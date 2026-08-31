@@ -29,6 +29,9 @@
         <entry name="showMpris" type="Bool">
             <default>true</default>
         </entry>
+        <entry name="alwaysVisible" type="Bool">
+            <default>false</default>
+        </entry>
         <entry name="useSystemAccent" type="Bool">
             <default>true</default>
         </entry>

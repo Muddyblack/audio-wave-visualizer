@@ -20,6 +20,7 @@ KCM.SimpleKCM {
     property string cfg_inputMethodDefault: "auto"
 
     property alias cfg_showMpris: showMprisCheckBox.checked
+    property alias cfg_alwaysVisible: alwaysVisibleCheckBox.checked
     property alias cfg_useSystemAccent: useSystemAccentCheckBox.checked
     property alias cfg_customColor: customColorButton.color
     property alias cfg_lineWidth: lineWidthSlider.value
@@ -140,6 +141,12 @@ KCM.SimpleKCM {
             id: showMprisCheckBox
             Kirigami.FormData.label: i18n("Layout:")
             text: i18n("Show album art and track info")
+        }
+
+        QQC.CheckBox {
+            id: alwaysVisibleCheckBox
+            Kirigami.FormData.label: i18n("Visibility:")
+            text: i18n("Keep widget visible when nothing is playing")
         }
 
         QQC.CheckBox {

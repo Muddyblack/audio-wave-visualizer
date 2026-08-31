@@ -9,10 +9,12 @@ import org.kde.kirigami as Kirigami
 PlasmoidItem {
     id: root
 
-    Layout.minimumWidth: plasmoid.configuration.showMpris ? 260 : 160
-    Layout.minimumHeight: 64
-    Layout.preferredWidth: plasmoid.configuration.showMpris ? 360 : 200
-    Layout.preferredHeight: plasmoid.configuration.showMpris ? 104 : 84
+    readonly property bool shouldShow: hasPlayer || plasmoid.configuration.alwaysVisible
+
+    Layout.minimumWidth: shouldShow ? (plasmoid.configuration.showMpris ? 260 : 160) : 0
+    Layout.minimumHeight: shouldShow ? 64 : 0
+    Layout.preferredWidth: shouldShow ? (plasmoid.configuration.showMpris ? 360 : 200) : 0
+    Layout.preferredHeight: shouldShow ? (plasmoid.configuration.showMpris ? 104 : 84) : 0
 
     preferredRepresentation: fullRepresentation
     Plasmoid.backgroundHints: "NoBackground"
@@ -134,6 +136,7 @@ PlasmoidItem {
 
     fullRepresentation: Item {
         id: container
+        visible: root.shouldShow
         // No clip — clipping cuts off text when background card is enabled
 
         // ── Background card source (rendered offscreen, used by backgroundCardEffect) ──
