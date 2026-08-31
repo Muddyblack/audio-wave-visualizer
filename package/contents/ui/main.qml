@@ -184,14 +184,22 @@ PlasmoidItem {
             // Whether the album art is actually being used as the fill right now.
             property bool artMode: plasmoid.configuration.artBg && bgArtImg.status === Image.Ready
 
-            // Solid-colour fill — ONLY when not in art mode. Kept as its own
-            // rectangle (no gradient on it) so there's never a color↔gradient
-            // conflict on a single Rectangle, which was painting the whole card
-            // black.
+            // Solid-colour fill — ONLY when not in art mode (art mode has its
+            // own image fill above). Kept as its own rectangle (no gradient on
+            // it) so there's never a color↔gradient conflict on a single
+            // Rectangle, which was painting the whole card black.
+            //
+            // While idle (no MPRIS player at all — nothing to show art or a
+            // custom colour for) fall back to a soft glass tint instead of the
+            // raw configured bgColor, which otherwise defaults to near-black
+            // and reads as a dead solid box. This mirrors the dock's default
+            // glass look and keeps the idle state looking clean rather than
+            // just "off". Once a player appears, the user's configured
+            // background (colour or art) takes over as before.
             Rectangle {
                 anchors.fill: parent
                 visible: !backgroundCard.artMode
-                color: plasmoid.configuration.bgColor
+                color: root.hasPlayer ? plasmoid.configuration.bgColor : Qt.rgba(1, 1, 1, 0.06)
             }
 
             // NOTE: the art-darkness scrim is intentionally NOT here. backgroundCard
