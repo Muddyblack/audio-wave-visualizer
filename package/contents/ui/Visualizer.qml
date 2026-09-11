@@ -1,4 +1,5 @@
 import QtQuick
+import QtCore
 import org.kde.plasma.plasma5support as Plasma5Support
 
 Item {
@@ -7,7 +8,10 @@ Item {
     property int numBars: plasmoid.configuration.numBars
     property real maxRange: 1000.0
     property var bars: Array(numBars).fill(0)
+    // Audio capture is independent of MPRIS: browsers and other apps can emit
+    // sound without the selected media player reporting playback.
     property bool active: true
+    readonly property bool hasAudio: bars.some(value => value > idleThreshold)
     property int idleCounter: 0
     property bool restarting: false
 
@@ -26,18 +30,41 @@ Item {
         onNewData: function (source, data) {
             disconnectSource(source);
         }
-        function spawn() {
+        function spawnCommand() {
             const args = [plasmoid.configuration.numBars, plasmoid.configuration.framerate, plasmoid.configuration.sensitivity, plasmoid.configuration.noiseReduction, plasmoid.configuration.inputMethod || "auto"].join(" ");
-            connectSource("bash " + vis.feederPath + " " + args);
+            return "bash " + vis.shellQuote(vis.feederPath) + " " + args;
+        }
+        function spawn() {
+            connectSource(spawnCommand());
+        }
+        // Stop the feeder by the PID it records once it holds the lock, so a
+        // restart during a backend probe cannot carry on with the old settings.
+        // -f spares a process that reused a stale PID. Older feeders write no
+        // PID file; stopping their cava makes them exit too. Neither kill can
+        // hit the shell running it.
+        function killCommand() {
+            if (!vis.resolvedRunDir)
+                return "";
+            const conf = (vis.resolvedRunDir + "/cava.conf").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+            return "pkill -F " + vis.shellQuote(vis.resolvedRunDir + "/feeder.pid") + " -f 'feeder\\.sh' 2>/dev/null; pkill -f -- " + vis.shellQuote("^([^ ]*/)?cava -p " + conf + "$");
         }
         function killFeeder() {
-            connectSource("bash -lc \"pkill -f '" + vis.feederPath + "'; pkill -f 'cava -p .*audio-wave-widget'\"");
+            const command = killCommand();
+            if (command)
+                connectSource(command);
+        }
+        // Wait for the old feeder to release the lock rather than a fixed
+        // delay, which lost the race whenever it was slow to exit.
+        function restartFeeder() {
+            const kill = killCommand();
+            connectSource(kill ? kill + "; flock -w 3 " + vis.shellQuote(vis.resolvedRunDir + "/lock") + " true; " + spawnCommand() : spawnCommand());
         }
     }
 
     // Resolved at startup by pathResolver — no shell expansion needed after that.
     property string resolvedRunDir: ""
     readonly property string resolvedBarsPath: resolvedRunDir ? resolvedRunDir + "/bars" : ""
+    readonly property string resolvedFramePath: resolvedRunDir ? resolvedRunDir + "/frame.ini" : ""
     readonly property string resolvedStatusPath: resolvedRunDir ? resolvedRunDir + "/status" : ""
 
     Plasma5Support.DataSource {
@@ -140,7 +167,7 @@ Item {
         }
         function read() {
             if (vis.resolvedStatusPath)
-                connectSource("cat " + vis.resolvedStatusPath);
+                connectSource("cat " + vis.shellQuote(vis.resolvedStatusPath));
         }
     }
 
@@ -160,7 +187,7 @@ Item {
             // flock in feeder.sh makes this a no-op if it is already healthy.
             // Hard failures (no cava, no backend at all) are left to the
             // heartbeat — respawning every 4s would never fix them.
-            if (backendCode === "cava-exited")
+            if (backendCode === "cava-exited" && vis.active)
                 feederLauncher.spawn();
         } else {
             backendErrorStreak = 0;
@@ -169,15 +196,30 @@ Item {
 
     Timer {
         interval: 4000
-        running: vis.plasmoidVisible && vis.resolvedStatusPath !== ""
+        running: vis.plasmoidVisible && vis.active && vis.resolvedStatusPath !== ""
         repeat: true
         triggeredOnStart: true
         onTriggered: statusReader.read()
     }
 
-    // Reader uses pre-resolved path (no shell expansion per frame).
+    // ── Frame transport ───────────────────────────────────────────────────────
+    // New feeders publish a separate INI frame for in-process reads. Keep the
+    // original semicolon file usable by older widgets sharing this feeder.
+    // A timestamp detects a stale INI file if an older feeder takes over later.
+    Loader {
+        id: barsSource
+        active: vis.resolvedFramePath !== ""
+        sourceComponent: Settings {
+            location: "file://" + vis.resolvedFramePath
+        }
+    }
+
+    function shellQuote(value) {
+        return "'" + value.replace(/'/g, "'\\''") + "'";
+    }
+
     Plasma5Support.DataSource {
-        id: reader
+        id: legacyReader
         engine: "executable"
         connectedSources: []
         onNewData: function (source, data) {
@@ -185,9 +227,30 @@ Item {
             vis.handleData((data["stdout"] || "").trim());
         }
         function read() {
-            if (vis.resolvedBarsPath)
-                connectSource("cat " + vis.resolvedBarsPath);
+            if (vis.resolvedBarsPath && connectedSources.length === 0)
+                connectSource("cat " + vis.shellQuote(vis.resolvedBarsPath));
         }
+    }
+
+    property real lastIniFrame: 0
+
+    function readBars() {
+        const s = barsSource.item as Settings;
+        if (!s)
+            return;
+        s.sync();
+        const now = Date.now();
+        const stamp = Number(s.value("t", 0)) * 1000;
+        if (stamp > 0 && Math.abs(now - stamp) < 2000) {
+            lastIniFrame = now;
+            handleData(s.value("v", ""));
+        } else if (now - lastIniFrame >= 2000) {
+            // Join an already-running old feeder without killing it. This
+            // fallback goes away as soon as a current feeder owns the lock.
+            legacyReader.read();
+        }
+        // Otherwise the poll landed between the feeder truncating and writing
+        // the file: keep the previous frame, as for an empty legacy read.
     }
 
     readonly property int pollInterval: Math.round(1000 / plasmoid.configuration.framerate)
@@ -203,33 +266,44 @@ Item {
     // a strict `val > 0` idle test never trips. Anything under this is "quiet".
     readonly property real idleThreshold: maxRange * 0.012
 
-    function handleData(line) {
-        if (!line)
+    // Accept both the INI string list and the original semicolon transport.
+    // Empty or malformed reads keep the previous frame.
+    function handleData(frame) {
+        if (!frame)
             return;
-        const rawParts = line.split(";");
+        const rawParts = typeof frame === "string" ? frame.replace(/^v=/, "").split(/[;,]/) : Array.prototype.slice.call(frame);
         const parts = [];
         for (let i = 0; i < rawParts.length; i++) {
-            if (rawParts[i] !== "")
-                parts.push(rawParts[i]);
+            if (rawParts[i] === "")
+                continue;
+            const value = Number(rawParts[i]);
+            if (!isFinite(value))
+                return;
+            parts.push(Math.max(0, Math.min(maxRange, value)));
         }
         if (!parts.length)
             return;
         const prev = bars;
         const out = [];
         let isQuiet = true;
+        let changed = prev.length !== numBars;
         const a = smoothing;
         for (let i = 0; i < numBars; i++) {
             // Keep animating even if the feeder is briefly still on the old bar
             // count while cava restarts after a config change.
             const sourceIndex = Math.min(parts.length - 1, Math.floor(i * parts.length / numBars));
-            const v = parseFloat(parts[sourceIndex]);
-            const target = isNaN(v) ? 0 : v;
+            const v = parts[sourceIndex];
+            const target = v > idleThreshold ? v : 0;
             if (target > idleThreshold)
                 isQuiet = false;
             const p = prev[i] || 0;
-            out.push(p + a * (target - p));
+            const blended = p + a * (target - p);
+            const next = Math.abs(blended - target) < 0.5 ? target : blended;
+            out.push(next);
+            changed = changed || next !== p;
         }
-        bars = out;
+        if (changed)
+            bars = out;
 
         if (restarting) {
             pollTimer.interval = vis.pollInterval;
@@ -250,7 +324,14 @@ Item {
         interval: vis.pollInterval
         running: vis.active && vis.plasmoidVisible
         repeat: true
-        onTriggered: reader.read()
+        onTriggered: vis.readBars()
+    }
+
+    onActiveChanged: {
+        if (active) {
+            idleCounter = 0;
+            pollTimer.interval = pollInterval;
+        }
     }
 
     // Keep the feeder alive. spawn() is guarded by flock in feeder.sh, so a
@@ -259,7 +340,7 @@ Item {
     // fall back to a slow 30s heartbeat that recovers from a crashed feeder.
     Timer {
         interval: 30000
-        running: vis.plasmoidVisible
+        running: vis.plasmoidVisible && vis.active
         repeat: true
         triggeredOnStart: true
         onTriggered: feederLauncher.spawn()
@@ -271,16 +352,8 @@ Item {
         vis.backendErrorStreak = 0;
         vis.bars = Array(vis.numBars).fill(0);
         pollTimer.interval = vis.pollInterval;
-        feederLauncher.killFeeder();
-        restartTimer.start();
+        feederLauncher.restartFeeder();
         restartCooldown.start();
-    }
-
-    Timer {
-        id: restartTimer
-        interval: 150
-        repeat: false
-        onTriggered: feederLauncher.spawn()
     }
 
     Timer {

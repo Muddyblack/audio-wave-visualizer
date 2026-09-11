@@ -43,18 +43,36 @@ if ! flock -n 9; then
   exit 0
 fi
 
+# Lets the widget stop this feeder, not just cava: when cava dies during a
+# backend probe the feeder moves on to the next backend with its old settings
+# and keeps the lock, so a restart with new settings would never start.
+PIDFILE="$RUN/feeder.pid"
+printf '%s\n' "$$" >"$PIDFILE"
+
 # Ensure clean termination of the background cava process. The pkill pattern is
 # pinned to our own config path so a cava the user started themselves survives.
 cleanup() {
   pkill -P $$ >/dev/null 2>&1
   pkill -f "cava -p $CONF" >/dev/null 2>&1
+  rm -f "$PIDFILE"
   return 0
 }
 trap cleanup EXIT
 
-# Generate initial zero-filled string for the requested number of bars
+# Keep the original transport for installed widgets. The separate INI frame
+# lets newer readers avoid a process per poll. Its timestamp detects old
+# feeders taking over the lock without refreshing frame.ini.
+# EPOCHREALTIME uses the locale's decimal separator, so under e.g. de_DE it
+# reads "1789074907,765593"; QSettings would parse that comma as a list, the
+# reader's freshness check would always fail and it would fall back to one
+# `cat` per frame. Force the dot.
+write_frame() {
+  printf '%s' "$1" >"$RUN/bars"
+  printf 't=%s\nv=%s\n' "${EPOCHREALTIME/,/.}" "${1//;/,}" >"$RUN/frame.ini"
+}
+
 zeros=$(printf '0;%.0s' $(seq 1 "$BARS"))
-printf '%s' "$zeros" >"$RUN/bars"
+write_frame "$zeros"
 
 # Reported alongside "no-cava" so the widget can name the actual install
 # command. Binary presence beats the /etc/os-release ID: derivatives keep their
@@ -126,7 +144,7 @@ run_method() {
     # microsecond truncate/write gap sees an empty file; Visualizer.qml's
     # handleData() already no-ops on an empty read, so that poll just keeps
     # the previous frame instead of updating.
-    printf '%s' "$line" >"$RUN/bars"
+    write_frame "$line"
     if [ ! -e "$MARKER" ]; then
       : >"$MARKER"
       printf '%s\n' "$method" >"$REMEMBERED"
@@ -136,7 +154,8 @@ run_method() {
   local pipeline=$!
 
   # Watchdog: a backend that hangs without erroring out would otherwise block
-  # the probe forever.
+  # the probe forever. It closes the lock fd: its sleep can outlive a stopped
+  # feeder by up to PROBE_TIMEOUT seconds and would block the replacement.
   (
     sleep "$PROBE_TIMEOUT"
     [ -e "$MARKER" ] && exit 0
@@ -144,7 +163,7 @@ run_method() {
     pkill -P "$pipeline" >/dev/null 2>&1
     kill "$pipeline" >/dev/null 2>&1
     return 0
-  ) &
+  ) 9>&- &
   local watchdog=$!
 
   wait "$pipeline" >/dev/null 2>&1

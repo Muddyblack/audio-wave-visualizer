@@ -127,8 +127,8 @@ PlasmoidItem {
         }
     }
 
-    // Cava always runs — wave reacts to whatever's playing system-wide,
-    // independent of whether MPRIS players are reporting state correctly.
+    // Listen to system audio even when MPRIS is absent or reports a paused
+    // player. The sampled audio controls the wave; MPRIS controls track info.
     Visualizer {
         id: vis
         active: true
@@ -723,7 +723,7 @@ PlasmoidItem {
                             return;
 
                         // ── Idle line (all visualizer types) ──────────────────
-                        if (!root.isPlaying) {
+                        if (!vis.hasAudio) {
                             ctx.lineWidth = 1.2;
                             ctx.strokeStyle = Qt.rgba(root.textColor.r, root.textColor.g, root.textColor.b, 0.35);
                             ctx.beginPath();
@@ -1237,12 +1237,14 @@ PlasmoidItem {
                                 waveformSeek.requestPaint();
                             }
                         }
-                        Connections {
-                            target: progressBar
-                            function onProgressChanged() {
-                                waveformSeek.requestPaint();
-                            }
-                        }
+                        // Repaint when the playhead reaches a new pixel, not on
+                        // every 50 ms position tick: bars only change colour as
+                        // the playhead passes them, and on a three-minute track
+                        // it moves under 2 px a second.
+                        readonly property int playheadPx: Math.round(progressBar.progress * width)
+                        readonly property bool showPlayhead: progressBar.progress > 0 && progressBar.progress < 1
+                        onPlayheadPxChanged: requestPaint()
+                        onShowPlayheadChanged: requestPaint()
 
                         onPaint: {
                             const ctx = getContext("2d");
@@ -1253,8 +1255,7 @@ PlasmoidItem {
                             const barW = 3;
                             const n = barHeights.length;
                             const h = height;
-                            const prog = progressBar.progress;
-                            const playheadX = prog * width;
+                            const playheadX = playheadPx;
 
                             for (let i = 0; i < n; i++) {
                                 const x = i * (barW + gap);
@@ -1283,7 +1284,7 @@ PlasmoidItem {
                             }
 
                             // playhead line
-                            if (prog > 0 && prog < 1) {
+                            if (showPlayhead) {
                                 ctx.fillStyle = Qt.rgba(root.controlColor.r, root.controlColor.g, root.controlColor.b, 0.95);
                                 const phX = playheadX - 1;
                                 ctx.fillRect(phX, 0, 2, h);

@@ -1,0 +1,21 @@
+name: Tests
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - master
+
+jobs:
+  visualizer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: cachix/install-nix-action@v27
+
+      # The dev shell provides qmltestrunner; python3, flock and pkill come
+      # from the runner. No sound server is needed: cava is stubbed.
+      - name: QML and feeder regression tests
+        run: nix develop --command python3 tests/run.py
