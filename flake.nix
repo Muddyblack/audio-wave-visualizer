@@ -81,7 +81,10 @@
               pre-commit
               zip
             ];
+            # Desktop NixOS sessions export this, CI runners do not; without it
+            # qmltestrunner and qmllint cannot resolve e.g. `import QtCore`.
             shellHook = ''
+              export NIXPKGS_QT6_QML_IMPORT_PATH="${pkgs.qt6.qtdeclarative}/${pkgs.qt6.qtbase.qtQmlPrefix}''${NIXPKGS_QT6_QML_IMPORT_PATH:+:$NIXPKGS_QT6_QML_IMPORT_PATH}"
               pre-commit install -f --install-hooks
               echo "plasma-audio-visualizer dev shell ready"
               echo "  make help        — list targets (view, install, pack, tag)"
