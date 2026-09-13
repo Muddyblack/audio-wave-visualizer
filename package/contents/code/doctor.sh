@@ -27,6 +27,7 @@ echo "kernel:  $(uname -r)"
 echo "plasma:  $(plasmashell --version 2>/dev/null || echo 'not found')"
 echo "session: ${XDG_SESSION_TYPE:-unset} / ${XDG_CURRENT_DESKTOP:-unset}"
 echo "runtime: ${XDG_RUNTIME_DIR:-unset}"
+echo "awk:     $(command -v awk 2>/dev/null || echo 'not found (optional)')"
 
 section "cava"
 if ! have cava; then
@@ -124,8 +125,10 @@ section "Widget backend state"
 if [ -d "$RUN" ]; then
   echo "runtime dir: $RUN"
   echo "status:      $(cat "$RUN/status" 2>/dev/null || echo '(none — feeder.sh never wrote one)')"
+  echo "publisher:   $(cat "$RUN/publisher" 2>/dev/null || echo '(unknown — feeder predates this check)')"
   echo "bars:        $(cut -c1-60 "$RUN/bars" 2>/dev/null || echo '(missing)')"
-  echo "bars age:    $(($(date +%s) - $(stat -c %Y "$RUN/bars" 2>/dev/null || date +%s)))s"
+  echo "bars age:    $(($(date +%s) - $(stat -c %Y "$RUN/bars" 2>/dev/null || date +%s)))s (unchanged frames are not rewritten)"
+  echo "frame age:   $(($(date +%s) - $(stat -c %Y "$RUN/frame.ini" 2>/dev/null || date +%s)))s (live INI heartbeat)"
   if [ -s "$RUN/cava.log" ]; then
     echo "cava.log:"
     sed 's/^/  /' "$RUN/cava.log"

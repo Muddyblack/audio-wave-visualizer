@@ -6,6 +6,7 @@ import os
 import shutil
 import signal
 import subprocess
+import sys
 import tempfile
 import time
 from pathlib import Path
@@ -15,6 +16,8 @@ FEEDER = REPO / "package/contents/code/feeder.sh"
 runner = shutil.which("qmltestrunner")
 if not runner:
     raise SystemExit("Qt 6 qmltestrunner must be on PATH")
+
+subprocess.run([sys.executable, str(REPO / "tests/test_feeder.py")], check=True)
 
 
 def start(env, bars, method):
@@ -68,6 +71,7 @@ done
         "PATH": str(binaries) + os.pathsep + os.environ["PATH"],
         "XDG_RUNTIME_DIR": directory,
         "QT_QPA_PLATFORM": "offscreen",
+        "QT_QUICK_BACKEND": "software",
         "QT_FORCE_STDERR_LOGGING": "1",
         "QML_DISABLE_DISK_CACHE": "1",
     }
@@ -94,12 +98,12 @@ done
             [
                 runner,
                 "-input",
-                str(REPO / "tests/tst_visualizer.qml"),
+                str(REPO / "tests"),
                 "-import",
                 str(REPO / "tests/stubs"),
             ],
             env=env,
-            timeout=20,
+            timeout=60,
             check=True,
         )
         print("PASS: legacy transport, live INI frames, silence/wake, shared startup")

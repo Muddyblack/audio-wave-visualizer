@@ -131,7 +131,7 @@ PlasmoidItem {
     // player. The sampled audio controls the wave; MPRIS controls track info.
     Visualizer {
         id: vis
-        active: true
+        active: root.visible && root.shouldShow && root.width > 0 && root.height > 0
     }
 
     fullRepresentation: Item {
@@ -624,13 +624,22 @@ PlasmoidItem {
                 Layout.fillHeight: true
                 spacing: 0
 
-                Canvas {
+                WaveCanvas {
                     id: wave
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     Layout.maximumHeight: 44
-                    antialiasing: true
-                    renderStrategy: Canvas.Cooperative
+                    bars: vis.bars
+                    numBars: vis.numBars
+                    maxRange: vis.maxRange
+                    hasAudio: vis.hasAudio
+                    backendFailed: vis.backendFailed
+                    waveColor: root.waveColor
+                    textColor: root.textColor
+                    lineWidth: plasmoid.configuration.lineWidth
+                    fillWave: plasmoid.configuration.fillWave
+                    glowWave: plasmoid.configuration.glowWave
+                    visualizerType: plasmoid.configuration.visualizerType
 
                     // Backend down: say what broke and what to type, instead of
                     // drawing a flat line that looks exactly like silence.
@@ -670,337 +679,6 @@ PlasmoidItem {
                             id: hoverHandler
                         }
                     }
-
-                    Connections {
-                        target: vis
-                        function onBackendFailedChanged() {
-                            wave.requestPaint();
-                        }
-                        function onBarsChanged() {
-                            wave.requestPaint();
-                        }
-                    }
-                    Connections {
-                        target: root
-                        function onIsPlayingChanged() {
-                            wave.requestPaint();
-                        }
-                        function onWaveColorChanged() {
-                            wave.requestPaint();
-                        }
-                    }
-                    Connections {
-                        target: plasmoid.configuration
-                        ignoreUnknownSignals: true
-                        function onLineWidthChanged() {
-                            wave.requestPaint();
-                        }
-                        function onFillWaveChanged() {
-                            wave.requestPaint();
-                        }
-                        function onGlowWaveChanged() {
-                            wave.requestPaint();
-                        }
-                        function onVisualizerTypeChanged() {
-                            wave.requestPaint();
-                        }
-                    }
-
-                    onPaint: {
-                        const ctx = getContext("2d");
-                        ctx.reset();
-                        ctx.lineCap = "round";
-                        ctx.lineJoin = "round";
-
-                        const mid = height / 2;
-                        const n = vis.numBars;
-                        const vtype = plasmoid.configuration.visualizerType;
-
-                        // Backend down: the label above carries the explanation,
-                        // so leave the canvas empty instead of striping the text
-                        // with the idle line.
-                        if (vis.backendFailed)
-                            return;
-
-                        // ── Idle line (all visualizer types) ──────────────────
-                        if (!vis.hasAudio) {
-                            ctx.lineWidth = 1.2;
-                            ctx.strokeStyle = Qt.rgba(root.textColor.r, root.textColor.g, root.textColor.b, 0.35);
-                            ctx.beginPath();
-                            ctx.moveTo(2, mid);
-                            ctx.lineTo(width - 2, mid);
-                            ctx.stroke();
-                            return;
-                        }
-
-                        // ── Shared glow setup ─────────────────────────────────
-                        const doGlow = plasmoid.configuration.glowWave;
-                        if (doGlow) {
-                            ctx.shadowBlur = 8;
-                            ctx.shadowColor = root.waveColor;
-                        } else {
-                            ctx.shadowBlur = 0;
-                        }
-
-                        // ─────────────────────────────────────────────────────
-                        // Helper: cosine-taper so bars/waves fade at the edges
-                        // ─────────────────────────────────────────────────────
-                        function getTaper(i, total) {
-                            const pos = i / (total - 1);
-                            const edge = 0.15;
-                            if (pos < edge) {
-                                const w = pos / edge;
-                                return 0.5 - 0.5 * Math.cos(w * Math.PI);
-                            } else if (pos > 1.0 - edge) {
-                                const w = (1.0 - pos) / edge;
-                                return 0.5 - 0.5 * Math.cos(w * Math.PI);
-                            }
-                            return 1.0;
-                        }
-
-                        // ═════════════════════════════════════════════════════
-                        // TYPE 0 — Smooth Wave (mirrored bezier)
-                        // ═════════════════════════════════════════════════════
-                        if (vtype === 0) {
-                            const step0 = width / (n - 1);
-                            ctx.lineWidth = plasmoid.configuration.lineWidth;
-                            ctx.strokeStyle = root.waveColor;
-
-                            function plot0(sign) {
-                                ctx.beginPath();
-                                const amp = height * 0.42;
-                                let prevX = 0;
-                                let prevY = mid + sign * ((vis.bars[0] || 0) / vis.maxRange) * amp * getTaper(0, n);
-                                ctx.moveTo(prevX, prevY);
-                                for (let i = 1; i < n; i++) {
-                                    const v = ((vis.bars[i] || 0) / vis.maxRange) * getTaper(i, n);
-                                    const x = i * step0;
-                                    const y = mid + sign * v * amp;
-                                    const cpX = (prevX + x) / 2;
-                                    ctx.bezierCurveTo(cpX, prevY, cpX, y, x, y);
-                                    prevX = x;
-                                    prevY = y;
-                                }
-                                ctx.stroke();
-
-                                if (plasmoid.configuration.fillWave) {
-                                    ctx.shadowBlur = 0;
-                                    ctx.lineTo(width, mid);
-                                    ctx.lineTo(0, mid);
-                                    ctx.closePath();
-                                    const grad = ctx.createLinearGradient(0, mid, 0, mid + sign * amp);
-                                    const c1 = Qt.rgba(root.waveColor.r, root.waveColor.g, root.waveColor.b, 0.38);
-                                    const c2 = Qt.rgba(root.waveColor.r, root.waveColor.g, root.waveColor.b, 0.02);
-                                    grad.addColorStop(0.0, c1);
-                                    grad.addColorStop(1.0, c2);
-                                    ctx.fillStyle = grad;
-                                    ctx.fill();
-                                    if (doGlow) {
-                                        ctx.shadowBlur = 8;
-                                        ctx.shadowColor = root.waveColor;
-                                    }
-                                }
-                            }
-                            plot0(-1);
-                            plot0(1);
-
-                            // ═════════════════════════════════════════════════════
-                            // TYPE 1 — Rounded Bars (upward bars from bottom)
-                            // ═════════════════════════════════════════════════════
-                        } else if (vtype === 1) {
-                            const totalW = width;
-                            const gap = Math.max(1, totalW / n * 0.25);
-                            const barW = Math.max(1, totalW / n - gap);
-                            const r = barW / 2;
-                            const amp1 = height * 0.88;
-                            ctx.lineWidth = 0;
-                            ctx.strokeStyle = "transparent";
-
-                            for (let i = 0; i < n; i++) {
-                                const v = ((vis.bars[i] || 0) / vis.maxRange) * getTaper(i, n);
-                                const bh = Math.max(2, v * amp1);
-                                const x = i * (barW + gap) + gap / 2;
-                                const y = height - bh;
-
-                                // gradient fill per bar
-                                const g = ctx.createLinearGradient(0, y, 0, height);
-                                g.addColorStop(0.0, Qt.rgba(root.waveColor.r, root.waveColor.g, root.waveColor.b, 0.95));
-                                g.addColorStop(1.0, Qt.rgba(root.waveColor.r, root.waveColor.g, root.waveColor.b, 0.35));
-                                ctx.fillStyle = g;
-
-                                // rounded-top rectangle
-                                ctx.beginPath();
-                                if (bh > r * 2) {
-                                    ctx.moveTo(x + r, y);
-                                    ctx.arc(x + r, y + r, r, Math.PI, 0);
-                                    ctx.lineTo(x + barW, height);
-                                    ctx.lineTo(x, height);
-                                    ctx.closePath();
-                                } else {
-                                    ctx.arc(x + r, y + r, r, 0, Math.PI * 2);
-                                }
-                                ctx.fill();
-                            }
-
-                            // ═════════════════════════════════════════════════════
-                            // TYPE 2 — Mirror Bars (bars grow from centre up & down)
-                            // ═════════════════════════════════════════════════════
-                        } else if (vtype === 2) {
-                            const totalW2 = width;
-                            const gap2 = Math.max(1, totalW2 / n * 0.22);
-                            const barW2 = Math.max(1, totalW2 / n - gap2);
-                            const r2 = barW2 / 2;
-                            const amp2 = height * 0.44;
-
-                            for (let i = 0; i < n; i++) {
-                                const v = ((vis.bars[i] || 0) / vis.maxRange) * getTaper(i, n);
-                                const bh = Math.max(2, v * amp2);
-                                const x = i * (barW2 + gap2) + gap2 / 2;
-
-                                const g2 = ctx.createLinearGradient(0, mid - bh, 0, mid + bh);
-                                g2.addColorStop(0.0, Qt.rgba(root.waveColor.r, root.waveColor.g, root.waveColor.b, 0.35));
-                                g2.addColorStop(0.5, Qt.rgba(root.waveColor.r, root.waveColor.g, root.waveColor.b, 0.95));
-                                g2.addColorStop(1.0, Qt.rgba(root.waveColor.r, root.waveColor.g, root.waveColor.b, 0.35));
-                                ctx.fillStyle = g2;
-
-                                // top half
-                                ctx.beginPath();
-                                if (bh > r2) {
-                                    ctx.moveTo(x, mid);
-                                    ctx.lineTo(x, mid - bh + r2);
-                                    ctx.arc(x + r2, mid - bh + r2, r2, Math.PI, 0);
-                                    ctx.lineTo(x + barW2, mid);
-                                    ctx.closePath();
-                                } else {
-                                    ctx.arc(x + r2, mid - r2, r2, 0, Math.PI * 2);
-                                }
-                                ctx.fill();
-
-                                // bottom half
-                                ctx.beginPath();
-                                if (bh > r2) {
-                                    ctx.moveTo(x, mid);
-                                    ctx.lineTo(x, mid + bh - r2);
-                                    ctx.arc(x + r2, mid + bh - r2, r2, Math.PI, 2 * Math.PI);
-                                    ctx.lineTo(x + barW2, mid);
-                                    ctx.closePath();
-                                } else {
-                                    ctx.arc(x + r2, mid + r2, r2, 0, Math.PI * 2);
-                                }
-                                ctx.fill();
-                            }
-
-                            // ═════════════════════════════════════════════════════
-                            // TYPE 3 — Tech Line (stepped segments with node dots)
-                            // ═════════════════════════════════════════════════════
-                        } else if (vtype === 3) {
-                            const step3 = width / (n - 1);
-                            const amp3 = height * 0.42;
-                            ctx.lineWidth = plasmoid.configuration.lineWidth;
-                            ctx.strokeStyle = root.waveColor;
-
-                            function drawTechLine(sign) {
-                                ctx.beginPath();
-                                for (let i = 0; i < n; i++) {
-                                    const v = ((vis.bars[i] || 0) / vis.maxRange) * getTaper(i, n);
-                                    const x = i * step3;
-                                    const y = mid + sign * v * amp3;
-                                    if (i === 0) {
-                                        ctx.moveTo(x, y);
-                                    } else {
-                                        // horizontal then vertical — oscilloscope step look
-                                        const prevX = (i - 1) * step3;
-                                        ctx.lineTo(x - step3 * 0.5, mid + sign * ((vis.bars[i - 1] || 0) / vis.maxRange) * getTaper(i - 1, n) * amp3);
-                                        ctx.lineTo(x - step3 * 0.5, y);
-                                        ctx.lineTo(x, y);
-                                    }
-                                }
-                                ctx.stroke();
-
-                                // node dots at each sample
-                                ctx.shadowBlur = doGlow ? 6 : 0;
-                                for (let i = 0; i < n; i++) {
-                                    const v = ((vis.bars[i] || 0) / vis.maxRange) * getTaper(i, n);
-                                    const x = i * step3;
-                                    const y = mid + sign * v * amp3;
-                                    ctx.beginPath();
-                                    ctx.arc(x, y, 1.6, 0, Math.PI * 2);
-                                    ctx.fillStyle = root.waveColor;
-                                    ctx.fill();
-                                }
-                                if (doGlow)
-                                    ctx.shadowBlur = 8;
-                            }
-                            drawTechLine(-1);
-                            drawTechLine(1);
-
-                            // ═════════════════════════════════════════════════════
-                            // TYPE 4 — Floating Dots (soft radial blobs, lineWidth scales size)
-                            // ═════════════════════════════════════════════════════
-                        } else if (vtype === 4) {
-                            const step4 = width / n;
-                            const amp4 = height * 0.42;
-                            // lineWidth (1–8) scales how big the dots get
-                            const maxR = Math.max(2, step4 * 0.28 * (plasmoid.configuration.lineWidth / 2.0));
-
-                            for (let i = 0; i < n; i++) {
-                                const v = ((vis.bars[i] || 0) / vis.maxRange) * getTaper(i, n);
-                                const cx = i * step4 + step4 / 2;
-                                const dotR = Math.max(1.5, v * maxR);
-
-                                function drawDot4(cy) {
-                                    // solid bright core so it's always visible
-                                    ctx.beginPath();
-                                    ctx.arc(cx, cy, dotR * 0.45, 0, Math.PI * 2);
-                                    ctx.fillStyle = Qt.rgba(root.waveColor.r, root.waveColor.g, root.waveColor.b, 0.92);
-                                    ctx.fill();
-                                    // soft glow halo
-                                    const grad = ctx.createRadialGradient(cx, cy, dotR * 0.3, cx, cy, dotR);
-                                    grad.addColorStop(0.0, Qt.rgba(root.waveColor.r, root.waveColor.g, root.waveColor.b, 0.55));
-                                    grad.addColorStop(1.0, Qt.rgba(root.waveColor.r, root.waveColor.g, root.waveColor.b, 0.0));
-                                    ctx.beginPath();
-                                    ctx.arc(cx, cy, dotR, 0, Math.PI * 2);
-                                    ctx.fillStyle = grad;
-                                    ctx.fill();
-                                }
-
-                                drawDot4(mid - v * amp4);
-                                drawDot4(mid + v * amp4);
-                            }
-
-                            // ═════════════════════════════════════════════════════
-                            // TYPE 5 — Floating Dots Bold (outlined rings, high-contrast)
-                            // ═════════════════════════════════════════════════════
-                        } else if (vtype === 5) {
-                            const step5 = width / n;
-                            const amp5 = height * 0.42;
-                            const maxR5 = Math.max(2, step5 * 0.32);
-                            const strokeW = Math.max(0.8, plasmoid.configuration.lineWidth * 0.6);
-
-                            for (let i = 0; i < n; i++) {
-                                const v = ((vis.bars[i] || 0) / vis.maxRange) * getTaper(i, n);
-                                const cx = i * step5 + step5 / 2;
-                                const dotR = Math.max(1.5, v * maxR5);
-
-                                function drawRing(cy) {
-                                    // filled center (always punchy)
-                                    ctx.beginPath();
-                                    ctx.arc(cx, cy, Math.max(0.8, dotR * 0.38), 0, Math.PI * 2);
-                                    ctx.fillStyle = Qt.rgba(root.waveColor.r, root.waveColor.g, root.waveColor.b, 1.0);
-                                    ctx.fill();
-                                    // outer ring stroke
-                                    ctx.beginPath();
-                                    ctx.arc(cx, cy, dotR, 0, Math.PI * 2);
-                                    ctx.strokeStyle = Qt.rgba(root.waveColor.r, root.waveColor.g, root.waveColor.b, 0.75);
-                                    ctx.lineWidth = strokeW;
-                                    ctx.stroke();
-                                }
-
-                                drawRing(mid - v * amp5);
-                                drawRing(mid + v * amp5);
-                            }
-                        }
-                    }
                 }
 
                 // ── Seekable progress pulse ──────────────────────────────────
@@ -1017,101 +695,16 @@ PlasmoidItem {
 
                     readonly property int pbStyle: plasmoid.configuration.progressBarStyle ?? 0
 
-                    property real lengthValue: playerLength()
-                    property real displayedPosition: 0
-                    property real anchorPosition: 0
-                    property real anchorMs: Date.now()
-                    property real progress: lengthValue > 0 ? clamp(displayedPosition / lengthValue, 0, 1) : 0
+                    readonly property real lengthValue: positionClock.lengthValue
+                    readonly property real progress: positionClock.progress
                     property real sweep: -0.35
-                    readonly property string elapsedText: formatTime(displayedPosition)
-                    readonly property string totalText: formatTime(lengthValue)
 
-                    function clamp(value, min, max) {
-                        return Math.max(min, Math.min(max, value));
-                    }
-
-                    function playerLength() {
-                        const p = mpris2Model.currentPlayer;
-                        if (!p)
-                            return 0;
-                        return Math.max(0, p.length || p.mprisLength || 0);
-                    }
-
-                    function playerPosition() {
-                        const p = mpris2Model.currentPlayer;
-                        if (!p)
-                            return 0;
-                        return clamp(p.position || 0, 0, lengthValue);
-                    }
-
-                    function unitsPerSecond() {
-                        if (lengthValue >= 1000000)
-                            return 1000000;
-                        if (lengthValue >= 10000)
-                            return 1000;
-                        return 1;
-                    }
-
-                    function predictedPosition() {
-                        if (!root.isPlaying)
-                            return anchorPosition;
-                        const elapsedMs = Date.now() - anchorMs;
-                        return clamp(anchorPosition + elapsedMs * unitsPerSecond() / 1000, 0, lengthValue);
-                    }
-
-                    function syncFromPlayer(hard) {
-                        const len = playerLength();
-                        // don't zero out a valid length on a transient 0 while player is present
-                        if (len > 0 || !root.hasPlayer)
-                            lengthValue = len;
-
-                        if (len <= 0) {
-                            if (!root.hasPlayer) {
-                                displayedPosition = 0;
-                                anchorPosition = 0;
-                                anchorMs = Date.now();
-                            }
-                            return;
-                        }
-
-                        const rawPosition = playerPosition();
-                        const predicted = predictedPosition();
-                        const drift = Math.abs(rawPosition - predicted);
-                        const seekSizedDrift = drift > unitsPerSecond() * 1.25;
-
-                        anchorPosition = rawPosition;
-                        anchorMs = Date.now();
-
-                        if (hard || seekSizedDrift || !root.isPlaying || displayedPosition <= 0) {
-                            displayedPosition = rawPosition;
-                        }
-                    }
-
-                    function tick() {
-                        const len = playerLength();
-                        // only shrink lengthValue to 0 if player is truly gone, not on transient 0
-                        if (len > 0 || !root.hasPlayer) {
-                            if (len !== lengthValue)
-                                lengthValue = len;
-                        }
-                        if (lengthValue <= 0)
-                            return;
-                        displayedPosition = predictedPosition();
-                    }
-
-                    function twoDigits(value) {
-                        return value < 10 ? "0" + value : "" + value;
-                    }
-
-                    function formatTime(value) {
-                        const seconds = Math.max(0, Math.floor(value / unitsPerSecond()));
-                        const hours = Math.floor(seconds / 3600);
-                        const minutes = Math.floor((seconds % 3600) / 60);
-                        const secs = seconds % 60;
-                        if (hours > 0) {
-                            return hours + ":" + twoDigits(minutes) + ":" + twoDigits(secs);
-                        }
-                        return minutes + ":" + twoDigits(secs);
+                    PlaybackClock {
+                        id: positionClock
+                        player: mpris2Model.currentPlayer
+                        playing: root.isPlaying
+                        track: root.track
+                        active: progressBar.visible && progressBar.width > 0 && progressBar.height > 0 && vis.plasmoidVisible
                     }
 
                     Behavior on opacity {
@@ -1120,48 +713,8 @@ PlasmoidItem {
                         }
                     }
 
-                    Component.onCompleted: syncFromPlayer(true)
-
-                    Connections {
-                        target: root
-                        function onIsPlayingChanged() {
-                            progressBar.syncFromPlayer(true);
-                        }
-                        function onTrackChanged() {
-                            progressBar.syncFromPlayer(true);
-                        }
-                        function onHasPlayerChanged() {
-                            progressBar.syncFromPlayer(true);
-                        }
-                    }
-
-                    Connections {
-                        target: mpris2Model.currentPlayer
-                        ignoreUnknownSignals: true
-                        function onPositionChanged() {
-                            progressBar.syncFromPlayer(false);
-                        }
-                        function onLengthChanged() {
-                            progressBar.syncFromPlayer(true);
-                        }
-                        function onMprisLengthChanged() {
-                            progressBar.syncFromPlayer(true);
-                        }
-                    }
-
-                    // Only predict position while actually playing. While paused
-                    // the position is static, and onIsPlayingChanged re-syncs the
-                    // displayed position, so a 20fps tick here just keeps the
-                    // shared render/event loop needlessly warm.
-                    Timer {
-                        interval: 50
-                        running: root.hasPlayer && root.isPlaying
-                        repeat: true
-                        onTriggered: progressBar.tick()
-                    }
-
                     SequentialAnimation on sweep {
-                        running: root.isPlaying && progressBar.visible && (progressBar.pbStyle === 0 || progressBar.pbStyle === 2)
+                        running: root.isPlaying && positionClock.active && (progressBar.pbStyle === 0 || progressBar.pbStyle === 2)
                         loops: Animation.Infinite
                         NumberAnimation {
                             from: -0.35
@@ -1189,17 +742,20 @@ PlasmoidItem {
                         // seeded pseudo-random waveform heights, unique per track
                         property var barHeights: []
                         property int numBars: 0
+                        property string waveformKey: ""
 
                         function buildWaveform() {
                             const w = width;
-                            if (w <= 0)
+                            if (!visible || w <= 0)
                                 return;
                             const gap = 2;
                             const barW = 3;
                             const n = Math.floor(w / (barW + gap));
-                            if (n === numBars && barHeights.length === n)
+                            const key = root.track + "\u0000" + root.artist;
+                            if (n === numBars && barHeights.length === n && waveformKey === key)
                                 return;
                             numBars = n;
+                            waveformKey = key;
                             // hash track title for a stable seed
                             let seed = 0;
                             const s = root.track + root.artist;
@@ -1210,7 +766,7 @@ PlasmoidItem {
                                 seed = (seed * 1664525 + 1013904223) >>> 0;
                                 const r = (seed >>> 16) / 65535;
                                 // shape: taper at edges, random in middle
-                                const pos = i / (n - 1);
+                                const pos = n > 1 ? i / (n - 1) : 0;
                                 const taper = Math.sin(pos * Math.PI);
                                 heights.push(0.15 + r * 0.85 * taper);
                             }
@@ -1219,32 +775,52 @@ PlasmoidItem {
                         }
 
                         Component.onCompleted: buildWaveform()
-                        onWidthChanged: {
-                            numBars = 0;
-                            buildWaveform();
+                        onWidthChanged: buildWaveform()
+                        onHeightChanged: {
+                            if (visible)
+                                requestPaint();
+                        }
+                        onVisibleChanged: {
+                            if (visible) {
+                                buildWaveform();
+                                requestPaint();
+                            }
                         }
                         Connections {
                             target: root
                             function onTrackChanged() {
-                                waveformSeek.numBars = 0;
                                 waveformSeek.buildWaveform();
                             }
                             function onArtistChanged() {
-                                waveformSeek.numBars = 0;
                                 waveformSeek.buildWaveform();
                             }
                             function onWaveColorChanged() {
-                                waveformSeek.requestPaint();
+                                if (waveformSeek.visible)
+                                    waveformSeek.requestPaint();
+                            }
+                            function onTextColorChanged() {
+                                if (waveformSeek.visible)
+                                    waveformSeek.requestPaint();
+                            }
+                            function onControlColorChanged() {
+                                if (waveformSeek.visible)
+                                    waveformSeek.requestPaint();
                             }
                         }
                         // Repaint when the playhead reaches a new pixel, not on
                         // every 50 ms position tick: bars only change colour as
                         // the playhead passes them, and on a three-minute track
                         // it moves under 2 px a second.
-                        readonly property int playheadPx: Math.round(progressBar.progress * width)
-                        readonly property bool showPlayhead: progressBar.progress > 0 && progressBar.progress < 1
-                        onPlayheadPxChanged: requestPaint()
-                        onShowPlayheadChanged: requestPaint()
+                        readonly property int playheadPx: visible ? Math.round(progressBar.progress * width) : 0
+                        readonly property bool showPlayhead: visible && progressBar.progress > 0 && progressBar.progress < 1
+                        onPlayheadPxChanged: {
+                            if (visible)
+                                requestPaint();
+                        }
+                        onShowPlayheadChanged: {
+                            if (visible)
+                                requestPaint();
+                        }
 
                         onPaint: {
                             const ctx = getContext("2d");
@@ -1256,6 +832,8 @@ PlasmoidItem {
                             const n = barHeights.length;
                             const h = height;
                             const playheadX = playheadPx;
+                            const playedColor = Qt.rgba(root.waveColor.r, root.waveColor.g, root.waveColor.b, 0.90);
+                            const unplayedColor = Qt.rgba(root.textColor.r, root.textColor.g, root.textColor.b, 0.25);
 
                             for (let i = 0; i < n; i++) {
                                 const x = i * (barW + gap);
@@ -1263,11 +841,7 @@ PlasmoidItem {
                                 const bh = played ? Math.max(2, barHeights[i] * h) : Math.max(2, barHeights[i] * h * 0.45);
                                 const y = (h - bh) / 2;
 
-                                if (played) {
-                                    ctx.fillStyle = Qt.rgba(root.waveColor.r, root.waveColor.g, root.waveColor.b, 0.90);
-                                } else {
-                                    ctx.fillStyle = Qt.rgba(root.textColor.r, root.textColor.g, root.textColor.b, 0.25);
-                                }
+                                ctx.fillStyle = played ? playedColor : unplayedColor;
 
                                 const r = barW / 2;
                                 ctx.beginPath();
@@ -1319,6 +893,8 @@ PlasmoidItem {
                             width: parent.width * progressBar.progress
                             clip: true
                             Behavior on width {
+                                // Like the knob's x below: depending on positionClock.active loops.
+                                enabled: progressTrack.visible
                                 NumberAnimation {
                                     duration: 90
                                     easing.type: Easing.Linear
@@ -1399,6 +975,9 @@ PlasmoidItem {
                             color: Qt.rgba(root.controlColor.r, root.controlColor.g, root.controlColor.b, root.isPlaying ? 0.95 : 0.68)
                             opacity: (progressBar.pbStyle !== 1 && progressBar.pbStyle !== 3 && progressBar.pbStyle !== 4 && progressBar.progress > 0) ? 1.0 : 0.0
                             Behavior on x {
+                                // Not tied to positionClock.active: activating the clock moves
+                                // progress, which writes x and re-enters this binding (a loop).
+                                enabled: progressTrack.visible && (progressBar.pbStyle === 0 || progressBar.pbStyle === 2)
                                 NumberAnimation {
                                     duration: 90
                                     easing.type: Easing.Linear
@@ -1413,7 +992,7 @@ PlasmoidItem {
                             }
 
                             SequentialAnimation on scale {
-                                running: root.isPlaying && progressBar.visible && (progressBar.pbStyle === 0 || progressBar.pbStyle === 2)
+                                running: root.isPlaying && positionClock.active && (progressBar.pbStyle === 0 || progressBar.pbStyle === 2)
                                 loops: Animation.Infinite
                                 NumberAnimation {
                                     from: 0.92
@@ -1434,7 +1013,7 @@ PlasmoidItem {
                     Text {
                         anchors.left: parent.left
                         anchors.bottom: parent.bottom
-                        text: progressBar.elapsedText
+                        text: positionClock.elapsedText
                         color: root.textColor
                         opacity: 0.50
                         font.pixelSize: 8
@@ -1443,7 +1022,7 @@ PlasmoidItem {
                     Text {
                         anchors.right: parent.right
                         anchors.bottom: parent.bottom
-                        text: progressBar.totalText
+                        text: positionClock.totalText
                         color: root.textColor
                         opacity: 0.50
                         font.pixelSize: 8
@@ -1462,11 +1041,9 @@ PlasmoidItem {
                             const len = p.length || p.mprisLength || 0;
                             if (!len)
                                 return;
-                            const ratio = progressTrack.width > 0 ? progressBar.clamp((mouse.x - progressTrack.x) / progressTrack.width, 0, 1) : 0;
+                            const ratio = progressTrack.width > 0 ? positionClock.clamp((mouse.x - progressTrack.x) / progressTrack.width, 0, 1) : 0;
                             const newPos = ratio * len;
-                            progressBar.displayedPosition = newPos;
-                            progressBar.anchorPosition = newPos;
-                            progressBar.anchorMs = Date.now();
+                            positionClock.setPosition(newPos);
 
                             // Robust seek implementation for different MPRIS layers
                             if (typeof p.position !== "undefined" && p.canSeek !== false) {

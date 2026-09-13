@@ -219,4 +219,6 @@ and its current state in `.../status`.
 
 For a detailed explanation of the architecture and data flow, see the [Architecture Documentation](docs/workflow.md).
 
-In short: the widget uses a small shell helper (`feeder.sh`) to run `cava` in the background and atomically writes the latest bars to `$XDG_RUNTIME_DIR/audio-wave-widget/bars`. The QML side polls that file at ~30 fps.
+In short: a small shell helper (`feeder.sh`) runs `cava` in the background and writes each changed frame to `$XDG_RUNTIME_DIR/audio-wave-widget/`. The QML side reads it in-process at the configured frame rate, drops to 2 FPS after a few seconds of silence, and stops polling while the widget is hidden.
+
+Regression tests (synthetic audio, no desktop or sound server needed): `nix develop --command python3 tests/run.py`.

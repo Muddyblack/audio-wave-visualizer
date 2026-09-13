@@ -29,7 +29,7 @@
               for script in feeder.sh doctor.sh; do
                 chmod +x "$root/contents/code/$script"
                 wrapProgram "$root/contents/code/$script" \
-                  --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.cava pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ]}
+                  --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.cava pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ]}
               done
               runHook postInstall
             '';
@@ -80,6 +80,10 @@
               kdePackages.plasma-sdk
               pre-commit
               zip
+              # tests/test_feeder.py also streams frames through the awks
+              # Debian/Ubuntu (mawk) and BSD-style systems (nawk) ship.
+              mawk
+              nawk
             ];
             # Desktop NixOS sessions export this, CI runners do not; without it
             # qmltestrunner and qmllint cannot resolve e.g. `import QtCore`.

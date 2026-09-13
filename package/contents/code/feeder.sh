@@ -24,6 +24,8 @@ STATUS="$RUN/status"
 LOG="$RUN/cava.log"
 MARKER="$RUN/.first-frame"
 REMEMBERED="$RUN/input-method"
+PUBLISHER="${BASH_SOURCE[0]%/*}/publish.awk"
+[[ "${BASH_SOURCE[0]}" == */* ]] || PUBLISHER="./publish.awk"
 
 # How long a backend gets to produce its first frame before we call it dead.
 # cava emits a frame every 1/framerate second even in silence, so no output
@@ -36,6 +38,9 @@ AUTO_METHODS="pipewire pulse alsa"
 
 write_status() {
   printf '%s\n' "$*" >"$STATUS.tmp" && mv -f "$STATUS.tmp" "$STATUS"
+  # QSettings readers avoid spawning cat for healthy status polls. Keep the
+  # original file for older widget instances sharing this feeder.
+  printf 'v="%s"\n' "$*" >"$RUN/status.ini.tmp" && mv -f "$RUN/status.ini.tmp" "$RUN/status.ini"
 }
 
 exec 9>"$RUN/lock"
@@ -61,17 +66,31 @@ trap cleanup EXIT
 
 # Keep the original transport for installed widgets. The separate INI frame
 # lets newer readers avoid a process per poll. Its timestamp detects old
-# feeders taking over the lock without refreshing frame.ini.
+# feeders taking over the lock without refreshing frame.ini. Identical frames
+# need no bars rewrite; refresh only the INI heartbeat once per second so a
+# quiet backend still passes the reader's two-second freshness check. Changed
+# frames are always published immediately, at the configured full frame rate.
 # EPOCHREALTIME uses the locale's decimal separator, so under e.g. de_DE it
 # reads "1789074907,765593"; QSettings would parse that comma as a list, the
 # reader's freshness check would always fail and it would fall back to one
 # `cat` per frame. Force the dot.
+last_frame=""
+last_frame_second=-1
 write_frame() {
-  printf '%s' "$1" >"$RUN/bars"
-  printf 't=%s\nv=%s\n' "${EPOCHREALTIME/,/.}" "${1//;/,}" >"$RUN/frame.ini"
+  if [[ "$1" != "$last_frame" ]]; then
+    printf '%s' "$1" >"$RUN/bars"
+    last_frame="$1"
+  elif [[ "$EPOCHSECONDS" == "$last_frame_second" ]]; then
+    return
+  fi
+  last_frame_second="$EPOCHSECONDS"
+  # Quote the semicolon string for QSettings: unlike comma-separated values,
+  # this stays a string instead of constructing a QVariantList on every poll.
+  printf 't=%s\nv="%s"\nprotocol=2\n' "${EPOCHREALTIME/,/.}" "$last_frame" >"$RUN/frame.ini"
 }
 
-zeros=$(printf '0;%.0s' $(seq 1 "$BARS"))
+printf -v zeros '%*s' "$BARS" ''
+zeros="${zeros// /0;}"
 write_frame "$zeros"
 
 # Reported alongside "no-cava" so the widget can name the actual install
@@ -95,6 +114,18 @@ if ! command -v cava >/dev/null 2>&1; then
 fi
 
 : >"$LOG"
+
+# awk reads the pipe in blocks instead of Bash's byte-at-a-time `read`, but not
+# every awk suits a live stream: mawk (Debian/Ubuntu's default) fills its whole
+# read buffer before handling a line unless run with -W interactive, and
+# one-true-awk has no systime(). Without a usable awk the Bash loop keeps
+# publishing. The choice is recorded for doctor.sh.
+AWK=()
+if awk 'BEGIN { exit !(systime() > 0) }' </dev/null >/dev/null 2>&1; then
+  AWK=(awk)
+  [[ "$(awk -W version 2>/dev/null </dev/null)" == mawk* ]] && AWK+=(-W interactive)
+fi
+printf '%s\n' "${AWK[*]:-bash}" >"$RUN/publisher"
 
 write_conf() {
   local method="$1"
@@ -130,14 +161,12 @@ noise_reduction = $NOISE_REDUCTION
 EOF
 }
 
-# Runs cava with one input method. Returns 0 if it produced at least one frame
-# (i.e. the backend works and cava has since exited), 1 if the method is a dud.
-run_method() {
+# The first frame is handled in Bash so probing and status stay here. A usable
+# awk then takes over the pipe (see AWK above); otherwise this loop continues.
+publish_frames() {
   local method="$1"
-  write_conf "$method"
-  rm -f "$MARKER"
-
-  cava -p "$CONF" 2>>"$LOG" | while IFS= read -r line; do
+  local line
+  while IFS= read -r line; do
     [ -n "$line" ] || continue
     # Direct write, no tmp+rename: at framerate this forked an external mv
     # process per frame (up to 4M/day at 60fps). A poll landing in the
@@ -145,12 +174,26 @@ run_method() {
     # handleData() already no-ops on an empty read, so that poll just keeps
     # the previous frame instead of updating.
     write_frame "$line"
-    if [ ! -e "$MARKER" ]; then
-      : >"$MARKER"
-      printf '%s\n' "$method" >"$REMEMBERED"
-      write_status "ok $method"
-    fi
-  done &
+    [ -e "$MARKER" ] && continue
+    : >"$MARKER"
+    printf '%s\n' "$method" >"$REMEMBERED"
+    write_status "ok $method"
+    ((${#AWK[@]})) || continue
+    # Replacing this loop is the point: awk reads the rest of the stream.
+    # shellcheck disable=SC2093
+    AUDIO_WAVE_RUN="$RUN" AUDIO_WAVE_PREVIOUS="$line" AUDIO_WAVE_FRAME_SECOND="$last_frame_second" \
+      exec "${AWK[@]}" -f "$PUBLISHER"
+  done
+}
+
+# Runs cava with one input method. Returns 0 if it produced at least one frame
+# (i.e. the backend works and cava has since exited), 1 if the method is a dud.
+run_method() {
+  local method="$1"
+  write_conf "$method"
+  rm -f "$MARKER"
+
+  cava -p "$CONF" 2>>"$LOG" | publish_frames "$method" 2>>"$LOG" &
   local pipeline=$!
 
   # Watchdog: a backend that hangs without erroring out would otherwise block
@@ -179,7 +222,7 @@ auto | "")
   # Whatever worked last time goes first, so a restart does not re-probe.
   remembered=""
   if [ -r "$REMEMBERED" ]; then
-    remembered="$(head -n1 "$REMEMBERED")"
+    IFS= read -r remembered <"$REMEMBERED" || :
   fi
   methods="$remembered"
   for m in $AUTO_METHODS; do

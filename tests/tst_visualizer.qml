@@ -38,6 +38,7 @@ TestCase {
 
     function init() {
         Support.Commands.calls = [];
+        Support.Commands.legacyFrame = "100;200;300;400;";
         plasmoid.visible = false;
         subject = createTemporaryObject(visualizer, this);
         verify(subject !== null);
@@ -73,11 +74,79 @@ TestCase {
         verify(updates > settled);
     }
 
+    function test_repeatedFramesSmoothThenSettle() {
+        const frame = "900;900;900;900;";
+        verify(subject.handleData(frame));
+        compare(subject.bars, [495, 495, 495, 495]);
+        subject.handleData(frame);
+        verify(subject.bars[0] > 495 && subject.bars[0] < 900, "Repeated source frames must still animate toward their target");
+        for (let i = 0; i < 20; i++)
+            subject.handleData(frame);
+        compare(subject.bars, [900, 900, 900, 900]);
+        const settled = updates;
+        for (let i = 0; i < 20; i++)
+            subject.handleData(frame);
+        compare(updates, settled, "Settled frames must not emit barsChanged");
+        subject.restart();
+        subject.handleData(frame);
+        compare(subject.bars, [495, 495, 495, 495], "Restart must smooth from zero again");
+    }
+
+    function test_listFramesAndMalformedFramesRecover() {
+        verify(subject.handleData(["100", "200", ""]));
+        compare(subject.bars, [55, 55, 110, 110]);
+        const before = subject.bars.slice();
+        verify(!subject.handleData(["300", "invalid"]));
+        compare(subject.bars, before);
+        verify(subject.handleData("1000;1000;1000;1000;"));
+        verify(subject.bars[0] > before[0], "A malformed frame must not poison the next valid frame");
+    }
+
+    function test_missingFramesBackOffAndVisibilityResumes() {
+        subject.resolvedRunDir = runtimeDir + "/missing-feeder";
+        Support.Commands.legacyFrame = "";
+        const polling = findChild(subject, "framePollTimer");
+        verify(polling !== null);
+        for (let i = 0; i < 200; i++)
+            subject.readBars();
+        compare(polling.interval, 500, "A failed or missing feeder must not cause full-rate polling forever");
+        subject.active = false;
+        subject.active = true;
+        compare(polling.interval, subject.pollInterval, "Resuming must restore the requested frame rate");
+        for (let i = 0; i < 200; i++)
+            subject.readBars();
+        compare(polling.interval, 500);
+        plasmoid.visible = true;
+        compare(polling.interval, subject.pollInterval, "Becoming visible must not retain the idle delay");
+    }
+
     function test_oldFeederFallback() {
         subject.resolvedRunDir = runtimeDir + "/old-feeder";
         subject.readBars();
         verify(subject.hasAudio);
         verify(Support.Commands.calls.some(value => value.startsWith("cat ")));
+    }
+
+    function test_backendFailureStopsFramePollsAndRecoveryResumes() {
+        subject.resolvedRunDir = runtimeDir + "/missing-feeder";
+        Support.Commands.legacyFrame = "";
+        plasmoid.visible = true;
+        wait(20);
+        const polling = findChild(subject, "framePollTimer");
+        verify(polling.running);
+        for (let i = 0; i < 200; i++)
+            subject.readBars();
+        compare(polling.interval, 500);
+        subject.handleStatus("error no-cava apt-get");
+        verify(subject.backendFailed);
+        verify(!polling.running, "A known failed backend must stop frame polling entirely");
+        const calls = Support.Commands.calls.length;
+        wait(100);
+        compare(Support.Commands.calls.length, calls, "Failed capture must not keep launching frame readers");
+        subject.handleStatus("ok pipewire");
+        verify(!subject.backendFailed);
+        verify(polling.running);
+        compare(polling.interval, subject.pollInterval, "Recovery must immediately restore the requested frame rate");
     }
 
     function test_liveFeederWithoutFrameProcesses() {
@@ -93,6 +162,41 @@ TestCase {
         verify(sawLow && sawHigh, "Must follow changing external frames");
         verify(subject.hasAudio);
         verify(!Support.Commands.calls.some(value => value.startsWith("cat ")), "Current feeder must use in-process reads");
+        subject.readStatus();
+        compare(subject.backendState, "ok");
+        verify(!Support.Commands.calls.some(value => value.startsWith("cat ")), "Current feeder status must use in-process reads too");
+        const heartbeat = findChild(subject, "feederHeartbeat");
+        verify(heartbeat !== null);
+        heartbeat.triggered();
+        verify(!Support.Commands.calls.some(value => value.startsWith("bash ")), "Fresh healthy frames must avoid redundant feeder launches");
+        subject.lastIniFrame = Date.now() - 3000;
+        heartbeat.triggered();
+        verify(Support.Commands.calls.some(value => value.startsWith("bash ")), "Stale frames must still restart a crashed feeder");
+    }
+
+    function test_configurationChangesRestartOnceWithFinalValues() {
+        const config = plasmoid.configuration;
+        subject.resolvedRunDir = runtimeDir + "/audio-wave-widget";
+        try {
+            config.sensitivity = 110;
+            config.framerate = 30;
+            config.noiseReduction = 0.5;
+            wait(50);
+            config.numBars = 6;
+            config.inputMethod = "pulse";
+            wait(70);
+            compare(Support.Commands.calls.filter(value => value.includes("pkill")).length, 0);
+            wait(60);
+            const restarts = Support.Commands.calls.filter(value => value.includes("pkill"));
+            compare(restarts.length, 1, "A burst of settings must launch one backend restart");
+            verify(restarts[0].includes(" 6 30 110 0.5 pulse"), "The restart must use all final settings");
+        } finally {
+            config.numBars = 4;
+            config.framerate = 60;
+            config.sensitivity = 100;
+            config.noiseReduction = 0.77;
+            config.inputMethod = "auto";
+        }
     }
 
     // run.py runs this command against a real feeder stuck in a backend probe.

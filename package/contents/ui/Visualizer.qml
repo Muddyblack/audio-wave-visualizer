@@ -66,6 +66,7 @@ Item {
     readonly property string resolvedBarsPath: resolvedRunDir ? resolvedRunDir + "/bars" : ""
     readonly property string resolvedFramePath: resolvedRunDir ? resolvedRunDir + "/frame.ini" : ""
     readonly property string resolvedStatusPath: resolvedRunDir ? resolvedRunDir + "/status" : ""
+    readonly property string resolvedStatusIniPath: resolvedRunDir ? resolvedRunDir + "/status.ini" : ""
 
     Plasma5Support.DataSource {
         id: pathResolver
@@ -166,9 +167,37 @@ Item {
             vis.handleStatus((data["stdout"] || "").trim());
         }
         function read() {
-            if (vis.resolvedStatusPath)
+            if (vis.resolvedStatusPath && connectedSources.length === 0)
                 connectSource("cat " + vis.shellQuote(vis.resolvedStatusPath));
         }
+    }
+
+    Loader {
+        id: statusSource
+        active: vis.resolvedStatusIniPath !== ""
+        sourceComponent: Settings {
+            location: "file://" + vis.resolvedStatusIniPath
+        }
+    }
+
+    function readStatus() {
+        const frame = barsSource.item as Settings;
+        const status = statusSource.item as Settings;
+        if (frame && status) {
+            frame.sync();
+            // Old feeders can take over the shared lock. Only trust their
+            // predecessor's status.ini while a current feeder refreshes frames.
+            const stamp = Number(frame.value("t", 0)) * 1000;
+            if (Number(frame.value("protocol", 0)) >= 2 && Math.abs(Date.now() - stamp) < 2000) {
+                status.sync();
+                const line = status.value("v", "");
+                if (line) {
+                    handleStatus(line);
+                    return;
+                }
+            }
+        }
+        statusReader.read();
     }
 
     function handleStatus(line) {
@@ -199,7 +228,7 @@ Item {
         running: vis.plasmoidVisible && vis.active && vis.resolvedStatusPath !== ""
         repeat: true
         triggeredOnStart: true
-        onTriggered: statusReader.read()
+        onTriggered: vis.readStatus()
     }
 
     // ── Frame transport ───────────────────────────────────────────────────────
@@ -224,7 +253,8 @@ Item {
         connectedSources: []
         onNewData: function (source, data) {
             disconnectSource(source);
-            vis.handleData((data["stdout"] || "").trim());
+            if (!vis.handleData((data["stdout"] || "").trim()))
+                vis.updatePollingCadence(true);
         }
         function read() {
             if (vis.resolvedBarsPath && connectedSources.length === 0)
@@ -236,21 +266,26 @@ Item {
 
     function readBars() {
         const s = barsSource.item as Settings;
-        if (!s)
+        if (!s) {
+            updatePollingCadence(true);
             return;
+        }
         s.sync();
         const now = Date.now();
         const stamp = Number(s.value("t", 0)) * 1000;
         if (stamp > 0 && Math.abs(now - stamp) < 2000) {
             lastIniFrame = now;
-            handleData(s.value("v", ""));
+            if (!handleData(s.value("v", "")))
+                updatePollingCadence(true);
         } else if (now - lastIniFrame >= 2000) {
             // Join an already-running old feeder without killing it. This
             // fallback goes away as soon as a current feeder owns the lock.
             legacyReader.read();
+        } else {
+            // The poll landed between truncating and writing the frame: keep
+            // the previous bars, as for an empty legacy read.
+            updatePollingCadence(true);
         }
-        // Otherwise the poll landed between the feeder truncating and writing
-        // the file: keep the previous frame, as for an empty legacy read.
     }
 
     readonly property int pollInterval: Math.round(1000 / plasmoid.configuration.framerate)
@@ -266,52 +301,14 @@ Item {
     // a strict `val > 0` idle test never trips. Anything under this is "quiet".
     readonly property real idleThreshold: maxRange * 0.012
 
-    // Accept both the INI string list and the original semicolon transport.
-    // Empty or malformed reads keep the previous frame.
-    function handleData(frame) {
-        if (!frame)
-            return;
-        const rawParts = typeof frame === "string" ? frame.replace(/^v=/, "").split(/[;,]/) : Array.prototype.slice.call(frame);
-        const parts = [];
-        for (let i = 0; i < rawParts.length; i++) {
-            if (rawParts[i] === "")
-                continue;
-            const value = Number(rawParts[i]);
-            if (!isFinite(value))
-                return;
-            parts.push(Math.max(0, Math.min(maxRange, value)));
-        }
-        if (!parts.length)
-            return;
-        const prev = bars;
-        const out = [];
-        let isQuiet = true;
-        let changed = prev.length !== numBars;
-        const a = smoothing;
-        for (let i = 0; i < numBars; i++) {
-            // Keep animating even if the feeder is briefly still on the old bar
-            // count while cava restarts after a config change.
-            const sourceIndex = Math.min(parts.length - 1, Math.floor(i * parts.length / numBars));
-            const v = parts[sourceIndex];
-            const target = v > idleThreshold ? v : 0;
-            if (target > idleThreshold)
-                isQuiet = false;
-            const p = prev[i] || 0;
-            const blended = p + a * (target - p);
-            const next = Math.abs(blended - target) < 0.5 ? target : blended;
-            out.push(next);
-            changed = changed || next !== p;
-        }
-        if (changed)
-            bars = out;
-
+    function updatePollingCadence(isQuiet) {
         if (restarting) {
             pollTimer.interval = vis.pollInterval;
         } else if (isQuiet) {
             if (idleCounter < plasmoid.configuration.framerate * 3) {
                 idleCounter++;
             } else {
-                pollTimer.interval = 500; // Slow down to 2 FPS when idle
+                pollTimer.interval = 500;
             }
         } else {
             idleCounter = 0;
@@ -319,11 +316,54 @@ Item {
         }
     }
 
+    // Accept both the INI string list and the original semicolon transport.
+    // Empty or malformed reads keep the previous frame and return false. Bars
+    // that have settled are not reassigned, so silence emits no barsChanged.
+    function handleData(frame) {
+        if (!frame)
+            return false;
+        const rawParts = typeof frame === "string" ? frame.replace(/^v=/, "").split(/[;,]/) : frame;
+        const parts = [];
+        for (let i = 0; i < rawParts.length; i++) {
+            if (rawParts[i] === "")
+                continue;
+            const value = Number(rawParts[i]);
+            if (!isFinite(value))
+                return false;
+            const v = Math.max(0, Math.min(maxRange, value));
+            parts.push(v > idleThreshold ? v : 0);
+        }
+        if (!parts.length)
+            return false;
+        const count = numBars;
+        const prev = bars;
+        const out = new Array(count);
+        let changed = prev.length !== count;
+        let isQuiet = true;
+        for (let i = 0; i < count; i++) {
+            // Keep animating even if the feeder is briefly still on the old bar
+            // count while cava restarts after a config change.
+            const target = parts[Math.min(parts.length - 1, Math.floor(i * parts.length / count))];
+            isQuiet = isQuiet && target === 0;
+            const p = prev[i] || 0;
+            const blended = p + smoothing * (target - p);
+            const next = Math.abs(blended - target) < 0.5 ? target : blended;
+            out[i] = next;
+            changed = changed || next !== p;
+        }
+        updatePollingCadence(isQuiet);
+        if (changed)
+            bars = out;
+        return true;
+    }
+
     Timer {
         id: pollTimer
+        objectName: "framePollTimer"
         interval: vis.pollInterval
-        running: vis.active && vis.plasmoidVisible
+        running: vis.active && vis.plasmoidVisible && !vis.backendFailed && vis.resolvedFramePath !== ""
         repeat: true
+        triggeredOnStart: true
         onTriggered: vis.readBars()
     }
 
@@ -334,26 +374,46 @@ Item {
         }
     }
 
+    onPlasmoidVisibleChanged: {
+        if (plasmoidVisible) {
+            idleCounter = 0;
+            pollTimer.interval = pollInterval;
+        }
+    }
+
+    onBackendFailedChanged: {
+        if (!backendFailed) {
+            idleCounter = 0;
+            pollTimer.interval = pollInterval;
+        }
+    }
+
     // Keep the feeder alive. spawn() is guarded by flock in feeder.sh, so a
     // re-spawn while cava is healthy is a cheap no-op (it exits immediately).
     // We still avoid hammering it: fire once on start to get cava up fast, then
     // fall back to a slow 30s heartbeat that recovers from a crashed feeder.
     Timer {
+        objectName: "feederHeartbeat"
         interval: 30000
         running: vis.plasmoidVisible && vis.active
         repeat: true
         triggeredOnStart: true
-        onTriggered: feederLauncher.spawn()
+        onTriggered: {
+            // Fresh native frames already prove that the feeder is alive.
+            if (vis.backendState !== "ok" || Date.now() - vis.lastIniFrame >= 2000)
+                feederLauncher.spawn();
+        }
     }
 
     function restart() {
+        configurationRestart.stop();
         vis.restarting = true;
         vis.idleCounter = 0;
         vis.backendErrorStreak = 0;
         vis.bars = Array(vis.numBars).fill(0);
         pollTimer.interval = vis.pollInterval;
         feederLauncher.restartFeeder();
-        restartCooldown.start();
+        restartCooldown.restart();
     }
 
     Timer {
@@ -367,21 +427,29 @@ Item {
         target: plasmoid.configuration
         ignoreUnknownSignals: true
         function onNumBarsChanged() {
-            vis.bars = Array(vis.numBars).fill(0);
-            vis.restart();
+            configurationRestart.restart();
         }
         function onSensitivityChanged() {
-            vis.restart();
+            configurationRestart.restart();
         }
         function onFramerateChanged() {
-            vis.restart();
+            configurationRestart.restart();
         }
         function onNoiseReductionChanged() {
-            vis.restart();
+            configurationRestart.restart();
         }
         function onInputMethodChanged() {
-            vis.restart();
+            configurationRestart.restart();
         }
+    }
+
+    // Applying several settings (or dragging a slider) needs one restart with
+    // the final values, rather than a competing shell/backend for each signal.
+    Timer {
+        id: configurationRestart
+        interval: 100
+        repeat: false
+        onTriggered: vis.restart()
     }
 
     Component.onDestruction: feederLauncher.killFeeder()

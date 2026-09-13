@@ -15,7 +15,8 @@ jobs:
 
       - uses: cachix/install-nix-action@v27
 
-      # The dev shell provides qmltestrunner; python3, flock and pkill come
-      # from the runner. No sound server is needed: cava is stubbed.
+      # The dev shell provides qmltestrunner plus mawk and nawk for the
+      # feeder's awk matrix; python3, flock and pkill come from the runner.
+      # No sound server is needed: cava is stubbed.
       - name: QML and feeder regression tests
         run: nix develop --command python3 tests/run.py
