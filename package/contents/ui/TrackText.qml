@@ -12,10 +12,12 @@ Text {
     // The artist line is 0.82 of the title size, as in the HTML.
     property real titleSize: 11
     property real sizeFactor: 1
+    // The "Nothing playing" message: regular weight at .55.
+    property bool idle: false
 
     text: secondary ? (artist !== "" ? artist : sourceHint) : (trackUnknown ? qsTr("No track metadata") : displayTrack)
-    opacity: secondary ? 0.6 : (trackUnknown ? 0.75 : 1)
-    font.bold: !secondary
+    opacity: idle && !secondary ? 0.55 : secondary ? 0.6 : (trackUnknown ? 0.75 : 1)
+    font.bold: !secondary && !idle
     font.italic: secondary ? (artist === "" && sourceHint !== "") : trackUnknown
     font.pixelSize: Math.round((secondary ? titleSize * 0.82 : titleSize) * sizeFactor)
     elide: Text.ElideRight

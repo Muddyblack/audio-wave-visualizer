@@ -7,17 +7,45 @@ Waveform {
     required property var configuration
     required property var visualizer
     property string defaultFontFamily: Qt.application.font.family
+    // Set by the layout: fade while paused, battery saver, idle ambient wave.
+    property bool faded: false
+    property bool batterySaving: false
+    property bool ambient: false
+    // The ambient wave has no audio frames to ride; it updates at the capped
+    // frame rate (at most 20 Hz) only while enabled and nothing plays.
+    property real _ambientTime: 0
+    Timer {
+        interval: Math.round(1000 / Math.max(1, Math.min(20, root.configuration.framerate ?? 30)))
+        running: root.ambient && root.visible && !root.backendFailed
+        repeat: true
+        onTriggered: root._ambientTime = Date.now()
+    }
+    readonly property var ambientBars: {
+        const count = Math.max(8, root.visualizer?.numBars ?? 24), range = root.visualizer?.maxRange ?? 1000;
+        const t = _ambientTime / 1000 * 0.35;
+        const out = [];
+        for (let i = 0; i < count; i++)
+            out.push(range * 0.22 * (0.55 + 0.45 * Math.sin(t * 1.3 + i * 0.45)) * (0.6 + 0.4 * Math.sin(t * 0.7 + i * 0.21)));
+        return out;
+    }
 
-    bars: root.visualizer?.bars ?? []
-    numBars: root.visualizer?.numBars ?? 0
+    opacity: faded ? 0.28 : 1
+    Behavior on opacity {
+        NumberAnimation {
+            duration: 400
+        }
+    }
+
+    bars: ambient ? ambientBars : (root.visualizer?.bars ?? [])
+    numBars: ambient ? ambientBars.length : (root.visualizer?.numBars ?? 0)
     maxRange: root.visualizer?.maxRange ?? 1000
-    hasAudio: root.visualizer?.hasAudio ?? false
+    hasAudio: ambient || (root.visualizer?.hasAudio ?? false)
     backendFailed: root.visualizer?.backendFailed ?? false
     lineWidth: root.configuration.lineWidth
     fillWave: root.configuration.fillWave
-    glowWave: root.configuration.glowWave
+    glowWave: root.configuration.glowWave && !batterySaving
     visualizerType: root.configuration.visualizerType
-    visualFrameTime: root.visualizer?.frameTimeMs ?? 0
+    visualFrameTime: ambient ? _ambientTime : (root.visualizer?.frameTimeMs ?? 0)
     bass: root.visualizer?.bass ?? 0
     mid: root.visualizer?.mid ?? 0
     high: root.visualizer?.high ?? 0

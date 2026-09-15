@@ -433,7 +433,9 @@ Item {
         }
     }
 
-    readonly property int pollInterval: Math.round(1000 / vis.configuration.framerate)
+    // Battery saver (set by the host while on battery): draw at most 20 Hz.
+    property bool batterySaverActive: false
+    readonly property int pollInterval: Math.round(1000 / (batterySaverActive ? Math.min(20, vis.configuration.framerate) : vis.configuration.framerate))
 
     // Exponential moving average toward each new cava frame. Cava already
     // smooths over time, but reading a fresh frame every poll still snaps

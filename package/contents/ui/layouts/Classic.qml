@@ -106,6 +106,9 @@ Item {
                 defaultFontFamily: root.view.defaultFontFamily
                 coverColor1: root.view.coverColor1
                 coverColor2: root.view.coverColor2
+                faded: (root.view.configuration.fadeVizWhenPaused ?? false) && root.view.pausedPlayer
+                batterySaving: root.view.batterySaving
+                ambient: (root.view.configuration.idleAmbient ?? false) && !root.view.hasPlayer && !(root.view.visualizer.hasAudio ?? false)
             }
 
             ProgressBar {

@@ -410,6 +410,49 @@ TestCase {
         compare(lines.map(line => line.text), ["first", "again", "again"]);
         compare(lyrics.requestKey, "", "No request without track metadata");
     }
+    function test_idleMessageAndAmbientWave() {
+        subject.player = null;
+        subject.configuration = Object.assign({}, defaults, {
+            alwaysVisible: true,
+            idleText: true,
+            idleAmbient: true
+        });
+        backend.hasAudio = false;
+        const texts = findChild(subject, "layoutTexts");
+        compare(texts.children[1].children[0].text, "Nothing playing");
+        const wave = findChild(subject, "canvasLoader").parent;
+        verify(wave.ambient && wave.hasAudio, "The ambient wave draws without audio");
+        backend.hasAudio = true;
+    }
+    function test_pausedDimAndFade() {
+        subject.isPlaying = false;
+        subject.configuration = Object.assign({}, defaults, {
+            dimWhenPaused: true,
+            fadeVizWhenPaused: true
+        });
+        tryCompare(findChild(subject, "layoutLoader"), "opacity", 0.55);
+        tryCompare(findChild(subject, "canvasLoader").parent, "opacity", 0.28);
+        subject.isPlaying = true;
+        tryCompare(findChild(subject, "layoutLoader"), "opacity", 1);
+    }
+    function test_batterySaverDropsGlow() {
+        subject.configuration = Object.assign({}, defaults, {
+            batterySaver: true,
+            glowWave: true
+        });
+        const wave = findChild(subject, "canvasLoader").parent;
+        verify(wave.glowWave);
+        subject.onBattery = true;
+        verify(!wave.glowWave, "No glow on battery");
+    }
+    function test_scrollChangesPlayerVolume() {
+        subject.configuration = Object.assign({}, defaults, {
+            scrollVolume: true
+        });
+        mouseWheel(subject, 100, 50, 0, 120);
+        fuzzyCompare(player.volume, 0.54, 1e-6);
+        verify(findChild(subject, "volumeOsd").shown);
+    }
     function test_defaultCardLoadsNoMaterialLayers() {
         subject.configuration = Object.assign({}, defaults, {
             showBg: true

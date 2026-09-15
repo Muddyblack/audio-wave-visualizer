@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import org.kde.plasma.plasmoid
 import org.kde.plasma.core as PlasmaCore
+import org.kde.plasma.plasma5support as Plasma5Support
 import org.kde.plasma.private.mpris as Mpris
 import org.kde.kirigami as Kirigami
 import "../code/Layouts.js" as LayoutSizes
@@ -32,8 +33,16 @@ PlasmoidItem {
         onModelReset: refreshRows()
         Component.onCompleted: refreshRows()
     }
+    // Power source for the battery saver.
+    Plasma5Support.DataSource {
+        id: powerSource
+        engine: "powermanagement"
+        connectedSources: plasmoid.configuration.batterySaver ? ["AC Adapter"] : []
+        readonly property bool onBattery: plasmoid.configuration.batterySaver && data["AC Adapter"] !== undefined && data["AC Adapter"]["Plugged in"] === false
+    }
     Visualizer {
         id: vis
+        batterySaverActive: powerSource.onBattery
         active: root.visible && root.shouldShow && root.width > 0 && root.height > 0
     }
     fullRepresentation: VisualizerView {
@@ -42,6 +51,7 @@ PlasmoidItem {
         visualizer: vis
         player: mpris2Model.currentPlayer
         playerCount: mpris2Model.playerRows
+        onBattery: powerSource.onBattery
         switchPlayer: mpris2Model.cyclePlayer
         isPlaying: player?.playbackStatus === Mpris.PlaybackStatus.Playing
         accentColor: Kirigami.Theme.highlightColor
@@ -70,6 +80,9 @@ PlasmoidItem {
         }
         // Hover details (tooltip or drawer) in a borderless popup below the card.
         PlasmaCore.Dialog {
+            id: detailsDialog
+            // Named so the details' own `view` property does not shadow it.
+            readonly property var cardView: view
             type: PlasmaCore.Dialog.Tooltip
             flags: Qt.WindowDoesNotAcceptFocus
             location: PlasmaCore.Types.Floating
@@ -77,10 +90,10 @@ PlasmoidItem {
             visualParent: view
             visible: view.detailsVisible
             mainItem: TrackDetails {
-                width: Math.max(view.width, 250)
+                width: Math.max(detailsDialog.cardView.width, 250)
                 height: implicitHeight
-                view: view
-                mode: view.detailsPopupMode
+                view: detailsDialog.cardView
+                mode: detailsDialog.cardView.detailsPopupMode
             }
         }
         fallbackIcon: Component {

@@ -18,7 +18,7 @@ New configuration keys alone do not mean their features are implemented.
 | 6 | Card materials, glass/liquid, depth and wallpaper sampling | Implemented without blur-behind, refraction or wallpaper sampling; Classic snapshots unchanged |
 | 7 | Artwork shapes/effects and control dock options | Implemented; Classic snapshots unchanged; tilt has no perspective and reflection needs the GPU scene graph |
 | 8 | Richer track information and opt-in lyrics | Implemented; format detail and live Plasma/Hyprland popup checks pending |
-| 9 | Idle/paused behaviour, interaction and power options | Partial: waveform reduced motion and software selection are wired; remaining behaviour is not implemented |
+| 9 | Idle/paused behaviour, interaction and power options | Implemented; system reduced-motion preference and live battery checks pending |
 | 10 | Panel pill/icon and popup; Waybar/Quickshell bar integration | Not started |
 | 11 | Studio settings, search, preview, presets and diagnostics | Not started; current settings pages expose the new waveform controls |
 | 12 | README/gallery, release screenshots and version | Not started; developer workflow documentation is updated |
@@ -163,6 +163,25 @@ New configuration keys alone do not mean their features are implemented.
   switching were compiled and unit-tested but not yet checked on a live
   Plasma or Hyprland desktop; the marquee clips instead of the HTML's edge fade.
 
+### Phase 9 — behaviour
+
+- [x] `idleText` ("Nothing playing / Start music in any player") and
+  `idleAmbient` (energy .22, slowed time) while no player is open.
+- [x] `dimWhenPaused` (content at .55, card unchanged) and
+  `fadeVizWhenPaused` (visualizer at .28, poster texture too).
+- [x] `hoverLift` (−3 px, ×1.01) and `scrollVolume` (±4 % player volume per
+  notch with a vertical bar beside the card for 1.1 s).
+- [x] `batterySaver`: hosts report the power source (Plasma `powermanagement`
+  data engine, Quickshell `UPower.onBattery`); on battery the widget polls at
+  most 20 Hz and draws no glow. `reducedMotion` and `simpleRender` were already
+  wired.
+- [ ] Limits: the ambient wave has no audio frames to ride, so it uses a timer
+  at the frame rate capped to 20 Hz, only while enabled and idle; the battery
+  cap limits drawing, not cava's own capture rate; the volume bar sits outside
+  the card and may be clipped by the widget's window; the system reduced-motion
+  preference (`Kirigami.Units.longDuration == 0`) is not followed yet; battery
+  switching was not checked on a live desktop.
+
 ## Verification and limits
 
 - **Full suite:** `make test` (`python3 tests/run.py`) passes: **258 QML tests**,
@@ -228,10 +247,9 @@ Current session artifacts (temporary, not committed):
 ## Next work
 
 Fix the Chrome reference capture so phases 3–4 can be compared with the browser,
-then continue with **phase 9: behaviour** (idle text and ambient wave, dim or
-fade while paused, hover lift, scroll volume, battery saver; reduced motion and
-simple rendering are already wired). The studio settings interface and presets
-are still future phases.
+then continue with **phase 10: panel** (Plasma compact pill/icon with popup
+card, Quickshell bar module and Waybar JSON). The studio settings interface and
+presets are still future phases.
 
 ### Open follow-ups (before presets / release)
 

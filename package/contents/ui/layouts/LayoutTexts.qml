@@ -94,7 +94,8 @@ ColumnLayout {
             titleSize: root.ts
             sizeFactor: root.titleFactor
             horizontalAlignment: root.marquee ? Text.AlignLeft : root.alignment
-            displayTrack: root.view.displayTrack
+            idle: root.view.idleMessage
+            displayTrack: root.view.idleMessage ? qsTr("Nothing playing") : root.view.displayTrack
             trackUnknown: root.view.trackUnknown
             rawTrack: root.view.track
             color: root.view.textColor
@@ -117,7 +118,7 @@ ColumnLayout {
         titleSize: root.ts
         sizeFactor: root.artistSize / 0.82
         horizontalAlignment: root.alignment
-        artist: root.view.artist
+        artist: root.view.idleMessage ? qsTr("Start music in any player") : root.view.artist
         sourceHint: root.view.sourceHint
         color: root.view.textColor
     }

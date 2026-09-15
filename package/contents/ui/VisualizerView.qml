@@ -155,6 +155,61 @@ Item {
     property bool zoomOpen: false
     readonly property bool cardHovered: cardHover.hovered
 
+    // Behaviour (docs/redesign-plan.md §7.5).
+    readonly property bool idleMessage: !hasPlayer && (configuration.idleText ?? false)
+    readonly property bool pausedPlayer: hasPlayer && !isPlaying
+    // Hosts report the power source; battery saver caps frames and drops glow.
+    property bool onBattery: false
+    readonly property bool batterySaving: onBattery && (configuration.batterySaver ?? false)
+    readonly property bool lifted: (configuration.hoverLift ?? false) && cardHovered
+
+    WheelHandler {
+        objectName: "volumeWheel"
+        enabled: (root.configuration.scrollVolume ?? false) && root.hasPlayer && root.volume >= 0
+        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+        onWheel: event => {
+            const step = event.angleDelta.y / 120 * 0.04;
+            if (step === 0 || !root.player)
+                return;
+            root.player.volume = Math.max(0, Math.min(1, root.volume + step));
+            volumeOsd.shown = true;
+            volumeHide.restart();
+        }
+    }
+    Timer {
+        id: volumeHide
+        interval: 1100
+        onTriggered: volumeOsd.shown = false
+    }
+    // Vertical volume bar right of the card while scrolling.
+    Rectangle {
+        id: volumeOsd
+        objectName: "volumeOsd"
+        property bool shown: false
+        x: root.width + 12
+        y: root.height * 0.08
+        width: 6
+        height: root.height * 0.84
+        radius: 6
+        color: Qt.rgba(0, 0, 0, 0x77 / 255)
+        border.color: Qt.rgba(1, 1, 1, 0x26 / 255)
+        border.width: 1
+        clip: true
+        opacity: shown ? 1 : 0
+        visible: opacity > 0
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 250
+            }
+        }
+        Rectangle {
+            anchors.bottom: parent.bottom
+            width: parent.width
+            height: parent.height * Math.max(0, root.volume)
+            color: root.waveColor
+        }
+    }
+
     HoverHandler {
         id: cardHover
     }
@@ -192,7 +247,30 @@ Item {
         // The flip turns each face separately and swaps them halfway;
         // backface visibility is unreliable with effects and canvases.
         opacity: Math.abs(frontTurn.angle) < 90 ? 1 : 0
-        transform: root.flipEnabled ? [frontTurn] : []
+        transform: (root.flipEnabled ? [frontTurn] : []).concat((root.configuration.hoverLift ?? false) ? [liftScale, liftShift] : [])
+        Scale {
+            id: liftScale
+            origin.x: front.width / 2
+            origin.y: front.height / 2
+            xScale: root.lifted ? 1.01 : 1
+            yScale: xScale
+            Behavior on xScale {
+                NumberAnimation {
+                    duration: 300
+                    easing.type: Easing.OutCubic
+                }
+            }
+        }
+        Translate {
+            id: liftShift
+            y: root.lifted ? -3 : 0
+            Behavior on y {
+                NumberAnimation {
+                    duration: 300
+                    easing.type: Easing.OutCubic
+                }
+            }
+        }
         Rotation {
             id: frontTurn
             origin.x: front.width / 2
@@ -222,7 +300,15 @@ Item {
 
         Loader {
             id: layoutLoader
+            objectName: "layoutLoader"
             anchors.fill: parent
+            // Dim the content (not the card) while paused.
+            opacity: (root.configuration.dimWhenPaused ?? false) && root.pausedPlayer ? 0.55 : 1
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 300
+                }
+            }
             sourceComponent: ({
                     mirrored: mirroredLayout,
                     inline: inlineLayout,

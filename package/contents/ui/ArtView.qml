@@ -44,8 +44,9 @@ Item {
     property real spinAngle: 0
     property real _lastSpinFrame: -1
     Connections {
-        target: root.view
-        enabled: root.disc
+        target: root.view ?? null
+        enabled: root.disc && !!root.view
+        ignoreUnknownSignals: true
         function onVisualFrameTimeChanged() {
             const now = root.view.visualFrameTime;
             if (!root.spinning) {

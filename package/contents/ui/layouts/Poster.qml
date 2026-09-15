@@ -28,7 +28,7 @@ Item {
             view: root.view
             anchors.fill: parent
             visible: root.cfg.posterVizBehind ?? true
-            opacity: root.cfg.posterVizOpacity ?? 0.35
+            opacity: (root.cfg.posterVizOpacity ?? 0.35) * (faded ? 0.28 : 1)
             edgeFade: true
         }
 
@@ -68,13 +68,13 @@ Item {
             Text {
                 objectName: "posterTitle"
                 Layout.fillWidth: true
-                text: root.view.trackUnknown ? qsTr("No track metadata") : (root.view.displayTrack || " ")
+                text: root.view.idleMessage ? qsTr("Nothing playing") : root.view.trackUnknown ? qsTr("No track metadata") : (root.view.displayTrack || " ")
                 horizontalAlignment: root.centered ? Text.AlignHCenter : Text.AlignLeft
                 font.pixelSize: Math.round(root.ts * 2.1)
-                font.weight: root.view.trackUnknown ? Font.Normal : Font.ExtraBold
+                font.weight: root.view.trackUnknown || root.view.idleMessage ? Font.Normal : Font.ExtraBold
                 font.italic: root.view.trackUnknown
                 font.letterSpacing: -0.02 * Math.round(root.ts * 2.1)
-                opacity: root.view.trackUnknown ? 0.75 : 1
+                opacity: root.view.idleMessage ? 0.55 : root.view.trackUnknown ? 0.75 : 1
                 lineHeight: 1.08
                 wrapMode: Text.Wrap
                 maximumLineCount: root.cfg.posterLines === 2 ? 2 : 1

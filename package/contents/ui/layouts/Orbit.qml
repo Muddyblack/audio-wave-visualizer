@@ -47,7 +47,7 @@ Item {
                 hueReactive: root.cfg.hueReactive ?? false
                 lineWidth: root.cfg.lineWidth
                 fillWave: root.cfg.fillWave
-                glowWave: root.cfg.glowWave
+                glowWave: root.cfg.glowWave && !root.view.batterySaving
                 bloom: root.cfg.bloom ?? 1
                 reducedMotion: root.cfg.reducedMotion ?? false
                 orbitStyle: root.cfg.orbitStyle ?? "bars"

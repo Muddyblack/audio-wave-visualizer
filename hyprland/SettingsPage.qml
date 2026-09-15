@@ -31,7 +31,7 @@ Rectangle {
         },
         {
             title: "Artwork and controls",
-            keys: ["artShape", "artBorder", "artGlow", "artTilt", "artReflect", "artGrayPaused", "artFallback", "artClick", "dockStyle", "showSkipButtons", "showShuffleRepeat", "showAlbum", "showSource", "showPlayerSwitch", "marquee", "showLyrics", "hoverDetails"]
+            keys: ["artShape", "artBorder", "artGlow", "artTilt", "artReflect", "artGrayPaused", "artFallback", "artClick", "dockStyle", "showSkipButtons", "showShuffleRepeat", "showAlbum", "showSource", "showPlayerSwitch", "marquee", "showLyrics", "hoverDetails", "idleText", "idleAmbient", "dimWhenPaused", "fadeVizWhenPaused", "hoverLift", "scrollVolume", "batterySaver"]
         },
         {
             title: "Audio",
@@ -146,6 +146,13 @@ Rectangle {
             marquee: qsTr("Scroll long titles"),
             showLyrics: qsTr("Synced lyrics (sends track info to lrclib.net)"),
             hoverDetails: qsTr("On hover"),
+            idleText: qsTr("Message when nothing plays"),
+            idleAmbient: qsTr("Ambient wave when nothing plays"),
+            dimWhenPaused: qsTr("Dim while paused"),
+            fadeVizWhenPaused: qsTr("Fade visualizer while paused"),
+            hoverLift: qsTr("Lift on hover"),
+            scrollVolume: qsTr("Scroll to change volume"),
+            batterySaver: qsTr("Battery saver (20 Hz, no glow)"),
             showSkipButtons: qsTr("Previous and next buttons"),
             showShuffleRepeat: qsTr("Shuffle and repeat buttons"),
             glassTint: qsTr("Liquid tint"),

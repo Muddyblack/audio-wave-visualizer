@@ -4,6 +4,7 @@ import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Services.Mpris
+import Quickshell.Services.UPower
 import "../package/contents/ui" as Shared
 import "Configuration.js" as Configuration
 import "../package/contents/code/Layouts.js" as LayoutSizes
@@ -170,8 +171,10 @@ ShellRoot {
     }
     readonly property string runtimeDirectory: (Quickshell.env("XDG_RUNTIME_DIR") || "/tmp") + "/audio-wave-quickshell"
 
+    readonly property bool onBattery: (configuration.batterySaver ?? false) && UPower.onBattery
     Shared.VisualizerCore {
         id: backend
+        batterySaverActive: root.onBattery
         configuration: audioConfig
         runtimeDirectory: root.runtimeDirectory
         active: root.shouldShow && root.selectedScreens.some(screen => occlusion.coveredScreens.indexOf(screen.name) === -1)
@@ -222,6 +225,7 @@ ShellRoot {
                 positionUnitsPerSecond: 1
                 playerCount: Mpris.players.values.length
                 switchPlayer: root.cyclePlayer
+                onBattery: root.onBattery
                 accentColor: root.configuration.waveColor
                 systemTextColor: root.configuration.textColor
                 fallbackIcon: Component {
@@ -235,19 +239,22 @@ ShellRoot {
             // Hover details (tooltip or drawer) below the card. The window
             // leaves 50 px around the details for their shadow.
             PopupWindow {
-                anchor.item: sharedView
+                id: detailsPopup
+                // Named so the details' own `view` property does not shadow it.
+                readonly property var cardView: view
+                anchor.item: view
                 anchor.rect.x: -50
-                anchor.rect.y: (sharedView.detailsPopupMode === "drawer" ? sharedView.height - 14 : sharedView.height + 10) - 50
-                implicitWidth: Math.max(sharedView.width, 250) + 100
+                anchor.rect.y: (view.detailsPopupMode === "drawer" ? view.height - 14 : view.height + 10) - 50
+                implicitWidth: Math.max(view.width, 250) + 100
                 implicitHeight: hoverDetails.implicitHeight + 100
                 color: "transparent"
-                visible: sharedView.detailsVisible && panel.visible
+                visible: view.detailsVisible && panel.visible
                 Shared.TrackDetails {
                     id: hoverDetails
                     anchors.fill: parent
                     anchors.margins: 50
-                    view: sharedView
-                    mode: sharedView.detailsPopupMode
+                    view: detailsPopup.cardView
+                    mode: detailsPopup.cardView.detailsPopupMode
                 }
             }
         }

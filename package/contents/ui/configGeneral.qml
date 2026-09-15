@@ -57,6 +57,13 @@ KCM.SimpleKCM {
     property alias cfg_showPlayerSwitch: showPlayerSwitchCheckBox.checked
     property alias cfg_showLyrics: showLyricsCheckBox.checked
     property alias cfg_marquee: marqueeCheckBox.checked
+    property alias cfg_idleText: idleTextCheckBox.checked
+    property alias cfg_idleAmbient: idleAmbientCheckBox.checked
+    property alias cfg_dimWhenPaused: dimWhenPausedCheckBox.checked
+    property alias cfg_fadeVizWhenPaused: fadeVizWhenPausedCheckBox.checked
+    property alias cfg_hoverLift: hoverLiftCheckBox.checked
+    property alias cfg_scrollVolume: scrollVolumeCheckBox.checked
+    property alias cfg_batterySaver: batterySaverCheckBox.checked
     property string cfg_hoverDetails: "off"
     property string cfg_hoverDetailsDefault: "off"
     property var cfg_detailFields: ["album", "genre", "format", "player"]
@@ -327,6 +334,48 @@ KCM.SimpleKCM {
             id: accentFromArtCheckBox
             text: i18n("Use accent from cover")
             visible: true
+        }
+
+        QQC.CheckBox {
+            id: idleTextCheckBox
+            Kirigami.FormData.label: i18n("Nothing playing:")
+            text: i18n("Show a message when no player is open")
+        }
+
+        QQC.CheckBox {
+            id: idleAmbientCheckBox
+            Kirigami.FormData.label: i18n("Idle wave:")
+            text: i18n("Slow ambient wave while nothing plays")
+        }
+
+        QQC.CheckBox {
+            id: dimWhenPausedCheckBox
+            Kirigami.FormData.label: i18n("When paused:")
+            text: i18n("Dim the widget")
+        }
+
+        QQC.CheckBox {
+            id: fadeVizWhenPausedCheckBox
+            Kirigami.FormData.label: ""
+            text: i18n("Fade the visualizer")
+        }
+
+        QQC.CheckBox {
+            id: hoverLiftCheckBox
+            Kirigami.FormData.label: i18n("Hover:")
+            text: i18n("Lift the card slightly")
+        }
+
+        QQC.CheckBox {
+            id: scrollVolumeCheckBox
+            Kirigami.FormData.label: i18n("Scroll:")
+            text: i18n("Change the player's volume")
+        }
+
+        QQC.CheckBox {
+            id: batterySaverCheckBox
+            Kirigami.FormData.label: i18n("Battery saver:")
+            text: i18n("On battery: at most 20 Hz and no glow")
         }
 
         QQC.CheckBox {
