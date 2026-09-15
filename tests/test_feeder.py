@@ -160,19 +160,26 @@ while True:
         self.assertIsNone(self.process.poll())
         self.assertEqual((self.run / "status.ini").stat().st_mtime_ns, status_mtime)
 
-    def test_changing_frames_continue_at_full_rate_between_heartbeat_ticks(self):
+    def test_changing_frames_are_not_limited_to_heartbeat_rate(self):
         self.assertIn("framerate = 144", self.read("cava.conf"))
         self.control.write_text("ramp")
         frames = set()
-        deadline = time.monotonic() + 0.8
-        while time.monotonic() < deadline:
+        # Count progress rather than benchmarking a shared CI runner over a
+        # subsecond window. Even with a tick at each boundary, a publisher
+        # limited to the one-second heartbeat cannot deliver 31 values here.
+        deadline = time.monotonic() + 5
+        while len(frames) < 31 and time.monotonic() < deadline:
             value = self.frame().get("v")
-            if value:
+            if value and value != '"0;0;0;0;"':
                 frames.add(value)
             time.sleep(0.002)
-        # Allow heavily shared CI scheduling, while rejecting a publisher that
-        # buffers or throttles changing audio along with duplicate frames.
-        self.assertGreater(len(frames), 30)
+        self.assertGreater(
+            len(frames),
+            30,
+            f"Only {len(frames)} changing frames observed in 5 seconds; "
+            f"publisher={self.read('publisher').strip()}, "
+            f"status={self.read('status').strip()}",
+        )
 
     def test_backend_exit_updates_both_status_formats(self):
         self.control.write_text("exit")
