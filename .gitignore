@@ -1,6 +1,7 @@
 # Build artifacts
 *.plasmoid
 notes.md
+redesign-plan.md
 
 # Python caches
 __pycache__/
