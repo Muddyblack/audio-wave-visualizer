@@ -104,6 +104,129 @@ A glassy audio visualizer plasmoid for KDE Plasma 6. Renders a mirrored waveform
 
 ## Install
 
+### Hyprland / Caelestia (Quickshell)
+
+Run the standalone desktop widget alongside Caelestia. Both frontends render
+the same `VisualizerView.qml`: the original Plasma layout, glass transport dock,
+album-art background effects, six waveform styles, and five seekbar styles.
+Requires `qs` (Quickshell), `cava`,
+and the shell utilities listed above; KDE Plasma is not required.
+
+From this repository, in your Hyprland session:
+
+```bash
+make view-hyprland
+# equivalent:
+bash hyprland/run.sh
+```
+
+On NixOS, if `qs` is not on PATH, the Make target uses `nix run .#view-hyprland`
+to supply Quickshell, cava, and the helper utilities automatically.
+
+Play audio and show your desktop: the transparent visualizer appears centered
+60% down the first monitor, below application windows. Stop with **Ctrl+C**.
+Caelestia can keep running. The launcher opens the root `shell.qml`, prevents
+duplicate instances, and stops its audio helpers when you exit.
+The launcher selects Qt's generic platform theme and Basic controls for this
+process only. This prevents an inherited KDE/Breeze theme from loading Kirigami
+through tooltips; the shared custom-drawn widget layout is unaffected.
+
+**Right-click the visualizer to open Settings.** Choose a monitor or **All displays**,
+adjust position, size, audio, colors and appearance, then click **Apply**.
+All displays share one audio capture and processing backend; each draws its own view.
+The Hyprland default is **15 Hz** to reduce GPU/compositor work across displays.
+In Settings → Audio, lower **Framerate** to **5 Hz** for less power use, or raise
+it for smoother motion. Explicit saved/declarative frame rates override this
+default. The layout, colors and drawing code are shared with Plasma.
+**Pause When Covered** is enabled by default: each fully covered view stops
+rendering, and covering all views also stops audio capture. Uncovering a view
+resumes it; window drags are checked once per second. Coverage uses window
+bounds, so disable this option if you want the widget visible through translucent
+windows. It applies only when the widget is below application windows.
+Preferences are saved to `~/.config/audio-wave-visualizer/hyprland.json`
+(or under `$XDG_CONFIG_HOME`). No Nix setup is needed.
+
+If the widget is hidden, open Settings from a terminal with:
+
+```bash
+make settings-hyprland
+```
+
+You can also edit `shell.qml` to set defaults for width, vertical position, monitor name, color,
+wave style, background, or media controls; Quickshell reloads automatically.
+Set `desktopLayer: false` to show it above application windows while testing.
+For audio tuning, add e.g. `audio.sensitivity: 150` or `audio.inputMethod: "pulse"`
+inside `AudioVisualizerShell { ... }`. Appearance defaults come directly from
+Plasma's `package/contents/config/main.xml`. Override any of them with `settings`,
+using the same property names, for example:
+
+```qml
+settings: ({
+    alwaysVisible: true,
+    showBg: true,
+    artBg: true,
+    progressBarStyle: 4
+})
+```
+
+The default size is Plasma's 360 × 104; change `widgetWidth` / `widgetHeight`
+as needed. Matching size, settings, colors, font and icon theme gives the same
+appearance. Plasma supplies its theme through Kirigami; Quickshell uses the
+configured colors and the session's font/icon theme, without requiring Kirigami.
+The Plasma configuration dialog remains specific to Plasma.
+
+For declarative defaults, set `AUDIO_WAVE_DEFAULTS` to a JSON file with the same
+keys as the settings above, plus `monitor` (`"all"`, `""`, or an output name),
+`widgetWidth`, `widgetHeight`, `verticalPosition`, `desktopLayer`, `pauseWhenCovered`, `waveColor`,
+and `textColor`. For example, in Home Manager:
+
+```nix
+home.sessionVariables.AUDIO_WAVE_DEFAULTS = toString (pkgs.writeText "audio-wave-defaults.json"
+  (builtins.toJSON {
+    monitor = "all";
+    sensitivity = 150;
+    progressBarStyle = 4;
+  }));
+```
+
+The running widget must inherit that environment variable. GUI changes override
+these defaults in the separate writable preferences file; they never rewrite
+your Nix files. **Reset to defaults** removes local overrides and restores the
+current declarative defaults (or `shell.qml`/Plasma defaults when none are supplied).
+
+To start at login, add this to your Hyprland configuration (use your actual path):
+
+```ini
+exec-once = bash /absolute/path/to/plasma-audio-visualizer/hyprland/run.sh
+```
+
+The Quickshell backend keeps its status and `cava.log` under
+`$XDG_RUNTIME_DIR/audio-wave-quickshell/`, separately from Plasma's backend.
+Its process adapter uses [Quickshell Process](https://quickshell.org/docs/v0.2.0/types/Quickshell.Io/Process/)
+and its controls use [Quickshell MPRIS](https://quickshell.org/docs/v0.2.0/types/Quickshell.Services.Mpris/MprisPlayer/).
+Headless adapter regression test: `python3 tests/test_quickshell.py` with `qs` on PATH.
+Settings UI/persistence test: `python3 tests/test_hyprland_settings.py`.
+Ctrl+C/duplicate-launch test: `python3 tests/test_lifecycle_power.py`.
+
+The shared waveform uses one GPU glow effect instead of blurring each bar on
+the CPU. Progress decorations follow audio updates instead of running a separate
+continuous animation. Software rendering omits the unsupported GPU glow.
+For a repeatable CPU comparison against a saved older package, run
+`python3 tests/benchmark_rendering.py --baseline /path/to/older/package`.
+`python3 tests/benchmark_frames.py` measures the current view's frame submissions.
+These offscreen benchmarks measure CPU drawing and frame submissions, not GPU
+cost or system power; compare actual watts in your desktop session.
+`python3 tests/measure_power.py` reads live package power, GPU clocks and capture
+status without root. Compare the same music and visible displays, with other
+work kept steady. Hardware domains overlap, so their watt readings must not be
+added together. Turning off waveform glow alone does not necessarily reduce
+compositor power; update rate and the number of visible displays matter too.
+For a renderer investigation, stop the preview and start it with
+`QSG_INFO=1 make view-hyprland`. Qt records its actual graphics backend and
+render-loop startup details in that instance's Quickshell log.
+
+### KDE Plasma
+
 <details open>
   <summary><b>Manual (any distro)</b></summary>
 
@@ -220,5 +343,7 @@ and its current state in `.../status`.
 For a detailed explanation of the architecture and data flow, see the [Architecture Documentation](docs/workflow.md).
 
 In short: a small shell helper (`feeder.sh`) runs `cava` in the background and writes each changed frame to `$XDG_RUNTIME_DIR/audio-wave-widget/`. The QML side reads it in-process at the configured frame rate, drops to 2 FPS after a few seconds of silence, and stops polling while the widget is hidden.
+
+The waveform is drawn by a single fragment shader (`package/contents/shaders/visualizer.frag`), so a frame costs no CPU rasterisation; software-rendered sessions fall back to the Canvas renderer. After editing the shader, run `make shaders`.
 
 Regression tests (synthetic audio, no desktop or sound server needed): `nix develop --command python3 tests/run.py`.

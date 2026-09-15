@@ -15,8 +15,20 @@ jobs:
 
       - uses: cachix/install-nix-action@v27
 
-      # The dev shell provides qmltestrunner plus mawk and nawk for the
-      # feeder's awk matrix; python3, flock and pkill come from the runner.
-      # No sound server is needed: cava is stubbed.
+      # The dev shell supplies Qt, Quickshell and the test utilities.
+      # Tests use offscreen rendering and synthetic cava; no desktop or audio
+      # server is needed. Give each Quickshell test a private session bus.
       - name: QML and feeder regression tests
         run: nix develop --command python3 tests/run.py
+
+      - name: Quickshell audio integration
+        timeout-minutes: 5
+        run: nix develop --command dbus-run-session -- python3 tests/test_quickshell.py
+
+      - name: Quickshell settings persistence
+        timeout-minutes: 5
+        run: nix develop --command dbus-run-session -- python3 tests/test_hyprland_settings.py
+
+      - name: Quickshell launcher lifecycle
+        timeout-minutes: 5
+        run: nix develop --command dbus-run-session -- python3 tests/test_lifecycle_power.py

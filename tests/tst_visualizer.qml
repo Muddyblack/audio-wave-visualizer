@@ -38,6 +38,7 @@ TestCase {
 
     function init() {
         Support.Commands.calls = [];
+        Support.Commands.cancelled = [];
         Support.Commands.legacyFrame = "100;200;300;400;";
         plasmoid.visible = false;
         subject = createTemporaryObject(visualizer, this);
@@ -215,6 +216,8 @@ TestCase {
         plasmoid.visible = true;
         const other = createTemporaryObject(visualizer, this);
         verify(other !== null);
+        // The command stub does not execute the asynchronous path resolver.
+        other.resolvedRunDir = runtimeDir + "/audio-wave-widget";
         wait(50);
         verify(Support.Commands.calls.some(value => value.startsWith("bash ")));
         verify(!Support.Commands.calls.some(value => value.includes("pkill")));
@@ -222,5 +225,27 @@ TestCase {
         wait(50);
         verify(other.active);
         verify(!Support.Commands.calls.some(value => value.includes("pkill")));
+    }
+
+    function test_dedicatedHostStopsCaptureWhenHidden() {
+        subject.stopWhenInactive = true;
+        subject.resolvedRunDir = runtimeDir + "/dedicated-feeder";
+        verify(Support.Commands.calls.some(value => value.includes("flock -w")), "Dedicated startup must reclaim an old feeder");
+        Support.Commands.calls = [];
+        subject.active = false;
+        verify(Support.Commands.cancelled.some(value => value.includes("flock -w")), "Hiding all views must cancel the pending capture restart");
+        verify(!findChild(subject, "framePollTimer").running);
+        verify(!findChild(subject, "feederHeartbeat").running);
+        subject.restart();
+        verify(!Support.Commands.calls.some(value => value.includes("bash ")), "Settings changes while hidden must not start capture");
+        Support.Commands.calls = [];
+        subject.active = true;
+        verify(Support.Commands.calls.some(value => value.includes("flock -w")), "Uncovering a view must restart capture");
+    }
+
+    function test_sharedHostDoesNotStopOtherWidgetsWhenHidden() {
+        subject.resolvedRunDir = runtimeDir + "/audio-wave-widget";
+        subject.active = false;
+        verify(!Support.Commands.calls.some(value => value.includes("pkill")), "A hidden Plasma view must preserve the shared capture");
     }
 }

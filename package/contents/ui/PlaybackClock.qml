@@ -13,7 +13,9 @@ Item {
     property real displayedPosition: 0
     property real anchorPosition: 0
     property real anchorMs: Date.now()
-    readonly property real unitsPerSecond: lengthValue >= 1000000 ? 1000000 : lengthValue >= 10000 ? 1000 : 1
+    property real unitScale: 0
+    property int updateInterval: 50
+    readonly property real unitsPerSecond: unitScale > 0 ? unitScale : lengthValue >= 1000000 ? 1000000 : lengthValue >= 10000 ? 1000 : 1
     readonly property real progress: lengthValue > 0 ? clamp(displayedPosition / lengthValue, 0, 1) : 0
     // Quantize before formatting: the label changes once a second even though
     // the smooth progress fill still advances every 50 ms.
@@ -103,7 +105,7 @@ Item {
     }
 
     Timer {
-        interval: 50
+        interval: clock.updateInterval
         running: clock.ticking
         repeat: true
         onTriggered: clock.tick()

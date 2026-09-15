@@ -46,6 +46,16 @@
       apps = forAllSystems (system:
         let pkgs = nixpkgs.legacyPackages.${system};
         in {
+          view-hyprland = {
+            type = "app";
+            program = "${pkgs.writeShellApplication {
+              name = "view-hyprland";
+              runtimeInputs = [ pkgs.quickshell pkgs.cava pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ];
+              text = ''
+                exec bash "$PWD/hyprland/run.sh" "$@"
+              '';
+            }}/bin/view-hyprland";
+          };
           view = {
             type = "app";
             program = toString (pkgs.writeShellScript "view" ''
@@ -76,6 +86,16 @@
             name = "plasma-audio-visualizer-dev";
             packages = with pkgs; [
               qt6.qtdeclarative
+              # qsb, for `make shaders`
+              qt6.qtshadertools
+              # Headless Quickshell integration tests and their process tools.
+              quickshell
+              python3
+              dbus
+              gnumake
+              util-linux
+              procps
+              gawk
               kdePackages.kpackage
               kdePackages.plasma-sdk
               pre-commit
