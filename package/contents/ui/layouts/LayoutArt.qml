@@ -17,7 +17,9 @@ Item {
     implicitHeight: implicitWidth
 
     ArtView {
+        id: artView
         anchors.fill: parent
+        view: root.view
         artUrl: root.view.artUrl
         desktopEntry: root.view.desktopEntry
         fallbackIcon: root.view.fallbackIcon
@@ -34,6 +36,7 @@ Item {
             positionUnitsPerSecond: root.view.positionUnitsPerSecond
             visualFrameTime: root.view.visualFrameTime
             accentColor: root.view.waveColor
+            cornerRadius: artView.ringRadius
         }
     }
 }

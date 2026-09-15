@@ -2,6 +2,9 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.1
 import QtQuick.Effects
 
+// Playback controls. Styles follow the HTML `.dock`: glass (the original
+// pill), bare, accent (round accent play button) and hover (glass, shown while
+// the card is hovered). Shuffle/repeat use the MPRIS player properties.
 Item {
     id: root
 
@@ -9,12 +12,59 @@ Item {
     property var player: null
     property bool isPlaying: false
     property color controlColor: "#ffffff"
+    property color accentColor: "#ffffff"
+    property bool cardHovered: false
 
-    implicitWidth: 88
+    readonly property string dockStyle: configuration.dockStyle ?? "glass"
+    readonly property bool framed: dockStyle === "glass" || dockStyle === "hover"
+    readonly property bool showSkip: configuration.showSkipButtons ?? true
+    readonly property bool showExtras: configuration.showShuffleRepeat ?? false
+    // Plasma reports ShuffleStatus (Off = 1, On = 2) and LoopStatus (None = 1,
+    // Playlist = 2, Track = 3); Quickshell a bool and MprisLoopState (None = 0).
+    readonly property bool shuffleOn: !!player && (typeof player.shuffle === "boolean" ? player.shuffle : player.shuffle === 2)
+    readonly property bool loopOn: !!player && (player.loopStatus !== undefined ? player.loopStatus >= 2 : (player.loopState ?? 0) > 0)
+    readonly property bool hiddenUntilHover: dockStyle === "hover" && !cardHovered
+
+    implicitWidth: framed ? Math.max(88, controlRow.implicitWidth + 12) : controlRow.implicitWidth
     implicitHeight: 26
+    opacity: hiddenUntilHover ? 0 : 1
+    Behavior on opacity {
+        NumberAnimation {
+            duration: 250
+        }
+    }
+    transform: Translate {
+        y: root.hiddenUntilHover ? 3 : 0
+        Behavior on y {
+            NumberAnimation {
+                duration: 250
+            }
+        }
+    }
+
+    function toggleShuffle() {
+        const p = player;
+        if (!p || p.canControl === false)
+            return;
+        if (typeof p.shuffle === "boolean")
+            p.shuffle = !p.shuffle;
+        else
+            p.shuffle = p.shuffle === 2 ? 1 : 2;
+    }
+    // None → Playlist → Track → None.
+    function cycleLoop() {
+        const p = player;
+        if (!p || p.canControl === false)
+            return;
+        if (p.loopStatus !== undefined)
+            p.loopStatus = p.loopStatus === 2 ? 3 : p.loopStatus === 3 ? 1 : 2;
+        else if (p.loopState !== undefined)
+            p.loopState = p.loopState === 0 ? 2 : p.loopState === 2 ? 1 : 0;
+    }
 
     Rectangle {
         anchors.fill: parent
+        visible: root.framed
         radius: height / 2
         // Darker, cleaner glass: a deeper translucent base reads as
         // a single calm surface against busy album art, instead of
@@ -23,7 +73,7 @@ Item {
         border.color: Qt.rgba(1, 1, 1, 0.16)
         border.width: 1
 
-        layer.enabled: true
+        layer.enabled: visible
         layer.effect: MultiEffect {
             shadowEnabled: true
             shadowColor: Qt.rgba(0, 0, 0, 0.35)
@@ -49,11 +99,24 @@ Item {
     RowLayout {
         id: controlRow
         anchors.centerIn: parent
-        spacing: 2
+        spacing: root.dockStyle === "accent" ? 5 : 2
+
+        DockToggle {
+            visible: root.showExtras
+            Layout.preferredWidth: 22
+            Layout.preferredHeight: 22
+            areaName: "shuffleArea"
+            active: root.shuffleOn
+            controlColor: root.controlColor
+            accentColor: root.accentColor
+            iconPath: "M16 3h5v5l-1.8-1.8-4.4 4.4-1.4-1.4 4.4-4.4zM3 5.4 4.4 4 20 19.6 18.6 21zM13.4 14.8l1.4-1.4 4.4 4.4L21 16v5h-5l1.8-1.8z"
+            onToggled: root.toggleShuffle()
+        }
 
         // Previous Button
         Item {
             id: prevBtn
+            visible: root.showSkip
             Layout.preferredWidth: 22
             Layout.preferredHeight: 22
             scale: prevArea.pressed ? 0.94 : (prevArea.containsMouse ? 1.07 : 1.0)
@@ -110,8 +173,9 @@ Item {
         // Play/Pause Button
         Item {
             id: playBtn
-            Layout.preferredWidth: 26
-            Layout.preferredHeight: 22
+            readonly property bool accent: root.dockStyle === "accent"
+            Layout.preferredWidth: accent ? 24 : 26
+            Layout.preferredHeight: accent ? 24 : 22
             scale: playArea.pressed ? 0.94 : (playArea.containsMouse ? 1.06 : 1.0)
             Behavior on scale {
                 NumberAnimation {
@@ -120,16 +184,33 @@ Item {
                 }
             }
 
+            // Accent style: a round accent button with a dark icon.
+            Rectangle {
+                anchors.fill: parent
+                visible: playBtn.accent
+                radius: width / 2
+                color: root.accentColor
+                layer.enabled: visible && GraphicsInfo.api !== GraphicsInfo.Software
+                layer.effect: MultiEffect {
+                    shadowEnabled: true
+                    shadowColor: root.accentColor
+                    shadowOpacity: 0.45
+                    shadowBlur: 0.35
+                    shadowVerticalOffset: 2
+                }
+            }
+
             Canvas {
                 id: playIcon
                 anchors.centerIn: parent
-                width: 12
-                height: 12
-                opacity: playArea.containsMouse ? 1.0 : 0.86
+                width: playBtn.accent ? 10 : 12
+                height: width
+                opacity: playBtn.accent ? 1 : (playArea.containsMouse ? 1.0 : 0.86)
                 onPaint: {
                     const ctx = getContext("2d");
                     ctx.reset();
-                    ctx.fillStyle = root.controlColor;
+                    ctx.scale(width / 12, height / 12);
+                    ctx.fillStyle = playBtn.accent ? "#11140f" : root.controlColor;
                     if (root.isPlaying) {
                         // Draw two vertical pause bars
                         ctx.fillRect(2, 1, 3.5, 10);
@@ -144,6 +225,7 @@ Item {
                         ctx.fill();
                     }
                 }
+                onWidthChanged: requestPaint()
                 Connections {
                     target: root
                     function onIsPlayingChanged() {
@@ -182,6 +264,7 @@ Item {
         // Next Button
         Item {
             id: nextBtn
+            visible: root.showSkip
             Layout.preferredWidth: 22
             Layout.preferredHeight: 22
             scale: nextArea.pressed ? 0.94 : (nextArea.containsMouse ? 1.07 : 1.0)
@@ -233,6 +316,18 @@ Item {
                         p.Next();
                 }
             }
+        }
+
+        DockToggle {
+            visible: root.showExtras
+            Layout.preferredWidth: 22
+            Layout.preferredHeight: 22
+            areaName: "repeatArea"
+            active: root.loopOn
+            controlColor: root.controlColor
+            accentColor: root.accentColor
+            iconPath: "M7 7h11V4l4 4-4 4V9H7v4H5V9a2 2 0 0 1 2-2zm10 10H6v3l-4-4 4-4v3h11v-4h2v4a2 2 0 0 1-2 2z"
+            onToggled: root.cycleLoop()
         }
     }
 }

@@ -36,6 +36,22 @@ KCM.SimpleKCM {
     property alias cfg_orbitReach: orbitReachSlider.value
     property alias cfg_orbitRotate: orbitRotateCheckBox.checked
     property alias cfg_orbitCoverPulse: orbitCoverPulseCheckBox.checked
+    property string cfg_artShape: "rounded"
+    property string cfg_artShapeDefault: "rounded"
+    property string cfg_artBorder: "subtle"
+    property string cfg_artBorderDefault: "subtle"
+    property alias cfg_artGlow: artGlowCheckBox.checked
+    property alias cfg_artTilt: artTiltCheckBox.checked
+    property alias cfg_artReflect: artReflectCheckBox.checked
+    property alias cfg_artGrayPaused: artGrayPausedCheckBox.checked
+    property string cfg_artFallback: "icon"
+    property string cfg_artFallbackDefault: "icon"
+    property string cfg_artClick: "none"
+    property string cfg_artClickDefault: "none"
+    property string cfg_dockStyle: "glass"
+    property string cfg_dockStyleDefault: "glass"
+    property alias cfg_showSkipButtons: showSkipButtonsCheckBox.checked
+    property alias cfg_showShuffleRepeat: showShuffleRepeatCheckBox.checked
     property alias cfg_showTimes: showTimesCheckBox.checked
     property string cfg_timeFormat: "total"
     property string cfg_timeFormatDefault: "total"
@@ -597,6 +613,168 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: i18n("Cover pulse:")
             visible: root.cfg_layoutMode === "orbit"
             text: i18n("Cover breathes with the bass")
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Cover shape:")
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("Sharp"),
+                    value: "sharp"
+                },
+                {
+                    label: i18n("Rounded"),
+                    value: "rounded"
+                },
+                {
+                    label: i18n("Squircle"),
+                    value: "squircle"
+                },
+                {
+                    label: i18n("Circle"),
+                    value: "circle"
+                },
+                {
+                    label: i18n("Vinyl"),
+                    value: "vinyl"
+                },
+                {
+                    label: i18n("CD"),
+                    value: "cd"
+                }
+            ]
+            currentIndex: Math.max(0, ["sharp", "rounded", "squircle", "circle", "vinyl", "cd"].indexOf(root.cfg_artShape))
+            onActivated: root.cfg_artShape = currentValue
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Cover border:")
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("None"),
+                    value: "none"
+                },
+                {
+                    label: i18n("Subtle"),
+                    value: "subtle"
+                },
+                {
+                    label: i18n("Accent"),
+                    value: "accent"
+                }
+            ]
+            currentIndex: Math.max(0, ["none", "subtle", "accent"].indexOf(root.cfg_artBorder))
+            onActivated: root.cfg_artBorder = currentValue
+        }
+
+        QQC.CheckBox {
+            id: artGlowCheckBox
+            Kirigami.FormData.label: i18n("Cover glow:")
+            text: i18n("Soft glow in the cover's colour")
+        }
+
+        QQC.CheckBox {
+            id: artTiltCheckBox
+            Kirigami.FormData.label: i18n("Cover tilt:")
+            text: i18n("Tilt the cover when hovering the card")
+        }
+
+        QQC.CheckBox {
+            id: artReflectCheckBox
+            Kirigami.FormData.label: i18n("Cover reflection:")
+            text: i18n("Mirrored reflection below the cover")
+        }
+
+        QQC.CheckBox {
+            id: artGrayPausedCheckBox
+            Kirigami.FormData.label: i18n("Paused cover:")
+            text: i18n("Greyscale while paused")
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Without a cover:")
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("Player icon"),
+                    value: "icon"
+                },
+                {
+                    label: i18n("Colour gradient"),
+                    value: "gradient"
+                },
+                {
+                    label: i18n("Title initials"),
+                    value: "letters"
+                }
+            ]
+            currentIndex: Math.max(0, ["icon", "gradient", "letters"].indexOf(root.cfg_artFallback))
+            onActivated: root.cfg_artFallback = currentValue
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Cover click:")
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("Nothing"),
+                    value: "none"
+                },
+                {
+                    label: i18n("Show large cover"),
+                    value: "zoom"
+                },
+                {
+                    label: i18n("Raise the player"),
+                    value: "raise"
+                }
+            ]
+            currentIndex: Math.max(0, ["none", "zoom", "raise"].indexOf(root.cfg_artClick))
+            onActivated: root.cfg_artClick = currentValue
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Controls style:")
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("Glass"),
+                    value: "glass"
+                },
+                {
+                    label: i18n("Bare"),
+                    value: "bare"
+                },
+                {
+                    label: i18n("Accent"),
+                    value: "accent"
+                },
+                {
+                    label: i18n("On hover"),
+                    value: "hover"
+                }
+            ]
+            currentIndex: Math.max(0, ["glass", "bare", "accent", "hover"].indexOf(root.cfg_dockStyle))
+            onActivated: root.cfg_dockStyle = currentValue
+        }
+
+        QQC.CheckBox {
+            id: showSkipButtonsCheckBox
+            Kirigami.FormData.label: i18n("Skip buttons:")
+            text: i18n("Previous and next")
+        }
+
+        QQC.CheckBox {
+            id: showShuffleRepeatCheckBox
+            Kirigami.FormData.label: i18n("Shuffle and repeat:")
+            text: i18n("Show shuffle and repeat buttons")
         }
 
         QQC.CheckBox {

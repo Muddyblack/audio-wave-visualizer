@@ -13,7 +13,8 @@ Item {
     // Progress style 10 draws a ring around the cover instead of a bar; the
     // cover shrinks by the ring's 6 px, and without a cover style 0 is used.
     readonly property bool ringMode: (view.configuration.progressBarStyle ?? 0) === 10
-    readonly property real artLimit: ringMode ? Math.min(72, height - (view.configuration.showBg ? 4 : 0) - (view.hasPlayer ? 30 : 0)) - 6 : 72
+    // The HTML's scaled(72, available height); unchanged at the default 100 %.
+    readonly property real artLimit: Math.min(ringMode ? Math.min(72, height - (view.configuration.showBg ? 4 : 0) - (view.hasPlayer ? 30 : 0)) : 72, 72 * (view.configuration.artScale ?? 100) / 100) - (ringMode ? 6 : 0)
 
     RowLayout {
         anchors.fill: parent
@@ -39,6 +40,7 @@ Item {
 
             ArtView {
                 id: artBox
+                objectName: "classicArt"
                 visible: root.view.configuration.showArtThumb && (!root.view.artIsBackground || root.view.configuration.artBgKeepThumb)
                 Layout.fillHeight: true
                 Layout.maximumHeight: root.artLimit
@@ -49,6 +51,7 @@ Item {
                 artUrl: root.view.configuration.showMpris ? root.view.artUrl : ""
                 desktopEntry: root.view.desktopEntry
                 fallbackIcon: root.view.fallbackIcon
+                view: root.view
 
                 CoverRing {
                     objectName: "coverRing"
@@ -62,18 +65,21 @@ Item {
                     positionUnitsPerSecond: root.view.positionUnitsPerSecond
                     visualFrameTime: root.view.visualFrameTime
                     accentColor: root.view.waveColor
+                    cornerRadius: artBox.ringRadius
                 }
             }
 
             TransportDock {
                 Layout.alignment: Qt.AlignHCenter
-                Layout.preferredWidth: 88
+                Layout.preferredWidth: implicitWidth
                 Layout.preferredHeight: 26
                 visible: root.view.hasPlayer
                 configuration: root.view.configuration
                 player: root.view.player
                 isPlaying: root.view.isPlaying
                 controlColor: root.view.controlColor
+                accentColor: root.view.waveColor
+                cardHovered: root.view.cardHovered
             }
 
             Item {

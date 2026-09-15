@@ -120,7 +120,12 @@ Item {
             artUrl = url;
     }
 
+    // Artwork click "zoom" shows the cover large over the card.
+    property bool zoomOpen: false
+    readonly property bool cardHovered: cardHover.hovered
+
     onPlayerChanged: {
+        zoomOpen = false;
         artUrl = "";
         _refreshArtUrl();
     }
@@ -134,6 +139,10 @@ Item {
         anchors.fill: parent
         visible: root.shouldShow
         // No clip: text and control shadows may extend beyond the card.
+
+        HoverHandler {
+            id: cardHover
+        }
 
         CardSurface {
             anchors.fill: parent
@@ -158,6 +167,62 @@ Item {
                     strip: stripLayout,
                     orbit: orbitLayout
                 })[root.layoutMode] ?? classicLayout
+        }
+
+        Rectangle {
+            objectName: "artZoom"
+            anchors.fill: parent
+            radius: root.configuration.bgRadius
+            color: Qt.rgba(0.02, 0.02, 0.03, 0.9)
+            opacity: root.zoomOpen ? 1 : 0
+            // Visible from the moment it opens, so it can be closed mid-fade.
+            visible: root.zoomOpen || opacity > 0
+            Behavior on opacity {
+                NumberAnimation {
+                    duration: 180
+                }
+            }
+
+            Row {
+                anchors.centerIn: parent
+                spacing: 12
+                ArtView {
+                    objectName: "zoomArt"
+                    width: Math.max(0, Math.min(parent.parent.height - 16, 220))
+                    height: width
+                    artUrl: root.artUrl
+                    desktopEntry: root.desktopEntry
+                    fallbackIcon: root.fallbackIcon
+                }
+                Column {
+                    anchors.verticalCenter: parent.verticalCenter
+                    width: Math.max(60, Math.min(220, parent.parent.width - parent.parent.height - 28))
+                    Text {
+                        width: parent.width
+                        text: root.displayTrack
+                        color: root.textColor
+                        font.pixelSize: 13
+                        font.bold: true
+                        wrapMode: Text.Wrap
+                        maximumLineCount: 2
+                        elide: Text.ElideRight
+                    }
+                    Text {
+                        width: parent.width
+                        text: root.artist
+                        color: root.textColor
+                        opacity: 0.7
+                        font.pixelSize: 11
+                        elide: Text.ElideRight
+                    }
+                }
+            }
+            MouseArea {
+                objectName: "artZoomArea"
+                anchors.fill: parent
+                enabled: root.zoomOpen
+                onClicked: root.zoomOpen = false
+            }
         }
     }
 

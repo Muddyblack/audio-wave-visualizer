@@ -50,6 +50,8 @@ TestCase {
             property real position: 60
             property bool canSeek: true
             property bool positionSupported: true
+            property bool shuffle: false
+            property int loopState: 0
             property int previousCalls: 0
             property int playCalls: 0
             property int nextCalls: 0
@@ -264,6 +266,76 @@ TestCase {
         });
         compare(orbit.particles.length, 0, "Reduced motion removes sparks");
         backend.bars = [300, 700, 900, 400];
+    }
+    function test_artworkShapes_data() {
+        return [["sharp", w => 2], ["rounded", w => 10], ["squircle", w => w * 0.3], ["circle", w => w / 2], ["vinyl", w => w / 2], ["cd", w => w / 2]].map(row => ({
+                    tag: row[0],
+                    shape: row[0],
+                    radius: row[1]
+                }));
+    }
+    function test_artworkShapes(data) {
+        subject.configuration = Object.assign({}, defaults, {
+            artShape: data.shape,
+            artFallback: "letters"
+        });
+        const art = findChild(subject, "classicArt");
+        verify(art !== null && art.width > 0);
+        fuzzyCompare(art.cornerRadius, data.radius(art.width), 0.01);
+        verify(art.showFallbackArt, "Without a cover the initials placeholder is used");
+        compare(art.initials("Track name here"), "TN");
+    }
+    function test_vinylSpinsOnAudioFramesOnly() {
+        subject.configuration = Object.assign({}, defaults, {
+            artShape: "vinyl"
+        });
+        player.artUrl = Qt.resolvedUrl("fixtures/cover-red-blue.ppm").toString();
+        const art = findChild(subject, "classicArt");
+        tryVerify(() => art.coverReady);
+        subject.isPlaying = true;
+        backend.frameTimeMs = 1000;
+        backend.frameTimeMs = 1200;
+        verify(art.spinAngle > 5, "Vinyl turns with audio frames");
+        const angle = art.spinAngle;
+        subject.isPlaying = false;
+        backend.frameTimeMs = 1400;
+        compare(art.spinAngle, angle, "A paused record stops");
+        player.artUrl = "";
+    }
+    function test_dockStylesAndToggles() {
+        subject.configuration = Object.assign({}, defaults, {
+            showSkipButtons: false,
+            showShuffleRepeat: true,
+            dockStyle: "accent"
+        });
+        // Let the row lay out the newly shown buttons before clicking them.
+        waitForRendering(subject);
+        verify(!findChild(subject, "prevArea").parent.visible);
+        verify(!findChild(subject, "nextArea").parent.visible);
+        const shuffle = findChild(subject, "shuffleArea");
+        const repeat = findChild(subject, "repeatArea");
+        verify(shuffle.visible && repeat.visible);
+        mouseClick(shuffle);
+        compare(player.shuffle, true);
+        mouseClick(repeat);
+        compare(player.loopState, 2, "Repeat cycles to the playlist");
+        subject.configuration = Object.assign({}, defaults, {
+            dockStyle: "hover"
+        });
+        tryCompare(findChild(subject, "playArea").parent.parent.parent, "opacity", 0);
+    }
+    function test_coverClickZoom() {
+        subject.configuration = Object.assign({}, defaults, {
+            artClick: "zoom"
+        });
+        player.artUrl = Qt.resolvedUrl("fixtures/cover-red-blue.ppm").toString();
+        const art = findChild(subject, "classicArt");
+        tryVerify(() => art.coverReady);
+        mouseClick(findChild(subject, "artClickArea"));
+        verify(subject.zoomOpen);
+        mouseClick(findChild(subject, "artZoomArea"));
+        verify(!subject.zoomOpen);
+        player.artUrl = "";
     }
     function test_defaultCardLoadsNoMaterialLayers() {
         subject.configuration = Object.assign({}, defaults, {

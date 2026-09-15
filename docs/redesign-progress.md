@@ -16,7 +16,7 @@ New configuration keys alone do not mean their features are implemented.
 | 4 | Progress styles 5–10 and time format | Implemented in the Classic layout with Plasma and Hyprland settings; Classic snapshots unchanged; browser acceptance pending |
 | 5 | Mirrored, inline, hero, stacked, strip, poster and orbit layouts | Implemented; orbit ring is Canvas-only (no shader family yet); Classic snapshots unchanged; GPU parity unchanged |
 | 6 | Card materials, glass/liquid, depth and wallpaper sampling | Implemented without blur-behind, refraction or wallpaper sampling; Classic snapshots unchanged |
-| 7 | Artwork shapes/effects and control dock options | Not started; cover colour extraction is already available from phase 3 |
+| 7 | Artwork shapes/effects and control dock options | Implemented; Classic snapshots unchanged; tilt has no perspective and reflection needs the GPU scene graph |
 | 8 | Richer track information and opt-in lyrics | Not started |
 | 9 | Idle/paused behaviour, interaction and power options | Partial: waveform reduced motion and software selection are wired; remaining behaviour is not implemented |
 | 10 | Panel pill/icon and popup; Waybar/Quickshell bar integration | Not started |
@@ -122,6 +122,25 @@ New configuration keys alone do not mean their features are implemented.
   and per-pixel `ImageData` loops became 100+ s on their second run. Shadows are
   separable Gaussians built from native gradients instead.
 
+### Phase 7 — artwork and controls
+
+- [x] `artShape` sharp, rounded, squircle, circle, vinyl (grooves, round cover
+  label, 7 s/turn) and CD (iridescent disc, faint cover print, 3 s/turn). Spins
+  advance on audio frames only and stop when paused or with reduced motion.
+- [x] `artScale` in every layout, `artBorder` none/subtle/accent, `artGlow`
+  (cover-tinted, via `CardGlow`), `artTilt` on card hover, `artReflect`,
+  `artGrayPaused`, `artFallback` icon/gradient/initials, `artClick` zoom
+  (cover and track over the card) or raise the player.
+- [x] The progress ring follows the cover shape.
+- [x] `dockStyle` glass/bare/accent/hover, `showSkipButtons`,
+  `showShuffleRepeat` (`DockToggle.qml`) using Plasma `shuffle`/`loopStatus` and
+  Quickshell `shuffle`/`loopState`.
+- [ ] Limits: Qt Quick rotations have no perspective, so tilt is flatter than
+  the HTML; the reflection and cover images need the GPU scene graph
+  (MultiEffect); the zoom view stays inside the card rather than a lightbox; the
+  Quickshell loop values (None = 0, Track = 1, Playlist = 2) are assumed from
+  its API, not checked against a running player.
+
 ## Verification and limits
 
 - **Full suite:** `make test` (`python3 tests/run.py`) passes: **258 QML tests**,
@@ -187,10 +206,9 @@ Current session artifacts (temporary, not committed):
 ## Next work
 
 Fix the Chrome reference capture so phases 3–4 can be compared with the browser,
-then continue with **phase 7: artwork** (shapes, vinyl/CD, size, border, glow,
-tilt, reflection, greyscale when paused, fallback, click action) **and controls**
-(dock styles, skip and shuffle/repeat buttons). The studio settings interface
-and presets are still future phases.
+then continue with **phase 8: track information** (album, player chip, player
+switcher, hover tooltip/drawer/flip, detail fields, opt-in lyrics). The studio
+settings interface and presets are still future phases.
 
 ### Open follow-ups (before presets / release)
 

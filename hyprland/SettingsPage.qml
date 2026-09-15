@@ -30,6 +30,10 @@ Rectangle {
             keys: ["layoutMode", "titleSize", "textAlign", "artScale", "posterAlign", "posterLines", "posterVizBehind", "posterVizOpacity", "posterClock", "orbitStyle", "orbitReach", "orbitRotate", "orbitCoverPulse"]
         },
         {
+            title: "Artwork and controls",
+            keys: ["artShape", "artBorder", "artGlow", "artTilt", "artReflect", "artGrayPaused", "artFallback", "artClick", "dockStyle", "showSkipButtons", "showShuffleRepeat"]
+        },
+        {
             title: "Audio",
             keys: ["numBars", "framerate", "sensitivity", "noiseReduction", "inputMethod"]
         },
@@ -102,6 +106,11 @@ Rectangle {
             layoutMode: [[qsTr("Classic"), "classic"], [qsTr("Mirrored"), "mirrored"], [qsTr("Inline"), "inline"], [qsTr("Hero wave"), "hero"], [qsTr("Stacked"), "stacked"], [qsTr("Poster"), "poster"], [qsTr("Slim strip"), "strip"], [qsTr("Orbit"), "orbit"]],
             orbitStyle: [[qsTr("Bars"), "bars"], [qsTr("Wave"), "wave"], [qsTr("Dots"), "dots"], [qsTr("Ribbon"), "ribbon"], [qsTr("Sparks"), "sparks"]],
             textAlign: [[qsTr("Left"), "left"], [qsTr("Centre"), "center"], [qsTr("Right"), "right"]],
+            artShape: [[qsTr("Sharp"), "sharp"], [qsTr("Rounded"), "rounded"], [qsTr("Squircle"), "squircle"], [qsTr("Circle"), "circle"], [qsTr("Vinyl"), "vinyl"], [qsTr("CD"), "cd"]],
+            artBorder: [[qsTr("None"), "none"], [qsTr("Subtle"), "subtle"], [qsTr("Accent"), "accent"]],
+            artFallback: [[qsTr("Player icon"), "icon"], [qsTr("Colour gradient"), "gradient"], [qsTr("Title initials"), "letters"]],
+            artClick: [[qsTr("Nothing"), "none"], [qsTr("Show large cover"), "zoom"], [qsTr("Raise the player"), "raise"]],
+            dockStyle: [[qsTr("Glass"), "glass"], [qsTr("Bare"), "bare"], [qsTr("Accent"), "accent"], [qsTr("On hover"), "hover"]],
             surfaceStyle: [[qsTr("Tint"), "color"], [qsTr("Glass"), "glass"], [qsTr("Liquid glass"), "liquid"], [qsTr("Solid"), "solid"], [qsTr("Atmosphere"), "atmosphere"]],
             glassTint: [[qsTr("Clear"), "clear"], [qsTr("Frost"), "frost"], [qsTr("From cover"), "cover"]],
             cardShadow: [[qsTr("None"), "none"], [qsTr("Soft"), "soft"], [qsTr("Lifted"), "lifted"]],
@@ -121,6 +130,17 @@ Rectangle {
             showTimes: qsTr("Time labels"),
             layoutMode: qsTr("Layout"),
             surfaceStyle: qsTr("Card material"),
+            artShape: qsTr("Cover shape"),
+            artBorder: qsTr("Cover border"),
+            artGlow: qsTr("Cover glow"),
+            artTilt: qsTr("Tilt cover on hover"),
+            artReflect: qsTr("Cover reflection"),
+            artGrayPaused: qsTr("Greyscale cover while paused"),
+            artFallback: qsTr("Without a cover"),
+            artClick: qsTr("Cover click"),
+            dockStyle: qsTr("Controls style"),
+            showSkipButtons: qsTr("Previous and next buttons"),
+            showShuffleRepeat: qsTr("Shuffle and repeat buttons"),
             glassTint: qsTr("Liquid tint"),
             glassSpecular: qsTr("Pointer light"),
             cardShadow: qsTr("Card shadow"),
