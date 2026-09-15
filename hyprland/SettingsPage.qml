@@ -31,7 +31,7 @@ Rectangle {
         },
         {
             title: "Artwork and controls",
-            keys: ["artShape", "artBorder", "artGlow", "artTilt", "artReflect", "artGrayPaused", "artFallback", "artClick", "dockStyle", "showSkipButtons", "showShuffleRepeat"]
+            keys: ["artShape", "artBorder", "artGlow", "artTilt", "artReflect", "artGrayPaused", "artFallback", "artClick", "dockStyle", "showSkipButtons", "showShuffleRepeat", "showAlbum", "showSource", "showPlayerSwitch", "marquee", "showLyrics", "hoverDetails"]
         },
         {
             title: "Audio",
@@ -111,6 +111,7 @@ Rectangle {
             artFallback: [[qsTr("Player icon"), "icon"], [qsTr("Colour gradient"), "gradient"], [qsTr("Title initials"), "letters"]],
             artClick: [[qsTr("Nothing"), "none"], [qsTr("Show large cover"), "zoom"], [qsTr("Raise the player"), "raise"]],
             dockStyle: [[qsTr("Glass"), "glass"], [qsTr("Bare"), "bare"], [qsTr("Accent"), "accent"], [qsTr("On hover"), "hover"]],
+            hoverDetails: [[qsTr("Nothing"), "off"], [qsTr("Tooltip"), "tooltip"], [qsTr("Drawer"), "drawer"], [qsTr("Flip the card"), "flip"]],
             surfaceStyle: [[qsTr("Tint"), "color"], [qsTr("Glass"), "glass"], [qsTr("Liquid glass"), "liquid"], [qsTr("Solid"), "solid"], [qsTr("Atmosphere"), "atmosphere"]],
             glassTint: [[qsTr("Clear"), "clear"], [qsTr("Frost"), "frost"], [qsTr("From cover"), "cover"]],
             cardShadow: [[qsTr("None"), "none"], [qsTr("Soft"), "soft"], [qsTr("Lifted"), "lifted"]],
@@ -139,6 +140,12 @@ Rectangle {
             artFallback: qsTr("Without a cover"),
             artClick: qsTr("Cover click"),
             dockStyle: qsTr("Controls style"),
+            showAlbum: qsTr("Album and year"),
+            showSource: qsTr("Player name chip"),
+            showPlayerSwitch: qsTr("Player switcher"),
+            marquee: qsTr("Scroll long titles"),
+            showLyrics: qsTr("Synced lyrics (sends track info to lrclib.net)"),
+            hoverDetails: qsTr("On hover"),
             showSkipButtons: qsTr("Previous and next buttons"),
             showShuffleRepeat: qsTr("Shuffle and repeat buttons"),
             glassTint: qsTr("Liquid tint"),

@@ -153,8 +153,19 @@ ShellRoot {
         property string inputMethod: root.configuration.inputMethod
     }
 
+    // The player switcher pins a player; otherwise follow the one playing.
+    property var pinnedPlayer: null
+    function cyclePlayer() {
+        const players = Mpris.players.values;
+        if (players.length === 0)
+            return;
+        const index = players.indexOf(root.player);
+        root.pinnedPlayer = players[(index + 1) % players.length];
+    }
     readonly property var player: {
         const players = Mpris.players.values;
+        if (root.pinnedPlayer && players.indexOf(root.pinnedPlayer) !== -1)
+            return root.pinnedPlayer;
         return players.find(p => p.isPlaying) || players[0] || null;
     }
     readonly property string runtimeDirectory: (Quickshell.env("XDG_RUNTIME_DIR") || "/tmp") + "/audio-wave-quickshell"
@@ -209,6 +220,8 @@ ShellRoot {
                 track: root.player?.trackTitle ?? ""
                 playerArtUrl: root.player?.trackArtUrl ?? ""
                 positionUnitsPerSecond: 1
+                playerCount: Mpris.players.values.length
+                switchPlayer: root.cyclePlayer
                 accentColor: root.configuration.waveColor
                 systemTextColor: root.configuration.textColor
                 fallbackIcon: Component {
@@ -216,6 +229,25 @@ ShellRoot {
                         source: Quickshell.iconPath(view.desktopEntry !== "" ? view.desktopEntry : "audio-x-generic-symbolic", true) || Qt.resolvedUrl("../package/icon.png")
                         fillMode: Image.PreserveAspectFit
                     }
+                }
+            }
+
+            // Hover details (tooltip or drawer) below the card. The window
+            // leaves 50 px around the details for their shadow.
+            PopupWindow {
+                anchor.item: sharedView
+                anchor.rect.x: -50
+                anchor.rect.y: (sharedView.detailsPopupMode === "drawer" ? sharedView.height - 14 : sharedView.height + 10) - 50
+                implicitWidth: Math.max(sharedView.width, 250) + 100
+                implicitHeight: hoverDetails.implicitHeight + 100
+                color: "transparent"
+                visible: sharedView.detailsVisible && panel.visible
+                Shared.TrackDetails {
+                    id: hoverDetails
+                    anchors.fill: parent
+                    anchors.margins: 50
+                    view: sharedView
+                    mode: sharedView.detailsPopupMode
                 }
             }
         }

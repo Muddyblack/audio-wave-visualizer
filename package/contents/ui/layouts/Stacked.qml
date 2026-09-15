@@ -33,6 +33,9 @@ Item {
                 view: root.view
                 titleFactor: 1.6
                 artistSize: 1.05
+                albumSize: 0.85
+                lyricSize: 0.85
+                sourceSize: 8
                 Layout.fillWidth: true
             }
         }

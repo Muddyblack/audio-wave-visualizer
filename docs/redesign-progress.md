@@ -17,7 +17,7 @@ New configuration keys alone do not mean their features are implemented.
 | 5 | Mirrored, inline, hero, stacked, strip, poster and orbit layouts | Implemented; orbit ring is Canvas-only (no shader family yet); Classic snapshots unchanged; GPU parity unchanged |
 | 6 | Card materials, glass/liquid, depth and wallpaper sampling | Implemented without blur-behind, refraction or wallpaper sampling; Classic snapshots unchanged |
 | 7 | Artwork shapes/effects and control dock options | Implemented; Classic snapshots unchanged; tilt has no perspective and reflection needs the GPU scene graph |
-| 8 | Richer track information and opt-in lyrics | Not started |
+| 8 | Richer track information and opt-in lyrics | Implemented; format detail and live Plasma/Hyprland popup checks pending |
 | 9 | Idle/paused behaviour, interaction and power options | Partial: waveform reduced motion and software selection are wired; remaining behaviour is not implemented |
 | 10 | Panel pill/icon and popup; Waybar/Quickshell bar integration | Not started |
 | 11 | Studio settings, search, preview, presets and diagnostics | Not started; current settings pages expose the new waveform controls |
@@ -141,6 +141,28 @@ New configuration keys alone do not mean their features are implemented.
   Quickshell loop values (None = 0, Track = 1, Playlist = 2) are assumed from
   its API, not checked against a running player.
 
+### Phase 8 — track information
+
+- [x] Player chip (`showSource`) with the player name, player switcher
+  (`showPlayerSwitch`: Plasma cycles `Mpris2Model.currentIndex` past its
+  automatic row, Hyprland pins the next Quickshell player), `showAlbum`
+  (album · year) and `marquee` (titles over 26 characters, 14 s loop on the
+  audio clock, off with reduced motion). Classic now uses the shared texts;
+  its snapshots are unchanged.
+- [x] `hoverDetails`: `tooltip` and `drawer` in a host popup (Plasma
+  `PlasmaCore.Dialog`, Quickshell `PopupWindow`), `flip` turns the card with
+  separate front/back faces swapped halfway. `TrackDetails.qml` shows the
+  `detailFields` rows that have data: album (year), track number, genre,
+  length, player and a volume bar.
+- [x] `showLyrics`: `LyricsSource.qml` asks LRCLIB only while enabled, caches
+  hits and misses on disk (LocalStorage; misses retried after a day) and shows
+  the current synced line on the card and in the details.
+- [ ] Limits: the `format` field is not available (it needs the stream's
+  PipeWire node); genre, track number and year come from Quickshell metadata
+  and are absent on Plasma, which does not expose them; the popups and player
+  switching were compiled and unit-tested but not yet checked on a live
+  Plasma or Hyprland desktop; the marquee clips instead of the HTML's edge fade.
+
 ## Verification and limits
 
 - **Full suite:** `make test` (`python3 tests/run.py`) passes: **258 QML tests**,
@@ -206,9 +228,10 @@ Current session artifacts (temporary, not committed):
 ## Next work
 
 Fix the Chrome reference capture so phases 3–4 can be compared with the browser,
-then continue with **phase 8: track information** (album, player chip, player
-switcher, hover tooltip/drawer/flip, detail fields, opt-in lyrics). The studio
-settings interface and presets are still future phases.
+then continue with **phase 9: behaviour** (idle text and ambient wave, dim or
+fade while paused, hover lift, scroll volume, battery saver; reduced motion and
+simple rendering are already wired). The studio settings interface and presets
+are still future phases.
 
 ### Open follow-ups (before presets / release)
 
@@ -220,3 +243,20 @@ settings interface and presets are still future phases.
   the Orbit, Halo and Sunburst presets are accepted (`measure_power.py` A/B).
 - [ ] Pulse Orb palette/rainbow differ most from Chrome (RMSE ≈ 0.05); check.
 - [ ] Browser comparison for glow rows and progress styles 5–10.
+- [ ] If titl option not realizeable remove it but tr ymake it work
+- [ ] 
+## Retry after all phases
+
+Revisit once phases 9–12 are done:
+
+- [ ] **Orbit shader family** — benchmark first; required before the Orbit, Halo and Sunburst presets.
+- [ ] **Pulse Orb palette/rainbow vs Chrome** (RMSE ≈ 0.05).
+- [ ] **Browser comparison** for glow rows, progress styles 5–10, layouts, materials and artwork.
+- [ ] **Blur behind glass/liquid and liquid refraction** (`glassRefraction` has no effect); wallpaper sampling.
+- [ ] **Artwork tilt perspective** (Qt Quick rotations are flat); zoom as a real lightbox instead of in-card.
+- [ ] **Soft-light specular and overlay grain** blend modes (approximated in normal blending).
+- [ ] **Marquee edge fade** (currently clips).
+- [ ] **Track `format` detail** via the stream's PipeWire node; genre/track/year on Plasma.
+- [ ] **Live desktop checks**: hover tooltip/drawer popups, player switcher, shuffle/repeat (Quickshell loop values), lyrics network/cache.
+- [ ] **Software renderer**: covers, reflection and progress shadows need MultiEffect (GPU only).
+- [ ] **Power A/B** (`tests/measure_power.py`) for Classic defaults and the heaviest presets.

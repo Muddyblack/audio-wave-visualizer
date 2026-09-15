@@ -42,6 +42,37 @@ Item {
     property string track: player?.track ?? ""
     property string playerArtUrl: player?.artUrl ?? ""
     readonly property string desktopEntry: player?.desktopEntry ?? ""
+
+    // Track information (Plasma PlayerContainer or Quickshell MprisPlayer).
+    readonly property string album: player?.album ?? player?.trackAlbum ?? ""
+    readonly property var metadata: player?.metadata ?? ({})
+    readonly property string genre: {
+        const value = metadata["xesam:genre"];
+        return Array.isArray(value) ? value.join(", ") : String(value ?? "");
+    }
+    readonly property int trackNumber: Number(metadata["xesam:trackNumber"] ?? 0) || 0
+    readonly property string year: String(metadata["xesam:contentCreated"] ?? "").slice(0, 4)
+    readonly property string playerName: player?.identity ?? ""
+    readonly property real volume: player && player.volume !== undefined ? player.volume : -1
+    readonly property string lengthText: {
+        const length = player ? (player.length || player.mprisLength || 0) : 0;
+        if (length <= 0)
+            return "";
+        const units = positionUnitsPerSecond > 0 ? positionUnitsPerSecond : length >= 1000000 ? 1000000 : length >= 10000 ? 1000 : 1;
+        const seconds = Math.floor(length / units);
+        return Math.floor(seconds / 60) + ":" + String(seconds % 60).padStart(2, "0");
+    }
+    // Hosts that know every running player set these for the player switcher.
+    property int playerCount: hasPlayer ? 1 : 0
+    property var switchPlayer: null
+    readonly property string lyricLine: lyricsLoader.item?.currentLine ?? ""
+
+    readonly property string detailsMode: !hasPlayer || trackUnknown ? "off" : (configuration.hoverDetails ?? "off")
+    readonly property bool flipEnabled: detailsMode === "flip" && layoutMode !== "strip"
+    readonly property bool flipped: flipEnabled && cardHovered
+    // Tooltip and drawer are shown by the host in a popup outside the card.
+    readonly property bool detailsVisible: (detailsMode === "tooltip" || detailsMode === "drawer" || (detailsMode === "flip" && layoutMode === "strip")) && cardHovered
+    readonly property string detailsPopupMode: detailsMode === "drawer" ? "drawer" : "tooltip"
     // Solid cards are light: system text and controls switch to dark ink.
     readonly property bool lightCard: configuration.showBg && configuration.surfaceStyle === "solid" && !(configuration.showMpris && configuration.artBg && artUrl !== "") && (configuration.autoContrast ?? true)
     readonly property color textColor: configuration.useSystemText ? (lightCard ? "#1e241d" : systemTextColor) : configuration.customTextColor
@@ -124,6 +155,24 @@ Item {
     property bool zoomOpen: false
     readonly property bool cardHovered: cardHover.hovered
 
+    HoverHandler {
+        id: cardHover
+    }
+
+    Loader {
+        id: lyricsLoader
+        active: (root.configuration.showLyrics ?? false) && root.hasPlayer && !root.trackUnknown
+        sourceComponent: LyricsSource {
+            player: root.player
+            isPlaying: root.isPlaying
+            track: root.displayTrack
+            artist: root.artist
+            album: root.album
+            positionUnitsPerSecond: root.positionUnitsPerSecond
+            visualFrameTime: root.visualFrameTime
+        }
+    }
+
     onPlayerChanged: {
         zoomOpen = false;
         artUrl = "";
@@ -136,12 +185,28 @@ Item {
     onShowMprisChanged: _refreshArtUrl()
 
     Item {
+        id: front
         anchors.fill: parent
         visible: root.shouldShow
         // No clip: text and control shadows may extend beyond the card.
-
-        HoverHandler {
-            id: cardHover
+        // The flip turns each face separately and swaps them halfway;
+        // backface visibility is unreliable with effects and canvases.
+        opacity: Math.abs(frontTurn.angle) < 90 ? 1 : 0
+        transform: root.flipEnabled ? [frontTurn] : []
+        Rotation {
+            id: frontTurn
+            origin.x: front.width / 2
+            origin.y: front.height / 2
+            axis.x: 0
+            axis.y: 1
+            axis.z: 0
+            angle: root.flipped ? -180 : 0
+            Behavior on angle {
+                NumberAnimation {
+                    duration: 600
+                    easing.type: Easing.InOutCubic
+                }
+            }
         }
 
         CardSurface {
@@ -222,6 +287,43 @@ Item {
                 anchors.fill: parent
                 enabled: root.zoomOpen
                 onClicked: root.zoomOpen = false
+            }
+        }
+    }
+
+    Loader {
+        anchors.fill: parent
+        active: root.flipEnabled && root.shouldShow
+        sourceComponent: Item {
+            id: backFace
+            objectName: "flipBack"
+            opacity: Math.abs(backTurn.angle) < 90 ? 1 : 0
+            transform: Rotation {
+                id: backTurn
+                origin.x: backFace.width / 2
+                origin.y: backFace.height / 2
+                axis.x: 0
+                axis.y: 1
+                axis.z: 0
+                angle: root.flipped ? 0 : 180
+                Behavior on angle {
+                    NumberAnimation {
+                        duration: 600
+                        easing.type: Easing.InOutCubic
+                    }
+                }
+            }
+            CardMaterial {
+                anchors.fill: parent
+                material: root.configuration.showBg && ["liquid", "solid", "atmosphere"].indexOf(root.configuration.surfaceStyle) !== -1 ? root.configuration.surfaceStyle : "glass"
+                radius: root.configuration.bgRadius
+                cover1: root.coverColor1
+                cover2: root.coverColor2
+            }
+            TrackDetails {
+                anchors.fill: parent
+                view: root
+                mode: "back"
             }
         }
     }

@@ -135,26 +135,9 @@ Item {
                 visualFrameTime: root.view.visualFrameTime
             }
 
-            TrackText {
+            LayoutTexts {
                 Layout.fillWidth: true
-                Layout.preferredHeight: implicitHeight
-                displayTrack: root.view.displayTrack
-                trackUnknown: root.view.trackUnknown
-                rawTrack: root.view.track
-                titleSize: root.view.configuration.titleSize ?? 11
-                horizontalAlignment: root.view.configuration.textAlign === "center" ? Text.AlignHCenter : root.view.configuration.textAlign === "right" ? Text.AlignRight : Text.AlignLeft
-                color: root.view.textColor
-            }
-
-            TrackText {
-                Layout.fillWidth: true
-                Layout.preferredHeight: implicitHeight
-                secondary: true
-                artist: root.view.artist
-                sourceHint: root.view.sourceHint
-                titleSize: root.view.configuration.titleSize ?? 11
-                horizontalAlignment: root.view.configuration.textAlign === "center" ? Text.AlignHCenter : root.view.configuration.textAlign === "right" ? Text.AlignRight : Text.AlignLeft
-                color: root.view.textColor
+                view: root.view
             }
         }
     }

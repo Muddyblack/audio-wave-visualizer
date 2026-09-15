@@ -52,6 +52,15 @@ KCM.SimpleKCM {
     property string cfg_dockStyleDefault: "glass"
     property alias cfg_showSkipButtons: showSkipButtonsCheckBox.checked
     property alias cfg_showShuffleRepeat: showShuffleRepeatCheckBox.checked
+    property alias cfg_showAlbum: showAlbumCheckBox.checked
+    property alias cfg_showSource: showSourceCheckBox.checked
+    property alias cfg_showPlayerSwitch: showPlayerSwitchCheckBox.checked
+    property alias cfg_showLyrics: showLyricsCheckBox.checked
+    property alias cfg_marquee: marqueeCheckBox.checked
+    property string cfg_hoverDetails: "off"
+    property string cfg_hoverDetailsDefault: "off"
+    property var cfg_detailFields: ["album", "genre", "format", "player"]
+    property var cfg_detailFieldsDefault: ["album", "genre", "format", "player"]
     property alias cfg_showTimes: showTimesCheckBox.checked
     property string cfg_timeFormat: "total"
     property string cfg_timeFormatDefault: "total"
@@ -775,6 +784,92 @@ KCM.SimpleKCM {
             id: showShuffleRepeatCheckBox
             Kirigami.FormData.label: i18n("Shuffle and repeat:")
             text: i18n("Show shuffle and repeat buttons")
+        }
+
+        QQC.CheckBox {
+            id: showAlbumCheckBox
+            Kirigami.FormData.label: i18n("Album:")
+            text: i18n("Album and year under the artist")
+        }
+
+        QQC.CheckBox {
+            id: showSourceCheckBox
+            Kirigami.FormData.label: i18n("Player name:")
+            text: i18n("Small player chip above the title")
+        }
+
+        QQC.CheckBox {
+            id: showPlayerSwitchCheckBox
+            Kirigami.FormData.label: i18n("Player switcher:")
+            text: i18n("Button to cycle through running players")
+        }
+
+        QQC.CheckBox {
+            id: marqueeCheckBox
+            Kirigami.FormData.label: i18n("Long titles:")
+            text: i18n("Scroll instead of cutting them off")
+        }
+
+        QQC.CheckBox {
+            id: showLyricsCheckBox
+            Kirigami.FormData.label: i18n("Lyrics:")
+            text: i18n("Show the current synced lyric line")
+        }
+
+        QQC.Label {
+            visible: showLyricsCheckBox.checked
+            Layout.maximumWidth: Kirigami.Units.gridUnit * 18
+            wrapMode: Text.WordWrap
+            font: Kirigami.Theme.smallFont
+            opacity: 0.7
+            text: i18n("Sends the title, artist, album and length of each track to lrclib.net and caches the result on this computer.")
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("On hover:")
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("Nothing"),
+                    value: "off"
+                },
+                {
+                    label: i18n("Tooltip"),
+                    value: "tooltip"
+                },
+                {
+                    label: i18n("Drawer"),
+                    value: "drawer"
+                },
+                {
+                    label: i18n("Flip the card"),
+                    value: "flip"
+                }
+            ]
+            currentIndex: Math.max(0, ["off", "tooltip", "drawer", "flip"].indexOf(root.cfg_hoverDetails))
+            onActivated: root.cfg_hoverDetails = currentValue
+        }
+
+        Flow {
+            Kirigami.FormData.label: i18n("Details shown:")
+            visible: root.cfg_hoverDetails !== "off"
+            Layout.maximumWidth: Kirigami.Units.gridUnit * 18
+            spacing: Kirigami.Units.smallSpacing
+            Repeater {
+                model: [["album", i18n("Album")], ["track", i18n("Track number")], ["genre", i18n("Genre")], ["length", i18n("Length")], ["format", i18n("Format")], ["player", i18n("Player")], ["volume", i18n("Volume")]]
+                QQC.CheckBox {
+                    required property var modelData
+                    text: modelData[1]
+                    checked: root.cfg_detailFields.indexOf(modelData[0]) !== -1
+                    onToggled: {
+                        const fields = root.cfg_detailFields.filter(field => field !== modelData[0]);
+                        if (checked)
+                            fields.push(modelData[0]);
+                        root.cfg_detailFields = fields;
+                    }
+                }
+            }
         }
 
         QQC.CheckBox {

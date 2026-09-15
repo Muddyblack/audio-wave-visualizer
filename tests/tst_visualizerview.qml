@@ -52,6 +52,9 @@ TestCase {
             property bool positionSupported: true
             property bool shuffle: false
             property int loopState: 0
+            property string album: "Album"
+            property string identity: "Spotify"
+            property real volume: 0.5
             property int previousCalls: 0
             property int playCalls: 0
             property int nextCalls: 0
@@ -77,6 +80,14 @@ TestCase {
                 Item {}
             }
         }
+    }
+    Component {
+        id: detailsComponent
+        TrackDetails {}
+    }
+    Component {
+        id: lyricsComponent
+        LyricsSource {}
     }
     function init() {
         player = createTemporaryObject(playerComponent, this);
@@ -336,6 +347,68 @@ TestCase {
         mouseClick(findChild(subject, "artZoomArea"));
         verify(!subject.zoomOpen);
         player.artUrl = "";
+    }
+    function test_trackInfoLines() {
+        let switches = 0;
+        subject.playerCount = 3;
+        subject.switchPlayer = () => switches++;
+        subject.configuration = Object.assign({}, defaults, {
+            showAlbum: true,
+            showSource: true,
+            showPlayerSwitch: true
+        });
+        waitForRendering(subject);
+        compare(findChild(subject, "albumLine").text, "Album");
+        verify(findChild(subject, "albumLine").visible);
+        compare(findChild(subject, "sourceChip").text, "SPOTIFY");
+        compare(findChild(subject, "playerSwitchLabel").text, "3 ▾");
+        mouseClick(findChild(subject, "playerSwitchArea"));
+        compare(switches, 1);
+        verify(!findChild(subject, "lyricLine").visible, "No lyrics without the opt-in");
+    }
+    function test_detailRowsSkipMissingData() {
+        subject.configuration = Object.assign({}, defaults, {
+            detailFields: ["album", "genre", "format", "player", "length", "volume"]
+        });
+        const details = createTemporaryObject(detailsComponent, testCase, {
+            view: subject
+        });
+        compare(details.rows.map(row => row[0]), ["Album", "Player", "Length", "Volume"]);
+        compare(details.rows[2][1], "3:00");
+    }
+    function test_flipShowsBackOnHover() {
+        subject.configuration = Object.assign({}, defaults, {
+            hoverDetails: "flip"
+        });
+        mouseMove(subject, 20, 20);
+        tryVerify(() => subject.flipped);
+        const back = findChild(subject, "flipBack");
+        verify(back !== null);
+        tryCompare(back, "opacity", 1);
+        mouseMove(testCase, 395, 135);
+        tryVerify(() => !subject.flipped);
+    }
+    function test_marqueeScrollsOnAudioFrames() {
+        player.track = "A very long track title that surely needs scrolling";
+        subject.configuration = Object.assign({}, defaults, {
+            marquee: true
+        });
+        const texts = findChild(subject, "layoutTexts");
+        verify(texts.marquee);
+        backend.frameTimeMs = 7000;
+        verify(texts.marqueeOffset > 0);
+        subject.configuration = Object.assign({}, defaults, {
+            marquee: true,
+            reducedMotion: true
+        });
+        compare(texts.marqueeOffset, 0);
+    }
+    function test_lyricsParsing() {
+        const lyrics = createTemporaryObject(lyricsComponent, testCase);
+        const lines = lyrics.parse("[00:01.00]first\n[00:03.50][00:05]again\nno tag");
+        compare(lines.map(line => line.time), [1, 3.5, 5]);
+        compare(lines.map(line => line.text), ["first", "again", "again"]);
+        compare(lyrics.requestKey, "", "No request without track metadata");
     }
     function test_defaultCardLoadsNoMaterialLayers() {
         subject.configuration = Object.assign({}, defaults, {

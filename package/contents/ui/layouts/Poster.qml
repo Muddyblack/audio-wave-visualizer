@@ -57,7 +57,7 @@ Item {
                     objectName: "posterMeta"
                     Layout.fillWidth: !root.centered
                     Layout.maximumWidth: area.width - 11
-                    text: (root.view.artist !== "" ? root.view.artist : root.view.sourceHint).toUpperCase() || " "
+                    text: [root.view.artist !== "" ? root.view.artist : root.view.sourceHint, (root.cfg.showAlbum ?? false) ? root.view.album : ""].filter(Boolean).join(" · ").toUpperCase() || " "
                     font.pixelSize: 8
                     font.letterSpacing: 1.6
                     font.italic: root.view.artist === "" && root.view.sourceHint !== ""
