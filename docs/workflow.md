@@ -9,7 +9,7 @@ graph TD
     subgraph "Frontend (QML)"
         main[main.qml - UI & Logic]
         vis[Visualizer.qml - Data Handler]
-        canvas[WaveCanvas.qml - Waveform Renderer]
+        canvas[Waveform.qml - GPU shader, Canvas fallback]
         clock[PlaybackClock.qml - Progress Prediction]
     end
 
@@ -43,7 +43,7 @@ sequenceDiagram
     participant CAVA as CAVA (via feeder.sh)
     participant FS as Runtime Directory
     participant QML as Visualizer.qml
-    participant Canvas as WaveCanvas.qml
+    participant Canvas as Waveform.qml
 
     Note over QML, CAVA: 1. Initialization
     QML->>CAVA: Spawns feeder.sh (30s heartbeat, flock prevents duplicates)
@@ -61,7 +61,7 @@ sequenceDiagram
         FS-->>QML: Quoted string of bar values
         QML->>QML: Parses and smooths toward the new frame
         QML->>Canvas: Triggers onBarsChanged only when bar values change
-        Canvas->>Canvas: Repaints the selected style
+        Canvas->>Canvas: Uploads levels to the shader (Canvas fallback repaints)
     end
 ```
 
@@ -136,12 +136,37 @@ This component is responsible for:
   old settings.
 - Cleaning up the feeder process when the widget is destroyed.
 
-### 3. The Renderer (`WaveCanvas.qml`)
-The UI uses the HTML5-like `Canvas` API in QML to draw the selected visualizer from
-the configured number of frequency bars. The idle line follows `vis.hasAudio`;
+### 3. The Renderer (`Waveform.qml`)
+`Waveform.qml` draws the selected style with `WaveShader.qml` wherever Qt Quick runs
+shaders, and with `WaveCanvas.qml` on the software scene graph, which ignores
+`ShaderEffect`.
+
+`WaveShader` is one fragment shader, `contents/shaders/visualizer.frag`, that follows
+WaveCanvas' paths shape by shape, including its glow. An audio frame costs a few
+uniform writes: the tapered levels travel four per `vec4`, since `ShaderEffect` has
+no array uniforms. There is no CPU rasterisation, texture upload or blur pass per
+frame. The glow is two Gaussians fitted to the `MultiEffect` shadow WaveCanvas uses.
+`tests/tst_rendererparity.qml` compares both renderers pixel by pixel on a desktop,
+so keep them in step, and run `make shaders` after editing the shader: the widget
+loads the compiled `visualizer.frag.qsb`.
+
+Commit both `package/contents/shaders/visualizer.frag` and its generated
+`visualizer.frag.qsb`: edit the `.frag`, run `make shaders`, then commit both files.
+The compiled file is required at runtime and ships in the repository so users
+do not need `qsb`. Packaging does not rebuild it, and a missing `.qsb` does not
+trigger the software Canvas fallback.
+
+When `qsb` is on `PATH`, `tests/run.py` rebuilds the shader in a temporary directory
+and compares its bytes with the checked-in `.qsb`; a mismatch fails the test.
+Without `qsb`, this check is skipped. Use `nix develop --command python3 tests/run.py`
+to run with the development tools. After a nixpkgs update changes the `qsb`
+version, the compiled bytes may change: run `make shaders` and commit the updated
+`.qsb` if the check reports it as out of date.
+
+`WaveCanvas` uses the HTML5-like `Canvas` API. The idle line follows `vis.hasAudio`;
 MPRIS only controls track information and media controls. Colors, edge tapers and
-fill gradients are recomputed only when their inputs change, and the canvas skips
-repaints while hidden, idle, or showing a backend error.
+fill gradients are recomputed only when their inputs change, and both renderers skip
+work while hidden, idle, or showing a backend error.
 
 `PlaybackClock.qml` predicts the playback position between MPRIS updates, since MPRIS
 does not signal position during normal playback. Its 50ms tick only runs while the
@@ -158,5 +183,19 @@ nawk) plus an unusable one, and the actual QML components with a stub executable
 engine. They cover changing and repeated frames, the heartbeat, legacy compatibility
 and the stale-file fallback, silence settling and wakeup, joining an existing feeder,
 backend fallthrough and failure recovery, coalesced settings, a restart during a
-backend probe, all six canvas styles, and playback prediction. They do not access the
-desktop or sound server. CI runs them in `.github/workflows/tests.yml`.
+backend probe, all six canvas styles, what the shader receives, and playback
+prediction. They do not access the desktop or sound server. CI runs them in
+`.github/workflows/tests.yml`. The renderer parity check needs a GPU scene graph and
+skips itself there; on a desktop run `qmltestrunner -input tests/tst_rendererparity.qml`.
+
+CI also runs the Quickshell audio, settings persistence and launcher lifecycle
+integration tests. Run the same checks locally with:
+
+```sh
+nix develop --command dbus-run-session -- python3 tests/test_quickshell.py
+nix develop --command dbus-run-session -- python3 tests/test_hyprland_settings.py
+nix develop --command dbus-run-session -- python3 tests/test_lifecycle_power.py
+```
+
+These use offscreen rendering, synthetic audio and private runtime directories
+and session buses; no running desktop or sound server is required.

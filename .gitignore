@@ -2,6 +2,10 @@
 *.plasmoid
 notes.md
 
+# Python caches
+__pycache__/
+*.py[cod]
+
 # Nix
 result
 .direnv/

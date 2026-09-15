@@ -15,4 +15,8 @@ QtObject {
     function disconnectSource(source) {
         connectedSources = connectedSources.filter(value => value !== source);
     }
+    function cancelSource(source) {
+        Commands.cancelled = Commands.cancelled.concat([source]);
+        disconnectSource(source);
+    }
 }

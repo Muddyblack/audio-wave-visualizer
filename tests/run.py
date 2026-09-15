@@ -19,6 +19,35 @@ if not runner:
 
 subprocess.run([sys.executable, str(REPO / "tests/test_feeder.py")], check=True)
 
+# The widget loads the compiled shader, so an edit to visualizer.frag without
+# `make shaders` would silently keep drawing the old one. Same flags as make.
+shader = REPO / "package/contents/shaders/visualizer.frag"
+qsb = shutil.which("qsb")
+if qsb:
+    with tempfile.TemporaryDirectory(prefix="audio-visualizer-qsb-") as directory:
+        built = Path(directory) / "visualizer.frag.qsb"
+        subprocess.run(
+            [
+                qsb,
+                "--glsl",
+                "100es,120,150",
+                "--hlsl",
+                "50",
+                "--msl",
+                "12",
+                "-o",
+                str(built),
+                str(shader),
+            ],
+            check=True,
+        )
+        assert built.read_bytes() == shader.with_suffix(".frag.qsb").read_bytes(), (
+            "visualizer.frag.qsb is out of date: run make shaders"
+        )
+    print("PASS: compiled shader matches visualizer.frag")
+else:
+    print("SKIP: qsb is not on PATH; compiled shader not checked")
+
 
 def start(env, bars, method):
     command = ["bash", str(FEEDER), str(bars), "60", "100", "0.77", method]
@@ -71,9 +100,12 @@ done
         "PATH": str(binaries) + os.pathsep + os.environ["PATH"],
         "XDG_RUNTIME_DIR": directory,
         "QT_QPA_PLATFORM": "offscreen",
+        "QT_QPA_PLATFORMTHEME": "generic",
         "QT_QUICK_BACKEND": "software",
+        "QT_QUICK_CONTROLS_STYLE": "Basic",
         "QT_FORCE_STDERR_LOGGING": "1",
         "QML_DISABLE_DISK_CACHE": "1",
+        "QML_XHR_ALLOW_FILE_READ": "1",
     }
     command, feeder = start(env, 4, "pipewire")
     try:
@@ -120,8 +152,14 @@ done
     _, probing = start(env, 6, "auto")
     restarted = None
     try:
-        wait_for(lambda: "bars = 6" in conf.read_text(), "Probing feeder failed to start", probing)
-        restarted = subprocess.Popen(["sh", "-c", restart], env=env, start_new_session=True)
+        wait_for(
+            lambda: "bars = 6" in conf.read_text(),
+            "Probing feeder failed to start",
+            probing,
+        )
+        restarted = subprocess.Popen(
+            ["sh", "-c", restart], env=env, start_new_session=True
+        )
         wait_for(
             lambda: probing.poll() is not None and "bars = 4" in conf.read_text(),
             "Restart kept the old feeder and settings",

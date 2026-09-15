@@ -16,7 +16,7 @@ SENSITIVITY="${3:-100}"
 NOISE_REDUCTION="${4:-0.77}"
 INPUT_METHOD="${5:-auto}"
 
-RUN="${XDG_RUNTIME_DIR:-/tmp}/audio-wave-widget"
+RUN="${AUDIO_WAVE_RUNTIME_DIR:-${XDG_RUNTIME_DIR:-/tmp}/audio-wave-widget}"
 mkdir -p "$RUN"
 
 CONF="$RUN/cava.conf"

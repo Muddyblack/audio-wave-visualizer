@@ -1,4 +1,5 @@
 import QtQuick 2.15
+import QtQuick.Effects
 
 Canvas {
     id: wave
@@ -17,6 +18,21 @@ Canvas {
 
     antialiasing: true
     renderStrategy: Canvas.Cooperative
+
+    // Match the system monitor's chart pipeline: rasterize the geometry once,
+    // then blur its combined texture on the GPU. Canvas shadowBlur performs a
+    // separate CPU image blur for every stroke, bar and dot in every frame.
+    // Qt's software scene graph cannot render MultiEffect; keep the waveform
+    // visible there without falling back to those expensive CPU shadows.
+    layer.enabled: glowWave && hasAudio && !backendFailed && GraphicsInfo.api !== GraphicsInfo.Software
+    layer.effect: MultiEffect {
+        shadowEnabled: true
+        shadowColor: wave.waveColor
+        shadowOpacity: 1.0
+        shadowBlur: 1.0
+        blurMax: 8
+        autoPaddingEnabled: false
+    }
 
     // A palette change, not an audio frame, creates these colors. In the dot
     // styles this avoids hundreds of QColor conversions per second.
@@ -109,15 +125,6 @@ Canvas {
             return;
         }
 
-        // ── Shared glow setup ─────────────────────────────────
-        const doGlow = glowWave;
-        if (doGlow) {
-            ctx.shadowBlur = 8;
-            ctx.shadowColor = waveColor;
-        } else {
-            ctx.shadowBlur = 0;
-        }
-
         // Read the QML-backed sample list once and normalize each bar once.
         // Mirrored paths and their dots share these values within this frame.
         const samples = bars;
@@ -165,16 +172,11 @@ Canvas {
                 ctx.stroke();
 
                 if (fillWave) {
-                    ctx.shadowBlur = 0;
                     ctx.lineTo(width, mid);
                     ctx.lineTo(0, mid);
                     ctx.closePath();
                     ctx.fillStyle = sign < 0 ? _drawCache.fillAbove : _drawCache.fillBelow;
                     ctx.fill();
-                    if (doGlow) {
-                        ctx.shadowBlur = 8;
-                        ctx.shadowColor = waveColor;
-                    }
                 }
             }
             plot0(-1);
@@ -293,7 +295,6 @@ Canvas {
                 ctx.stroke();
 
                 // node dots at each sample
-                ctx.shadowBlur = doGlow ? 6 : 0;
                 for (let i = 0; i < n; i++) {
                     const v = levels[i];
                     const x = i * step3;
@@ -303,8 +304,6 @@ Canvas {
                     ctx.fillStyle = waveColor;
                     ctx.fill();
                 }
-                if (doGlow)
-                    ctx.shadowBlur = 8;
             }
             drawTechLine(-1);
             drawTechLine(1);

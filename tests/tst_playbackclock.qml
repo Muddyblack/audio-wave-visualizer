@@ -44,6 +44,16 @@ TestCase {
         secondsSpy.clear();
     }
 
+    function test_explicitSecondsForLongQuickshellTracks() {
+        subject.unitScale = 1;
+        player.length = 14400;
+        player.position = 10800;
+        subject.syncFromPlayer(true);
+        compare(subject.unitsPerSecond, 1);
+        compare(subject.elapsedText, "3:00:00");
+        compare(subject.totalText, "4:00:00");
+    }
+
     function test_hiddenStopsAndCatchesUp() {
         verify(!subject.ticking);
         wait(170);
