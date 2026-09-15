@@ -6,6 +6,7 @@ import Quickshell.Wayland
 import Quickshell.Services.Mpris
 import "../package/contents/ui" as Shared
 import "Configuration.js" as Configuration
+import "../package/contents/code/Layouts.js" as LayoutSizes
 
 ShellRoot {
     id: root
@@ -124,8 +125,11 @@ ShellRoot {
     // Desktop coordinates for coverage detection; panels use the same bounds
     // with the screen origin removed from their top margin.
     function widgetGeometry(screen) {
-        const width = Math.min(configuration.widgetWidth, screen.width);
-        const height = configuration.widgetHeight;
+        // The default 360 × 104 follows the chosen layout; explicit sizes win.
+        const layoutSize = LayoutSizes.size(configuration);
+        const defaultSize = configuration.widgetWidth === 360 && configuration.widgetHeight === 104;
+        const width = Math.min(defaultSize ? layoutSize[0] : configuration.widgetWidth, screen.width);
+        const height = defaultSize ? layoutSize[1] : configuration.widgetHeight;
         return {
             name: screen.name,
             x: screen.x + (screen.width - width) / 2,

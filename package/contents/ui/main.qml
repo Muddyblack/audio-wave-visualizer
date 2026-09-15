@@ -3,14 +3,15 @@ import QtQuick.Layouts
 import org.kde.plasma.plasmoid
 import org.kde.plasma.private.mpris as Mpris
 import org.kde.kirigami as Kirigami
+import "../code/Layouts.js" as LayoutSizes
 
 PlasmoidItem {
     id: root
     readonly property bool shouldShow: !!mpris2Model.currentPlayer || plasmoid.configuration.alwaysVisible
     Layout.minimumWidth: shouldShow ? (plasmoid.configuration.showMpris ? 260 : 160) : 0
-    Layout.minimumHeight: shouldShow ? 64 : 0
-    Layout.preferredWidth: shouldShow ? (plasmoid.configuration.showMpris ? 360 : 200) : 0
-    Layout.preferredHeight: shouldShow ? (plasmoid.configuration.showMpris ? 104 : 84) : 0
+    Layout.minimumHeight: shouldShow ? Math.min(64, LayoutSizes.size(plasmoid.configuration)[1]) : 0
+    Layout.preferredWidth: shouldShow ? LayoutSizes.size(plasmoid.configuration)[0] : 0
+    Layout.preferredHeight: shouldShow ? LayoutSizes.size(plasmoid.configuration)[1] : 0
     preferredRepresentation: fullRepresentation
     Plasmoid.backgroundHints: "NoBackground"
 

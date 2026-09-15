@@ -232,5 +232,5 @@ void main()
         else if (type == 10) color = ribbonLayers(p, W, H, n);
         else if (type == 12) color = pixelMatrix(p, W, H, n);
     }
-    fragColor = over(color, htmlShadow(glow)) * qt_Opacity;
+    fragColor = over(color, htmlShadow(glow)) * (qt_Opacity * edgeMask());
 }

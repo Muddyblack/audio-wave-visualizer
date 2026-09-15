@@ -2,6 +2,7 @@ import QtQuick
 import QtTest
 import "../package/contents/ui"
 import "../hyprland/Configuration.js" as Configuration
+import "../package/contents/code/Layouts.js" as LayoutSizes
 
 TestCase {
     id: testCase
@@ -204,6 +205,59 @@ TestCase {
         verify(!ring.visible);
         verify(bar.visible);
         compare(bar.style, 0, "Without a cover the ring falls back to the default bar");
+    }
+
+    function test_layouts_data() {
+        return [].concat(...["classic", "mirrored", "inline", "hero", "stacked", "poster", "strip"].map(mode => [
+                {
+                    tag: mode + "-card",
+                    mode: mode,
+                    bg: true
+                },
+                {
+                    tag: mode + "-bare",
+                    mode: mode,
+                    bg: false
+                }
+            ]));
+    }
+    function test_layouts(data) {
+        subject.configuration = Object.assign({}, defaults, {
+            layoutMode: data.mode,
+            showBg: data.bg
+        });
+        const size = LayoutSizes.size(subject.configuration);
+        compare(subject.implicitWidth, size[0]);
+        compare(subject.implicitHeight, size[1]);
+        subject.width = size[0];
+        subject.height = size[1];
+        waitForRendering(subject);
+        // The HTML slim strip has no progress bar.
+        const bar = findChild(subject, "progressBar");
+        if (data.mode === "strip")
+            compare(bar, null);
+        else
+            verify(bar !== null && bar.visible && bar.width > 60 && bar.x + bar.width <= subject.width + 1 && bar.y + bar.height <= subject.height + 1, "progress bar laid out");
+        const play = findChild(subject, "playArea");
+        verify(play !== null && play.visible && play.width > 0, "dock laid out");
+        const wave = findChild(subject, data.mode === "poster" ? "posterTexture" : "canvasLoader");
+        verify(wave !== null && wave.width > 60 && wave.height >= 20, "wave laid out");
+    }
+    function test_posterClockReplacesTimeLabels() {
+        subject.configuration = Object.assign({}, defaults, {
+            layoutMode: "poster",
+            posterLines: 2
+        });
+        compare(subject.implicitHeight, 138);
+        compare(findChild(subject, "posterClock").text, "1:00");
+        verify(!findChild(subject, "totalTimeLabel").visible, "The large clock replaces the bar's labels");
+        compare(findChild(subject, "posterMeta").text, "ARTIST");
+        subject.configuration = Object.assign({}, defaults, {
+            layoutMode: "poster",
+            posterClock: false
+        });
+        verify(!findChild(subject, "posterClock").visible);
+        verify(findChild(subject, "totalTimeLabel").visible);
     }
 
     function test_playerChangesClearOldArtwork() {

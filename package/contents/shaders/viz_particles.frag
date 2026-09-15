@@ -29,5 +29,5 @@ void main()
         vec4 dot = over(paint(particle.w, cover(d - particle.z)), htmlShadow(particle.w * htmlDiscGlow(d, particle.z)));
         color = over(dot, color);
     }
-    fragColor = color * qt_Opacity;
+    fragColor = color * (qt_Opacity * edgeMask());
 }

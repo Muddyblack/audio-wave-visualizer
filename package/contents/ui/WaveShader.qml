@@ -37,6 +37,7 @@ Item {
     property var peaks: []
     property var particles: []
     property var ripples: []
+    property bool edgeFade: false
     readonly property real _timeSeconds: !reducedMotion && (visualizerType === 9 || visualizerType === 10 || visualizerType === 11 || visualizerType === 13 || visualizerType === 15) ? visualFrameTime / 1000 : 0
     readonly property bool _usesBass: visualizerType === 11 || visualizerType === 13 || visualizerType === 15
     readonly property var _colors: WaveMath.colorStops(waveColor, vizColorMode, vizPalette, coverColor1, coverColor2, hueReactive, hueReactive && !reducedMotion ? high : 0.5, !reducedMotion && (hueReactive || vizColorMode === "rainbow") ? visualFrameTime / 1000 : 0, reducedMotion)
@@ -176,6 +177,7 @@ Item {
         readonly property real bloom: wave.bloom
         readonly property real ribbonCurvature: wave.ribbonCurvature
         readonly property real ribbonFullness: wave.ribbonFullness
+        readonly property real edgeFade: wave.edgeFade ? 1 : 0
         property real particleCount: 0
         property real rippleCount: 0
         readonly property color color0: wave._colors[Math.min(0, wave._colors.length - 1)]

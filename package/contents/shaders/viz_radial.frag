@@ -66,5 +66,5 @@ void main()
         if (style < 12.0) color = radialBurst(p, canvasSize.x, canvasSize.y, n);
         else color = pulseOrb(p, canvasSize.x, canvasSize.y, n);
     }
-    fragColor = color * qt_Opacity;
+    fragColor = color * (qt_Opacity * edgeMask());
 }

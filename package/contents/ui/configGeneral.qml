@@ -19,6 +19,18 @@ KCM.SimpleKCM {
     property string cfg_inputMethod: "auto"
     property string cfg_inputMethodDefault: "auto"
 
+    property string cfg_layoutMode: "classic"
+    property string cfg_layoutModeDefault: "classic"
+    property alias cfg_titleSize: titleSizeSpin.value
+    property string cfg_textAlign: "left"
+    property string cfg_textAlignDefault: "left"
+    property alias cfg_artScale: artScaleSlider.value
+    property string cfg_posterAlign: "left"
+    property string cfg_posterAlignDefault: "left"
+    property alias cfg_posterLines: posterLinesSpin.value
+    property alias cfg_posterVizBehind: posterVizBehindCheckBox.checked
+    property alias cfg_posterVizOpacity: posterVizOpacitySlider.value
+    property alias cfg_posterClock: posterClockCheckBox.checked
     property alias cfg_showTimes: showTimesCheckBox.checked
     property string cfg_timeFormat: "total"
     property string cfg_timeFormatDefault: "total"
@@ -365,6 +377,145 @@ KCM.SimpleKCM {
             ]
             currentIndex: Math.max(0, ["total", "remaining"].indexOf(root.cfg_timeFormat))
             onActivated: root.cfg_timeFormat = currentValue
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Layout:")
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("Classic"),
+                    value: "classic"
+                },
+                {
+                    label: i18n("Mirrored"),
+                    value: "mirrored"
+                },
+                {
+                    label: i18n("Inline"),
+                    value: "inline"
+                },
+                {
+                    label: i18n("Hero wave"),
+                    value: "hero"
+                },
+                {
+                    label: i18n("Stacked"),
+                    value: "stacked"
+                },
+                {
+                    label: i18n("Poster"),
+                    value: "poster"
+                },
+                {
+                    label: i18n("Slim strip"),
+                    value: "strip"
+                }
+            ]
+            currentIndex: Math.max(0, ["classic", "mirrored", "inline", "hero", "stacked", "poster", "strip"].indexOf(root.cfg_layoutMode))
+            onActivated: root.cfg_layoutMode = currentValue
+        }
+
+        QQC.SpinBox {
+            id: titleSizeSpin
+            Kirigami.FormData.label: i18n("Title size:")
+            from: 9
+            to: 16
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Text alignment:")
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("Left"),
+                    value: "left"
+                },
+                {
+                    label: i18n("Centre"),
+                    value: "center"
+                },
+                {
+                    label: i18n("Right"),
+                    value: "right"
+                }
+            ]
+            currentIndex: Math.max(0, ["left", "center", "right"].indexOf(root.cfg_textAlign))
+            onActivated: root.cfg_textAlign = currentValue
+        }
+
+        RowLayout {
+            Kirigami.FormData.label: i18n("Cover size:")
+            QQC.Slider {
+                id: artScaleSlider
+                from: 60
+                to: 130
+                stepSize: 5
+                Layout.fillWidth: true
+            }
+            QQC.Label {
+                text: Math.round(artScaleSlider.value) + "%"
+                Layout.minimumWidth: 40
+            }
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Poster alignment:")
+            visible: root.cfg_layoutMode === "poster"
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("Left"),
+                    value: "left"
+                },
+                {
+                    label: i18n("Centre"),
+                    value: "center"
+                }
+            ]
+            currentIndex: Math.max(0, ["left", "center"].indexOf(root.cfg_posterAlign))
+            onActivated: root.cfg_posterAlign = currentValue
+        }
+
+        QQC.SpinBox {
+            id: posterLinesSpin
+            Kirigami.FormData.label: i18n("Title lines:")
+            visible: root.cfg_layoutMode === "poster"
+            from: 1
+            to: 2
+        }
+
+        QQC.CheckBox {
+            id: posterVizBehindCheckBox
+            Kirigami.FormData.label: i18n("Poster texture:")
+            visible: root.cfg_layoutMode === "poster"
+            text: i18n("Visualizer behind the title")
+        }
+
+        RowLayout {
+            Kirigami.FormData.label: i18n("Texture strength:")
+            visible: root.cfg_layoutMode === "poster" && posterVizBehindCheckBox.checked
+            QQC.Slider {
+                id: posterVizOpacitySlider
+                from: 0.1
+                to: 0.8
+                stepSize: 0.05
+                Layout.fillWidth: true
+            }
+            QQC.Label {
+                text: Math.round(posterVizOpacitySlider.value * 100) + "%"
+                Layout.minimumWidth: 40
+            }
+        }
+
+        QQC.CheckBox {
+            id: posterClockCheckBox
+            Kirigami.FormData.label: i18n("Large clock:")
+            visible: root.cfg_layoutMode === "poster"
+            text: i18n("Show elapsed time in large digits")
         }
 
         QQC.CheckBox {

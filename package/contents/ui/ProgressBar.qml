@@ -26,6 +26,7 @@ Item {
     property bool suppressed: false
     // Heights follow the HTML `.pb` variants, with and without time labels.
     implicitHeight: style === 9 ? 12 : style === 4 ? (showTimes ? 28 : 19) : style === 5 || style === 7 ? (showTimes ? 18 : 11) : (showTimes ? 18 : 9)
+    readonly property string elapsedText: positionClock.elapsedText
     readonly property string totalLabel: timeFormat === "remaining" ? positionClock.remainingText : positionClock.totalText
 
     // Audio frames advance playback; the clock retains its slow silent fallback.

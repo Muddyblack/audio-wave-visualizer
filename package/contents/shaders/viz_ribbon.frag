@@ -93,5 +93,5 @@ void main()
             color += silkStroke(d, 0.5, (1.0 - ripple.y) * 0.6);
         }
     }
-    fragColor = clamp(color, 0.0, 1.0) * qt_Opacity;
+    fragColor = clamp(color, 0.0, 1.0) * (qt_Opacity * edgeMask());
 }

@@ -6,6 +6,8 @@ import ".."
 Item {
     id: root
     required property var view
+    // Mirrored puts the cover column on the right.
+    property bool mirrored: false
     implicitWidth: view.configuration.showMpris ? 360 : 200
     implicitHeight: view.configuration.showMpris ? 104 : 84
     // Progress style 10 draws a ring around the cover instead of a bar; the
@@ -15,6 +17,7 @@ Item {
 
     RowLayout {
         anchors.fill: parent
+        layoutDirection: root.mirrored ? Qt.RightToLeft : Qt.LeftToRight
         anchors.leftMargin: root.view.configuration.showBg ? 10 : 0
         anchors.rightMargin: root.view.configuration.showBg ? 10 : 0
         anchors.topMargin: root.view.configuration.showBg ? 4 : 0
@@ -132,6 +135,8 @@ Item {
                 displayTrack: root.view.displayTrack
                 trackUnknown: root.view.trackUnknown
                 rawTrack: root.view.track
+                titleSize: root.view.configuration.titleSize ?? 11
+                horizontalAlignment: root.view.configuration.textAlign === "center" ? Text.AlignHCenter : root.view.configuration.textAlign === "right" ? Text.AlignRight : Text.AlignLeft
                 color: root.view.textColor
             }
 
@@ -141,6 +146,8 @@ Item {
                 secondary: true
                 artist: root.view.artist
                 sourceHint: root.view.sourceHint
+                titleSize: root.view.configuration.titleSize ?? 11
+                horizontalAlignment: root.view.configuration.textAlign === "center" ? Text.AlignHCenter : root.view.configuration.textAlign === "right" ? Text.AlignRight : Text.AlignLeft
                 color: root.view.textColor
             }
         }

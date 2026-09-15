@@ -67,6 +67,7 @@ layout(std140, binding = 0) uniform buf {
     float ribbonFullness;
     float particleCount;
     float rippleCount;
+    float edgeFade;
     vec4 color0;
     vec4 color1;
     vec4 color2;
@@ -403,4 +404,13 @@ vec4 tint(vec3 rgb, float alpha)
 vec4 htmlShadow(float glow)
 {
     return colorStop(int(floor(colorCount * 0.5))) * clamp(glow * glowAmount, 0.0, 1.0);
+}
+
+// Poster texture: fade both sides (transparent → opaque at 14 % and 86 %).
+float edgeMask()
+{
+    if (edgeFade < 0.5)
+        return 1.0;
+    float x = qt_TexCoord0.x;
+    return clamp(min(x, 1.0 - x) / 0.14, 0.0, 1.0);
 }

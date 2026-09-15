@@ -35,6 +35,7 @@ Canvas {
     property var peaks: []
     property var particles: []
     property var ripples: []
+    property bool edgeFade: false
     readonly property var colorStops: WaveMath.colorStops(waveColor, vizColorMode, vizPalette, coverColor1, coverColor2, hueReactive, hueReactive && !reducedMotion ? high : .5, !reducedMotion && (hueReactive || vizColorMode === "rainbow") ? visualFrameTime / 1000 : 0, reducedMotion)
     readonly property bool _colored: vizColorMode !== "solid" || hueReactive
     readonly property color _mainColor: _colored ? colorStops[0] : waveColor
@@ -166,8 +167,27 @@ Canvas {
             repaint();
     }
 
+    onEdgeFadeChanged: repaint()
+
     onPaint: {
         const ctx = getContext("2d");
+        paintFrame(ctx);
+        // Poster texture: fade both sides like the HTML's CSS mask.
+        if (edgeFade) {
+            ctx.save();
+            ctx.globalCompositeOperation = "destination-in";
+            const fade = ctx.createLinearGradient(0, 0, width, 0);
+            fade.addColorStop(0, Qt.rgba(0, 0, 0, 0));
+            fade.addColorStop(0.14, Qt.rgba(0, 0, 0, 1));
+            fade.addColorStop(0.86, Qt.rgba(0, 0, 0, 1));
+            fade.addColorStop(1, Qt.rgba(0, 0, 0, 0));
+            ctx.fillStyle = fade;
+            ctx.fillRect(0, 0, width, height);
+            ctx.restore();
+        }
+    }
+
+    function paintFrame(ctx) {
         ctx.reset();
         ctx.lineCap = "round";
         ctx.lineJoin = "round";

@@ -34,6 +34,8 @@ Item {
     property real ribbonFullness: 1
     property color coverColor1: waveColor
     property color coverColor2: waveColor
+    // Fades both sides; the poster layout uses the wave as a texture.
+    property bool edgeFade: false
     readonly property var peaks: motion.peaks
     readonly property var particles: motion.particles
     readonly property var ripples: motion.ripples
@@ -93,6 +95,7 @@ Item {
             peaks: root.peaks
             particles: root.particles
             ripples: root.ripples
+            edgeFade: root.edgeFade
         }
     }
 
@@ -131,6 +134,7 @@ Item {
             peaks: root.peaks
             particles: root.particles
             ripples: root.ripples
+            edgeFade: root.edgeFade
         }
     }
 }

@@ -14,7 +14,7 @@ New configuration keys alone do not mean their features are implemented.
 | 2 | Bass, mid, high, smoothed bass and attack analysis | Implemented; synthetic audio and deterministic analysis tests pass |
 | 3 | Visualizers 6–15, direction, colour modes, palettes, bloom, hue drift | Implemented in Canvas and shader families; 53 exact HTML-source comparisons pass on Qt; 42 GPU shader/Canvas rows measured on an OpenGL desktop; browser acceptance pending |
 | 4 | Progress styles 5–10 and time format | Implemented in the Classic layout with Plasma and Hyprland settings; Classic snapshots unchanged; browser acceptance pending |
-| 5 | Mirrored, inline, hero, stacked, strip, poster and orbit layouts | Not started; Classic extraction provides the shared components |
+| 5 | Mirrored, inline, hero, stacked, strip, poster and orbit layouts | Six layouts implemented (orbit pending); Classic snapshots unchanged; GPU parity unchanged |
 | 6 | Card materials, glass/liquid, depth and wallpaper sampling | Not started |
 | 7 | Artwork shapes/effects and control dock options | Not started; cover colour extraction is already available from phase 3 |
 | 8 | Richer track information and opt-in lyrics | Not started |
@@ -79,6 +79,21 @@ New configuration keys alone do not mean their features are implemented.
 - [x] `showTimes` and `timeFormat` (`-2:27` remaining), including the HTML's
   reduced bar heights without labels; Time only keeps its labels.
 - [x] Plasma and Hyprland settings expose the new styles and time options.
+
+### Phase 5 — layouts (orbit pending)
+
+- [x] Mirrored, Inline, Hero wave, Stacked, Poster and Slim strip, with the HTML
+  sizes, padding (card on/off), gaps, text scales and cover sizes (`artScale`).
+- [x] Shared layout parts (`layouts/Layout*.qml`) for cover + ring, progress,
+  wave, dock and texts; `code/Layouts.js` holds the size table and mode fallback.
+- [x] Poster: faded visualizer texture (`edgeFade` in both renderers, a shader
+  uniform in every family), accent meta line, 1–2 line title, large clock that
+  replaces the bar's time labels.
+- [x] `titleSize` and `textAlign` apply to Classic too (defaults unchanged).
+- [x] Plasma sizes the widget from the layout; Hyprland does so while
+  `widgetWidth`/`widgetHeight` stay at the 360 × 104 default.
+- [x] Plasma and Hyprland settings: layout, title size, alignment, cover size and
+  poster options. Orbit and the panel pill are not offered until implemented.
 
 ## Verification and limits
 
@@ -145,5 +160,6 @@ Current session artifacts (temporary, not committed):
 ## Next work
 
 Fix the Chrome reference capture so phases 3–4 can be compared with the browser,
-then continue with **phase 5: layouts** (mirrored, inline, hero, stacked, strip,
-poster, orbit). The studio settings interface and presets are still future phases.
+then finish **phase 5 with the orbit layout** (polar visualizer in both renderers,
+ring styles, cover pulse). The studio settings interface and presets are still
+future phases.

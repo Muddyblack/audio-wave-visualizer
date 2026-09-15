@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 import QtQuick
 import "layouts" as Layouts
+import "../code/Layouts.js" as LayoutSizes
 
 Item {
     id: root
@@ -142,10 +143,60 @@ Item {
         Loader {
             id: layoutLoader
             anchors.fill: parent
-            // Further modes plug into this shared layout boundary in phase 5.
-            sourceComponent: Layouts.Classic {
-                view: root
-            }
+            sourceComponent: ({
+                    mirrored: mirroredLayout,
+                    inline: inlineLayout,
+                    hero: heroLayout,
+                    stacked: stackedLayout,
+                    poster: posterLayout,
+                    strip: stripLayout
+                })[root.layoutMode] ?? classicLayout
+        }
+    }
+
+    readonly property string layoutMode: LayoutSizes.mode(configuration)
+
+    Component {
+        id: classicLayout
+        Layouts.Classic {
+            view: root
+        }
+    }
+    Component {
+        id: mirroredLayout
+        Layouts.Classic {
+            view: root
+            mirrored: true
+        }
+    }
+    Component {
+        id: inlineLayout
+        Layouts.Inline {
+            view: root
+        }
+    }
+    Component {
+        id: heroLayout
+        Layouts.Hero {
+            view: root
+        }
+    }
+    Component {
+        id: stackedLayout
+        Layouts.Stacked {
+            view: root
+        }
+    }
+    Component {
+        id: posterLayout
+        Layouts.Poster {
+            view: root
+        }
+    }
+    Component {
+        id: stripLayout
+        Layouts.Strip {
+            view: root
         }
     }
 }
