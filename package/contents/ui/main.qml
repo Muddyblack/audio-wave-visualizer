@@ -30,6 +30,27 @@ PlasmoidItem {
         accentColor: Kirigami.Theme.highlightColor
         systemTextColor: Kirigami.Theme.textColor
         defaultFontFamily: Kirigami.Theme.defaultFont.family
+        coverPalette: artColors
+        Image {
+            id: paletteImage
+            source: (view.configuration.accentFromArt || view.configuration.vizColorMode === "cover") ? view.artUrl : ""
+            sourceSize: Qt.size(64, 64)
+            width: 64
+            height: 64
+            visible: false
+            asynchronous: true
+            onStatusChanged: {
+                if (status === Image.Ready)
+                    artColors.update();
+            }
+        }
+        Kirigami.ImageColors {
+            id: artColors
+            source: paletteImage.status === Image.Ready ? paletteImage : null
+            fallbackDominant: view.baseWaveColor
+            fallbackDominantContrasting: view.baseWaveColor
+            fallbackHighlight: view.baseWaveColor
+        }
         fallbackIcon: Component {
             Kirigami.Icon {
                 source: view.desktopEntry !== "" ? view.desktopEntry : "audio-x-generic-symbolic"

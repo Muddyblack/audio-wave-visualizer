@@ -23,6 +23,8 @@ Item {
     readonly property int totalSeconds: Math.max(0, Math.floor(lengthValue / unitsPerSecond))
     readonly property string elapsedText: formatTime(elapsedSeconds)
     readonly property string totalText: formatTime(totalSeconds)
+    readonly property int remainingSeconds: Math.max(0, Math.floor((lengthValue - displayedPosition) / unitsPerSecond))
+    readonly property string remainingText: "-" + formatTime(remainingSeconds)
     readonly property bool ticking: active && playing && !!player && lengthValue > 0 && displayedPosition < lengthValue
 
     function clamp(value, min, max) {

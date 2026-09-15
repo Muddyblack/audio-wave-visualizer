@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Measure Canvas CPU work with synthetic audio; this does not measure GPU power.
+"""Measure software CPU work with synthetic audio; this does not measure GPU power.
 
 Save a pre-change copy of package/ first, then compare it with the working tree:
   python3 tests/benchmark_rendering.py --baseline /tmp/audio-power-before/package
+  python3 tests/benchmark_rendering.py --style 15 --renderer waveform
 
 The software scene graph intentionally omits the new GPU glow. This isolates
 the CPU raster work removed by moving the blur out of Canvas; use the real
@@ -26,6 +27,16 @@ def measure(package, args):
     if not (ui / "WaveCanvas.qml").is_file():
         raise SystemExit(f"No WaveCanvas.qml in {ui}")
     with tempfile.TemporaryDirectory(prefix="audio-render-benchmark-") as directory:
+        motion = """
+            visualFrameTime: root.ticks * 33
+            bass: 0.5 + 0.3 * Math.sin(root.ticks * 0.1)
+            mid: 0.6
+            high: 0.4
+            vizColorMode: "palette"
+        """ if args.style >= 6 else ""
+        if args.style >= 6 and args.renderer == "waveform":
+            motion += "\n            attack: root.ticks % 15 === 0\n"
+        component = "Waveform" if args.renderer == "waveform" else "WaveCanvas"
         config = Path(directory) / "benchmark.qml"
         config.write_text(f"""import QtQuick
 import {json.dumps(ui.as_uri())} as Shared
@@ -37,11 +48,12 @@ Window {{
     property int ticks: 0
     Repeater {{
         model: {args.copies}
-        Shared.WaveCanvas {{
+        Shared.{component} {{
             x: index * 330; y: 20; width: 320; height: 44
             visualizerType: {args.style}
             hasAudio: true
             glowWave: true
+            {motion}
             bars: {{
                 const values = [];
                 for (let i = 0; i < 24; i++)
@@ -78,7 +90,9 @@ Window {{
         after = resource.getrusage(resource.RUSAGE_CHILDREN)
         output = result.stdout + result.stderr
         ticks = re.search(r"BENCH_TICKS (\d+)", output)
-        if result.returncode or not ticks:
+        if result.returncode or not ticks or any(message in output for message in (
+            "ReferenceError:", "TypeError:", "Binding loop detected", "Cannot assign",
+        )):
             raise SystemExit(output or f"qml exited with {result.returncode}")
         # Report other QML warnings rather than allowing broken rendering to
         # look like a successful low-CPU result.
@@ -94,15 +108,18 @@ Window {{
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--baseline", type=Path, required=True)
+    parser.add_argument("--baseline", type=Path)
     parser.add_argument("--copies", type=int, choices=range(1, 5), default=3)
-    parser.add_argument("--style", type=int, choices=range(6), default=1)
+    parser.add_argument("--style", type=int, choices=range(16), default=1)
+    parser.add_argument("--renderer", choices=("canvas", "waveform"), default="canvas",
+                        help="waveform includes shared particles, peaks and ripples")
     parser.add_argument("--seconds", type=float, default=5)
     args = parser.parse_args()
     if args.seconds <= 0 or not shutil.which("qml"):
         parser.error("qml must be on PATH and --seconds must be positive")
     print("Software Canvas CPU comparison; GPU glow/compositor/watts are not measured.")
-    measure(args.baseline, args)
+    if args.baseline:
+        measure(args.baseline, args)
     measure(Path(__file__).resolve().parents[1] / "package", args)
 
 

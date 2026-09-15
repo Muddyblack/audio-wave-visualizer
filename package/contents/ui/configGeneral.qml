@@ -19,6 +19,23 @@ KCM.SimpleKCM {
     property string cfg_inputMethod: "auto"
     property string cfg_inputMethodDefault: "auto"
 
+    property alias cfg_showTimes: showTimesCheckBox.checked
+    property string cfg_timeFormat: "total"
+    property string cfg_timeFormatDefault: "total"
+    property string cfg_vizDirection: "up"
+    property string cfg_vizDirectionDefault: "up"
+    property string cfg_vizColorMode: "solid"
+    property string cfg_vizColorModeDefault: "solid"
+    property string cfg_vizPalette: "aurora"
+    property string cfg_vizPaletteDefault: "aurora"
+    property alias cfg_hueReactive: hueReactiveCheckBox.checked
+    property alias cfg_bloom: bloomSlider.value
+    property alias cfg_ribbonCurvature: ribbonCurvatureSlider.value
+    property alias cfg_ribbonFullness: ribbonFullnessSlider.value
+    property alias cfg_accentFromArt: accentFromArtCheckBox.checked
+    property alias cfg_reducedMotion: reducedMotionCheckBox.checked
+    property alias cfg_simpleRender: simpleRenderCheckBox.checked
+
     property alias cfg_showMpris: showMprisCheckBox.checked
     property alias cfg_alwaysVisible: alwaysVisibleCheckBox.checked
     property alias cfg_useSystemAccent: useSystemAccentCheckBox.checked
@@ -159,13 +176,195 @@ KCM.SimpleKCM {
         QQC.ComboBox {
             id: visualizerTypeCombo
             Kirigami.FormData.label: i18n("Visualizer Style:")
-            model: [i18n("Smooth Wave"), i18n("Rounded Bars"), i18n("Mirror Bars"), i18n("Tech Line"), i18n("Floating Dots"), i18n("Floating Dots Bold")]
+            model: [i18n("Smooth Wave"), i18n("Rounded Bars"), i18n("Mirror Bars"), i18n("Tech Line"), i18n("Floating Dots"), i18n("Floating Dots Bold"), i18n("Peak Bars"), i18n("LED Meter"), i18n("Mountain"), i18n("Oscilloscope"), i18n("Ribbon"), i18n("Radial Burst"), i18n("Pixel Matrix"), i18n("Pulse Orb"), i18n("Sparkles"), i18n("Silk Ribbon")]
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Direction:")
+            visible: [1, 6, 7, 8].indexOf(root.cfg_visualizerType) !== -1
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("Up"),
+                    value: "up"
+                },
+                {
+                    label: i18n("Down"),
+                    value: "down"
+                }
+            ]
+            currentIndex: Math.max(0, ["up", "down"].indexOf(root.cfg_vizDirection))
+            onActivated: root.cfg_vizDirection = currentValue
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Wave colours:")
+            visible: true
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("Accent"),
+                    value: "solid"
+                },
+                {
+                    label: i18n("Gradient"),
+                    value: "gradient"
+                },
+                {
+                    label: i18n("From cover"),
+                    value: "cover"
+                },
+                {
+                    label: i18n("Palette"),
+                    value: "palette"
+                },
+                {
+                    label: i18n("Rainbow"),
+                    value: "rainbow"
+                }
+            ]
+            currentIndex: Math.max(0, ["solid", "gradient", "cover", "palette", "rainbow"].indexOf(root.cfg_vizColorMode))
+            onActivated: root.cfg_vizColorMode = currentValue
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Palette:")
+            visible: root.cfg_vizColorMode === "palette"
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("Aurora"),
+                    value: "aurora"
+                },
+                {
+                    label: i18n("Ember"),
+                    value: "ember"
+                },
+                {
+                    label: i18n("Ice"),
+                    value: "ice"
+                },
+                {
+                    label: i18n("Grove"),
+                    value: "grove"
+                },
+                {
+                    label: i18n("Iris"),
+                    value: "iris"
+                },
+                {
+                    label: i18n("Coral"),
+                    value: "coral"
+                }
+            ]
+            currentIndex: Math.max(0, ["aurora", "ember", "ice", "grove", "iris", "coral"].indexOf(root.cfg_vizPalette))
+            onActivated: root.cfg_vizPalette = currentValue
+        }
+
+        QQC.CheckBox {
+            id: hueReactiveCheckBox
+            text: i18n("Music-reactive hue")
+            visible: true
+        }
+
+        QQC.CheckBox {
+            id: accentFromArtCheckBox
+            text: i18n("Use accent from cover")
+            visible: true
+        }
+
+        QQC.CheckBox {
+            id: reducedMotionCheckBox
+            text: i18n("Reduce decorative motion")
+            visible: true
+        }
+
+        QQC.CheckBox {
+            id: simpleRenderCheckBox
+            text: i18n("Use software renderer")
+            visible: true
+        }
+
+        RowLayout {
+            Kirigami.FormData.label: i18n("Bloom:")
+            visible: root.cfg_glowWave
+            QQC.Slider {
+                id: bloomSlider
+                from: 0
+                to: 1.5
+                stepSize: 0.05
+                Layout.fillWidth: true
+            }
+            QQC.Label {
+                text: Math.round(bloomSlider.value * 100) + "%"
+                Layout.minimumWidth: 40
+            }
+        }
+
+        RowLayout {
+            Kirigami.FormData.label: i18n("Ribbon curvature:")
+            visible: root.cfg_visualizerType === 15
+            QQC.Slider {
+                id: ribbonCurvatureSlider
+                from: 0.5
+                to: 1.25
+                stepSize: 0.05
+                Layout.fillWidth: true
+            }
+            QQC.Label {
+                text: Math.round(ribbonCurvatureSlider.value * 100) + "%"
+                Layout.minimumWidth: 40
+            }
+        }
+
+        RowLayout {
+            Kirigami.FormData.label: i18n("Ribbon fullness:")
+            visible: root.cfg_visualizerType === 15
+            QQC.Slider {
+                id: ribbonFullnessSlider
+                from: 0.6
+                to: 1.3
+                stepSize: 0.05
+                Layout.fillWidth: true
+            }
+            QQC.Label {
+                text: Math.round(ribbonFullnessSlider.value * 100) + "%"
+                Layout.minimumWidth: 40
+            }
         }
 
         QQC.ComboBox {
             id: progressBarStyleCombo
             Kirigami.FormData.label: i18n("Progress Bar Style:")
-            model: [i18n("Glassy Sleek"), i18n("Ultra Minimal"), i18n("Glowing Pulse"), i18n("Bold Pill"), i18n("Waveform")]
+            model: [i18n("Glassy Sleek"), i18n("Ultra Minimal"), i18n("Glowing Pulse"), i18n("Bold Pill"), i18n("Waveform"), i18n("Squiggle"), i18n("Segmented"), i18n("Dotted"), i18n("Capsule"), i18n("Time only"), i18n("Cover ring")]
+        }
+
+        QQC.CheckBox {
+            id: showTimesCheckBox
+            Kirigami.FormData.label: i18n("Time labels:")
+            text: i18n("Elapsed and total time under the bar")
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Time format:")
+            visible: root.cfg_showTimes || progressBarStyleCombo.currentIndex === 9
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("1:31 · 3:58"),
+                    value: "total"
+                },
+                {
+                    label: i18n("1:31 · -2:27"),
+                    value: "remaining"
+                }
+            ]
+            currentIndex: Math.max(0, ["total", "remaining"].indexOf(root.cfg_timeFormat))
+            onActivated: root.cfg_timeFormat = currentValue
         }
 
         QQC.CheckBox {

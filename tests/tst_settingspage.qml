@@ -47,11 +47,15 @@ TestCase {
     function test_draftChangesRequireApplyAndButtonsWork() {
         page.setValue("monitor", "all");
         page.setValue("sensitivity", 175);
+        page.setValue("detailFields", ["player", "album"]);
+        page.setValue("layoutMode", "poster");
         compare(applied.count, 0);
         mouseClick(findChild(page, "applySettings"));
         compare(applied.count, 1);
         compare(applied.signalArguments[0][0].monitor, "all");
         compare(applied.signalArguments[0][0].sensitivity, 175);
+        compare(applied.signalArguments[0][0].detailFields, ["player", "album"]);
+        compare(applied.signalArguments[0][0].layoutMode, "poster");
         mouseClick(findChild(page, "resetSettings"));
         compare(reset.count, 1);
         mouseClick(findChild(page, "closeSettings"));

@@ -38,11 +38,32 @@ install: ## install test copy to local Plasma session
 doctor: ## diagnose "the bars don't move" (paste output into issues)
 	@bash package/contents/code/doctor.sh
 
-shaders: ## rebuild the waveform shader after editing visualizer.frag
-	@if command -v qsb >/dev/null 2>&1; then \
-	  qsb --glsl "100es,120,150" --hlsl 50 --msl 12 -o package/contents/shaders/visualizer.frag.qsb package/contents/shaders/visualizer.frag; \
+test: ## run the full test suite (software rendering, no desktop needed)
+	@if command -v qmltestrunner >/dev/null 2>&1; then \
+	  python3 tests/run.py; \
 	else \
-	  nix develop --command qsb --glsl "100es,120,150" --hlsl 50 --msl 12 -o package/contents/shaders/visualizer.frag.qsb package/contents/shaders/visualizer.frag; \
+	  nix develop --command python3 tests/run.py; \
+	fi
+
+parity: ## GPU shader vs Canvas on this desktop (opens a window; saves image pairs)
+	@dir="$${TMPDIR:-/tmp}/audio-visualizer-parity"; rm -rf "$$dir"; mkdir -p "$$dir"; \
+	run="qmltestrunner -input tests/tst_rendererparity.qml -import tests/stubs"; \
+	command -v qmltestrunner >/dev/null 2>&1 || run="nix develop --command $$run"; \
+	QT_QPA_PLATFORMTHEME=generic QML_DISABLE_DISK_CACHE=1 $$run > "$$dir/test.log" 2>&1; status=$$?; \
+	grep -E 'parity |^FAIL|^Totals' "$$dir/test.log" | sed 's/^QDEBUG *: *[^ ]* *//'; \
+	echo "image pairs and log: $$dir"; exit $$status
+
+compare-html: ## render styles 6-15 from docs/index.html and the widget; writes report.html
+	@out="$${TMPDIR:-/tmp}/audio-visualizer-html"; \
+	run="python3 tests/compare_html_visualizers.py --reference qt --extended --output $$out"; \
+	command -v qmltestrunner >/dev/null 2>&1 || run="nix develop --command $$run"; \
+	$$run; status=$$?; echo "report: $$out/report.html"; exit $$status
+
+shaders: ## rebuild every waveform shader family and its shared GLSL prelude
+	@if command -v qsb >/dev/null 2>&1; then \
+	  python3 package/contents/shaders/build_shaders.py; \
+	else \
+	  nix develop --command python3 package/contents/shaders/build_shaders.py; \
 	fi
 
 pack: ## build .plasmoid archive

@@ -31,11 +31,11 @@ Rectangle {
         },
         {
             title: "Wave and media",
-            keys: ["visualizerType", "progressBarStyle", "showMpris", "showArtThumb", "lineWidth", "fillWave", "glowWave"]
+            keys: ["visualizerType", "progressBarStyle", "showTimes", "timeFormat", "showMpris", "showArtThumb", "lineWidth", "fillWave", "glowWave", "vizDirection", "ribbonCurvature", "ribbonFullness", "reducedMotion", "simpleRender"]
         },
         {
             title: "Colors",
-            keys: ["waveColor", "textColor", "useSystemAccent", "customColor", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor"]
+            keys: ["waveColor", "textColor", "useSystemAccent", "customColor", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "hueReactive", "bloom", "accentFromArt"]
         },
         {
             title: "Background",
@@ -51,6 +51,9 @@ Rectangle {
             sensitivity: [10, 300, 5],
             noiseReduction: [0, 1, 0.05],
             lineWidth: [1, 8, 0.1],
+            bloom: [0, 1.5, 0.05],
+            ribbonCurvature: [0.5, 1.25, 0.05],
+            ribbonFullness: [0.6, 1.3, 0.05],
             bgRadius: [0, 30, 1],
             artBgDim: [0, 1, 0.01],
             artBgBlur: [0, 1, 0.01],
@@ -77,19 +80,40 @@ Rectangle {
                         value: value
                     }));
         if (key === "visualizerType")
-            return ["Smooth wave", "Rounded bars", "Mirror bars", "Tech line", "Floating dots", "Floating dots bold"].map((label, value) => ({
+            return ["Smooth wave", "Rounded bars", "Mirror bars", "Tech line", "Floating dots", "Floating dots bold", qsTr("Peak Bars"), qsTr("LED Meter"), qsTr("Mountain"), qsTr("Oscilloscope"), qsTr("Ribbon"), qsTr("Radial Burst"), qsTr("Pixel Matrix"), qsTr("Pulse Orb"), qsTr("Sparkles"), qsTr("Silk Ribbon")].map((label, value) => ({
                         label: label,
                         value: value
                     }));
         if (key === "progressBarStyle")
-            return ["Glassy sleek", "Ultra minimal", "Glowing pulse", "Bold pill", "Waveform"].map((label, value) => ({
+            return ["Glassy sleek", "Ultra minimal", "Glowing pulse", "Bold pill", "Waveform", qsTr("Squiggle"), qsTr("Segmented"), qsTr("Dotted"), qsTr("Capsule"), qsTr("Time only"), qsTr("Cover ring")].map((label, value) => ({
                         label: label,
                         value: value
                     }));
-        return [];
+        const extra = {
+            timeFormat: [[qsTr("1:31 · 3:58"), "total"], [qsTr("1:31 · -2:27"), "remaining"]],
+            vizDirection: [[qsTr("Up"), "up"], [qsTr("Down"), "down"]],
+            vizColorMode: [[qsTr("Accent"), "solid"], [qsTr("Gradient"), "gradient"], [qsTr("From cover"), "cover"], [qsTr("Palette"), "palette"], [qsTr("Rainbow"), "rainbow"]],
+            vizPalette: [[qsTr("Aurora"), "aurora"], [qsTr("Ember"), "ember"], [qsTr("Ice"), "ice"], [qsTr("Grove"), "grove"], [qsTr("Iris"), "iris"], [qsTr("Coral"), "coral"]]
+        };
+        return (extra[key] || []).map(pair => ({
+                    label: pair[0],
+                    value: pair[1]
+                }));
     }
     function label(key) {
         const labels = {
+            showTimes: qsTr("Time labels"),
+            timeFormat: qsTr("Time format"),
+            vizDirection: qsTr("Direction"),
+            vizColorMode: qsTr("Wave colours"),
+            vizPalette: qsTr("Palette"),
+            hueReactive: qsTr("Music-reactive hue"),
+            bloom: qsTr("Bloom"),
+            ribbonCurvature: qsTr("Ribbon curvature"),
+            ribbonFullness: qsTr("Ribbon fullness"),
+            accentFromArt: qsTr("Use accent from cover"),
+            reducedMotion: qsTr("Reduce decorative motion"),
+            simpleRender: qsTr("Use software renderer"),
             verticalPosition: "Vertical position",
             desktopLayer: "Behind application windows",
             showMpris: "Show media information",

@@ -109,6 +109,7 @@ ShellRoot {
         widgetWidth: widgetWidth,
         widgetHeight: widgetHeight,
         verticalPosition: verticalPosition,
+        hAnchor: "center",
         monitor: monitor,
         waveColor: waveColor.toString(),
         textColor: textColor.toString(),
