@@ -215,9 +215,10 @@ def browser_capture(args, output):
     if not browser:
         raise RuntimeError("Chromium/Chrome is required for --reference chromium")
     with tempfile.TemporaryDirectory(prefix="audio-html-chrome-") as profile:
-        command = [browser, "--headless", "--disable-gpu", "--disable-dev-shm-usage",
-            "--disable-breakpad", "--disable-crash-reporter", "--disable-crashpad-for-testing",
-            "--no-first-run", "--no-default-browser-check", "--force-device-scale-factor=1",
+        # Current Chrome hangs in --dump-dom with legacy --headless or with the
+        # crash-reporter/crashpad disabling flags.
+        command = [browser, "--headless=new", "--virtual-time-budget=5000",
+            "--disable-gpu", "--disable-dev-shm-usage", "--no-first-run", "--no-default-browser-check", "--force-device-scale-factor=1",
             f"--user-data-dir={profile}", "--dump-dom", (output / "reference.html").as_uri()]
         if args.browser_no_sandbox:
             command.insert(1, "--no-sandbox")

@@ -108,10 +108,11 @@ New configuration keys alone do not mean their features are implemented.
   one CPU core respectively. These are synthetic CPU measurements, not GPU or
   compositor power measurements. The longer Classic A/B run found no sustained
   CPU regression; startup and short-run measurements vary.
-- **Browser appearance is unverified.** Headless Chrome is installed, but
-  `compare_html_visualizers.py --reference chromium` timed out after 40 s in its
-  `--dump-dom` capture. Equal Qt pixels do not establish identical Chromium
-  antialiasing or bloom.
+- **Browser comparison runs.** `compare_html_visualizers.py --reference chromium
+  --extended` now captures headless Chrome (it previously hung on legacy
+  `--headless` and the crashpad flags). All 53 pairs render; none are pixel-exact
+  (antialiasing), maximum normalized RGB RMSE 0.052. Bloom rows are not yet
+  covered, and progress styles 5–10 are not in this harness.
 - **Deliberate differences:** existing styles 0–5 preserve the installed widget's
   appearance; production particles are capped at 32 rather than the demo's 220;
   reduced motion freezes decorative phases and hues that the HTML still animates.
