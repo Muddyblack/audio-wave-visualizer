@@ -12,6 +12,7 @@ Item {
     property real visualFrameTime: 0
     property color accentColor: "#ffffff"
     property real cornerRadius: 14
+    property real band: 2
     readonly property real progress: clock.progress
 
     onVisualFrameTimeChanged: {
@@ -61,10 +62,11 @@ Item {
             const ctx = getContext("2d");
             ctx.reset();
             const w = width, h = height;
-            if (w <= 4 || h <= 4)
+            const band = ring.band;
+            if (w <= band * 2 || h <= band * 2)
                 return;
             const r = Math.min(ring.cornerRadius, w / 2, h / 2);
-            const inner = Math.max(0, r - 2);
+            const inner = Math.max(0, r - band);
             const start = -Math.PI / 2;
             const end = start + sweepStep / 720 * Math.PI * 2;
             const reach = w + h;
@@ -81,7 +83,7 @@ Item {
                 ctx.clip();
                 ctx.beginPath();
                 ctx.roundedRect(0, 0, w, h, r, r);
-                ctx.roundedRect(2, 2, w - 4, h - 4, inner, inner);
+                ctx.roundedRect(band, band, w - band * 2, h - band * 2, inner, inner);
                 ctx.fillStyle = color;
                 ctx.fill();
                 ctx.restore();

@@ -16,6 +16,10 @@ Item {
     property Component fallbackIcon
     // Plasma supplies ImageColors; other hosts sample a tiny static cover.
     property var coverPalette: null
+    // "card" follows layoutMode; hosts use "pill" or "pillicon" in panels.
+    property string presentation: "card"
+    // Pill click with pillClick "popup": the host opens the full card.
+    signal popupRequested
     readonly property color baseWaveColor: configuration.useSystemAccent ? accentColor : configuration.customColor
     readonly property color coverColor1: coverPalette ? coverPalette.dominant : (coverSampler.item?.primary ?? baseWaveColor)
     readonly property color coverColor2: coverPalette ? coverPalette.dominantContrast : (coverSampler.item?.secondary ?? baseWaveColor)
@@ -68,10 +72,11 @@ Item {
     readonly property string lyricLine: lyricsLoader.item?.currentLine ?? ""
 
     readonly property string detailsMode: !hasPlayer || trackUnknown ? "off" : (configuration.hoverDetails ?? "off")
-    readonly property bool flipEnabled: detailsMode === "flip" && layoutMode !== "strip"
+    readonly property bool panelForm: layoutMode === "pill" || layoutMode === "pillicon"
+    readonly property bool flipEnabled: detailsMode === "flip" && layoutMode !== "strip" && !panelForm
     readonly property bool flipped: flipEnabled && cardHovered
     // Tooltip and drawer are shown by the host in a popup outside the card.
-    readonly property bool detailsVisible: (detailsMode === "tooltip" || detailsMode === "drawer" || (detailsMode === "flip" && layoutMode === "strip")) && cardHovered
+    readonly property bool detailsVisible: (detailsMode === "tooltip" || detailsMode === "drawer" || (detailsMode === "flip" && (layoutMode === "strip" || panelForm))) && cardHovered
     readonly property string detailsPopupMode: detailsMode === "drawer" ? "drawer" : "tooltip"
     // Solid cards are light: system text and controls switch to dark ink.
     readonly property bool lightCard: configuration.showBg && configuration.surfaceStyle === "solid" && !(configuration.showMpris && configuration.artBg && artUrl !== "") && (configuration.autoContrast ?? true)
@@ -162,6 +167,34 @@ Item {
     property bool onBattery: false
     readonly property bool batterySaving: onBattery && (configuration.batterySaver ?? false)
     readonly property bool lifted: (configuration.hoverLift ?? false) && cardHovered
+
+    function togglePlayback() {
+        const p = player;
+        if (!p || p.canTogglePlaying === false)
+            return;
+        if (p.togglePlaying)
+            p.togglePlaying();
+        else if (p.playPause)
+            p.playPause();
+        else if (p.PlayPause)
+            p.PlayPause();
+    }
+    function previousTrack() {
+        const p = player;
+        if (p && p.canGoPrevious !== false)
+            (p.previous || p.Previous || function () {}).call(p);
+    }
+    function nextTrack() {
+        const p = player;
+        if (p && p.canGoNext !== false)
+            (p.next || p.Next || function () {}).call(p);
+    }
+    function activatePill() {
+        if ((configuration.pillClick ?? "popup") === "toggle")
+            togglePlayback();
+        else
+            popupRequested();
+    }
 
     WheelHandler {
         objectName: "volumeWheel"
@@ -292,10 +325,27 @@ Item {
             configuration: root.configuration
             artUrl: root.artUrl
             hasPlayer: root.hasPlayer
+            cardRadius: root.panelForm ? root.height / 2 : root.configuration.bgRadius
             accentColor: root.waveColor
             coverColor1: root.coverColor1
             coverColor2: root.coverColor2
             bass: root.visualizer.bass ?? 0
+        }
+
+        // Panel forms: hover tint without a card, and a click on the pill.
+        Rectangle {
+            anchors.fill: parent
+            visible: root.panelForm && !root.configuration.showBg && root.cardHovered
+            radius: height / 2
+            color: Qt.rgba(1, 1, 1, 0x14 / 255)
+        }
+        MouseArea {
+            objectName: "pillClickArea"
+            anchors.fill: parent
+            enabled: root.panelForm
+            visible: enabled
+            cursorShape: Qt.PointingHandCursor
+            onClicked: root.activatePill()
         }
 
         Loader {
@@ -316,7 +366,9 @@ Item {
                     stacked: stackedLayout,
                     poster: posterLayout,
                     strip: stripLayout,
-                    orbit: orbitLayout
+                    orbit: orbitLayout,
+                    pill: pillLayout,
+                    pillicon: pillIconLayout
                 })[root.layoutMode] ?? classicLayout
         }
 
@@ -414,7 +466,7 @@ Item {
         }
     }
 
-    readonly property string layoutMode: LayoutSizes.mode(configuration)
+    readonly property string layoutMode: presentation !== "card" ? presentation : LayoutSizes.mode(configuration)
 
     Component {
         id: classicLayout
@@ -450,6 +502,18 @@ Item {
     Component {
         id: posterLayout
         Layouts.Poster {
+            view: root
+        }
+    }
+    Component {
+        id: pillLayout
+        Layouts.Pill {
+            view: root
+        }
+    }
+    Component {
+        id: pillIconLayout
+        Layouts.PillIcon {
             view: root
         }
     }

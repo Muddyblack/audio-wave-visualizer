@@ -34,6 +34,10 @@ Rectangle {
             keys: ["artShape", "artBorder", "artGlow", "artTilt", "artReflect", "artGrayPaused", "artFallback", "artClick", "dockStyle", "showSkipButtons", "showShuffleRepeat", "showAlbum", "showSource", "showPlayerSwitch", "marquee", "showLyrics", "hoverDetails", "idleText", "idleAmbient", "dimWhenPaused", "fadeVizWhenPaused", "hoverLift", "scrollVolume", "batterySaver"]
         },
         {
+            title: "Panel pill",
+            keys: ["pillContent", "pillArt", "pillEq", "pillProgress", "pillControls", "pillMaxWidth", "pillClick"]
+        },
+        {
             title: "Audio",
             keys: ["numBars", "framerate", "sensitivity", "noiseReduction", "inputMethod"]
         },
@@ -65,6 +69,7 @@ Rectangle {
             posterLines: [1, 2, 1],
             posterVizOpacity: [0.1, 0.8, 0.05],
             orbitReach: [0.5, 1.3, 0.05],
+            pillMaxWidth: [140, 420, 10],
             ribbonCurvature: [0.5, 1.25, 0.05],
             ribbonFullness: [0.6, 1.3, 0.05],
             bgRadius: [0, 30, 1],
@@ -103,7 +108,12 @@ Rectangle {
                         value: value
                     }));
         const extra = {
-            layoutMode: [[qsTr("Classic"), "classic"], [qsTr("Mirrored"), "mirrored"], [qsTr("Inline"), "inline"], [qsTr("Hero wave"), "hero"], [qsTr("Stacked"), "stacked"], [qsTr("Poster"), "poster"], [qsTr("Slim strip"), "strip"], [qsTr("Orbit"), "orbit"]],
+            layoutMode: [[qsTr("Classic"), "classic"], [qsTr("Mirrored"), "mirrored"], [qsTr("Inline"), "inline"], [qsTr("Hero wave"), "hero"], [qsTr("Stacked"), "stacked"], [qsTr("Poster"), "poster"], [qsTr("Slim strip"), "strip"], [qsTr("Orbit"), "orbit"], [qsTr("Panel pill"), "pill"], [qsTr("Panel icon"), "pillicon"]],
+            pillContent: [[qsTr("Title"), "title"], [qsTr("Title · Artist"), "title-artist"], [qsTr("Artist — Title"), "artist-title"]],
+            pillEq: [[qsTr("None"), "off"], [qsTr("Static bars"), "static"], [qsTr("Live bars"), "live"], [qsTr("Mini visualizer"), "wave"]],
+            pillProgress: [[qsTr("None"), "off"], [qsTr("Underline"), "underline"], [qsTr("Ring around the cover"), "ring"]],
+            pillControls: [[qsTr("None"), "none"], [qsTr("Play/pause"), "play"], [qsTr("Previous, play, next"), "all"]],
+            pillClick: [[qsTr("Open the full card"), "popup"], [qsTr("Play/pause"), "toggle"]],
             orbitStyle: [[qsTr("Bars"), "bars"], [qsTr("Wave"), "wave"], [qsTr("Dots"), "dots"], [qsTr("Ribbon"), "ribbon"], [qsTr("Sparks"), "sparks"]],
             textAlign: [[qsTr("Left"), "left"], [qsTr("Centre"), "center"], [qsTr("Right"), "right"]],
             artShape: [[qsTr("Sharp"), "sharp"], [qsTr("Rounded"), "rounded"], [qsTr("Squircle"), "squircle"], [qsTr("Circle"), "circle"], [qsTr("Vinyl"), "vinyl"], [qsTr("CD"), "cd"]],
@@ -153,6 +163,13 @@ Rectangle {
             hoverLift: qsTr("Lift on hover"),
             scrollVolume: qsTr("Scroll to change volume"),
             batterySaver: qsTr("Battery saver (20 Hz, no glow)"),
+            pillContent: qsTr("Pill text"),
+            pillArt: qsTr("Pill cover"),
+            pillEq: qsTr("Pill motion"),
+            pillProgress: qsTr("Pill progress"),
+            pillControls: qsTr("Pill buttons"),
+            pillMaxWidth: qsTr("Pill maximum width"),
+            pillClick: qsTr("Pill click"),
             showSkipButtons: qsTr("Previous and next buttons"),
             showShuffleRepeat: qsTr("Shuffle and repeat buttons"),
             glassTint: qsTr("Liquid tint"),

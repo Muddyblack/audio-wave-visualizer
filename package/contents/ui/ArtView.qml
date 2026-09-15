@@ -10,6 +10,8 @@ Item {
     property string desktopEntry: ""
     property Component fallbackIcon
     property var view: null
+    // Corner radius of the "rounded" shape (the panel pill uses 6 px).
+    property real roundedRadius: 10
 
     readonly property var cfg: view ? view.configuration : ({})
     readonly property string shape: cfg.artShape ?? "rounded"
@@ -22,7 +24,7 @@ Item {
 
     readonly property bool coverReady: artImg.status === Image.Ready
     readonly property bool disc: shape === "vinyl" || shape === "cd"
-    readonly property real cornerRadius: shape === "sharp" ? 2 : shape === "squircle" ? width * 0.3 : (shape === "circle" || disc) ? width / 2 : 10
+    readonly property real cornerRadius: shape === "sharp" ? 2 : shape === "squircle" ? width * 0.3 : (shape === "circle" || disc) ? width / 2 : roundedRadius
     // Radius for the progress ring drawn 4 px outside (HTML `.artwrap .rg`).
     readonly property real ringRadius: (shape === "circle" || disc) ? (width + 8) / 2 : shape === "squircle" ? (width + 8) * 0.32 : 14
     readonly property bool showFallbackArt: !coverReady && fallback !== "icon" && title !== ""

@@ -19,7 +19,7 @@ New configuration keys alone do not mean their features are implemented.
 | 7 | Artwork shapes/effects and control dock options | Implemented; Classic snapshots unchanged; tilt has no perspective and reflection needs the GPU scene graph |
 | 8 | Richer track information and opt-in lyrics | Implemented; format detail and live Plasma/Hyprland popup checks pending |
 | 9 | Idle/paused behaviour, interaction and power options | Implemented; system reduced-motion preference and live battery checks pending |
-| 10 | Panel pill/icon and popup; Waybar/Quickshell bar integration | Not started |
+| 10 | Panel pill/icon and popup; Waybar/Quickshell bar integration | Implemented; not yet checked in a live Plasma panel or Hyprland bar |
 | 11 | Studio settings, search, preview, presets and diagnostics | Not started; current settings pages expose the new waveform controls |
 | 12 | README/gallery, release screenshots and version | Not started; developer workflow documentation is updated |
 
@@ -182,6 +182,27 @@ New configuration keys alone do not mean their features are implemented.
   preference (`Kirigami.Units.longDuration == 0`) is not followed yet; battery
   switching was not checked on a live desktop.
 
+### Phase 10 — panel
+
+- [x] Shared pill (`layouts/Pill.qml`): cover with optional ring, EQ (`off`,
+  `static` without redraws, `live` on the audio clock, `wave` mini visualizer),
+  Title · Artist / Artist — Title, play or prev/play/next buttons, underline
+  progress, width following the content up to `pillMaxWidth`. Panel icon
+  (`layouts/PillIcon.qml`): cover with EQ badge, or a mini orbit ring.
+- [x] `pillClick`: `popup` asks the host for the full card, `toggle` plays and
+  pauses. Without a card the pill gets the hover tint; with one it is fully
+  rounded. Hover details use the tooltip popup.
+- [x] Plasma: `compactRepresentation` in panels while `autoPillInPanel` is on
+  (vertical panels always use the icon); the popup is Classic with a card,
+  glass unless a material is chosen, radius ≥ 14 and a lifted shadow.
+- [x] Hyprland: `hyprland/PanelPill.qml` bar module (reads `hyprland.json`,
+  shares the desktop feeder, reads audio only for live/wave EQ or the open
+  popup, popup card below the pill) and `run.sh --waybar` (JSON lines from
+  `playerctl`, tested with a fake `playerctl`).
+- [x] Plasma and Hyprland settings for the pill keys; `layoutMode` pill/pillicon.
+- [ ] Not yet checked in a live Plasma panel or Hyprland bar (the bar module
+  loads in Quickshell; the Plasma compact representation passed lint only).
+
 ## Verification and limits
 
 - **Full suite:** `make test` (`python3 tests/run.py`) passes: **258 QML tests**,
@@ -247,9 +268,8 @@ Current session artifacts (temporary, not committed):
 ## Next work
 
 Fix the Chrome reference capture so phases 3–4 can be compared with the browser,
-then continue with **phase 10: panel** (Plasma compact pill/icon with popup
-card, Quickshell bar module and Waybar JSON). The studio settings interface and
-presets are still future phases.
+then continue with **phase 11: studio settings** (tabs, search, live preview,
+built-in and user presets, diagnostics) for Plasma and Hyprland.
 
 ### Open follow-ups (before presets / release)
 

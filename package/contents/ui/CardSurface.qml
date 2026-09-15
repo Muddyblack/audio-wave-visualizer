@@ -15,7 +15,8 @@ Item {
     // A loaded cover background (the "Cover" material) wins over surfaceStyle.
     readonly property bool coverActive: configuration.showMpris && configuration.artBg && artUrl !== ""
     readonly property string material: ["glass", "liquid", "solid", "atmosphere"].indexOf(configuration.surfaceStyle) !== -1 && !coverActive ? configuration.surfaceStyle : ""
-    readonly property real cardRadius: configuration.bgRadius
+    // Layouts may override it: the panel pill is fully rounded.
+    property real cardRadius: configuration.bgRadius
     readonly property var shadowLayers: configuration.cardShadow === "lifted" ? [
         {
             y: 24,
@@ -69,7 +70,7 @@ Item {
         id: backgroundCard
         anchors.fill: parent
         visible: false
-        radius: root.configuration.bgRadius
+        radius: root.cardRadius
         color: "transparent"
         clip: true
 
@@ -131,7 +132,7 @@ Item {
         Rectangle {
             anchors.fill: parent
             color: "transparent"
-            radius: root.configuration.bgRadius
+            radius: root.cardRadius
             border.color: Qt.rgba(1, 1, 1, 0.12)
             border.width: 1
         }
@@ -162,7 +163,7 @@ Item {
     Rectangle {
         id: cardRoundMask
         anchors.fill: parent
-        radius: root.configuration.bgRadius
+        radius: root.cardRadius
         color: "black"
         visible: false
         layer.enabled: true
@@ -177,7 +178,7 @@ Item {
         id: artScrim
         anchors.fill: parent
         antialiasing: true
-        radius: root.configuration.bgRadius
+        radius: root.cardRadius
         visible: root.configuration.showBg && root.configuration.artBg && bgArtImg.status === Image.Ready
         // 0 = art fully visible · 1 = strongly dimmed for readability.
         // Also inherits the background transparency so it fades with the card.

@@ -453,6 +453,47 @@ TestCase {
         fuzzyCompare(player.volume, 0.54, 1e-6);
         verify(findChild(subject, "volumeOsd").shown);
     }
+    function test_panelPill() {
+        subject.presentation = "pill";
+        subject.configuration = Object.assign({}, defaults, {
+            pillControls: "all",
+            pillProgress: "underline",
+            pillContent: "artist-title"
+        });
+        waitForRendering(subject);
+        compare(subject.implicitHeight, 30);
+        verify(subject.implicitWidth > 60 && subject.implicitWidth <= 300, "The pill follows its content up to the maximum width");
+        compare(findChild(subject, "pillPrimary").text, "Artist");
+        compare(findChild(subject, "pillSecondary").text, "Track");
+        verify(findChild(subject, "pillUnderline").visible);
+        mouseClick(findChild(subject, "pillPlayArea"));
+        compare(player.playCalls, 1);
+        mouseClick(findChild(subject, "pillNextArea"));
+        compare(player.nextCalls, 1);
+        let popups = 0;
+        subject.popupRequested.connect(() => popups++);
+        mouseClick(findChild(subject, "pillClickArea"), 8, 15);
+        compare(popups, 1, "A click on the pill asks the host for the full card");
+        subject.configuration = Object.assign({}, defaults, {
+            pillClick: "toggle"
+        });
+        mouseClick(findChild(subject, "pillClickArea"), 8, 15);
+        compare(player.playCalls, 2, "pillClick toggle plays/pauses");
+        compare(popups, 1);
+    }
+    function test_panelIcon() {
+        subject.presentation = "pillicon";
+        subject.configuration = Object.assign({}, defaults, {
+            pillEq: "live"
+        });
+        compare(subject.implicitWidth, 30);
+        compare(subject.implicitHeight, 30);
+        verify(findChild(subject, "pillIconArt") !== null);
+        subject.configuration = Object.assign({}, defaults, {
+            pillEq: "wave"
+        });
+        verify(findChild(subject, "pillOrbit").visible, "The mini orbit ring surrounds the cover");
+    }
     function test_defaultCardLoadsNoMaterialLayers() {
         subject.configuration = Object.assign({}, defaults, {
             showBg: true

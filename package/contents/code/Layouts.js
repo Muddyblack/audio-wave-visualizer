@@ -10,21 +10,27 @@ const SIZES = {
     strip: [460, 46],
     poster: [360, 112],
     orbit: [250, 332],
+    pillicon: [30, 30],
     compact: [200, 84]
 };
 
 // Layouts the widget can draw; other stored values fall back to Classic.
-const MODES = ["classic", "mirrored", "inline", "hero", "stacked", "poster", "strip", "orbit"];
+const MODES = ["classic", "mirrored", "inline", "hero", "stacked", "poster", "strip", "orbit", "pill", "pillicon"];
 
 function mode(configuration) {
+    const value = configuration.layoutMode || "classic";
+    // The panel forms show the track regardless of showMpris.
+    if (value === "pill" || value === "pillicon")
+        return value;
     if (!configuration.showMpris)
         return "compact";
-    const value = configuration.layoutMode || "classic";
     return MODES.indexOf(value) === -1 ? "classic" : value;
 }
 
 function size(configuration) {
     const current = mode(configuration);
+    if (current === "pill")
+        return [configuration.pillMaxWidth || 300, 30];
     if (current === "poster")
         return [360, configuration.posterLines === 2 ? 138 : 112];
     return SIZES[current];

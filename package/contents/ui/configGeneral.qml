@@ -64,6 +64,19 @@ KCM.SimpleKCM {
     property alias cfg_hoverLift: hoverLiftCheckBox.checked
     property alias cfg_scrollVolume: scrollVolumeCheckBox.checked
     property alias cfg_batterySaver: batterySaverCheckBox.checked
+    property alias cfg_autoPillInPanel: autoPillInPanelCheckBox.checked
+    property string cfg_pillContent: "title-artist"
+    property string cfg_pillContentDefault: "title-artist"
+    property alias cfg_pillArt: pillArtCheckBox.checked
+    property string cfg_pillEq: "static"
+    property string cfg_pillEqDefault: "static"
+    property string cfg_pillProgress: "off"
+    property string cfg_pillProgressDefault: "off"
+    property string cfg_pillControls: "none"
+    property string cfg_pillControlsDefault: "none"
+    property alias cfg_pillMaxWidth: pillMaxWidthSlider.value
+    property string cfg_pillClick: "popup"
+    property string cfg_pillClickDefault: "popup"
     property string cfg_hoverDetails: "off"
     property string cfg_hoverDetailsDefault: "off"
     property var cfg_detailFields: ["album", "genre", "format", "player"]
@@ -378,6 +391,148 @@ KCM.SimpleKCM {
             text: i18n("On battery: at most 20 Hz and no glow")
         }
 
+        Kirigami.Separator {
+            Kirigami.FormData.isSection: true
+            Kirigami.FormData.label: i18n("Panel pill")
+        }
+
+        QQC.CheckBox {
+            id: autoPillInPanelCheckBox
+            Kirigami.FormData.label: i18n("In panels:")
+            text: i18n("Show as a pill automatically")
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Text:")
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("Title"),
+                    value: "title"
+                },
+                {
+                    label: i18n("Title · Artist"),
+                    value: "title-artist"
+                },
+                {
+                    label: i18n("Artist — Title"),
+                    value: "artist-title"
+                }
+            ]
+            currentIndex: Math.max(0, ["title", "title-artist", "artist-title"].indexOf(root.cfg_pillContent))
+            onActivated: root.cfg_pillContent = currentValue
+        }
+
+        QQC.CheckBox {
+            id: pillArtCheckBox
+            Kirigami.FormData.label: i18n("Cover:")
+            text: i18n("Small cover in the pill")
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Motion:")
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("None"),
+                    value: "off"
+                },
+                {
+                    label: i18n("Static bars (no redraws)"),
+                    value: "static"
+                },
+                {
+                    label: i18n("Live bars"),
+                    value: "live"
+                },
+                {
+                    label: i18n("Mini visualizer"),
+                    value: "wave"
+                }
+            ]
+            currentIndex: Math.max(0, ["off", "static", "live", "wave"].indexOf(root.cfg_pillEq))
+            onActivated: root.cfg_pillEq = currentValue
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Progress:")
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("None"),
+                    value: "off"
+                },
+                {
+                    label: i18n("Underline"),
+                    value: "underline"
+                },
+                {
+                    label: i18n("Ring around the cover"),
+                    value: "ring"
+                }
+            ]
+            currentIndex: Math.max(0, ["off", "underline", "ring"].indexOf(root.cfg_pillProgress))
+            onActivated: root.cfg_pillProgress = currentValue
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Buttons:")
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("None"),
+                    value: "none"
+                },
+                {
+                    label: i18n("Play/pause"),
+                    value: "play"
+                },
+                {
+                    label: i18n("Previous, play, next"),
+                    value: "all"
+                }
+            ]
+            currentIndex: Math.max(0, ["none", "play", "all"].indexOf(root.cfg_pillControls))
+            onActivated: root.cfg_pillControls = currentValue
+        }
+
+        RowLayout {
+            Kirigami.FormData.label: i18n("Maximum width:")
+            QQC.Slider {
+                id: pillMaxWidthSlider
+                from: 140
+                to: 420
+                stepSize: 10
+                Layout.fillWidth: true
+            }
+            QQC.Label {
+                text: Math.round(pillMaxWidthSlider.value) + " px"
+                Layout.minimumWidth: 48
+            }
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Click:")
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("Open the full card"),
+                    value: "popup"
+                },
+                {
+                    label: i18n("Play/pause"),
+                    value: "toggle"
+                }
+            ]
+            currentIndex: Math.max(0, ["popup", "toggle"].indexOf(root.cfg_pillClick))
+            onActivated: root.cfg_pillClick = currentValue
+        }
+
         QQC.CheckBox {
             id: reducedMotionCheckBox
             text: i18n("Reduce decorative motion")
@@ -505,9 +660,17 @@ KCM.SimpleKCM {
                 {
                     label: i18n("Orbit"),
                     value: "orbit"
+                },
+                {
+                    label: i18n("Panel pill"),
+                    value: "pill"
+                },
+                {
+                    label: i18n("Panel icon"),
+                    value: "pillicon"
                 }
             ]
-            currentIndex: Math.max(0, ["classic", "mirrored", "inline", "hero", "stacked", "poster", "strip", "orbit"].indexOf(root.cfg_layoutMode))
+            currentIndex: Math.max(0, ["classic", "mirrored", "inline", "hero", "stacked", "poster", "strip", "orbit", "pill", "pillicon"].indexOf(root.cfg_layoutMode))
             onActivated: root.cfg_layoutMode = currentValue
         }
 

@@ -14,7 +14,24 @@ PlasmoidItem {
     Layout.minimumHeight: shouldShow ? Math.min(64, LayoutSizes.size(plasmoid.configuration)[1]) : 0
     Layout.preferredWidth: shouldShow ? LayoutSizes.size(plasmoid.configuration)[0] : 0
     Layout.preferredHeight: shouldShow ? LayoutSizes.size(plasmoid.configuration)[1] : 0
-    preferredRepresentation: fullRepresentation
+    readonly property bool inPanel: Plasmoid.formFactor === PlasmaCore.Types.Horizontal || Plasmoid.formFactor === PlasmaCore.Types.Vertical
+    // In panels the pill (or, in vertical panels, the icon) opens the full card.
+    preferredRepresentation: inPanel && plasmoid.configuration.autoPillInPanel ? compactRepresentation : fullRepresentation
+    // The popup card: Classic with a card, glass unless a material is chosen,
+    // at least 14 px radius, lifted shadow and no hover details.
+    readonly property var popupConfiguration: {
+        const source = plasmoid.configuration, copy = {};
+        for (const key of source.keys())
+            copy[key] = source[key];
+        return Object.assign(copy, {
+            layoutMode: "classic",
+            showBg: true,
+            surfaceStyle: source.showBg ? source.surfaceStyle : "glass",
+            bgRadius: Math.max(14, source.bgRadius),
+            cardShadow: "lifted",
+            hoverDetails: "off"
+        });
+    }
     Plasmoid.backgroundHints: "NoBackground"
 
     Mpris.Mpris2Model {
@@ -45,9 +62,35 @@ PlasmoidItem {
         batterySaverActive: powerSource.onBattery
         active: root.visible && root.shouldShow && root.width > 0 && root.height > 0
     }
+    compactRepresentation: VisualizerView {
+        id: pill
+        presentation: Plasmoid.formFactor === PlasmaCore.Types.Vertical || plasmoid.configuration.layoutMode === "pillicon" ? "pillicon" : "pill"
+        configuration: plasmoid.configuration
+        visualizer: vis
+        player: mpris2Model.currentPlayer
+        isPlaying: player?.playbackStatus === Mpris.PlaybackStatus.Playing
+        playerCount: mpris2Model.playerRows
+        switchPlayer: mpris2Model.cyclePlayer
+        onBattery: powerSource.onBattery
+        accentColor: Kirigami.Theme.highlightColor
+        systemTextColor: Kirigami.Theme.textColor
+        defaultFontFamily: Kirigami.Theme.defaultFont.family
+        Layout.minimumWidth: shouldShow ? implicitWidth : 0
+        Layout.preferredWidth: shouldShow ? implicitWidth : 0
+        Layout.maximumWidth: shouldShow ? implicitWidth : 0
+        Layout.minimumHeight: Plasmoid.formFactor === PlasmaCore.Types.Vertical ? implicitHeight : 0
+        onPopupRequested: root.expanded = !root.expanded
+        fallbackIcon: Component {
+            Kirigami.Icon {
+                source: pill.desktopEntry !== "" ? pill.desktopEntry : "audio-x-generic-symbolic"
+            }
+        }
+    }
     fullRepresentation: VisualizerView {
         id: view
-        configuration: plasmoid.configuration
+        configuration: root.inPanel ? root.popupConfiguration : plasmoid.configuration
+        Layout.preferredWidth: LayoutSizes.size(configuration)[0]
+        Layout.preferredHeight: LayoutSizes.size(configuration)[1]
         visualizer: vis
         player: mpris2Model.currentPlayer
         playerCount: mpris2Model.playerRows
