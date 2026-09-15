@@ -27,7 +27,7 @@ Rectangle {
         },
         {
             title: "Layout",
-            keys: ["layoutMode", "titleSize", "textAlign", "artScale", "posterAlign", "posterLines", "posterVizBehind", "posterVizOpacity", "posterClock"]
+            keys: ["layoutMode", "titleSize", "textAlign", "artScale", "posterAlign", "posterLines", "posterVizBehind", "posterVizOpacity", "posterClock", "orbitStyle", "orbitReach", "orbitRotate", "orbitCoverPulse"]
         },
         {
             title: "Audio",
@@ -60,6 +60,7 @@ Rectangle {
             artScale: [60, 130, 5],
             posterLines: [1, 2, 1],
             posterVizOpacity: [0.1, 0.8, 0.05],
+            orbitReach: [0.5, 1.3, 0.05],
             ribbonCurvature: [0.5, 1.25, 0.05],
             ribbonFullness: [0.6, 1.3, 0.05],
             bgRadius: [0, 30, 1],
@@ -98,7 +99,8 @@ Rectangle {
                         value: value
                     }));
         const extra = {
-            layoutMode: [[qsTr("Classic"), "classic"], [qsTr("Mirrored"), "mirrored"], [qsTr("Inline"), "inline"], [qsTr("Hero wave"), "hero"], [qsTr("Stacked"), "stacked"], [qsTr("Poster"), "poster"], [qsTr("Slim strip"), "strip"]],
+            layoutMode: [[qsTr("Classic"), "classic"], [qsTr("Mirrored"), "mirrored"], [qsTr("Inline"), "inline"], [qsTr("Hero wave"), "hero"], [qsTr("Stacked"), "stacked"], [qsTr("Poster"), "poster"], [qsTr("Slim strip"), "strip"], [qsTr("Orbit"), "orbit"]],
+            orbitStyle: [[qsTr("Bars"), "bars"], [qsTr("Wave"), "wave"], [qsTr("Dots"), "dots"], [qsTr("Ribbon"), "ribbon"], [qsTr("Sparks"), "sparks"]],
             textAlign: [[qsTr("Left"), "left"], [qsTr("Centre"), "center"], [qsTr("Right"), "right"]],
             posterAlign: [[qsTr("Left"), "left"], [qsTr("Centre"), "center"]],
             timeFormat: [[qsTr("1:31 · 3:58"), "total"], [qsTr("1:31 · -2:27"), "remaining"]],
@@ -120,6 +122,10 @@ Rectangle {
             posterVizBehind: qsTr("Poster visualizer texture"),
             posterVizOpacity: qsTr("Poster texture strength"),
             posterClock: qsTr("Poster large clock"),
+            orbitStyle: qsTr("Orbit ring"),
+            orbitReach: qsTr("Orbit ring reach"),
+            orbitRotate: qsTr("Rotate orbit ring"),
+            orbitCoverPulse: qsTr("Cover pulses with bass"),
             timeFormat: qsTr("Time format"),
             vizDirection: qsTr("Direction"),
             vizColorMode: qsTr("Wave colours"),

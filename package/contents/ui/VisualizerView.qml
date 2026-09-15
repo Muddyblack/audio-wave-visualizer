@@ -149,7 +149,8 @@ Item {
                     hero: heroLayout,
                     stacked: stackedLayout,
                     poster: posterLayout,
-                    strip: stripLayout
+                    strip: stripLayout,
+                    orbit: orbitLayout
                 })[root.layoutMode] ?? classicLayout
         }
     }
@@ -190,6 +191,12 @@ Item {
     Component {
         id: posterLayout
         Layouts.Poster {
+            view: root
+        }
+    }
+    Component {
+        id: orbitLayout
+        Layouts.Orbit {
             view: root
         }
     }

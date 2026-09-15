@@ -208,7 +208,7 @@ TestCase {
     }
 
     function test_layouts_data() {
-        return [].concat(...["classic", "mirrored", "inline", "hero", "stacked", "poster", "strip"].map(mode => [
+        return [].concat(...["classic", "mirrored", "inline", "hero", "stacked", "poster", "strip", "orbit"].map(mode => [
                 {
                     tag: mode + "-card",
                     mode: mode,
@@ -240,8 +240,30 @@ TestCase {
             verify(bar !== null && bar.visible && bar.width > 60 && bar.x + bar.width <= subject.width + 1 && bar.y + bar.height <= subject.height + 1, "progress bar laid out");
         const play = findChild(subject, "playArea");
         verify(play !== null && play.visible && play.width > 0, "dock laid out");
-        const wave = findChild(subject, data.mode === "poster" ? "posterTexture" : "canvasLoader");
+        const wave = findChild(subject, data.mode === "poster" ? "posterTexture" : data.mode === "orbit" ? "orbitCanvas" : "canvasLoader");
         verify(wave !== null && wave.width > 60 && wave.height >= 20, "wave laid out");
+    }
+    function test_orbitSparksAreBoundedAndStop() {
+        subject.configuration = Object.assign({}, defaults, {
+            layoutMode: "orbit",
+            orbitStyle: "sparks"
+        });
+        subject.width = 250;
+        subject.height = 332;
+        backend.bars = [1000, 1000, 1000, 1000];
+        const orbit = findChild(subject, "orbitCanvas");
+        verify(orbit !== null);
+        for (let i = 0; i < 60; i++)
+            backend.frameTimeMs += 33;
+        verify(orbit.particles.length > 0, "Loud audio spawns sparks");
+        verify(orbit.particles.length <= 32, "Sparks stay within the uniform budget");
+        subject.configuration = Object.assign({}, defaults, {
+            layoutMode: "orbit",
+            orbitStyle: "sparks",
+            reducedMotion: true
+        });
+        compare(orbit.particles.length, 0, "Reduced motion removes sparks");
+        backend.bars = [300, 700, 900, 400];
     }
     function test_posterClockReplacesTimeLabels() {
         subject.configuration = Object.assign({}, defaults, {

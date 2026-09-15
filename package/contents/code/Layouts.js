@@ -9,11 +9,12 @@ const SIZES = {
     stacked: [320, 200],
     strip: [460, 46],
     poster: [360, 112],
+    orbit: [250, 332],
     compact: [200, 84]
 };
 
 // Layouts the widget can draw; other stored values fall back to Classic.
-const MODES = ["classic", "mirrored", "inline", "hero", "stacked", "poster", "strip"];
+const MODES = ["classic", "mirrored", "inline", "hero", "stacked", "poster", "strip", "orbit"];
 
 function mode(configuration) {
     if (!configuration.showMpris)

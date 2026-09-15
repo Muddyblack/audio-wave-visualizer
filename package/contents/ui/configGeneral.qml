@@ -31,6 +31,11 @@ KCM.SimpleKCM {
     property alias cfg_posterVizBehind: posterVizBehindCheckBox.checked
     property alias cfg_posterVizOpacity: posterVizOpacitySlider.value
     property alias cfg_posterClock: posterClockCheckBox.checked
+    property string cfg_orbitStyle: "bars"
+    property string cfg_orbitStyleDefault: "bars"
+    property alias cfg_orbitReach: orbitReachSlider.value
+    property alias cfg_orbitRotate: orbitRotateCheckBox.checked
+    property alias cfg_orbitCoverPulse: orbitCoverPulseCheckBox.checked
     property alias cfg_showTimes: showTimesCheckBox.checked
     property string cfg_timeFormat: "total"
     property string cfg_timeFormatDefault: "total"
@@ -411,9 +416,13 @@ KCM.SimpleKCM {
                 {
                     label: i18n("Slim strip"),
                     value: "strip"
+                },
+                {
+                    label: i18n("Orbit"),
+                    value: "orbit"
                 }
             ]
-            currentIndex: Math.max(0, ["classic", "mirrored", "inline", "hero", "stacked", "poster", "strip"].indexOf(root.cfg_layoutMode))
+            currentIndex: Math.max(0, ["classic", "mirrored", "inline", "hero", "stacked", "poster", "strip", "orbit"].indexOf(root.cfg_layoutMode))
             onActivated: root.cfg_layoutMode = currentValue
         }
 
@@ -516,6 +525,67 @@ KCM.SimpleKCM {
             Kirigami.FormData.label: i18n("Large clock:")
             visible: root.cfg_layoutMode === "poster"
             text: i18n("Show elapsed time in large digits")
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Orbit ring:")
+            visible: root.cfg_layoutMode === "orbit"
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("Bars"),
+                    value: "bars"
+                },
+                {
+                    label: i18n("Wave"),
+                    value: "wave"
+                },
+                {
+                    label: i18n("Dots"),
+                    value: "dots"
+                },
+                {
+                    label: i18n("Ribbon"),
+                    value: "ribbon"
+                },
+                {
+                    label: i18n("Sparks"),
+                    value: "sparks"
+                }
+            ]
+            currentIndex: Math.max(0, ["bars", "wave", "dots", "ribbon", "sparks"].indexOf(root.cfg_orbitStyle))
+            onActivated: root.cfg_orbitStyle = currentValue
+        }
+
+        RowLayout {
+            Kirigami.FormData.label: i18n("Ring reach:")
+            visible: root.cfg_layoutMode === "orbit"
+            QQC.Slider {
+                id: orbitReachSlider
+                from: 0.5
+                to: 1.3
+                stepSize: 0.05
+                Layout.fillWidth: true
+            }
+            QQC.Label {
+                text: Math.round(orbitReachSlider.value * 100) + "%"
+                Layout.minimumWidth: 40
+            }
+        }
+
+        QQC.CheckBox {
+            id: orbitRotateCheckBox
+            Kirigami.FormData.label: i18n("Ring rotation:")
+            visible: root.cfg_layoutMode === "orbit"
+            text: i18n("Slowly rotate while playing")
+        }
+
+        QQC.CheckBox {
+            id: orbitCoverPulseCheckBox
+            Kirigami.FormData.label: i18n("Cover pulse:")
+            visible: root.cfg_layoutMode === "orbit"
+            text: i18n("Cover breathes with the bass")
         }
 
         QQC.CheckBox {

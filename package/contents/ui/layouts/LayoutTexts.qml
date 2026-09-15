@@ -9,7 +9,9 @@ ColumnLayout {
     required property var view
     property real titleFactor: 1
     property real artistSize: 0.82
-    readonly property int alignment: view.configuration.textAlign === "center" ? Text.AlignHCenter : view.configuration.textAlign === "right" ? Text.AlignRight : Text.AlignLeft
+    // Orbit always centres its texts.
+    property int alignmentOverride: -1
+    readonly property int alignment: alignmentOverride >= 0 ? alignmentOverride : view.configuration.textAlign === "center" ? Text.AlignHCenter : view.configuration.textAlign === "right" ? Text.AlignRight : Text.AlignLeft
     spacing: 0
 
     TrackText {

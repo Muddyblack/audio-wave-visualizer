@@ -14,7 +14,7 @@ New configuration keys alone do not mean their features are implemented.
 | 2 | Bass, mid, high, smoothed bass and attack analysis | Implemented; synthetic audio and deterministic analysis tests pass |
 | 3 | Visualizers 6–15, direction, colour modes, palettes, bloom, hue drift | Implemented in Canvas and shader families; 53 exact HTML-source comparisons pass on Qt; 42 GPU shader/Canvas rows measured on an OpenGL desktop; browser acceptance pending |
 | 4 | Progress styles 5–10 and time format | Implemented in the Classic layout with Plasma and Hyprland settings; Classic snapshots unchanged; browser acceptance pending |
-| 5 | Mirrored, inline, hero, stacked, strip, poster and orbit layouts | Six layouts implemented (orbit pending); Classic snapshots unchanged; GPU parity unchanged |
+| 5 | Mirrored, inline, hero, stacked, strip, poster and orbit layouts | Implemented; orbit ring is Canvas-only (no shader family yet); Classic snapshots unchanged; GPU parity unchanged |
 | 6 | Card materials, glass/liquid, depth and wallpaper sampling | Not started |
 | 7 | Artwork shapes/effects and control dock options | Not started; cover colour extraction is already available from phase 3 |
 | 8 | Richer track information and opt-in lyrics | Not started |
@@ -80,7 +80,16 @@ New configuration keys alone do not mean their features are implemented.
   reduced bar heights without labels; Time only keeps its labels.
 - [x] Plasma and Hyprland settings expose the new styles and time options.
 
-### Phase 5 — layouts (orbit pending)
+### Phase 5 — layouts
+
+- [x] Orbit (250 × 332): cover in the centre, `OrbitCanvas.qml` + `code/OrbitDraw.js`
+  translate `drawOrbit` — bars, wave, dots, ribbon and sparks, mirrored ring
+  values, conic colour gradient, reach, rotation (`t·0.2`, audio-frame clock),
+  bass cover pulse. Sparks are capped at 32 and advance once per audio
+  timestamp; reduced motion removes them and stops rotation.
+- [ ] Orbit has no ShaderEffect family yet (plan C6/P1). It rasterizes a
+  box-sized Canvas per audio frame on every scene graph; measure before relying
+  on it for the heaviest presets.
 
 - [x] Mirrored, Inline, Hero wave, Stacked, Poster and Slim strip, with the HTML
   sizes, padding (card on/off), gaps, text scales and cover sizes (`artScale`).
@@ -160,6 +169,17 @@ Current session artifacts (temporary, not committed):
 ## Next work
 
 Fix the Chrome reference capture so phases 3–4 can be compared with the browser,
-then finish **phase 5 with the orbit layout** (polar visualizer in both renderers,
-ring styles, cover pulse). The studio settings interface and presets are still
-future phases.
+then continue with **phase 6: card materials and depth** (glass, liquid,
+solid, atmosphere, shadows, edge highlight, grain, bass pulse). The studio
+settings interface and presets are still future phases.
+
+### Open follow-ups (before presets / release)
+
+- [ ] **Orbit shader family** (`viz_orbit.frag`): GPU version of `OrbitDraw.js`
+  for bars, wave, dots, ribbon and sparks (≤32 particles as uniforms), added to
+  `build_shaders.py`, `WaveShader`-style loader and `make parity` rows. First
+  benchmark the Canvas ring against a shader style with `benchmark_rendering.py`;
+  if it costs noticeably more, do this before continuing. Must be done before
+  the Orbit, Halo and Sunburst presets are accepted (`measure_power.py` A/B).
+- [ ] Pulse Orb palette/rainbow differ most from Chrome (RMSE ≈ 0.05); check.
+- [ ] Browser comparison for glow rows and progress styles 5–10.
