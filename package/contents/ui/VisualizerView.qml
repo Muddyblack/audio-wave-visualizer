@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import QtQuick.Controls.Basic as Controls
 import "layouts" as Layouts
 import "../code/Layouts.js" as LayoutSizes
 
@@ -74,7 +75,12 @@ Item {
     readonly property string detailsMode: !hasPlayer || trackUnknown ? "off" : (configuration.hoverDetails ?? "off")
     readonly property bool panelForm: layoutMode === "pill" || layoutMode === "pillicon"
     readonly property bool flipEnabled: detailsMode === "flip" && layoutMode !== "strip" && !panelForm
-    readonly property bool flipped: flipEnabled && cardHovered
+    property bool detailsOpen: false
+    readonly property bool flipped: flipEnabled && detailsOpen
+    onFlipEnabledChanged: {
+        if (!flipEnabled)
+            detailsOpen = false;
+    }
     // Tooltip and drawer are shown by the host in a popup outside the card.
     readonly property bool detailsVisible: (detailsMode === "tooltip" || detailsMode === "drawer" || (detailsMode === "flip" && (layoutMode === "strip" || panelForm))) && cardHovered
     readonly property string detailsPopupMode: detailsMode === "drawer" ? "drawer" : "tooltip"
@@ -262,6 +268,7 @@ Item {
     }
 
     onPlayerChanged: {
+        detailsOpen = false;
         zoomOpen = false;
         artUrl = "";
         _refreshArtUrl();
@@ -274,6 +281,8 @@ Item {
 
     Item {
         id: front
+        objectName: "playbackFace"
+        enabled: !root.flipped && frontTurn.angle === 0
         anchors.fill: parent
         visible: root.shouldShow
         // No clip: text and control shadows may extend beyond the card.
@@ -314,7 +323,7 @@ Item {
             angle: root.flipped ? -180 : 0
             Behavior on angle {
                 NumberAnimation {
-                    duration: 600
+                    duration: (root.configuration.reducedMotion ?? false) ? 0 : 350
                     easing.type: Easing.InOutCubic
                 }
             }
@@ -434,6 +443,7 @@ Item {
         active: root.flipEnabled && root.shouldShow
         sourceComponent: Item {
             id: backFace
+            enabled: root.flipped && backTurn.angle === 0
             objectName: "flipBack"
             opacity: Math.abs(backTurn.angle) < 90 ? 1 : 0
             transform: Rotation {
@@ -446,7 +456,7 @@ Item {
                 angle: root.flipped ? 0 : 180
                 Behavior on angle {
                     NumberAnimation {
-                        duration: 600
+                        duration: (root.configuration.reducedMotion ?? false) ? 0 : 350
                         easing.type: Easing.InOutCubic
                     }
                 }
@@ -463,6 +473,38 @@ Item {
                 view: root
                 mode: "back"
             }
+        }
+    }
+
+    // This control stays outside both transformed faces. Hovering the card
+    // must never hide playback controls or move the way back to them.
+    Controls.ToolButton {
+        objectName: "flipDetailsButton"
+        anchors.top: parent.top
+        anchors.right: parent.right
+        anchors.margins: 4
+        width: 22
+        height: 22
+        visible: root.flipEnabled && root.shouldShow && !root.zoomOpen
+        focusPolicy: Qt.StrongFocus
+        text: root.flipped ? "×" : "i"
+        Accessible.name: root.flipped ? "Return to playback controls" : "Show track details"
+        Controls.ToolTip.visible: hovered
+        Controls.ToolTip.text: Accessible.name
+        Controls.ToolTip.delay: 500
+        onClicked: root.detailsOpen = !root.detailsOpen
+        Keys.onEscapePressed: root.detailsOpen = false
+        contentItem: Text {
+            text: parent.text
+            color: root.textColor
+            font.pixelSize: 14
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+        background: Rectangle {
+            radius: width / 2
+            color: parent.hovered ? "#55303030" : "#33202020"
+            border.color: "#33ffffff"
         }
     }
 

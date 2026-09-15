@@ -43,6 +43,27 @@ Item {
         displayedPosition = anchorPosition;
     }
 
+    // Both linear bars and cover rings seek in the player's native units.
+    function seekToFraction(fraction) {
+        const p = player;
+        if (!p || p.canControl === false || p.canSeek === false || p.positionSupported === false)
+            return false;
+        const length = p.length || p.mprisLength || 0;
+        if (!Number.isFinite(length) || length <= 0 || !Number.isFinite(fraction))
+            return false;
+        const position = clamp(fraction, 0, 1) * length;
+        if (p.position !== undefined)
+            p.position = position;
+        else if (typeof p.SetPosition === "function")
+            p.SetPosition(position);
+        else if (typeof p.setPosition === "function")
+            p.setPosition(position);
+        else
+            return false;
+        setPosition(position);
+        return true;
+    }
+
     function syncFromPlayer(hard) {
         const len = player ? Math.max(0, player.length || player.mprisLength || 0) : 0;
         // Some players briefly clear length while updating metadata.

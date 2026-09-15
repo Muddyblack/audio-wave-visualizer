@@ -201,6 +201,60 @@ TestCase {
         compare(seek.phase, 0, "A flat squiggle does not repaint on audio frames");
     }
 
+    function test_coverRingSeeksAndPreservesCoverClick_data() {
+        return [
+            {
+                tag: "rounded-seconds",
+                shape: "rounded",
+                length: 180
+            },
+            {
+                tag: "circle-seconds",
+                shape: "circle",
+                length: 180
+            },
+            {
+                tag: "rounded-microseconds",
+                shape: "rounded",
+                length: 180000000
+            },
+            {
+                tag: "circle-microseconds",
+                shape: "circle",
+                length: 180000000
+            }
+        ];
+    }
+    function test_coverRingSeeksAndPreservesCoverClick(data) {
+        subject.configuration = Object.assign({}, defaults, {
+            progressBarStyle: 10,
+            artShape: data.shape,
+            artClick: "zoom"
+        });
+        player.length = data.length;
+        player.artUrl = Qt.resolvedUrl("../package/icon.png").toString();
+        tryCompare(findChild(subject, "classicArt"), "coverReady", true);
+        verify(waitForRendering(subject));
+        const ring = findChild(subject, "coverRing");
+        for (const point of [[ring.width - 1, ring.height / 2, 0.25], [ring.width / 2, ring.height - 1, 0.5], [1, ring.height / 2, 0.75], [ring.width / 2, 1, 0]]) {
+            mouseClick(ring, point[0], point[1]);
+            fuzzyCompare(player.position, point[2] * data.length, 0.01);
+            fuzzyCompare(ring.progress, point[2], 0.001);
+            verify(!subject.zoomOpen, "Ring clicks must not activate the cover");
+        }
+        player.canSeek = false;
+        mouseClick(ring, ring.width - 1, ring.height / 2);
+        compare(player.position, 0);
+        player.canSeek = true;
+        player.positionSupported = false;
+        mouseClick(ring, ring.width - 1, ring.height / 2);
+        compare(player.position, 0);
+        player.positionSupported = true;
+        mouseClick(ring, ring.width / 2, ring.height / 2);
+        verify(subject.zoomOpen, "Clicks through the ring centre retain the cover action");
+        compare(player.position, 0);
+    }
+
     function test_coverRingReplacesBar() {
         subject.configuration = Object.assign({}, defaults, {
             progressBarStyle: 10
@@ -333,6 +387,7 @@ TestCase {
         subject.configuration = Object.assign({}, defaults, {
             dockStyle: "hover"
         });
+        mouseMove(testCase, 395, 135);
         tryCompare(findChild(subject, "playArea").parent.parent.parent, "opacity", 0);
     }
     function test_coverClickZoom() {
@@ -376,17 +431,72 @@ TestCase {
         compare(details.rows.map(row => row[0]), ["Album", "Player", "Length", "Volume"]);
         compare(details.rows[2][1], "3:00");
     }
-    function test_flipShowsBackOnHover() {
+    function test_flipRequiresExplicitClickAndKeepsControlsReachable() {
         subject.configuration = Object.assign({}, defaults, {
-            hoverDetails: "flip"
+            hoverDetails: "flip",
+            showShuffleRepeat: true
         });
         mouseMove(subject, 20, 20);
-        tryVerify(() => subject.flipped);
+        wait(400);
+        verify(!subject.flipped, "Entering the card must not hide its controls");
+        const shuffle = findChild(subject, "shuffleArea");
+        mouseClick(shuffle);
+        compare(player.shuffle, true);
+        mouseClick(findChild(subject, "repeatArea"));
+        compare(player.loopState, 2);
+        mouseClick(findChild(subject, "playArea"));
+        compare(player.playCalls, 1);
+        const button = findChild(subject, "flipDetailsButton");
+        const position = button.mapToItem(subject, 0, 0);
+        mouseClick(button);
+        verify(subject.flipped);
         const back = findChild(subject, "flipBack");
-        verify(back !== null);
-        tryCompare(back, "opacity", 1);
+        tryCompare(back, "enabled", true);
+        compare(button.mapToItem(subject, 0, 0), position, "Return button must not rotate");
         mouseMove(testCase, 395, 135);
-        tryVerify(() => !subject.flipped);
+        verify(subject.flipped, "Moving the pointer must not flip the card again");
+        mouseClick(button);
+        verify(!subject.flipped);
+        tryCompare(findChild(subject, "playbackFace"), "enabled", true);
+        mouseClick(findChild(subject, "playArea"));
+        compare(player.playCalls, 2);
+        mouseClick(button);
+        verify(subject.flipped);
+        keyClick(Qt.Key_Escape);
+        verify(!subject.flipped);
+    }
+    function test_artTiltKeepsClickTargetsStable() {
+        subject.configuration = Object.assign({}, defaults, {
+            artTilt: true,
+            artClick: "zoom",
+            showShuffleRepeat: true
+        });
+        player.artUrl = Qt.resolvedUrl("../package/icon.png").toString();
+        const art = findChild(subject, "classicArt");
+        tryCompare(art, "coverReady", true);
+        verify(waitForRendering(subject));
+        const clickArea = findChild(art, "artClickArea");
+        const shuffle = findChild(subject, "shuffleArea");
+        const coverPosition = clickArea.mapToItem(subject, 0, 0);
+        const buttonPosition = shuffle.mapToItem(subject, 0, 0);
+        mouseMove(art, art.width / 2, art.height / 2);
+        verify(!art.tilted, "Tilt waits briefly before starting");
+        tryCompare(art, "tilted", true);
+        wait(220);
+        compare(clickArea.mapToItem(subject, 0, 0), coverPosition);
+        compare(shuffle.mapToItem(subject, 0, 0), buttonPosition);
+        mouseClick(clickArea);
+        verify(subject.zoomOpen, "The cover remains clickable during tilt");
+        subject.zoomOpen = false;
+        mouseClick(shuffle);
+        compare(player.shuffle, true);
+        tryCompare(art, "tilted", false);
+        subject.configuration = Object.assign({}, subject.configuration, {
+            reducedMotion: true
+        });
+        mouseMove(art, art.width / 2, art.height / 2);
+        wait(200);
+        verify(!art.tilted, "Reduced motion disables decorative tilt");
     }
     function test_marqueeScrollsOnAudioFrames() {
         player.track = "A very long track title that surely needs scrolling";

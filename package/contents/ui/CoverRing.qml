@@ -4,6 +4,7 @@ import QtQuick
 // The owner places it 4 px outside the artwork; the band is 2 px wide.
 Item {
     id: ring
+    z: 1
     property var player: null
     property bool isPlaying: false
     property bool playbackActive: true
@@ -14,6 +15,46 @@ Item {
     property real cornerRadius: 14
     property real band: 2
     readonly property real progress: clock.progress
+
+    readonly property bool canSeek: !!player && player.canControl !== false && player.canSeek !== false && player.positionSupported !== false && (player.length || player.mprisLength || 0) > 0
+
+    function insideRoundedRect(x, y, inset) {
+        const w = width - 2 * inset, h = height - 2 * inset;
+        x -= inset;
+        y -= inset;
+        if (w <= 0 || h <= 0 || x < 0 || y < 0 || x > w || y > h)
+            return false;
+        const r = Math.max(0, Math.min(cornerRadius - inset, w / 2, h / 2));
+        const dx = Math.max(r - x, 0, x - (w - r));
+        const dy = Math.max(r - y, 0, y - (h - r));
+        return dx * dx + dy * dy <= r * r;
+    }
+    function onBand(x, y) {
+        // Give the thin visible stroke a little tolerance without covering
+        // the centre artwork or the empty corners of a circular cover.
+        return insideRoundedRect(x, y, -3) && !insideRoundedRect(x, y, band + 3);
+    }
+    function seekAt(x, y) {
+        // Match the conic paint sweep: top = 0, clockwise to right = 25%.
+        const turn = 2 * Math.PI;
+        const fraction = ((Math.atan2(y - height / 2, x - width / 2) + Math.PI / 2 + turn) % turn) / turn;
+        return clock.seekToFraction(fraction);
+    }
+
+    MouseArea {
+        id: seekArea
+        objectName: "ringSeekArea"
+        anchors.fill: parent
+        anchors.margins: -3
+        enabled: ring.canSeek
+        hoverEnabled: true
+        cursorShape: ring.onBand(mouseX - 3, mouseY - 3) ? Qt.PointingHandCursor : Qt.ArrowCursor
+        onPressed: mouse => mouse.accepted = ring.onBand(mouse.x - 3, mouse.y - 3)
+        onClicked: mouse => {
+            if (ring.onBand(mouse.x - 3, mouse.y - 3))
+                ring.seekAt(mouse.x - 3, mouse.y - 3);
+        }
+    }
 
     onVisualFrameTimeChanged: {
         if (clock.active && ring.isPlaying)

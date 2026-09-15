@@ -1,5 +1,7 @@
 # Build artifacts
 *.plasmoid
+# Generated browser assets; originals live in package/contents/ui/studio.
+docs/assets/studio/
 notes.md
 redesign-plan.md
 

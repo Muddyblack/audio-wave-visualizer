@@ -30,7 +30,24 @@ Item {
     readonly property bool showFallbackArt: !coverReady && fallback !== "icon" && title !== ""
     readonly property bool grayed: (cfg.artGrayPaused ?? false) && !!view && view.hasPlayer && !isPlaying
     readonly property bool spinning: disc && coverReady && isPlaying && !reducedMotion
-    readonly property bool tilted: (cfg.artTilt ?? false) && !!view && view.cardHovered && !spinning
+    readonly property bool tiltWanted: (cfg.artTilt ?? false) && !reducedMotion && artHover.hovered && !spinning && !artClickArea.pressed
+    property bool tilted: false
+    onTiltWantedChanged: {
+        if (tiltWanted)
+            tiltDelay.restart();
+        else {
+            tiltDelay.stop();
+            tilted = false;
+        }
+    }
+    HoverHandler {
+        id: artHover
+    }
+    Timer {
+        id: tiltDelay
+        interval: 160
+        onTriggered: root.tilted = root.tiltWanted
+    }
 
     function initials(text) {
         return text.split(/\s+/).filter(Boolean).slice(0, 2).map(word => word[0].toUpperCase()).join("");
@@ -83,6 +100,7 @@ Item {
 
     Item {
         id: face
+        objectName: "artFace"
         anchors.fill: parent
         rotation: root.spinAngle
         transform: [
@@ -92,10 +110,10 @@ Item {
                 axis.x: 1
                 axis.y: 0
                 axis.z: 0
-                angle: root.tilted ? 9 : 0
+                angle: root.tilted ? 6 : 0
                 Behavior on angle {
                     NumberAnimation {
-                        duration: 350
+                        duration: root.reducedMotion ? 0 : 200
                         easing.type: Easing.OutCubic
                     }
                 }
@@ -106,10 +124,10 @@ Item {
                 axis.x: 0
                 axis.y: 1
                 axis.z: 0
-                angle: root.tilted ? -14 : 0
+                angle: root.tilted ? -9 : 0
                 Behavior on angle {
                     NumberAnimation {
-                        duration: 350
+                        duration: root.reducedMotion ? 0 : 200
                         easing.type: Easing.OutCubic
                     }
                 }
@@ -117,11 +135,11 @@ Item {
             Scale {
                 origin.x: face.width / 2
                 origin.y: face.height / 2
-                xScale: root.tilted ? 1.05 : 1
+                xScale: root.tilted ? 1.02 : 1
                 yScale: xScale
                 Behavior on xScale {
                     NumberAnimation {
-                        duration: 350
+                        duration: root.reducedMotion ? 0 : 200
                         easing.type: Easing.OutCubic
                     }
                 }
@@ -392,6 +410,7 @@ Item {
     }
 
     MouseArea {
+        id: artClickArea
         objectName: "artClickArea"
         anchors.fill: parent
         enabled: root.clickAction !== "none" && root.coverReady && !!root.view

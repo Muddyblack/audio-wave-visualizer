@@ -7,6 +7,11 @@ on:
       - master
     paths:
       - docs/**
+      - package/icon.png
+      - package/contents/ui/studio/StudioCatalog.js
+      - package/contents/ui/studio/PresetCodec.js
+      - package/contents/ui/studio/wallpapers/**
+      - tools/sync_studio_assets.py
       - .github/workflows/pages.yml
   workflow_dispatch:
 
@@ -27,6 +32,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
+      - name: Build shared studio assets
+        run: |
+          python3 tools/sync_studio_assets.py
+          python3 tools/sync_studio_assets.py --check
 
       - uses: actions/configure-pages@v5
 

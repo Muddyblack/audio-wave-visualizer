@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls.Basic as Controls
 
 // A 10 px MPRIS toggle (shuffle/repeat) drawn from the HTML's 24-unit SVG icon:
 // .45 opacity when off, accent colour when on.
@@ -6,6 +7,20 @@ Item {
     id: toggle
     property string iconPath: ""
     property bool active: false
+    property bool available: true
+    property string label: ""
+    property string badge: ""
+    Accessible.role: Accessible.Button
+    Accessible.name: label
+    Accessible.checkable: true
+    Accessible.checked: active
+    Accessible.onPressAction: {
+        if (available)
+            toggled();
+    }
+    Controls.ToolTip.visible: toggleArea.containsMouse
+    Controls.ToolTip.text: label
+    Controls.ToolTip.delay: 500
     property string areaName: ""
     property color controlColor: "#ffffff"
     property color accentColor: "#ffffff"
@@ -25,7 +40,7 @@ Item {
         anchors.centerIn: parent
         width: 10
         height: 10
-        opacity: toggle.active ? 1 : 0.45
+        opacity: !toggle.available ? 0.2 : toggle.active ? 1 : 0.45
         readonly property var signature: [toggle.active, toggle.controlColor, toggle.accentColor, toggle.iconPath]
         onSignatureChanged: requestPaint()
         onPaint: {
@@ -38,13 +53,28 @@ Item {
         }
     }
 
+    Text {
+        objectName: toggle.areaName + "Badge"
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.rightMargin: 1
+        text: toggle.badge
+        visible: text !== ""
+        color: toggle.accentColor
+        font.pixelSize: 8
+        font.bold: true
+    }
+
     MouseArea {
         id: toggleArea
         objectName: toggle.areaName
         anchors.fill: parent
         anchors.margins: -2
         hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-        onClicked: toggle.toggled()
+        cursorShape: toggle.available ? Qt.PointingHandCursor : Qt.ArrowCursor
+        onClicked: {
+            if (toggle.available)
+                toggle.toggled();
+        }
     }
 }

@@ -17,6 +17,8 @@ runner = shutil.which("qmltestrunner")
 if not runner:
     raise SystemExit("Qt 6 qmltestrunner must be on PATH")
 
+subprocess.run([sys.executable, str(REPO / "tools/sync_studio_assets.py")], check=True)
+subprocess.run([sys.executable, str(REPO / "tools/sync_studio_assets.py"), "--check"], check=True)
 subprocess.run([sys.executable, str(REPO / "tests/test_feeder.py")], check=True)
 subprocess.run([sys.executable, str(REPO / "tests/test_waybar.py")], check=True)
 

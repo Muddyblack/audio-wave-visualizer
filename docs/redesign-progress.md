@@ -3,7 +3,8 @@
 Updated: 2026-09-15. Checklist for [redesign-plan.md](./redesign-plan.md), using
 [index.html](./index.html) as the visual reference.
 
-**Phases 1–4 are implemented. Browser visual and desktop power acceptance are still open.**
+**Phases 1–11 are implemented with the limits below. Live desktop, browser visual
+and power acceptance are still open.**
 New configuration keys alone do not mean their features are implemented.
 
 ## Roadmap status
@@ -20,7 +21,7 @@ New configuration keys alone do not mean their features are implemented.
 | 8 | Richer track information and opt-in lyrics | Implemented; format detail and live Plasma/Hyprland popup checks pending |
 | 9 | Idle/paused behaviour, interaction and power options | Implemented; system reduced-motion preference and live battery checks pending |
 | 10 | Panel pill/icon and popup; Waybar/Quickshell bar integration | Implemented; not yet checked in a live Plasma panel or Hyprland bar |
-| 11 | Studio settings, search, preview, presets and diagnostics | Not started; current settings pages expose the new waveform controls |
+| 11 | Studio settings, search, preview, presets and diagnostics | Implemented in shared Plasma/Hyprland studio; automated settings tests pass; live Plasma and browser visual acceptance pending |
 | 12 | README/gallery, release screenshots and version | Not started; developer workflow documentation is updated |
 
 ## Implemented work
@@ -74,6 +75,9 @@ New configuration keys alone do not mean their features are implemented.
   the HTML `.pb` CSS and `drawSeek` geometry and colours.
 - [x] Squiggle phase rides audio frames; its amplitude settles with a one-shot
   transition when paused or with reduced motion, so a flat squiggle stops repainting.
+- [x] Click the cover ring to seek clockwise from the top, using the same
+  player-unit and capability handling as the linear bars. Rounded and circular
+  rings preserve the cover action in their centre.
 - [x] Cover ring (`CoverRing.qml`) replaces the bar around the cover, which shrinks
   by 6 px; without a cover the bar falls back to style 0.
 - [x] `showTimes` and `timeFormat` (`-2:27` remaining), including the HTML's
@@ -128,7 +132,7 @@ New configuration keys alone do not mean their features are implemented.
   label, 7 s/turn) and CD (iridescent disc, faint cover print, 3 s/turn). Spins
   advance on audio frames only and stop when paused or with reduced motion.
 - [x] `artScale` in every layout, `artBorder` none/subtle/accent, `artGlow`
-  (cover-tinted, via `CardGlow`), `artTilt` on card hover, `artReflect`,
+  (cover-tinted, via `CardGlow`), `artTilt` after 160 ms of cover hover with stationary click targets, `artReflect`,
   `artGrayPaused`, `artFallback` icon/gradient/initials, `artClick` zoom
   (cover and track over the card) or raise the player.
 - [x] The progress ring follows the cover shape.
@@ -138,8 +142,8 @@ New configuration keys alone do not mean their features are implemented.
 - [ ] Limits: Qt Quick rotations have no perspective, so tilt is flatter than
   the HTML; the reflection and cover images need the GPU scene graph
   (MultiEffect); the zoom view stays inside the card rather than a lightbox; the
-  Quickshell loop values (None = 0, Track = 1, Playlist = 2) are assumed from
-  its API, not checked against a running player.
+  Quickshell loop values (None = 0, Track = 1, Playlist = 2) match the installed
+  QML type metadata; real-player shuffle/repeat still need a desktop check.
 
 ### Phase 8 — track information
 
@@ -150,8 +154,10 @@ New configuration keys alone do not mean their features are implemented.
   audio clock, off with reduced motion). Classic now uses the shared texts;
   its snapshots are unchanged.
 - [x] `hoverDetails`: `tooltip` and `drawer` in a host popup (Plasma
-  `PlasmaCore.Dialog`, Quickshell `PopupWindow`), `flip` turns the card with
-  separate front/back faces swapped halfway. `TrackDetails.qml` shows the
+  `PlasmaCore.Dialog`, Quickshell `PopupWindow`), `flip` uses an explicit info button with
+  separate front/back faces swapped halfway. A fixed return button and Escape
+  restore playback controls; hover never flips the card and hidden/turning faces
+  cannot intercept clicks. Reduced motion skips the flip animation. `TrackDetails.qml` shows the
   `detailFields` rows that have data: album (year), track number, genre,
   length, player and a volume bar.
 - [x] `showLyrics`: `LyricsSource.qml` asks LRCLIB only while enabled, caches
@@ -203,9 +209,55 @@ New configuration keys alone do not mean their features are implemented.
 - [ ] Not yet checked in a live Plasma panel or Hyprland bar (the bar module
   loads in Quickshell; the Plasma compact representation passed lint only).
 
+### Phase 11 — studio settings
+
+- [x] Shared `studio/Studio.qml`, hosted by Plasma `configStudio.qml` and
+  Hyprland `SettingsPage.qml`: 11 tabs, search across tabs, conditional rows,
+  platform notes, tiles, switches, ranges, colours and placement controls.
+  Tabs wrap into two visible rows at the normal studio size and extra rows at
+  narrow widths; no horizontal scrolling is needed. Changing tabs/search returns
+  the settings body to the top. Hyprland position controls live under Behaviour;
+  Plasma has no redundant Placement tab. Accent source, colour mode, palettes,
+  glow and bloom are grouped under Colours.
+- [x] Preview of the draft with synthetic audio capped at 15 Hz, wallpaper,
+  playback/error states and zoom; stop preview clocks when the studio is hidden.
+  Accent swatches select a custom accent in the draft (disabling system/cover
+  accent sources), so Apply persists the colour. The settings-page regression
+  verifies the preview, selection indicator and Apply payload.
+- [x] 27 built-in looks, category filters, Keep my colours and Surprise me;
+  named user presets with removal, JSON copy/import and placement exclusion in
+  their own My presets tab next to the built-in Presets tab.
+- [x] Diagnostics card runs the existing doctor script through each host.
+  Hyprland retains draft/Apply, Reset and persisted overrides; Plasma exposes
+  the `cfg_*` properties used by its configuration dialog.
+- [x] Fix delegate ID shadowing (`studioRoot` and `sectionRoot`), wait for complete
+  preview configurations, and stop queued motion updates during destruction.
+- [x] Shuffle/repeat controls respect player support, report their state in
+  tooltips and distinguish repeat-track with a “1” badge. Test both Plasma enum
+  and Quickshell boolean/enum APIs, unsupported players, and studio clicks.
+  Support flags follow the [Quickshell MprisPlayer API](https://quickshell.org/docs/v0.3.1/types/Quickshell.Services.Mpris/MprisPlayer/).
+  The session sandbox cannot connect to the desktop media bus, so live player
+  behavior is not verified. The combined flip/shuffle/repeat regression clicks the
+  actual view controls and verifies that hovering leaves them available.
+- [x] Use controls' implicit heights so tile grids and Saved looks cannot overlap;
+  test filtered built-ins and the separate saved-thumbnail form at narrow and
+  wide widths.
+- [x] Regression coverage for all tabs, cross-tab search, tile selection, preset
+  mappings, delayed draft loading and hidden preview clocks. Undefined bindings,
+  type/reference errors and binding loops fail the studio/settings tests.
+- [x] Inspect offscreen screenshots of Presets, Visualizer, Card and filtered
+  Saved looks. These verify layout only; software rendering omits cover effects.
+- [ ] Live Plasma Apply/Cancel/defaults and diagnostics interaction; desktop GPU
+  screenshots against the HTML, keyboard/accessibility polish and power checks.
+  Qt 6.11 still emits `Model size of -1 is less than 0` warnings when opening
+  the controls tab; no associated test failure, root cause not yet established.
+- [ ] Orbit/Halo/Sunburst are selectable but remain unaccepted pending the orbit
+  shader/power follow-up below. Other incomplete rendering features retain their
+  earlier limitations.
+
 ## Verification and limits
 
-- **Full suite:** `make test` (`python3 tests/run.py`) passes: **258 QML tests**,
+- **Full suite:** `make test` (`python3 tests/run.py`) passes: **338 QML tests**,
   **24 Python feeder tests**, and all **5 shader package rebuild checks**. The 40
   GPU rows skip there because it uses the software renderer.
 - **GPU parity:** `make parity` renders every shader row beside WaveCanvas on the
@@ -258,18 +310,49 @@ python3 tests/compare_html_visualizers.py --reference qt --extended \
 python3 tests/compare_view_snapshots.py --baseline-ref <original-revision>
 ```
 
-Current session artifacts (temporary, not committed):
+Studio continuation artifacts (temporary, not committed):
+
+- Full suite: `/tmp/audio-interaction-full.log`
+- Quickshell integration: `/tmp/audio-interaction-hyprland.log`
+- Studio screenshots: `/tmp/audio-studio-shots/` (including `saved-looks.png`)
+
+Earlier session artifacts (temporary, not committed):
 
 - HTML report: `/tmp/audio-html-comparison-extended-final/report.html`
 - Classic snapshots: `/tmp/audio-styles-classic-regression-final/`
 - Test log: `/tmp/audio-styles-tests-final.log`
 - Frame benchmark: `/tmp/audio-styles-frames.log`
 
+## Wallpaper and sizing follow-up
+
+- Replaced all six studio backdrops in QML and HTML: two pine-lake images from
+  the owner's NixOS setup, plus Midnight Marina, Aurora sound, Moss & mist and
+  Silver tide SVG scenes. Midnight Marina follows the theme's teal, electric blue
+  and aqua palette, with distant lights and water reflections.
+- Shared wallpaper files and tab/catalogue JavaScript through generated Pages
+  assets; added asset generation and verification to tests and Pages. Generated
+  browser copies are ignored by Git; each SVG/PNG has one tracked original.
+- Removed the HTML Plasma/Hyprland toggle; the browser uses a consistent desktop
+  presentation. Renderer and controls code remain separate from QML.
+- Plasma cards now scale proportionally inside the host's stored rectangle;
+  preset switches preserve the preview's shape and scaled button hit targets.
+  The outer Plasma rectangle remains controlled by the desktop host.
+- Wallpaper load/fallback tests and wide/tall/small sizing and click tests added.
+  Final validation: **353 QML passed, 40 GPU-only skipped**, 24 feeder tests,
+  Waybar checks, five shader package checks and Quickshell settings persistence
+  passed. Asset generation/identity checks, HTML script syntax and QML wallpaper
+  capture passed. Logs: `/tmp/audio-wallpapers-final.log` and
+  `/tmp/audio-wallpapers-hyprland.log`.
+- Chromium capture remains blocked by denied socket operations in this sandbox;
+  the HTML script passes Node syntax checking. Live Plasma sizing needs a desktop
+  check; the proportional frame is covered by offscreen input tests.
+
 ## Next work
 
-Fix the Chrome reference capture so phases 3–4 can be compared with the browser,
-then continue with **phase 11: studio settings** (tabs, search, live preview,
-built-in and user presets, diagnostics) for Plasma and Hyprland.
+Continue with **phase 12: README/gallery and release preparation**. Before release,
+complete the live Plasma studio checks, compare the studio and presets with the
+HTML on a GPU desktop, and resolve the rendering/power follow-ups below. Chrome
+reference capture works; the outstanding browser comparisons remain listed above.
 
 ### Open follow-ups (before presets / release)
 
@@ -298,3 +381,33 @@ Revisit once phases 9–12 are done:
 - [ ] **Live desktop checks**: hover tooltip/drawer popups, player switcher, shuffle/repeat (Quickshell loop values), lyrics network/cache.
 - [ ] **Software renderer**: covers, reflection and progress shadows need MultiEffect (GPU only).
 - [ ] **Power A/B** (`tests/measure_power.py`) for Classic defaults and the heaviest presets.
+
+### Midnight Marina settings palette
+
+Replaced the neutral/olive studio chrome with colours from the local Midnight
+Marina VS Code theme: midnight navy surfaces, aqua selection highlights and
+cyan switch gradients. QML and HTML use one palette in `StudioCatalog.js`;
+`Theme.js` and generated CSS consume it. Widget colour settings stay independent.
+Focused studio checks: 29 passed; QML screenshots captured for visual review.
+
+Palette refinement: restored neutral charcoal page/panel backgrounds, neutral
+borders and text. Midnight Marina remains on buttons, enabled switches, sliders
+and active selections in both QML and HTML, using the same shared palette.
+
+Fullscreen balance: studio content is centred and capped at 1280px, with a
+slightly wider settings column and a preview capped at 420px tall. Fit zoom
+shrinks when needed but no longer magnifies cards beyond 1×; explicit 2× zoom
+remains available. Applied to QML and HTML.
+
+HTML presentation cleanup: removed Feasibility and Keys navigation, page content,
+rendering code and unused styles. The header now uses the original widget PNG
+with the product name; the same PNG serves as the favicon. Removed Design Lab
+branding and simplified the introduction. Looks and Studio stay reachable on
+small screens. The asset build copies `package/icon.png` into ignored outputs.
+Validation: HTML structure/IDs, icon identity, JS syntax and asset checks passed.
+
+Preset exchange: added a shared versioned codec for HTML and QML. New exports
+include the complete known look; import normalizes compact/art aliases and
+track-detail arrays, excludes placement/libraries, accepts legacy JSON and
+rejects invalid types. Verified 11 exchange cases, 29 studio checks and a Node
+round trip using the actual HTML and main.xml defaults. Removed HTML tab dots.

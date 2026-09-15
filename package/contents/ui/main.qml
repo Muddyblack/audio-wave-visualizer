@@ -10,7 +10,7 @@ import "../code/Layouts.js" as LayoutSizes
 PlasmoidItem {
     id: root
     readonly property bool shouldShow: !!mpris2Model.currentPlayer || plasmoid.configuration.alwaysVisible
-    Layout.minimumWidth: shouldShow ? (plasmoid.configuration.showMpris ? 260 : 160) : 0
+    Layout.minimumWidth: shouldShow ? Math.min(160, LayoutSizes.size(plasmoid.configuration)[0]) : 0
     Layout.minimumHeight: shouldShow ? Math.min(64, LayoutSizes.size(plasmoid.configuration)[1]) : 0
     Layout.preferredWidth: shouldShow ? LayoutSizes.size(plasmoid.configuration)[0] : 0
     Layout.preferredHeight: shouldShow ? LayoutSizes.size(plasmoid.configuration)[1] : 0
@@ -86,62 +86,70 @@ PlasmoidItem {
             }
         }
     }
-    fullRepresentation: VisualizerView {
-        id: view
-        configuration: root.inPanel ? root.popupConfiguration : plasmoid.configuration
-        Layout.preferredWidth: LayoutSizes.size(configuration)[0]
-        Layout.preferredHeight: LayoutSizes.size(configuration)[1]
-        visualizer: vis
-        player: mpris2Model.currentPlayer
-        playerCount: mpris2Model.playerRows
-        onBattery: powerSource.onBattery
-        switchPlayer: mpris2Model.cyclePlayer
-        isPlaying: player?.playbackStatus === Mpris.PlaybackStatus.Playing
-        accentColor: Kirigami.Theme.highlightColor
-        systemTextColor: Kirigami.Theme.textColor
-        defaultFontFamily: Kirigami.Theme.defaultFont.family
-        coverPalette: artColors
-        Image {
-            id: paletteImage
-            source: (view.configuration.accentFromArt || view.configuration.vizColorMode === "cover") ? view.artUrl : ""
-            sourceSize: Qt.size(64, 64)
-            width: 64
-            height: 64
-            visible: false
-            asynchronous: true
-            onStatusChanged: {
-                if (status === Image.Ready)
-                    artColors.update();
+    fullRepresentation: FittedFrame {
+        readonly property var cardConfiguration: root.inPanel ? root.popupConfiguration : plasmoid.configuration
+        designSize: {
+            const dimensions = LayoutSizes.size(cardConfiguration);
+            return Qt.size(dimensions[0], dimensions[1]);
+        }
+        Layout.preferredWidth: implicitWidth
+        Layout.preferredHeight: implicitHeight
+        VisualizerView {
+            id: view
+            anchors.fill: parent
+            configuration: root.inPanel ? root.popupConfiguration : plasmoid.configuration
+            visualizer: vis
+            player: mpris2Model.currentPlayer
+            playerCount: mpris2Model.playerRows
+            onBattery: powerSource.onBattery
+            switchPlayer: mpris2Model.cyclePlayer
+            isPlaying: player?.playbackStatus === Mpris.PlaybackStatus.Playing
+            accentColor: Kirigami.Theme.highlightColor
+            systemTextColor: Kirigami.Theme.textColor
+            defaultFontFamily: Kirigami.Theme.defaultFont.family
+            coverPalette: artColors
+            Image {
+                id: paletteImage
+                source: (view.configuration.accentFromArt || view.configuration.vizColorMode === "cover") ? view.artUrl : ""
+                sourceSize: Qt.size(64, 64)
+                width: 64
+                height: 64
+                visible: false
+                asynchronous: true
+                onStatusChanged: {
+                    if (status === Image.Ready)
+                        artColors.update();
+                }
             }
-        }
-        Kirigami.ImageColors {
-            id: artColors
-            source: paletteImage.status === Image.Ready ? paletteImage : null
-            fallbackDominant: view.baseWaveColor
-            fallbackDominantContrasting: view.baseWaveColor
-            fallbackHighlight: view.baseWaveColor
-        }
-        // Hover details (tooltip or drawer) in a borderless popup below the card.
-        PlasmaCore.Dialog {
-            id: detailsDialog
-            // Named so the details' own `view` property does not shadow it.
-            readonly property var cardView: view
-            type: PlasmaCore.Dialog.Tooltip
-            flags: Qt.WindowDoesNotAcceptFocus
-            location: PlasmaCore.Types.Floating
-            backgroundHints: PlasmaCore.Dialog.NoBackground
-            visualParent: view
-            visible: view.detailsVisible
-            mainItem: TrackDetails {
-                width: Math.max(detailsDialog.cardView.width, 250)
-                height: implicitHeight
-                view: detailsDialog.cardView
-                mode: detailsDialog.cardView.detailsPopupMode
+            Kirigami.ImageColors {
+                id: artColors
+                source: paletteImage.status === Image.Ready ? paletteImage : null
+                fallbackDominant: view.baseWaveColor
+                fallbackDominantContrasting: view.baseWaveColor
+                fallbackHighlight: view.baseWaveColor
             }
-        }
-        fallbackIcon: Component {
-            Kirigami.Icon {
-                source: view.desktopEntry !== "" ? view.desktopEntry : "audio-x-generic-symbolic"
+            // Hover details (tooltip or drawer) in a borderless popup below the card.
+            PlasmaCore.Dialog {
+                id: detailsDialog
+                // Named so the details' own `view` property does not shadow it.
+                readonly property var cardView: view
+                type: PlasmaCore.Dialog.Tooltip
+                flags: Qt.WindowDoesNotAcceptFocus
+                location: PlasmaCore.Types.Floating
+                backgroundHints: PlasmaCore.Dialog.NoBackground
+                visualParent: view
+                visible: view.detailsVisible
+                mainItem: TrackDetails {
+                    width: Math.max(detailsDialog.cardView.width, 250)
+                    height: implicitHeight
+                    view: detailsDialog.cardView
+                    mode: detailsDialog.cardView.detailsPopupMode
+                }
+            }
+            fallbackIcon: Component {
+                Kirigami.Icon {
+                    source: view.desktopEntry !== "" ? view.desktopEntry : "audio-x-generic-symbolic"
+                }
             }
         }
     }

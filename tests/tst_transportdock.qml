@@ -7,7 +7,7 @@ TestCase {
     name: "TransportDock"
     when: windowShown
     visible: true
-    width: 120
+    width: 180
     height: 50
 
     property var subject
@@ -24,6 +24,85 @@ TestCase {
                     useSystemDockBg: true
                 })
         }
+    }
+
+    Component {
+        id: quickshellPlayer
+        QtObject {
+            property bool canControl: true
+            property bool shuffleSupported: true
+            property bool loopSupported: true
+            property bool shuffle: false
+            property int loopState: 0
+        }
+    }
+    Component {
+        id: plasmaPlayer
+        QtObject {
+            property bool canControl: true
+            property int shuffle: 1
+            property int loopStatus: 1
+        }
+    }
+
+    function test_shuffleAndRepeat_data() {
+        return [
+            {
+                tag: "quickshell",
+                plasma: false
+            },
+            {
+                tag: "plasma",
+                plasma: true
+            }
+        ];
+    }
+    function test_shuffleAndRepeat(data) {
+        const player = createTemporaryObject(data.plasma ? plasmaPlayer : quickshellPlayer, testCase);
+        subject.player = player;
+        subject.configuration = {
+            useSystemDockBg: true,
+            showShuffleRepeat: true
+        };
+        verify(waitForRendering(subject));
+        clickControl("shuffleArea");
+        compare(player.shuffle, data.plasma ? 2 : true);
+        verify(subject.shuffleOn);
+        clickControl("shuffleArea");
+        compare(player.shuffle, data.plasma ? 1 : false);
+        const loopKey = data.plasma ? "loopStatus" : "loopState";
+        for (const value of (data.plasma ? [2, 3, 1] : [2, 1, 0])) {
+            clickControl("repeatArea");
+            compare(player[loopKey], value);
+            compare(findChild(subject, "repeatAreaBadge").visible, value === (data.plasma ? 3 : 1));
+        }
+        player.canControl = false;
+        clickControl("shuffleArea");
+        clickControl("repeatArea");
+        compare(player.shuffle, data.plasma ? 1 : false);
+        compare(player[loopKey], data.plasma ? 1 : 0);
+    }
+    function test_unsupportedShuffleAndRepeat() {
+        const player = createTemporaryObject(quickshellPlayer, testCase, {
+            shuffleSupported: false,
+            loopSupported: false
+        });
+        subject.player = player;
+        subject.configuration = {
+            useSystemDockBg: true,
+            showShuffleRepeat: true
+        };
+        verify(waitForRendering(subject));
+        verify(!subject.canShuffle && !subject.canLoop);
+        clickControl("shuffleArea");
+        clickControl("repeatArea");
+        compare(player.shuffle, false);
+        compare(player.loopState, 0);
+        subject.player = createTemporaryObject(plasmaPlayer, testCase, {
+            shuffle: 0,
+            loopStatus: 0
+        });
+        verify(!subject.canShuffle && !subject.canLoop);
     }
 
     function init() {

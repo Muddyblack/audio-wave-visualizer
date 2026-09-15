@@ -549,24 +549,8 @@ Item {
         cursorShape: Qt.PointingHandCursor
 
         onClicked: mouse => {
-            const p = root.player;
-            if (!p || p.canSeek === false || p.positionSupported === false)
-                return;
-            const len = p.length || p.mprisLength || 0;
-            if (!len)
-                return;
-            const ratio = progressTrack.width > 0 ? positionClock.clamp((mouse.x - progressTrack.x) / progressTrack.width, 0, 1) : 0;
-            const newPos = ratio * len;
-            positionClock.setPosition(newPos);
-
-            // Robust seek implementation for different MPRIS layers
-            if (typeof p.position !== "undefined" && p.canSeek !== false) {
-                p.position = newPos;
-            } else if (typeof p.SetPosition === "function") {
-                p.SetPosition(newPos);
-            } else if (typeof p.setPosition === "function") {
-                p.setPosition(newPos);
-            }
+            const ratio = progressTrack.width > 0 ? (mouse.x - progressTrack.x) / progressTrack.width : 0;
+            positionClock.seekToFraction(ratio);
         }
     }
 }

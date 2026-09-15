@@ -23,6 +23,8 @@ QtObject {
     property var ripples: []
     property real _lastFrame: -1
     property int _seed: randomSeed
+    property bool _destroying: false
+    Component.onDestruction: _destroying = true
 
     function random() {
         _seed = (Math.imul(_seed, 1664525) + 1013904223) | 0;
@@ -41,7 +43,7 @@ QtObject {
     }
 
     function advance() {
-        if (!active || frameTime === _lastFrame || width <= 0 || height <= 0)
+        if (_destroying || !active || frameTime === _lastFrame || width <= 0 || height <= 0)
             return;
         // The HTML preview advances at 60 Hz. Scale decay/movement to elapsed
         // audio time so a 15 Hz widget keeps the same motion speed.

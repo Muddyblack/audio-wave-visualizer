@@ -86,6 +86,23 @@ ShellRoot {
         userSettings = overrides;
         preferences.setText(JSON.stringify(overrides, null, 2) + "\n");
     }
+    // Settings › Audio › Run diagnostics.
+    Process {
+        id: doctorProcess
+        property var done: null
+        command: ["bash", Qt.resolvedUrl("../package/contents/code/doctor.sh").toString().replace(/^file:\/\//, "")]
+        stdout: StdioCollector {
+            onStreamFinished: {
+                if (doctorProcess.done)
+                    doctorProcess.done(text);
+                doctorProcess.done = null;
+            }
+        }
+    }
+    function runDiagnostics(done) {
+        doctorProcess.done = done;
+        doctorProcess.running = true;
+    }
     IpcHandler {
         target: "settings"
         function open(): void {
@@ -133,7 +150,7 @@ ShellRoot {
         const height = defaultSize ? layoutSize[1] : configuration.widgetHeight;
         return {
             name: screen.name,
-            x: screen.x + (screen.width - width) / 2,
+            x: screen.x + (configuration.hAnchor === "left" ? 0 : configuration.hAnchor === "right" ? screen.width - width : (screen.width - width) / 2),
             y: screen.y + Math.max(0, Math.min(screen.height - height, screen.height * configuration.verticalPosition)),
             width: width,
             height: height
@@ -263,8 +280,8 @@ ShellRoot {
     FloatingWindow {
         visible: root.settingsOpen
         title: "Audio Visualizer Settings"
-        implicitWidth: 560
-        implicitHeight: 720
+        implicitWidth: 1180
+        implicitHeight: 800
         color: "#1e1e2e"
         onVisibleChanged: if (!visible)
             root.settingsOpen = false
@@ -272,6 +289,8 @@ ShellRoot {
             id: settingsEditor
             anchors.fill: parent
             screenNames: Quickshell.screens.map(s => s.name)
+            defaults: root.baseline
+            diagnosticsRunner: root.runDiagnostics
             errorMessage: root.settingsError
             onApply: draft => {
                 root.saveSettings(Configuration.overrides(root.baseline, draft));

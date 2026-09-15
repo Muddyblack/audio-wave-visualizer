@@ -1,5 +1,8 @@
-.PHONY: help view view-h view-hyprland settings-hyprland install doctor pack tag shaders
+.PHONY: help view view-h view-hyprland settings-hyprland install doctor pack tag shaders docs
 .DEFAULT_GOAL := help
+
+docs: ## build shared assets for the HTML demo; then open docs/index.html
+	@python3 tools/sync_studio_assets.py
 
 help: ## list targets
 	@awk 'BEGIN{FS=":.*##"} /^[a-z][a-zA-Z0-9_-]+:.*##/ {printf "  make %-10s %s\n", $$1, $$2}' $(MAKEFILE_LIST)

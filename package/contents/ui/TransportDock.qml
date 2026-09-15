@@ -22,6 +22,9 @@ Item {
     // Plasma reports ShuffleStatus (Off = 1, On = 2) and LoopStatus (None = 1,
     // Playlist = 2, Track = 3); Quickshell a bool and MprisLoopState (None = 0).
     readonly property bool shuffleOn: !!player && (typeof player.shuffle === "boolean" ? player.shuffle : player.shuffle === 2)
+    readonly property bool canShuffle: !!player && player.canControl !== false && player.shuffleSupported !== false && (typeof player.shuffle === "boolean" || player.shuffle === 1 || player.shuffle === 2)
+    readonly property bool canLoop: !!player && player.canControl !== false && player.loopSupported !== false && (player.loopStatus !== undefined ? player.loopStatus >= 1 : player.loopState !== undefined)
+    readonly property bool loopTrack: !!player && (player.loopStatus !== undefined ? player.loopStatus === 3 : player.loopState === 1)
     readonly property bool loopOn: !!player && (player.loopStatus !== undefined ? player.loopStatus >= 2 : (player.loopState ?? 0) > 0)
     readonly property bool hiddenUntilHover: dockStyle === "hover" && !cardHovered
 
@@ -44,7 +47,7 @@ Item {
 
     function toggleShuffle() {
         const p = player;
-        if (!p || p.canControl === false)
+        if (!canShuffle)
             return;
         if (typeof p.shuffle === "boolean")
             p.shuffle = !p.shuffle;
@@ -54,7 +57,7 @@ Item {
     // None → Playlist → Track → None.
     function cycleLoop() {
         const p = player;
-        if (!p || p.canControl === false)
+        if (!canLoop)
             return;
         if (p.loopStatus !== undefined)
             p.loopStatus = p.loopStatus === 2 ? 3 : p.loopStatus === 3 ? 1 : 2;
@@ -106,6 +109,8 @@ Item {
             Layout.preferredWidth: 22
             Layout.preferredHeight: 22
             areaName: "shuffleArea"
+            available: root.canShuffle
+            label: !root.canShuffle ? "Shuffle unavailable for this player" : root.shuffleOn ? "Shuffle on" : "Shuffle off"
             active: root.shuffleOn
             controlColor: root.controlColor
             accentColor: root.accentColor
@@ -323,6 +328,9 @@ Item {
             Layout.preferredWidth: 22
             Layout.preferredHeight: 22
             areaName: "repeatArea"
+            available: root.canLoop
+            label: !root.canLoop ? "Repeat unavailable for this player" : root.loopTrack ? "Repeat track" : root.loopOn ? "Repeat playlist" : "Repeat off"
+            badge: root.loopTrack ? "1" : ""
             active: root.loopOn
             controlColor: root.controlColor
             accentColor: root.accentColor

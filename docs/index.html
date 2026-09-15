@@ -3,15 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Audio Visualizer — Design Lab</title>
+<title>Plasma Audio Visualizer — Looks &amp; Studio</title>
+<meta name="description" content="Explore audio visualizer presets and tune your look in the interactive studio for Plasma Audio Visualizer.">
+<link rel="icon" type="image/png" href="assets/studio/icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
 <style>
 :root{
   color-scheme:dark;
-  --bg:#0e0f10;--panel:#151718;--sunk:#0f1112;
-  --line:#ffffff10;--line2:#ffffff1c;--text:#eeefeb;--muted:#9aa09b;--dim:#6c736d;
-  --brand:#d1e5bd;--brand-ink:#1f271a;--new:#f1c27b;--idea:#b9a4ff;
+  --bg:var(--studio-bg);--panel:var(--studio-panel);--sunk:var(--studio-sunk);
+  --line:var(--studio-line);--line2:var(--studio-line2);--text:var(--studio-text);--muted:var(--studio-muted);--dim:var(--studio-dim);
+  --brand:var(--studio-brand);--brand-ink:var(--studio-brandInk);--new:var(--studio-warn);--idea:#b9a4ff;
 }
 *{box-sizing:border-box}
 [hidden]{display:none!important}
@@ -25,14 +27,12 @@ button{cursor:pointer}
 header{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:#0e0f10cc;border-bottom:1px solid var(--line)}
 .hwrap{max-width:1440px;margin:auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .brand{display:flex;align-items:center;gap:12px;font-weight:600;letter-spacing:-.2px}
-.mark{display:flex;align-items:center;gap:3px;height:22px}.mark i{width:3px;border-radius:3px;background:var(--brand);animation:mk 1.4s ease-in-out infinite}
-.mark i:nth-child(1){height:10px}.mark i:nth-child(2){height:22px;animation-delay:-.3s}.mark i:nth-child(3){height:15px;animation-delay:-.6s}.mark i:nth-child(4){height:8px;animation-delay:-.9s}
-@keyframes mk{50%{transform:scaleY(.55)}}
+.brand-icon{width:36px;height:36px;object-fit:contain;flex-shrink:0}
 nav.jump{display:flex;gap:4px}
 nav.jump a{color:var(--muted);text-decoration:none;font-size:12px;padding:6px 11px;border-radius:7px}
-nav.jump a:hover{color:var(--text);background:#ffffff08}
-nav.jump a[aria-current=page]{color:var(--text);background:#ffffff10}
-.draft{border:1px solid var(--line2);border-radius:20px;padding:4px 11px;color:#b9beb9;font-size:10px;letter-spacing:1px;white-space:nowrap}
+nav.jump a:hover{color:var(--text);background:var(--studio-hover)}
+nav.jump a[aria-current=page]{color:var(--text);background:var(--studio-line)}
+
 main{max-width:1440px;margin:auto;padding:0 32px 40px}
 .eyebrow{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
 .intro{display:flex;justify-content:space-between;align-items:end;gap:40px;padding:56px 0 34px}
@@ -49,29 +49,17 @@ h1 span{color:#8f988c}
 .exist{color:#9fc3e6;background:#9fc3e612;border-color:#9fc3e62e}
 .hypr{color:#7fd8c8;background:#7fd8c812;border-color:#7fd8c82e}
 
-/* ─── backdrops ─── */
-.bd{position:absolute;inset:0;z-index:0;transition:background .4s}
-.bd-dusk{background:
-  url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 120' preserveAspectRatio='none'%3E%3Cpath fill='%23140f24' d='M0 120V78l18-22 8 14 14-40 16 36 10-16 16 30 14-50 18 44 10-18 14 34 12-26 16 30 20-58 18 52 12-20 14 32 16-38 14 30 12-14 16 26 18-46 16 40 12-16 14 26V120z'/%3E%3C/svg%3E") bottom/100% 45% no-repeat,
-  radial-gradient(ellipse at 70% 75%,#f08aa566,transparent 55%),
-  linear-gradient(180deg,#221c44 0%,#51346f 42%,#b3628a 74%,#3b2544 100%)}
-.bd-neon{background:radial-gradient(circle at 22% 28%,#ff4fb899,transparent 32%),radial-gradient(circle at 78% 70%,#7a3cffaa,transparent 38%),repeating-linear-gradient(135deg,#ffffff06 0 26px,transparent 26px 70px),linear-gradient(135deg,#2a0f4a,#5b1d6e 50%,#1b0b33)}
-.bd-breeze{background:radial-gradient(ellipse at 15% 100%,#1d99f340,transparent 60%),radial-gradient(ellipse at 90% 0%,#3daee91f,transparent 50%),#1b1e21}
-.bd-olive{background:radial-gradient(ellipse at 18% 100%,#6c6c4670,transparent 60%),radial-gradient(ellipse at 80% 8%,#64756160,transparent 60%),#202725}
-.bd-day{background:radial-gradient(circle at 82% 18%,#ffffffcc,transparent 38%),radial-gradient(ellipse at 10% 100%,#9fb7cf,transparent 60%),linear-gradient(160deg,#e4ebf1,#b6c6d6)}
-.bd-sea{background:
-  radial-gradient(circle at 30% 30%,#ffd36e 0 7%,transparent 7.5%),
-  repeating-linear-gradient(0deg,#ffffff14 0 2px,transparent 2px 16px),
-  linear-gradient(180deg,#f7b267 0%,#f25c54 38%,#2a6f97 38.5%,#013a63 100%)}
+/* Shared wallpaper artwork is loaded from assets/studio/wallpapers.css. */
+.bd{position:absolute;inset:0;z-index:0}
 
 /* ─── presets ─── */
 .filters{display:flex;gap:6px;flex-wrap:wrap;margin:-6px 0 16px}
-.filters button{background:#ffffff08;border:1px solid var(--line2);border-radius:20px;padding:5px 12px;font-size:11.5px;color:var(--muted)}
+.filters button{background:var(--studio-hover);border:1px solid var(--line2);border-radius:20px;padding:5px 12px;font-size:11.5px;color:var(--muted)}
 .filters button[aria-pressed=true]{background:var(--brand);color:var(--brand-ink);border-color:transparent}
 .presets{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
 .pcard{position:relative;border:1px solid var(--line2);border-radius:16px;overflow:hidden;background:var(--panel);transition:transform .2s,border-color .2s,box-shadow .2s}
 .pcard:hover{transform:translateY(-2px);border-color:#ffffff30;box-shadow:0 18px 40px #0006}
-.pcard.active{border-color:#d1e5bd80;box-shadow:0 0 0 3px #d1e5bd1a}
+.pcard.active{border-color:color-mix(in srgb,var(--brand) 50%,transparent);box-shadow:0 0 0 3px color-mix(in srgb,var(--brand) 10%,transparent)}
 .pcard .pv{position:relative;height:176px;display:grid;place-items:center;overflow:hidden;cursor:pointer}
 .pcard .pv .fit{position:relative;z-index:1}
 .pcard .meta{padding:14px 16px 16px;display:flex;justify-content:space-between;gap:12px;align-items:start;border-top:1px solid var(--line)}
@@ -82,26 +70,25 @@ h1 span{color:#8f988c}
 .use:hover,.pcard.active .use{background:var(--brand);color:var(--brand-ink);border-color:transparent}
 
 /* ─── studio ─── */
-.studio{display:grid;grid-template-columns:minmax(380px,580px) minmax(0,1fr);gap:20px;align-items:start}
-.panel{border:1px solid var(--line2);border-radius:18px;background:linear-gradient(180deg,#17191a,#131516);overflow:hidden}
+.studio{display:grid;grid-template-columns:minmax(380px,1.1fr) minmax(0,1fr);gap:20px;align-items:start;max-width:1280px;margin-inline:auto}
+.panel{border:1px solid var(--line2);border-radius:18px;background:linear-gradient(180deg,var(--studio-panelTop),var(--studio-panelBottom));overflow:hidden}
 .phead{padding:16px 18px 0;display:flex;gap:10px;align-items:center}
 .search{flex:1;display:flex;align-items:center;gap:8px;background:var(--sunk);border:1px solid var(--line2);border-radius:10px;padding:0 11px;height:36px;color:var(--dim)}
 .search svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
 .search input{flex:1;background:none;border:0;outline:0;font-size:12.5px;color:var(--text);min-width:0}
 .search kbd{font:10px Inter,sans-serif;border:1px solid var(--line2);border-radius:4px;padding:1px 5px;color:var(--dim)}
 .ghost{background:none;border:1px solid var(--line2);border-radius:10px;height:36px;padding:0 12px;font-size:11.5px;color:var(--muted);white-space:nowrap}
-.ghost:hover{color:var(--text);background:#ffffff08}
-.tabs{display:flex;gap:2px;padding:12px 12px 0;overflow-x:auto;overflow-y:hidden;border-bottom:1px solid var(--line);scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,#000 88%,transparent)}
+.ghost:hover{color:var(--text);background:var(--studio-hover)}
+.tabs{display:flex;flex-wrap:wrap;gap:2px;padding:12px 12px 0;border-bottom:1px solid var(--line)}
 .tabs::-webkit-scrollbar{display:none}
 .tabs button{position:relative;display:flex;align-items:center;gap:6px;background:none;border:0;padding:10px 10px 12px;font-size:12.5px;color:var(--muted);white-space:nowrap}
 .tabs button svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 .tabs button[aria-selected=true]{color:var(--text)}
 .tabs button[aria-selected=true]:after{content:"";position:absolute;left:8px;right:8px;bottom:-1px;height:2px;border-radius:2px;background:var(--brand)}
-.tabs .dot{width:5px;height:5px;border-radius:50%;background:var(--new);opacity:.85}
 .pbody{padding:6px 18px 22px}
 .sec{margin-top:18px}
-.sec>h4{margin:0 0 8px;font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:#aeb5ad}
-.card{border:1px solid var(--line);border-radius:14px;background:#ffffff04;padding:2px 14px}
+.sec>h4{margin:0 0 8px;font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--studio-sectionTitle)}
+.card{border:1px solid var(--line);border-radius:14px;background:var(--studio-card);padding:2px 14px}
 .row{display:flex;align-items:center;justify-content:space-between;gap:10px 18px;flex-wrap:wrap;padding:13px 0;border-top:1px solid var(--line)}
 .row.first{border-top:0}
 .row.full{display:block}
@@ -111,29 +98,29 @@ h1 span{color:#8f988c}
 .rt{font-size:12.5px;font-weight:500}
 .rd{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.5}
 .rc{flex-shrink:0;display:flex;align-items:center;gap:8px;flex-wrap:wrap;justify-content:flex-end}
-.switch{appearance:none;width:36px;height:21px;border-radius:21px;background:#3a3e3b;position:relative;cursor:pointer;flex-shrink:0;margin:0;transition:background .2s;box-shadow:inset 0 1px 2px #0006}
-.switch:checked{background:linear-gradient(180deg,#d7eac4,#b8d29f)}
-.switch:before{content:"";position:absolute;width:15px;height:15px;left:3px;top:3px;border-radius:50%;background:#f3f5f0;box-shadow:0 1px 3px #0007;transition:transform .2s cubic-bezier(.3,1.4,.6,1)}
-.switch:checked:before{transform:translateX(15px);background:#1f271a}
+.switch{appearance:none;width:36px;height:21px;border-radius:21px;background:var(--studio-switchOff);position:relative;cursor:pointer;flex-shrink:0;margin:0;transition:background .2s;box-shadow:inset 0 1px 2px #0006}
+.switch:checked{background:linear-gradient(180deg,var(--studio-switchOnTop),var(--studio-switchOnBottom))}
+.switch:before{content:"";position:absolute;width:15px;height:15px;left:3px;top:3px;border-radius:50%;background:var(--studio-knob);box-shadow:0 1px 3px #0007;transition:transform .2s cubic-bezier(.3,1.4,.6,1)}
+.switch:checked:before{transform:translateX(15px);background:var(--studio-brandInk)}
 .range{display:flex;align-items:center;gap:10px}
-.range input{appearance:none;width:168px;height:4px;border-radius:4px;margin:0;background:linear-gradient(90deg,var(--brand) var(--f,50%),#ffffff1a var(--f,50%));cursor:pointer}
-.range input::-webkit-slider-thumb{appearance:none;width:15px;height:15px;border-radius:50%;background:#f4f6f1;box-shadow:0 1px 4px #0008,0 0 0 4px #d1e5bd1f}
-.range input::-moz-range-thumb{width:15px;height:15px;border:0;border-radius:50%;background:#f4f6f1;box-shadow:0 1px 4px #0008,0 0 0 4px #d1e5bd1f}
-.range output{min-width:54px;text-align:center;font-size:11px;padding:3px 7px;border-radius:6px;background:#ffffff08;border:1px solid var(--line);font-variant-numeric:tabular-nums;color:#cfd6cb}
+.range input{appearance:none;width:168px;height:4px;border-radius:4px;margin:0;background:linear-gradient(90deg,var(--brand) var(--f,50%),var(--studio-rangeTrack) var(--f,50%));cursor:pointer}
+.range input::-webkit-slider-thumb{appearance:none;width:15px;height:15px;border-radius:50%;background:var(--studio-rangeThumb);box-shadow:0 1px 4px #0008,0 0 0 4px var(--studio-rangeRing)}
+.range input::-moz-range-thumb{width:15px;height:15px;border:0;border-radius:50%;background:var(--studio-rangeThumb);box-shadow:0 1px 4px #0008,0 0 0 4px var(--studio-rangeRing)}
+.range output{min-width:54px;text-align:center;font-size:11px;padding:3px 7px;border-radius:6px;background:var(--studio-hover);border:1px solid var(--line);font-variant-numeric:tabular-nums;color:var(--studio-outputText)}
 .seg{display:inline-flex;flex-wrap:wrap;gap:2px;background:var(--sunk);border:1px solid var(--line2);padding:3px;border-radius:9px}
 .seg button{background:none;border:0;border-radius:6px;padding:5px 10px;font-size:11.5px;color:var(--muted);white-space:nowrap;display:flex;align-items:center;gap:5px}
-.seg button[aria-pressed=true]{background:#2d322b;color:#e6efdf;box-shadow:0 1px 4px #0005,inset 0 1px #ffffff0d}
+.seg button[aria-pressed=true]{background:var(--studio-segPressed);color:var(--studio-segPressedText);box-shadow:0 1px 4px #0005,inset 0 1px #ffffff0d}
 .seg .new{margin-left:2px;padding:0 4px;font-size:8px}
 .chips{display:flex;flex-wrap:wrap;gap:6px}
 .chips button{background:var(--sunk);border:1px solid var(--line2);border-radius:20px;padding:5px 11px;font-size:11.5px;color:var(--muted)}
-.chips button[aria-pressed=true]{border-color:#d1e5bd88;color:var(--text);background:#1b2019}
+.chips button[aria-pressed=true]{border-color:var(--studio-chipPressedBorder);color:var(--text);background:var(--studio-chipPressed)}
 .chips button[aria-pressed=true]:before{content:"✓ ";color:var(--brand)}
 select.sel{background:var(--sunk);border:1px solid var(--line2);border-radius:8px;padding:7px 10px;font-size:12px;min-width:170px}
 .tiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(var(--tw,112px),1fr));gap:8px}
 .tile{position:relative;background:var(--sunk);border:1px solid var(--line2);border-radius:12px;padding:6px;text-align:left;color:var(--muted);transition:border-color .15s,transform .15s,background .15s}
-.tile:hover{border-color:#ffffff33;transform:translateY(-1px)}
-.tile[aria-pressed=true]{border-color:#d1e5bd99;color:var(--text);background:linear-gradient(180deg,#1b2019,#121412);box-shadow:0 0 0 3px #d1e5bd14}
-.tile .tpv{position:relative;display:grid;place-items:center;height:50px;border-radius:8px;overflow:hidden;background:radial-gradient(ellipse at 50% 120%,#ffffff0d,transparent 70%),#0a0b0c;margin-bottom:6px}
+.tile:hover{border-color:var(--studio-tileHoverBorder);transform:translateY(-1px)}
+.tile[aria-pressed=true]{border-color:var(--studio-tileSelectedBorder);color:var(--text);background:linear-gradient(180deg,var(--studio-chipPressed),var(--studio-panelBottom));box-shadow:0 0 0 3px var(--studio-tileSelectedRing)}
+.tile .tpv{position:relative;display:grid;place-items:center;height:50px;border-radius:8px;overflow:hidden;background:radial-gradient(ellipse at 50% 120%,#ffffff0d,transparent 70%),var(--studio-tilePreview);margin-bottom:6px}
 .tile .tpv>canvas{width:88%;height:36px;display:block}
 .tile .tl{display:flex;align-items:center;justify-content:space-between;gap:4px;font-size:11px;padding:0 3px 2px;line-height:1.3}
 .tile .tl .new{margin:0;padding:0 4px;font-size:8px}
@@ -149,14 +136,14 @@ select.sel{background:var(--sunk);border:1px solid var(--line2);border-radius:8p
 .sp{width:74%;height:34px;border-radius:9px;display:block;position:relative;overflow:hidden;border:1px solid #ffffff1f}
 .sp-color{background:#0a0b10e6}
 .sp-art{background:var(--cover) center/cover}.sp-art:after{content:"";position:absolute;inset:0;backdrop-filter:blur(3px);background:#0005}
-.sp-glass{background:linear-gradient(135deg,#ffffff30,#ffffff08 60%,#ffffff14);box-shadow:inset 0 1px #ffffff30}
+.sp-glass{background:linear-gradient(135deg,#ffffff30,var(--studio-hover) 60%,#ffffff14);box-shadow:inset 0 1px #ffffff30}
 .sp-liquid{border:0;background:linear-gradient(135deg,#ffffff22,#ffffff05 50%,#ffffff18);box-shadow:inset 0 1px #ffffffaa,inset 0 -1px #ffffff40,inset 1px 0 #ffffff50,inset 0 8px 14px -8px #ffffff60}
 .sp-solid{background:linear-gradient(135deg,#eeeee4,#d9dfcf)}
 .sp-atmosphere{background:radial-gradient(120% 140% at 100% 0%,#ff3d8baa,transparent 60%),radial-gradient(120% 120% at 0 100%,#5b2cffaa,transparent 60%),#120b2e}
 .tpv.onbd{background:linear-gradient(135deg,#5b1d6e,#b3628a)}
-.note{display:flex;gap:10px;padding:12px 13px;border-radius:12px;background:#b9a4ff0d;border:1px solid #b9a4ff26;font-size:11.5px;line-height:1.6;color:#cfc6ee}
+.note{display:flex;gap:10px;padding:12px 13px;border-radius:12px;background:var(--studio-noteBg);border:1px solid var(--studio-noteBorder);font-size:11.5px;line-height:1.6;color:var(--studio-noteText)}
 .note b{color:#fff;font-weight:550}
-.note .ok{color:#8fe39a}.note .warn{color:#f1c27b}.note .no{color:#ff8a8a}
+.note .ok{color:var(--studio-ok)}.note .warn{color:var(--studio-warn)}.note .no{color:#ff8a8a}
 .note>i{font-style:normal;font-size:14px}
 .note code{font:10.5px ui-monospace,monospace;background:#0006;padding:1px 5px;border-radius:4px}
 .plat{display:grid;gap:8px}
@@ -171,11 +158,11 @@ select.sel{background:var(--sunk);border:1px solid var(--line2);border-radius:8p
 .diagcard{display:grid;gap:8px}
 .check{display:flex;align-items:center;gap:10px;font-size:12px;padding:7px 0;color:var(--muted)}
 .check i{width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:10px;background:#ffffff0d;flex-shrink:0}
-.check.ok i{background:#7fd18a22;color:#8fe39a}
+.check.ok i{background:#7fd18a22;color:var(--studio-ok)}
 .check.ok{color:var(--text)}
 .check code{margin-left:auto;font:10.5px ui-monospace,monospace;color:var(--dim)}
 .status{display:flex;align-items:center;gap:12px;padding:6px 0 12px}
-.livedot{width:10px;height:10px;border-radius:50%;background:#8fe39a;animation:pl 2s infinite;flex-shrink:0}
+.livedot{width:10px;height:10px;border-radius:50%;background:var(--studio-ok);animation:pl 2s infinite;flex-shrink:0}
 @keyframes pl{0%{box-shadow:0 0 0 0 #8fe39a88}70%{box-shadow:0 0 0 8px #8fe39a00}100%{box-shadow:0 0 0 0 #8fe39a00}}
 .status b{font-weight:500;font-size:12.5px;display:block}.status span{font-size:11px;color:var(--muted)}
 .status .ghost{margin-left:auto;height:30px}
@@ -183,14 +170,14 @@ select.sel{background:var(--sunk);border:1px solid var(--line2);border-radius:8p
 
 /* stage */
 .stagecol{position:sticky;top:72px;display:grid;gap:14px}
-.stage{position:relative;border:1px solid var(--line2);border-radius:18px;overflow:hidden;height:min(560px,64vh);min-height:380px;isolation:isolate}
+.stage{position:relative;border:1px solid var(--line2);border-radius:18px;overflow:hidden;height:min(420px,55vh);min-height:320px;isolation:isolate}
 .stage .bar{position:absolute;z-index:6;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;pointer-events:none}
 .stage .bar>*{pointer-events:auto}
 .stage .bar.top{top:12px}.stage .bar.bottom{bottom:12px}
 .chip{display:flex;align-items:center;gap:6px;background:#0b0c0dcc;backdrop-filter:blur(12px);border:1px solid #ffffff1f;border-radius:10px;padding:4px;font-size:11px;color:#c9cfc6}
 .chip button{background:none;border:0;border-radius:7px;padding:4px 8px;font-size:11px;color:#aab1a7}
-.chip button[aria-pressed=true]{background:#ffffff1a;color:#fff}
-.chip .bdsw{width:20px;height:20px;padding:0;border-radius:6px;box-shadow:inset 0 0 0 1px #ffffff30;position:relative;overflow:hidden}
+.chip button[aria-pressed=true]{background:var(--studio-rangeTrack);color:#fff}
+.chip .bdsw{width:30px;height:20px;padding:0;border-radius:6px;box-shadow:inset 0 0 0 1px #ffffff30;position:relative;overflow:hidden}
 .chip .bdsw .bd{border-radius:6px}
 .chip .bdsw[aria-pressed=true]{box-shadow:0 0 0 2px #fff}
 .chip .acc{width:14px;height:14px;padding:0;border-radius:50%}
@@ -200,7 +187,7 @@ select.sel{background:var(--sunk);border:1px solid var(--line2);border-radius:8p
 .chip .lbl{padding:0 4px 0 6px;color:#8a9187;font-size:10px;letter-spacing:.5px;text-transform:uppercase}
 .scaler{position:absolute;z-index:2;transition:left .35s,top .35s}
 .scaled{transform-origin:0 0}
-.sizeinfo{font:10px ui-monospace,monospace;color:#e6ebe3b0;background:#0b0c0dcc;border:1px solid #ffffff1a;border-radius:8px;padding:5px 9px;backdrop-filter:blur(10px)}
+.sizeinfo{font:10px ui-monospace,monospace;color:#e6ebe3b0;background:#0b0c0dcc;border:1px solid var(--studio-rangeTrack);border-radius:8px;padding:5px 9px;backdrop-filter:blur(10px)}
 .hint{position:absolute;z-index:5;left:50%;transform:translateX(-50%);top:54px;font-size:11px;color:#fff;background:#0009;border-radius:20px;padding:4px 11px;backdrop-filter:blur(8px);pointer-events:none;white-space:nowrap}
 .lightbox{position:absolute;inset:0;z-index:8;display:grid;place-items:center;background:#000a;backdrop-filter:blur(16px);cursor:zoom-out;animation:fade .25s}
 .lightbox div{width:min(58%,300px);aspect-ratio:1;border-radius:14px;background-size:cover;box-shadow:0 30px 80px #000c}
@@ -222,23 +209,6 @@ select.sel{background:var(--sunk);border:1px solid var(--line2);border-radius:8p
 .primary{background:var(--brand);color:var(--brand-ink);border:0;padding:0 12px;font-weight:550}
 .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:11px;color:var(--muted);margin-top:10px}
 
-/* feasibility */
-.feas{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:14px}
-.fcard{border:1px solid var(--line2);border-radius:14px;background:var(--panel);padding:16px}
-.fcard h3{margin:0 0 4px;font-size:14px;font-weight:550}
-.fcard>p{margin:0 0 12px;font-size:12px;color:var(--muted);line-height:1.6}
-.fcard dl{margin:0;display:grid;gap:8px}
-.fcard dt{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--dim);display:flex;align-items:center;gap:6px}
-.fcard dd{margin:0;font-size:12px;line-height:1.6;color:#d3d9cf}
-.lvl{display:inline-block;padding:0 6px;border-radius:4px;font-size:9.5px;font-weight:600;letter-spacing:.5px}
-.lvl.y{background:#8fe39a1c;color:#8fe39a}.lvl.p{background:#f1c27b1c;color:#f1c27b}.lvl.n{background:#ff8a8a1c;color:#ff8a8a}
-.tablewrap{overflow-x:auto;border:1px solid var(--line2);border-radius:14px;margin-top:26px}
-table{width:100%;border-collapse:collapse;font-size:12px;min-width:640px}
-th,td{text-align:left;padding:8px 14px;border-bottom:1px solid var(--line)}
-th{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--dim);font-weight:500;background:#ffffff04}
-td code{font:11.5px ui-monospace,monospace;color:#e3b56d}
-td.m{color:var(--muted)}
-tr:last-child td{border-bottom:0}
 footer{border-top:1px solid var(--line);margin-top:50px;padding:20px 32px;max-width:1440px;margin-left:auto;margin-right:auto;display:flex;justify-content:space-between;gap:20px;color:#69736a;font-size:10.5px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;background:#e9efe4;color:#1a2117;border-radius:10px;padding:9px 14px;font-size:12px;font-weight:500;transition:.25s;z-index:99;pointer-events:none;box-shadow:0 10px 30px #0008}
 .toast.on{opacity:1;transform:translate(-50%,0)}
@@ -251,19 +221,19 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:20px 32px;max-wi
 .w .face{position:absolute;inset:0;border-radius:inherit}
 .w .surf{position:absolute;inset:0;border-radius:inherit;overflow:hidden;transition:opacity .2s}
 .s-color{background:var(--bgc)}
-.s-glass{background:linear-gradient(135deg,#ffffff24,#ffffff08 55%,#ffffff12);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5)}
+.s-glass{background:linear-gradient(135deg,#ffffff24,var(--studio-hover) 55%,#ffffff12);backdrop-filter:blur(20px) saturate(1.5);-webkit-backdrop-filter:blur(20px) saturate(1.5)}
 .s-solid{background:linear-gradient(135deg,#efefe6,#d8dece)}
 .s-atmosphere{background:radial-gradient(130% 150% at 100% 0%,color-mix(in srgb,var(--p1) 75%,transparent),transparent 58%),radial-gradient(120% 130% at 0% 100%,color-mix(in srgb,var(--p2) 80%,transparent),transparent 62%),var(--p3)}
 .s-atmosphere:after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,#0000,#0000004d)}
 .s-art .cover{position:absolute;inset:-18%;background:var(--cover) center/cover;filter:blur(var(--blur)) saturate(.85)}
 .s-art .scrim{position:absolute;inset:0;background:linear-gradient(#000000b8,#000000d9,#000000fa);opacity:var(--dim)}
 /* Liquid glass: blur + optional SVG refraction (Chromium) + specular rim that follows the pointer */
-.s-liquid{background:linear-gradient(135deg,#ffffff1c,#ffffff04 45%,#ffffff12);backdrop-filter:blur(var(--lgb,3px)) saturate(1.8) brightness(1.06);-webkit-backdrop-filter:blur(var(--lgb,3px)) saturate(1.8) brightness(1.06)}
+.s-liquid{background:linear-gradient(135deg,var(--studio-line2),var(--studio-card) 45%,#ffffff12);backdrop-filter:blur(var(--lgb,3px)) saturate(1.8) brightness(1.06);-webkit-backdrop-filter:blur(var(--lgb,3px)) saturate(1.8) brightness(1.06)}
 .s-liquid.refract{backdrop-filter:url(#lgRefract) blur(var(--lgb,3px)) saturate(1.8) brightness(1.06)}
-.s-liquid.t-frost{--lgb:14px;background:linear-gradient(135deg,#ffffff2e,#ffffff10 50%,#ffffff22)}
+.s-liquid.t-frost{--lgb:14px;background:linear-gradient(135deg,#ffffff2e,var(--studio-line) 50%,#ffffff22)}
 .s-liquid.t-cover{background:linear-gradient(135deg,color-mix(in srgb,var(--p1) 38%,transparent),color-mix(in srgb,var(--p2) 22%,transparent))}
 .s-liquid .spec{position:absolute;inset:0;border-radius:inherit;background:radial-gradient(180px circle at var(--mx,22%) var(--my,-10%),#ffffff59,transparent 62%);mix-blend-mode:soft-light;pointer-events:none}
-.s-liquid .edge{border:0!important;box-shadow:inset 0 1px 0 #ffffff99,inset 0 -1px 0 #ffffff33,inset 1px 0 0 #ffffff40,inset -1px 0 0 #ffffff26,inset 0 10px 18px -12px #ffffff66,inset 0 -12px 22px -14px #00000040!important}
+.s-liquid .edge{border:0!important;box-shadow:inset 0 1px 0 #ffffff99,inset 0 -1px 0 var(--studio-tileHoverBorder),inset 1px 0 0 #ffffff40,inset -1px 0 0 #ffffff26,inset 0 10px 18px -12px #ffffff66,inset 0 -12px 22px -14px #00000040!important}
 .w .edge{position:absolute;inset:0;border-radius:inherit;border:1px solid #ffffff1f;pointer-events:none}
 .w .edge.hl{box-shadow:inset 0 1px #ffffff2e,inset 0 -1px #00000026}
 .s-solid .edge{border-color:#ffffff99}
@@ -291,7 +261,7 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:20px 32px;max-wi
 .art.squircle{border-radius:30%}
 .art.circle{border-radius:50%}
 .art.vinyl,.art.cd{border-radius:50%}
-.art.vinyl{background:radial-gradient(circle at 30% 25%,#ffffff1f,transparent 40%),repeating-radial-gradient(circle,#101010 0 1.2px,#1e1e1e 1.2px 2.6px);box-shadow:0 0 0 1px #ffffff1a,0 4px 14px #0006}
+.art.vinyl{background:radial-gradient(circle at 30% 25%,#ffffff1f,transparent 40%),repeating-radial-gradient(circle,#101010 0 1.2px,#1e1e1e 1.2px 2.6px);box-shadow:0 0 0 1px var(--studio-rangeTrack),0 4px 14px #0006}
 .art.vinyl:before{content:"";position:absolute;inset:31%;border-radius:50%;background:var(--cover) center/cover}
 .art.vinyl:after,.art.cd:after{content:"";position:absolute;left:46%;top:46%;width:8%;height:8%;border-radius:50%;background:#0c0c0c;box-shadow:0 0 0 1px #ffffff30}
 .art.cd{background:radial-gradient(circle,#0000 0 17%,#ffffffcc 17.5% 19%,#0000 19.5%),conic-gradient(from 20deg,#d9e2e8,#f6c6dd,#bfe3f8,#fff3b8,#c9f0d4,#e4d2fb,#d9e2e8);box-shadow:0 0 0 1px #ffffff40,0 4px 14px #0005}
@@ -308,7 +278,7 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:20px 32px;max-wi
 .art.empty:before,.art.empty:after{display:none}
 .art.empty svg{width:42%;height:42%;fill:var(--text);opacity:.35}
 .art.empty.fb-gradient{background:linear-gradient(135deg,hsl(var(--fh) 70% 60%),hsl(calc(var(--fh) + 60) 70% 35%))}
-.art.empty.fb-letters{background:linear-gradient(135deg,#ffffff1f,#ffffff08)}
+.art.empty.fb-letters{background:linear-gradient(135deg,#ffffff1f,var(--studio-hover))}
 .art.empty b{font-size:calc(var(--a)*.36);font-weight:700;letter-spacing:-.5px;opacity:.8}
 .artwrap .rg{position:absolute;inset:-4px;border-radius:14px;padding:2px;background:conic-gradient(var(--accent) calc(var(--p)*360deg),#ffffff26 0);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
 .artwrap.round .rg{border-radius:50%}
@@ -334,7 +304,7 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:20px 32px;max-wi
 /* progress */
 .pb{position:relative;height:18px;margin:1px 0;flex-shrink:0;cursor:pointer}
 .pb.notimes{height:9px}
-.pb .track{position:absolute;left:0;right:0;top:2px;height:3px;border-radius:9px;background:color-mix(in srgb,var(--text) 12%,transparent);box-shadow:inset 0 0 0 1px #ffffff1a;transition:height .15s}
+.pb .track{position:absolute;left:0;right:0;top:2px;height:3px;border-radius:9px;background:color-mix(in srgb,var(--text) 12%,transparent);box-shadow:inset 0 0 0 1px var(--studio-rangeTrack);transition:height .15s}
 .pb:hover .track{height:5px}
 .pb .fill{position:absolute;left:0;top:0;bottom:0;width:calc(var(--p)*100%);border-radius:inherit;overflow:hidden;background:linear-gradient(90deg,color-mix(in srgb,var(--pg1) 62%,transparent),color-mix(in srgb,var(--pg1) 95%,transparent) 65%,color-mix(in srgb,var(--pg2) 82%,transparent));box-shadow:0 0 6px color-mix(in srgb,var(--pg1) 38%,transparent)}
 .pb .sweep{position:absolute;top:0;bottom:0;width:40%;left:-40%;opacity:0;background:linear-gradient(90deg,transparent,color-mix(in srgb,var(--control) 78%,transparent),transparent)}
@@ -385,7 +355,7 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:20px 32px;max-wi
 .ly{font-size:calc(var(--ts)*.78);font-style:italic;color:var(--accent);opacity:.9;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%;margin-top:1px;transition:opacity .3s}
 .src{display:flex;align-items:center;gap:5px;font-size:7px;letter-spacing:1.3px;text-transform:uppercase;opacity:.65;margin-bottom:3px}
 .src i{width:5px;height:5px;border-radius:50%;background:var(--accent)}
-.src button{background:#ffffff1a;border:0;border-radius:6px;padding:0 5px;font:inherit;letter-spacing:.5px;color:inherit;cursor:pointer}
+.src button{background:var(--studio-rangeTrack);border:0;border-radius:6px;padding:0 5px;font:inherit;letter-spacing:.5px;color:inherit;cursor:pointer}
 .tt.marq{text-overflow:clip;-webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 90%,transparent)}
 .tt.marq .mi{display:inline-block;animation:marq 14s linear infinite}
 .tt.marq .mi span{padding-right:40px}
@@ -474,8 +444,8 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:20px 32px;max-wi
 .pp-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
 .pp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
 .pp{position:relative;background:var(--sunk);border:1px solid var(--line2);border-radius:12px;padding:6px;color:var(--muted);cursor:pointer;transition:border-color .15s,transform .15s}
-.pp:hover{border-color:#ffffff33;transform:translateY(-1px)}
-.pp[aria-pressed=true]{border-color:#d1e5bd99;color:var(--text);box-shadow:0 0 0 3px #d1e5bd14}
+.pp:hover{border-color:var(--studio-tileHoverBorder);transform:translateY(-1px)}
+.pp[aria-pressed=true]{border-color:var(--studio-tileSelectedBorder);color:var(--text);box-shadow:0 0 0 3px var(--studio-tileSelectedRing)}
 .pp .ppv{position:relative;height:68px;border-radius:8px;overflow:hidden;display:grid;place-items:center;margin-bottom:6px}
 .pp .ppv .fit{position:relative;z-index:1}
 .pp .w{pointer-events:none}
@@ -489,7 +459,7 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:20px 32px;max-wi
 .saverow .primary{height:32px;border-radius:8px}
 .saverow .ghost{height:30px}
 textarea.sel{resize:none;min-width:170px;line-height:1.35;background:var(--sunk);border:1px solid var(--line2);border-radius:8px;padding:7px 10px;font:12px Inter,"Segoe UI",sans-serif;color:var(--text);outline:0}
-textarea.sel:focus{border-color:#d1e5bd66}
+textarea.sel:focus{border-color:color-mix(in srgb,var(--brand) 40%,transparent)}
 /* refraction is tuned for full size; at thumbnail scale it turns into blobs */
 .pp .s-liquid,.pp .s-liquid.refract,.pp .s-glass{backdrop-filter:none;-webkit-backdrop-filter:none;background-color:#ffffff1f}
 
@@ -516,7 +486,7 @@ textarea.sel:focus{border-color:#d1e5bd66}
 .L-pillicon .eq i{width:1.5px}
 .pctl{display:flex;gap:0;margin-left:2px}
 .pctl button{width:20px;height:20px;border:0;background:none;padding:0;display:grid;place-items:center;color:var(--control);opacity:.8;border-radius:50%}
-.pctl button:hover{background:#ffffff1a;opacity:1}
+.pctl button:hover{background:var(--studio-rangeTrack);opacity:1}
 .pctl svg{width:10px;height:10px;fill:currentColor}
 .pline{position:absolute;left:12px;right:12px;bottom:2px;height:2px;border-radius:2px;background:#ffffff1f;overflow:hidden;pointer-events:none}
 .pline i{position:absolute;inset:0 auto 0 0;width:calc(var(--p)*100%);background:var(--accent)}
@@ -547,35 +517,35 @@ textarea.sel:focus{border-color:#d1e5bd66}
   .caption{display:none}
 }
 @media (max-width:760px){
-  .hwrap{padding:12px 16px}nav.jump{display:none}
+  .hwrap{padding:12px 16px;flex-wrap:wrap;gap:8px 16px}.brand{font-size:13px}
   main{padding:0 16px 30px}
   .intro{display:block;padding:34px 0 20px}.intro p{margin-top:16px;max-width:none}
   .sh{display:block}.sh p{margin-top:8px}
-  .presets,.feas{grid-template-columns:1fr}
+  .presets{grid-template-columns:1fr}
   .row{flex-wrap:wrap}.range input{width:130px}
   .stage{height:280px}
   .stage .bar.bottom .sizeinfo,.stage .bar .lbl{display:none}
   footer{flex-direction:column}
 }
-.rm .art.spin,.rm .pb .sweep,.rm .pb .knob,.rm .tt.marq .mi,.rm .eq.live i,.rm .mark i{animation:none!important}
+.rm .art.spin,.rm .pb .sweep,.rm .pb .knob,.rm .tt.marq .mi,.rm .eq.live i{animation:none!important}
 @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
 </style>
+<link rel="stylesheet" href="assets/studio/wallpapers.css">
 </head>
 <body>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="lgRefract" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.006 0.011" numOctaves="2" seed="4" result="n"/><feGaussianBlur in="n" stdDeviation="2.5" result="nb"/><feDisplacementMap id="lgMap" in="SourceGraphic" in2="nb" scale="36" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <header><div class="hwrap">
-  <div class="brand"><span class="mark" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Audio Visualizer</div>
-  <nav class="jump"><a href="#" data-page="looks" aria-current="page">Looks</a><a href="#" data-page="studio">Studio</a><a href="#" data-page="ideas">Feasibility</a><a href="#" data-page="plan">Keys</a></nav>
-  <span class="draft">DESIGN LAB · 03</span>
+  <div class="brand"><img class="brand-icon" src="assets/studio/icon.png" width="36" height="36" alt="">Plasma Audio Visualizer</div>
+  <nav class="jump" aria-label="Main navigation"><a href="#" data-page="looks" aria-current="page">Looks</a><a href="#" data-page="studio">Studio</a></nav>
 </div></header>
 
 <main>
 <div data-page="looks">
 <section class="intro">
-  <div><div class="eyebrow">Keep what people love · add what they ask for</div>
-  <h1>Same widget.<br><span>More ways to make it yours.</span></h1>
+  <div><div class="eyebrow">Your music, your desktop</div>
+  <h1>Music in view.<br><span>Make it yours.</span></h1>
   <div class="stats" id="stats"></div></div>
-  <p>Everything below is the <b>real 360 × 104 widget</b> rebuilt in HTML, plus a panel pill, liquid glass and richer track info. Today's look stays the default. Every addition is an opt-in toggle marked <span class="new">New</span>; <span class="new hypr">Hyprland</span> marks settings that only exist there.</p>
+  <p>Explore visualizers, layouts and colours for Plasma and Hyprland. Choose a preset, then fine-tune it in the studio with an interactive preview.</p>
 </section>
 
 <div class="sh" id="looks"><div><div class="eyebrow">01 · Start from a look</div><h2>Presets</h2></div><p>One click sets the whole studio below. Buttons on the cards work — they share one sample player.</p></div>
@@ -600,7 +570,6 @@ textarea.sel:focus{border-color:#d1e5bd66}
       <div class="bd bd-dusk" id="stageBd"></div>
       <div class="bar top">
         <div class="chip" id="bdPicker"><span class="lbl">Wallpaper</span></div>
-        <div class="chip" id="envPicker"><button data-env="kde" aria-pressed="true">Plasma</button><button data-env="hypr">Hyprland</button></div>
         <div class="chip"><span class="lbl">State</span><select id="statusSel" aria-label="Widget state">
           <option value="normal">Playing</option><option value="paused">Paused</option><option value="long">Long title</option><option value="nometa">No metadata</option><option value="idle">Nothing playing</option><option value="backend">cava missing</option>
         </select></div>
@@ -623,22 +592,14 @@ textarea.sel:focus{border-color:#d1e5bd66}
 </section>
 </div>
 
-<div data-page="ideas" hidden>
-<div class="sh" id="ideas"><div><div class="eyebrow">03 · Can the real widget do this?</div><h2>Feasibility on Plasma &amp; Hyprland</h2></div><p>HTML can fake almost anything. This is what QML, KWin and Hyprland can actually ship — and what it costs.</p></div>
-<section class="feas" id="feas"></section>
-</div>
-
-<div data-page="plan" hidden>
-<div class="sh" id="plan"><div><div class="eyebrow">04 · How this lands in the widget</div><h2>Proposed config keys</h2></div><p>Nothing existing is renamed or removed. New keys default to today's behaviour, so an upgrade changes nothing on anyone's desktop.</p></div>
-<div class="tablewrap"><table><thead><tr><th>Proposed key</th><th>Type</th><th>Default</th><th>Values / purpose</th></tr></thead><tbody id="keyTable"></tbody></table></div>
-</div>
-
 </main>
-<footer><span>Plasma Audio Visualizer · design lab · illustrative artwork, lyrics &amp; data</span><span>Local HTML study — no desktop settings are changed</span></footer>
+<footer><span>Plasma Audio Visualizer · sample artwork and playback</span><span>Interactive browser preview — no desktop settings are changed</span></footer>
 
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
+<script src="assets/studio/StudioCatalog.js"></script>
+<script src="assets/studio/PresetCodec.js"></script>
 <script>
 'use strict';
 const $ = (s, r = document) => r.querySelector(s);
@@ -747,6 +708,7 @@ const PROPOSED = {
 };
 const DEFAULTS = { ...EXISTING, ...HYPR };
 for (const [k, v] of Object.entries(PROPOSED)) DEFAULTS[k] = v.def;
+const LOOK_DEFAULTS = { ...DEFAULTS };
 delete DEFAULTS.showMpris; delete DEFAULTS.artBg;
 
 const VIZ = ['Smooth Wave', 'Rounded Bars', 'Mirror Bars', 'Tech Line', 'Floating Dots', 'Floating Dots Bold',
@@ -1465,7 +1427,8 @@ function frame(now) {
 
 /* ─── main stage ───────────────────────────────────────────────── */
 let S = load() || structuredClone(DEFAULTS);
-let stageStatus = 'normal', zoom = 'fit', backdrop = 'dusk', env = 'kde', popupOpen = true, activePreset = null, activeTab = 'presets', query = '', presetFilter = 'all';
+const env = 'kde'; // One consistent desktop/panel presentation for the browser demo.
+let stageStatus = 'normal', zoom = 'fit', backdrop = 'dusk', popupOpen = true, activePreset = null, activeTab = 'presets', query = '', presetFilter = 'all';
 function load() {
   try { const o = JSON.parse(localStorage.getItem('pav-lab4')); if (o) return { ...DEFAULTS, ...o }; } catch (e) { }
   return null;
@@ -1509,7 +1472,7 @@ function fitStage() {
   const st = $('#stage'), sw = st.clientWidth, sh = st.clientHeight;
   const aw = sw - 48, ah = sh - 124;
   const fit = Math.max(.35, Math.min(aw / W, ah / (H + pop)));
-  stageScale = zoom === 'fit' ? Math.min(fit, 2.6) : Math.min(Number(zoom), Math.max(.35, aw / W));
+  stageScale = zoom === 'fit' ? Math.min(fit, 1) : Math.min(Number(zoom), Math.max(.35, aw / W));
   const sc = $('#scaler'), inner = $('#mainWidget');
   inner.style.width = W + 'px'; inner.style.height = H + 'px'; inner.style.transform = `scale(${stageScale})`;
   sc.style.width = W * stageScale + 'px'; sc.style.height = H * stageScale + 'px';
@@ -1525,24 +1488,18 @@ function fitStage() {
 }
 new ResizeObserver(() => { fitStage(); fitPresets(); }).observe(document.body);
 
-const BACKDROPS = { dusk: 'Pine dusk', neon: 'Neon', sea: 'Sunset sea', breeze: 'Breeze dark', olive: 'Olive haze', day: 'Daylight' };
+const BACKDROPS = Object.fromEntries(StudioCatalog.wallpapers.map(w => [w.id, w.label]));
 $('#bdPicker').insertAdjacentHTML('beforeend', Object.entries(BACKDROPS).map(([k, n]) => `<button class="bdsw" data-bd="${k}" title="${n}" aria-label="${n}" aria-pressed="${k === backdrop}"><span class="bd bd-${k}"></span></button>`).join(''));
 $('#bdPicker').addEventListener('click', e => {
   const b = e.target.closest('[data-bd]'); if (!b) return;
   backdrop = b.dataset.bd; $('#stageBd').className = 'bd bd-' + backdrop;
   $$('[data-bd]').forEach(x => x.setAttribute('aria-pressed', x === b));
 });
-$('#envPicker').addEventListener('click', e => {
-  const b = e.target.closest('[data-env]'); if (!b) return;
-  env = b.dataset.env; $$('[data-env]').forEach(x => x.setAttribute('aria-pressed', x === b));
-  renderMain(); syncSettings();
-});
 const ACCENTS = { '#3daee9': 'Breeze blue', '#a855f7': 'Purple', '#e93d8f': 'Pink', '#3dd68c': 'Green', '#f67400': 'Orange' };
-$('#accentPicker').insertAdjacentHTML('beforeend', Object.entries(ACCENTS).map(([c, n]) => `<button class="acc" data-acc="${c}" title="${n}" aria-label="${n} system accent" aria-pressed="${c === P.sysAccent}" style="background:${c}"></button>`).join(''));
+$('#accentPicker').insertAdjacentHTML('beforeend', Object.entries(ACCENTS).map(([c, n]) => `<button class="acc" data-acc="${c}" title="${n}" aria-label="${n} custom accent" aria-pressed="${c === P.sysAccent}" style="background:${c}"></button>`).join(''));
 $('#accentPicker').addEventListener('click', e => {
   const b = e.target.closest('[data-acc]'); if (!b) return;
-  P.sysAccent = b.dataset.acc; $$('[data-acc]').forEach(x => x.setAttribute('aria-pressed', x === b));
-  renderPlayers();
+  update({ useSystemAccent: false, accentFromArt: false, customColor: b.dataset.acc });
 });
 $('#zoomPicker').addEventListener('click', e => {
   const b = e.target.closest('[data-z]'); if (!b) return;
@@ -1696,7 +1653,6 @@ function applyPreset(p) {
   for (const k of Object.keys(HYPR)) next[k] = S[k];
   next.hAnchor = S.hAnchor;
   S = next; activePreset = p.id; presetDirty = false;
-  if (p.env && p.env !== env) { env = p.env; $$('[data-env]').forEach(x => x.setAttribute('aria-pressed', x.dataset.env === env)); }
   popupOpen = true;
   onChange(); renderPresets();
   toast(`Applied “${p.name}”${keepColors ? ' · kept your colours' : ''}`);
@@ -1747,8 +1703,8 @@ function renderPresetPicker(el) {
 
 const loadUser = () => { try { return JSON.parse(localStorage.getItem('pav-user-presets')) || []; } catch (e) { return []; } };
 const saveUser = list => { try { localStorage.setItem('pav-user-presets', JSON.stringify(list)); } catch (e) { } };
-// Only what differs from the defaults, and never placement.
-const diffOf = st => Object.fromEntries(Object.entries(st).filter(([k, v]) => k in DEFAULTS && !(k in HYPR) && k !== 'hAnchor' && JSON.stringify(v) !== JSON.stringify(DEFAULTS[k])));
+// Save all current look values so receiver defaults cannot alter the look.
+const diffOf = st => PresetCodec.browser(PresetCodec.decode(PresetCodec.encode('Saved look', st, LOOK_DEFAULTS, true), LOOK_DEFAULTS, false).settings);
 
 function renderUserPresets(el) {
   el.innerHTML = `<div class="pp-grid"></div>
@@ -1767,16 +1723,16 @@ function renderUserPresets(el) {
   };
   name.onkeydown = e => { if (e.key === 'Enter') $('[data-save]', el).click(); };
   $('[data-export]', el).onclick = async () => {
-    const txt = JSON.stringify({ name: 'Shared look', settings: diffOf(S) });
+    const txt = PresetCodec.encode(name.value.trim() || 'Shared look', S, LOOK_DEFAULTS, true);
     try { await navigator.clipboard.writeText(txt); toast('Look copied as JSON'); } catch (e) { prompt('Copy this JSON', txt); }
   };
   $('[data-import]', el).onclick = () => {
     const txt = prompt('Paste a look (JSON)'); if (!txt) return;
     try {
-      const o = JSON.parse(txt), all = loadUser();
-      const u = { id: 'u' + Date.now().toString(36), name: o.name || 'Imported look', s: o.settings || o };
+      const o = PresetCodec.decode(txt, LOOK_DEFAULTS, true), all = loadUser();
+      const u = { id: 'u' + Date.now().toString(36), name: o.name || 'Imported look', s: o.settings };
       all.push(u); saveUser(all); applyPreset(u);
-    } catch (e) { toast('That is not valid JSON'); }
+    } catch (e) { toast(e.message || 'That is not a valid look'); }
   };
   grid.addEventListener('click', e => {
     const del = e.target.closest('[data-del]');
@@ -1793,19 +1749,7 @@ function renderUserPresets(el) {
 
 /* ─── settings schema ──────────────────────────────────────────── */
 PROPOSED.pillEq.vals = 'off · static · live · wave (mini visualizer) — static costs no frames at all';
-const TABS = [
-  { id: 'presets', label: 'Presets', ic: '<rect x="3" y="3" width="8" height="8" rx="2"/><rect x="13" y="3" width="8" height="8" rx="2"/><rect x="3" y="13" width="8" height="8" rx="2"/><path d="M17 13v8M13 17h8"/>' },
-  { id: 'viz', label: 'Visualizer', ic: '<path d="M3 12h2l2-6 3 12 3-9 2 5 2-2h4"/>' },
-  { id: 'controls', label: 'Controls', ic: '<circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/>' },
-  { id: 'layout', label: 'Layout', ic: '<rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16M9 12h12"/>' },
-  { id: 'art', label: 'Artwork', ic: '<rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="9" cy="9" r="2"/><path d="m21 15-5-5L5 21"/>' },
-  { id: 'info', label: 'Track info', ic: '<circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/>' },
-  { id: 'card', label: 'Card', ic: '<rect x="3" y="6" width="18" height="12" rx="4"/><path d="M7 10h6"/>' },
-  { id: 'colors', label: 'Colours', ic: '<circle cx="12" cy="12" r="9"/><path d="M12 3a9 9 0 0 0 0 18z" fill="currentColor"/>' },
-  { id: 'behavior', label: 'Behaviour', ic: '<circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"/>' },
-  { id: 'place', label: 'Placement', ic: '<rect x="2" y="4" width="20" height="13" rx="2"/><path d="M8 21h8M12 17v4"/><rect x="12" y="7" width="6" height="4" rx="1"/>' },
-  { id: 'audio', label: 'Audio', ic: '<path d="M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"/>' },
-];
+const TABS = StudioCatalog.tabs.map(tab => ({ ...tab, ic: `<path d="${tab.icon}"/>` }));
 const pct = v => Math.round(v * 100) + '%';
 const DIAG = {
   classic: '<rect x="4" y="5" width="15" height="15" rx="3" class="f"/><rect x="4" y="23" width="15" height="7" rx="3.5" class="o"/><path d="M24 10q3-4 6 0t6 0 6 0 6 0 6 0" class="s"/><rect x="24" y="17" width="36" height="1.6" rx=".8" class="f2"/><rect x="24" y="22" width="26" height="3" rx="1" class="f"/><rect x="24" y="28" width="16" height="2" rx="1" class="f2"/>',
@@ -1842,7 +1786,7 @@ function platformNote(topic) {
   } else if (topic === 'pill') {
     body = kde ? `${L.y}: a <code>compactRepresentation</code> used when <code>formFactor</code> is a panel; clicking opens the full card as the popup, just like the AI-usage widget's panel slot.` : `${L.p}: Hyprland has no shared panel API. Either ship a small Quickshell bar module, or a <code>--waybar</code> mode printing JSON for a custom module (text + cover, no animation).`;
   } else {
-    body = kde ? `Plasma places desktop widgets by dragging them in edit mode and panel widgets inside the panel, so these Hyprland-only options stay hidden there. Switch the stage to <b>Hyprland</b> to see them.` : `Uses the existing Hyprland shell keys (<code>monitor</code>, <code>verticalPosition</code>, <code>desktopLayer</code>, <code>pauseWhenCovered</code>) plus a proposed horizontal anchor. Click a spot on the screen.`;
+    body = kde ? `Plasma places desktop widgets by dragging them in edit mode and panel widgets inside the panel, so these Hyprland-only options stay hidden there. The desktop settings page exposes placement options on Hyprland.` : `Uses the existing Hyprland shell keys (<code>monitor</code>, <code>verticalPosition</code>, <code>desktopLayer</code>, <code>pauseWhenCovered</code>) plus a proposed horizontal anchor. Click a spot on the screen.`;
   }
   return `<div class="note"><i>◇</i><div><b>${who}</b> — ${body}</div></div>`;
 }
@@ -1851,7 +1795,7 @@ const SECTIONS = [
   { tab: 'presets', title: 'Looks', rows: [
     { id: 'pick', type: 'custom', full: true, isNew: true, label: 'Start from a look', desc: 'One click sets everything. Fine-tune in the other tabs afterwards — your placement is never touched.', render: renderPresetPicker },
   ] },
-  { tab: 'presets', title: 'My presets', rows: [
+  { tab: 'saved', title: 'My presets', rows: [
     { id: 'mine', type: 'custom', full: true, isNew: true, label: 'Saved looks', desc: 'Save the current settings under a name, or share a look as a small JSON snippet.', render: renderUserPresets },
   ] },
   { tab: 'viz', title: 'Orbit around the cover', when: s => s.layoutMode === 'orbit', rows: [
@@ -1868,14 +1812,6 @@ const SECTIONS = [
     { k: 'ribbonFullness', type: 'range', isNew: true, label: 'Ribbon fullness', desc: 'How thick the bass makes it.', min: .6, max: 1.3, step: .05, fmt: pct, when: s => s.visualizerType === 15 },
     { k: 'lineWidth', type: 'range', label: 'Line weight', desc: 'Stroke width of lines and dot size.', min: 1, max: 8, step: .2, fmt: v => v.toFixed(1) },
     { k: 'fillWave', type: 'switch', label: 'Gradient fill', desc: 'Transparent fill under the wave and bars.' },
-  ] },
-  { tab: 'viz', title: 'Colour & light', rows: [
-    { k: 'vizColorMode', type: 'seg', isNew: true, label: 'Colour mode', desc: 'Solid uses the accent from the Colours tab.', opts: [['solid', 'Solid'], ['gradient', 'Gradient', 1], ['cover', 'Cover', 1], ['palette', 'Palette', 1], ['rainbow', 'Rainbow', 1]] },
-    { k: 'vizPalette', type: 'tiles', full: true, isNew: true, label: 'Palette', desc: 'Curated palettes with bounded hues, so they never turn muddy.', tw: 84, when: s => s.vizColorMode === 'palette',
-      opts: Object.entries(PALETTES).map(([k, c]) => ({ v: k, label: k[0].toUpperCase() + k.slice(1), pv: `<i class="sp" style="border:0;background:linear-gradient(90deg,${c.join(',')})"></i>` })) },
-    { k: 'hueReactive', type: 'switch', isNew: true, label: 'Music-reactive hue', desc: 'Colours drift slowly with the bass / treble balance.', when: s => !['solid', 'rainbow'].includes(s.vizColorMode) || true },
-    { k: 'glowWave', type: 'switch', label: 'Glow', desc: 'Soft light around the visualizer.' },
-    { k: 'bloom', type: 'range', isNew: true, label: 'Bloom', desc: 'How far the glow spreads.', min: 0, max: 1.5, step: .05, fmt: pct, when: s => s.glowWave },
   ] },
   { tab: 'controls', title: 'Progress bar', rows: [
     { k: 'progressBarStyle', type: 'tiles', full: true, label: 'Style', desc: 'Click anywhere on it in the widget to seek.', tw: 104, opts: PBS.map((l, i) => ({ v: i, label: l, isNew: i >= 5,
@@ -1977,11 +1913,19 @@ const SECTIONS = [
     { k: 'bassPulse', type: 'switch', isNew: true, label: 'Bass pulse', desc: 'The edge glows in the accent colour on every kick.' },
   ] },
   { tab: 'colors', title: 'Accent', rows: [
-    { id: 'waveSrc', type: 'seg', label: 'Accent colour', desc: 'Drives the wave, progress and play button. System follows Plasma — try the accent dots on the stage.',
+    { id: 'waveSrc', type: 'seg', label: 'Accent colour', desc: 'Drives the wave, progress and play button. System follows your desktop accent; the stage dots choose a custom colour.',
       opts: [['system', 'System'], ['art', 'From cover', true], ['custom', 'Custom']],
       get: s => s.accentFromArt ? 'art' : s.useSystemAccent ? 'system' : 'custom',
       set: v => ({ accentFromArt: v === 'art', useSystemAccent: v !== 'custom' }) },
     { k: 'customColor', type: 'color', label: 'Custom colour', swatches: SWATCHES, when: s => !s.accentFromArt && !s.useSystemAccent },
+  ] },
+  { tab: 'colors', title: 'Visualizer colour & light', rows: [
+    { k: 'vizColorMode', type: 'seg', isNew: true, label: 'Colour mode', desc: 'Solid uses the accent selected above.', opts: [['solid', 'Solid'], ['gradient', 'Gradient', 1], ['cover', 'Cover', 1], ['palette', 'Palette', 1], ['rainbow', 'Rainbow', 1]] },
+    { k: 'vizPalette', type: 'tiles', full: true, isNew: true, label: 'Palette', desc: 'Curated palettes with bounded hues, so they never turn muddy.', tw: 84, when: s => s.vizColorMode === 'palette',
+      opts: Object.entries(PALETTES).map(([k, c]) => ({ v: k, label: k[0].toUpperCase() + k.slice(1), pv: `<i class="sp" style="border:0;background:linear-gradient(90deg,${c.join(',')})"></i>` })) },
+    { k: 'hueReactive', type: 'switch', isNew: true, label: 'Music-reactive hue', desc: 'Colours drift slowly with the bass / treble balance.', when: s => !['solid', 'rainbow'].includes(s.vizColorMode) || true },
+    { k: 'glowWave', type: 'switch', label: 'Glow', desc: 'Soft light around the visualizer.' },
+    { k: 'bloom', type: 'range', isNew: true, label: 'Bloom', desc: 'How far the glow spreads.', min: 0, max: 1.5, step: .05, fmt: pct, when: s => s.glowWave },
   ] },
   { tab: 'colors', title: 'Text & controls', rows: [
     { id: 'textSrc', type: 'seg', label: 'Text colour', opts: [[true, 'System'], [false, 'Custom']], get: s => s.useSystemText, set: v => ({ useSystemText: v }) },
@@ -2010,7 +1954,7 @@ const SECTIONS = [
     { k: 'batterySaver', type: 'switch', isNew: true, label: 'Battery saver', desc: 'On battery: 20 Hz and no glow. Simulated here.' },
     { k: 'simpleRender', type: 'switch', isNew: true, label: 'Simple rendering', desc: 'Lightweight Canvas path — also the automatic fallback if shaders fail.' },
   ] },
-  { tab: 'place', title: 'Position', rows: [
+  { tab: 'behavior', title: 'Position', when: () => env === 'hypr', rows: [
     { id: 'placeNote', type: 'note', full: true, label: '', html: () => platformNote('place') },
     { id: 'anchor', type: 'custom', full: true, isNew: true, isHypr: true, label: 'Screen position', render: renderAnchor, when: () => env === 'hypr' },
     { k: 'verticalPosition', type: 'range', isHypr: true, label: 'Vertical position', min: 0, max: 1, step: .01, fmt: pct, when: () => env === 'hypr' },
@@ -2127,7 +2071,7 @@ function buildRow(r) {
 }
 
 function renderSettings() {
-  $('#tabs').innerHTML = TABS.map(t => `<button role="tab" data-tab="${t.id}" aria-selected="${t.id === activeTab}"><svg viewBox="0 0 24 24">${t.ic}</svg>${t.label}${SECTIONS.some(sec => sec.tab === t.id && sec.rows.some(r => r.isNew || (r.opts || []).some(o => o.isNew || o[2]))) ? '<i class="dot" title="Has new options"></i>' : ''}</button>`).join('');
+  $('#tabs').innerHTML = TABS.map(t => `<button role="tab" data-tab="${t.id}" aria-selected="${t.id === activeTab}"><svg viewBox="0 0 24 24">${t.ic}</svg>${t.label}</button>`).join('');
   const body = $('#pbody');
   body.innerHTML = '';
   rows = [];
@@ -2141,6 +2085,7 @@ function renderSettings() {
   body.insertAdjacentHTML('beforeend', '<div class="empty-search" hidden>No settings match that search.</div>');
 }
 function syncSettings() {
+  $$('[data-acc]').forEach(b => b.setAttribute('aria-pressed', !S.useSystemAccent && !S.accentFromArt && b.dataset.acc === S.customColor));
   const q = query.trim().toLowerCase();
   for (const row of rows) {
     const vis = row.r.when ? row.r.when(S) : true;
@@ -2211,51 +2156,8 @@ $('#shuffle').onclick = () => {
   activePreset = null; popupOpen = true; onChange(); renderPresets();
 };
 
-/* ─── feasibility cards ────────────────────────────────────────── */
-const LV = { y: '<span class="lvl y">YES</span>', p: '<span class="lvl p">PARTLY</span>', n: '<span class="lvl n">NO</span>' };
-const FEAS = [
-  { t: 'Settings like this studio', p: 'Tabs, tile pickers with live mini-previews, search and a preview pane.',
-    kde: [LV.y, 'Config pages are plain QML (<code>KCM.SimpleKCM</code>). Tabs become <code>ConfigCategory</code> pages, tiles are small <code>Waveform.qml</code> instances, the preview is a <code>VisualizerView</code> fed with the <code>cfg_*</code> values. Limits: Plasma owns the window chrome and OK/Apply, and colours should follow <code>Kirigami.Theme</code> instead of this dark palette.'],
-    hyp: [LV.y, '<code>SettingsPage.qml</code> is already fully custom Quickshell QML — this look can be matched almost 1:1. Share the tile and preview components between both front-ends.'] },
-  { t: 'Panel pill', p: 'A clean, optionally motionless pill; the full card as a popup.',
-    kde: [LV.y, 'Add a <code>compactRepresentation</code> (today <code>preferredRepresentation</code> is always the full view). Detect the panel via <code>formFactor</code>; vertical panels get the icon variant. Tooltips via <code>PlasmaComponents.ToolTip</code> like the AI-usage panel slot.'],
-    hyp: [LV.p, 'No shared panel API: ship a small Quickshell bar module, or a <code>--waybar</code> mode that prints JSON (title, cover path, state) for a custom module — naturally animation-free.'] },
-  { t: 'Liquid glass', p: 'Blur, refraction, rim light and a pointer-following specular.',
-    kde: [LV.p, 'KWin blurs only surfaces that request it. For a desktop widget, sample the wallpaper image in a <code>ShaderEffect</code> for blur + refraction — convincing on static wallpapers. Real refraction over windows needs a KWin effect plugin (C++). Rim light and specular are cheap QML.'],
-    hyp: [LV.p, 'Blur works today with a layer rule on the <code>audio-wave-visualizer</code> namespace; refraction needs a Hyprland plugin. <b>Power:</b> a Bottom-layer surface forces a full-monitor re-blur on every commit (~3 W measured), so glass pairs best with a static pill or low fps.'] },
-  { t: '16 visualizers · 11 progress bars', p: 'Peak bars, LED meter, mountain, oscilloscope, ribbon, radial, pixels, orb, sparkles, Silk Ribbon; squiggle, segmented, dotted, capsule, time-only, cover ring.',
-    kde: [LV.y, 'Most are a few lines in the existing shader or Canvas path. Peaks, sparkles and ribbon ripples need small per-bar state on the CPU side.'],
-    hyp: [LV.y, 'Same QML components — nothing platform-specific.'] },
-  { t: 'Orbit around the cover', p: 'The cover is the centre point; bars, wave, dots, ribbon or sparks circle it.',
-    kde: [LV.y, 'The same bar data drawn in polar coordinates: a few lines in the fragment shader (<code>atan</code> gives the angle, the distance from the centre the bar length) or a Canvas path. The cover sits on top with a circular <code>MultiEffect</code> mask, and a bass-driven <code>scale</code> makes it breathe. A mini version fits a panel icon.'],
-    hyp: [LV.y, 'Identical QML.'] },
-  { t: 'Presets inside settings', p: 'Pick a whole look in one click, keep your colours, save and share your own.',
-    kde: [LV.y, 'A preset is just a map of config keys applied to the page’s <code>cfg_*</code> properties, so Cancel still works. Built-ins ship as a JSON file; saved looks live in one <code>userPresets</code> String entry. The mini previews reuse the preview component at a small scale.'],
-    hyp: [LV.y, 'Same JSON, applied to the draft object in <code>SettingsPage.qml</code>; saved looks fit in the existing preferences file.'] },
-  { t: 'Poster layout & hanging bars', p: 'A big typographic title with the visualizer as a soft texture behind it; bars that grow downward.',
-    kde: [LV.y, 'Pure layout: the waveform item layered under the text with an opacity and a horizontal fade mask, a clamped two-line title and a monospace clock. Hanging bars are a vertical flip of the bar pass — <code>Scale { yScale: -1 }</code> or <code>1.0 - uv.y</code> in the shader.'],
-    hyp: [LV.y, 'Identical QML.'] },
-  { t: 'Palettes & music-reactive colour', p: 'Aurora, Ember, Ice, Grove, Iris, Coral; hue drift; bloom; cover colours.',
-    kde: [LV.y, 'Palettes are shader uniforms. Bass / mid / high bands can be derived by grouping cava’s bars — no FFTW needed. <code>Kirigami.ImageColors</code> extracts cover colours for accent, atmosphere and glow.'],
-    hyp: [LV.y, '<code>Kirigami.ImageColors</code> needs Kirigami; without it, a tiny downscaled-image average in QML does the job.'] },
-  { t: 'Richer track info', p: 'Album, genre, track number, player, volume, format, lyrics, player switcher.',
-    kde: [LV.y, 'MPRIS already provides album, genre, track number, length, identity, volume and shuffle/loop. <b>Audio format</b> is partial (reading the stream node via <code>pw-dump</code>). <b>Lyrics</b> are partial: an opt-in network request to LRCLIB with a cache.'],
-    hyp: [LV.y, 'Quickshell’s <code>Mpris</code> service exposes the same fields and the full player list for the switcher.'] },
-  { t: 'Artwork options', p: 'Six shapes, spin, glow, tilt, reflection, greyscale, fallbacks, click actions.',
-    kde: [LV.y, '<code>MultiEffect</code> masks for shapes, a <code>RotationAnimator</code> for vinyl/CD (paused with playback), a mirrored <code>Image</code> with gradient mask for reflection. “Open player” is MPRIS <code>Raise</code>.'],
-    hyp: [LV.y, 'Identical QML.'] },
-  { t: 'Audio without C++', p: 'The widget stays a plain .plasmoid: cava already does capture and FFT in native code.',
-    kde: [LV.y, 'cava captures PipeWire / Pulse and runs the FFT natively; <code>feeder.sh</code> already keeps one cava per user (<code>flock</code> in the runtime dir), so panel, desktop and settings-preview instances share a single analysis. Bass / mid / high bands, attack detection and hue drift are a few lines of QML over those bars. A compiled backend would add little and break the one-click Store install.'],
-    hyp: [LV.y, 'Same feeder and runtime directory — nothing to build.'] },
-  { t: 'Comfort & power', p: 'Reduced motion, battery saver, simple rendering fallback, pause when covered.',
-    kde: [LV.y, 'Respect the global animation speed (<code>Kirigami.Units.longDuration</code>), read battery state from Solid/UPower, fall back to Canvas when the shader fails.'],
-    hyp: [LV.y, '<code>pauseWhenCovered</code> already exists; the rest is shared QML plus UPower over D-Bus.'] },
-];
-$('#feas').innerHTML = FEAS.map(f => `<article class="fcard"><h3>${f.t}</h3><p>${f.p}</p><dl><dt>Plasma ${f.kde[0]}</dt><dd>${f.kde[1]}</dd><dt>Hyprland ${f.hyp[0]}</dt><dd>${f.hyp[1]}</dd></dl></article>`).join('');
-
-/* ─── key table + stats ────────────────────────────────────────── */
-$('#keyTable').innerHTML = Object.entries(PROPOSED).map(([k, p]) => `<tr><td><code>${k}</code></td><td class="m">${p.type}</td><td>${p.def}</td><td class="m">${p.vals}</td></tr>`).join('');
-$('#stats').innerHTML = [[VIZ.length, 'visualizers'], [PBS.length, 'progress bars'], [Object.keys(SIZES).length + PILLS.length, 'layouts'], [PRESETS.length, 'presets'], [Object.keys(PROPOSED).length, 'new options']].map(([n, l]) => `<div><b>${n}</b>${l}</div>`).join('');
+/* ─── gallery statistics ─── */
+$('#stats').innerHTML = [[VIZ.length, 'visualizers'], [PBS.length, 'progress bars'], [Object.keys(SIZES).length + PILLS.length, 'layouts'], [PRESETS.length, 'presets']].map(([n, l]) => `<div><b>${n}</b>${l}</div>`).join('');
 
 /* ─── glue ─────────────────────────────────────────────────────── */
 let toastTimer;

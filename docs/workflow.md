@@ -351,3 +351,71 @@ nix develop --command dbus-run-session -- python3 tests/test_lifecycle_power.py
 
 These use offscreen rendering, synthetic audio and private runtime directories
 and session buses; no running desktop or sound server is required.
+
+## Shared studio assets and the browser demo
+
+The settings page is Qt Quick/QML. GitHub Pages serves the HTML/JavaScript demo
+in `docs/index.html`. They have separate controls and rendering implementations;
+the browser does not run the installed settings page or change desktop settings.
+The browser demo uses one desktop/panel presentation, without a platform toggle.
+
+Both now use the tab, wallpaper and Midnight Marina interface palette in
+`package/contents/ui/studio/StudioCatalog.js`, plus the exact same wallpaper files
+in `package/contents/ui/studio/wallpapers`. The catalogue retains stable backdrop
+IDs so existing presets keep selecting the corresponding scene. QML loads static
+images at bounded decode sizes; no wallpaper animation timer is needed.
+
+After editing the catalogue or wallpapers:
+
+```sh
+python3 tools/sync_studio_assets.py
+python3 tools/sync_studio_assets.py --check
+```
+
+Commit only the sources. `docs/assets/studio` is an ignored build output, so
+each wallpaper and the catalogue have one tracked copy. Run `make docs` before
+opening `docs/index.html` locally. Both `make test` and the Pages workflow build
+these outputs and check byte-for-byte agreement. Pages publishes only `docs`,
+so the deployed demo also works without repository-relative imports.
+See the wallpaper directory's README for provenance and theme inspiration.
+
+Embedding the actual QML interface would require a separate
+[Qt for WebAssembly build](https://doc.qt.io/qt-6/wasm.html), browser-compatible
+imports and adapters for desktop services. That is not part of this static demo.
+
+### Plasma card sizing
+
+Plasma owns the outer widget rectangle and can retain the size of the previous
+layout. `main.qml` supplies the preset's preferred dimensions and uses
+`FittedFrame.qml` to scale the complete card uniformly inside the allocated
+space. This preserves the preview proportions, typography and click targets
+when changing between horizontal cards and Orbit, while allowing manual resizing.
+It does not forcibly resize or reposition Plasma's containment. The preview's
+Fit zoom can also make the same card appear physically smaller than on desktop.
+
+The studio uses neutral charcoal surfaces with Midnight Marina accents across
+hosts. Aqua/cyan highlights are reserved for buttons, switches, sliders and
+selected controls. `Theme.js`
+reads the shared catalogue; the browser build emits CSS variables from it,
+converting QML ARGB colours to CSS RGBA. This palette styles the settings UI;
+the widget still has its own System accent, cover accent and custom colours.
+
+## Share a look between the demo and widget
+
+In either interface, open **My presets** and use **Copy as JSON** (HTML calls it
+**Copy current as JSON**). In the other interface, choose **Import JSON** and
+paste it. In QML, select the imported tile, then click **Apply** or **OK**.
+Disable **Keep my colours** when you want to import the look's colours too.
+The separate **Copy config** button is not the preset exchange format.
+
+`studio/PresetCodec.js` is shared by both interfaces through the asset build.
+New exports contain all current known look values, a format identifier and version,
+so differing defaults do not silently change the look. The converter translates
+Compact/album-art picker aliases and track-detail lists. Legacy named presets
+and bare settings maps still import. Placement and the saved preset library are
+excluded, unknown settings are ignored, and malformed values are rejected.
+The two renderers and sample/current tracks can still look different.
+
+Regression checks: `tests/tst_presetcodec.qml` with qmltestrunner, and
+`node tests/test_preset_exchange.cjs` from the repository root. The Node check
+uses the actual HTML defaults and widget `main.xml`, without needing a browser.
