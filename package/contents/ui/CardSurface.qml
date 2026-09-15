@@ -7,6 +7,51 @@ Item {
     required property var configuration
     property string artUrl: ""
     property bool hasPlayer: false
+    property color accentColor: "#ffffff"
+    property color coverColor1: "#6c7086"
+    property color coverColor2: "#45475a"
+    property real bass: 0
+
+    // A loaded cover background (the "Cover" material) wins over surfaceStyle.
+    readonly property bool coverActive: configuration.showMpris && configuration.artBg && artUrl !== ""
+    readonly property string material: ["glass", "liquid", "solid", "atmosphere"].indexOf(configuration.surfaceStyle) !== -1 && !coverActive ? configuration.surfaceStyle : ""
+    readonly property real cardRadius: configuration.bgRadius
+    readonly property var shadowLayers: configuration.cardShadow === "lifted" ? [
+        {
+            y: 24,
+            blur: 60,
+            color: Qt.rgba(0, 0, 0, 0x73 / 255)
+        },
+        {
+            y: 6,
+            blur: 16,
+            color: Qt.rgba(0, 0, 0, 0x40 / 255)
+        }
+    ] : [
+        {
+            y: 10,
+            blur: 30,
+            color: Qt.rgba(0, 0, 0, 0x4d / 255)
+        },
+        {
+            y: 2,
+            blur: 6,
+            color: Qt.rgba(0, 0, 0, 0x33 / 255)
+        }
+    ]
+
+    // Card shadow: static, behind everything, only with a visible card.
+    Loader {
+        anchors.fill: parent
+        anchors.margins: -90
+        active: root.configuration.showBg && (root.configuration.cardShadow ?? "none") !== "none"
+        sourceComponent: CardGlow {
+            objectName: "cardShadow"
+            margin: 90
+            radius: root.cardRadius
+            layers: root.shadowLayers
+        }
+    }
 
     // ── Background card source (rendered offscreen, used by backgroundCardEffect) ──
     // Art image source — must be a sibling, not child of backgroundCard
@@ -96,7 +141,7 @@ Item {
         id: backgroundCardEffect
         anchors.fill: parent
         source: backgroundCard
-        visible: root.configuration.showBg
+        visible: root.configuration.showBg && root.material === ""
 
         // Round the whole composited card (art + tint + border) in one pass.
         maskEnabled: true
@@ -155,6 +200,54 @@ Item {
             NumberAnimation {
                 duration: 200
             }
+        }
+    }
+
+    Loader {
+        anchors.fill: parent
+        active: root.configuration.showBg && (root.material !== "" || (root.configuration.edgeHighlight ?? false))
+        opacity: root.configuration.artBgTransparency
+        sourceComponent: CardMaterial {
+            material: root.material
+            radius: root.cardRadius
+            glassTint: root.configuration.glassTint ?? "clear"
+            specular: root.configuration.glassSpecular ?? true
+            edgeHighlight: root.configuration.edgeHighlight ?? false
+            cover1: root.coverColor1
+            cover2: root.coverColor2
+            // The HTML's dark base tone of the cover palette.
+            cover3: Qt.rgba(root.coverColor1.r * 0.2 + root.coverColor2.r * 0.1, root.coverColor1.g * 0.2 + root.coverColor2.g * 0.1, root.coverColor1.b * 0.2 + root.coverColor2.b * 0.1, 1)
+        }
+    }
+
+    Loader {
+        anchors.fill: parent
+        active: root.configuration.showBg && (root.configuration.grain ?? false)
+        opacity: root.configuration.artBgTransparency
+        sourceComponent: CardGrain {
+            radius: root.cardRadius
+        }
+    }
+
+    // Bass pulse: the glow is painted once; audio frames change only opacity.
+    Loader {
+        anchors.fill: parent
+        anchors.margins: -40
+        active: root.configuration.bassPulse ?? false
+        sourceComponent: CardGlow {
+            objectName: "bassGlow"
+            margin: 40
+            radius: root.cardRadius
+            layers: [
+                {
+                    y: 0,
+                    blur: 22,
+                    spread: 2,
+                    color: root.accentColor
+                }
+            ]
+            insetColor: root.accentColor
+            opacity: Math.max(0, Math.min(1, root.bass)) * 0.7
         }
     }
 }

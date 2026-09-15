@@ -265,6 +265,39 @@ TestCase {
         compare(orbit.particles.length, 0, "Reduced motion removes sparks");
         backend.bars = [300, 700, 900, 400];
     }
+    function test_defaultCardLoadsNoMaterialLayers() {
+        subject.configuration = Object.assign({}, defaults, {
+            showBg: true
+        });
+        compare(findChild(subject, "cardMaterial"), null);
+        compare(findChild(subject, "cardShadow"), null);
+        compare(findChild(subject, "cardGrain"), null);
+        compare(findChild(subject, "bassGlow"), null);
+    }
+    function test_cardMaterials_data() {
+        return ["glass", "liquid", "solid", "atmosphere"].map(material => ({
+                    tag: material,
+                    material: material
+                }));
+    }
+    function test_cardMaterials(data) {
+        subject.configuration = Object.assign({}, defaults, {
+            showBg: true,
+            surfaceStyle: data.material,
+            glassTint: "cover",
+            cardShadow: "lifted",
+            edgeHighlight: true,
+            grain: true,
+            bassPulse: true
+        });
+        tryVerify(() => findChild(subject, "cardMaterial") !== null);
+        verify(findChild(subject, "cardShadow") !== null);
+        verify(findChild(subject, "cardGrain") !== null);
+        verify(findChild(subject, "bassGlow") !== null);
+        waitForRendering(subject);
+        compare(Qt.colorEqual(subject.textColor, "#1e241d"), data.material === "solid", "Solid cards use dark ink");
+        compare(Qt.colorEqual(subject.controlColor, "#1e241d"), data.material === "solid");
+    }
     function test_posterClockReplacesTimeLabels() {
         subject.configuration = Object.assign({}, defaults, {
             layoutMode: "poster",

@@ -15,7 +15,7 @@ New configuration keys alone do not mean their features are implemented.
 | 3 | Visualizers 6–15, direction, colour modes, palettes, bloom, hue drift | Implemented in Canvas and shader families; 53 exact HTML-source comparisons pass on Qt; 42 GPU shader/Canvas rows measured on an OpenGL desktop; browser acceptance pending |
 | 4 | Progress styles 5–10 and time format | Implemented in the Classic layout with Plasma and Hyprland settings; Classic snapshots unchanged; browser acceptance pending |
 | 5 | Mirrored, inline, hero, stacked, strip, poster and orbit layouts | Implemented; orbit ring is Canvas-only (no shader family yet); Classic snapshots unchanged; GPU parity unchanged |
-| 6 | Card materials, glass/liquid, depth and wallpaper sampling | Not started |
+| 6 | Card materials, glass/liquid, depth and wallpaper sampling | Implemented without blur-behind, refraction or wallpaper sampling; Classic snapshots unchanged |
 | 7 | Artwork shapes/effects and control dock options | Not started; cover colour extraction is already available from phase 3 |
 | 8 | Richer track information and opt-in lyrics | Not started |
 | 9 | Idle/paused behaviour, interaction and power options | Partial: waveform reduced motion and software selection are wired; remaining behaviour is not implemented |
@@ -104,6 +104,24 @@ New configuration keys alone do not mean their features are implemented.
 - [x] Plasma and Hyprland settings: layout, title size, alignment, cover size and
   poster options. Orbit and the panel pill are not offered until implemented.
 
+### Phase 6 — card materials and depth
+
+- [x] `surfaceStyle` glass, liquid (clear/frost/cover tint, rim light, inner
+  glow, pointer specular), solid and atmosphere (cover palette) in
+  `CardMaterial.qml`; the cover background (`artBg`) still wins over them.
+- [x] `cardShadow` soft/lifted and `bassPulse` in `CardGlow.qml`; `edgeHighlight`;
+  `grain` in `CardGrain.qml`; `autoContrast` dark ink on Solid.
+- [x] Every layer is a Canvas painted once per size/setting/cover change (about
+  50 ms); the bass pulse only changes opacity per audio frame. The default card
+  loads none of them.
+- [ ] Not implemented: blur behind glass/liquid (a `NoBackground` plasmoid gets
+  no compositor blur; Hyprland users can add a layer blur rule), liquid
+  refraction (`glassRefraction` has no effect) and wallpaper sampling.
+  soft-light specular and overlay grain are approximated in normal blending.
+- Performance note: Qt Canvas `shadowBlur` took up to 5 s for the lifted shadow,
+  and per-pixel `ImageData` loops became 100+ s on their second run. Shadows are
+  separable Gaussians built from native gradients instead.
+
 ## Verification and limits
 
 - **Full suite:** `make test` (`python3 tests/run.py`) passes: **258 QML tests**,
@@ -169,9 +187,10 @@ Current session artifacts (temporary, not committed):
 ## Next work
 
 Fix the Chrome reference capture so phases 3–4 can be compared with the browser,
-then continue with **phase 6: card materials and depth** (glass, liquid,
-solid, atmosphere, shadows, edge highlight, grain, bass pulse). The studio
-settings interface and presets are still future phases.
+then continue with **phase 7: artwork** (shapes, vinyl/CD, size, border, glow,
+tilt, reflection, greyscale when paused, fallback, click action) **and controls**
+(dock styles, skip and shuffle/repeat buttons). The studio settings interface
+and presets are still future phases.
 
 ### Open follow-ups (before presets / release)
 

@@ -76,6 +76,17 @@ KCM.SimpleKCM {
     property alias cfg_artBgTransparency: artBgTransparencySlider.value
     property alias cfg_showArtThumb: showArtThumbCheckBox.checked
     property alias cfg_artBgKeepThumb: artBgKeepThumbCheckBox.checked
+    property string cfg_surfaceStyle: "color"
+    property string cfg_surfaceStyleDefault: "color"
+    property string cfg_glassTint: "clear"
+    property string cfg_glassTintDefault: "clear"
+    property alias cfg_glassSpecular: glassSpecularCheckBox.checked
+    property string cfg_cardShadow: "none"
+    property string cfg_cardShadowDefault: "none"
+    property alias cfg_edgeHighlight: edgeHighlightCheckBox.checked
+    property alias cfg_grain: grainCheckBox.checked
+    property alias cfg_bassPulse: bassPulseCheckBox.checked
+    property alias cfg_autoContrast: autoContrastCheckBox.checked
 
     Kirigami.FormLayout {
         // Cava Settings Section
@@ -702,6 +713,118 @@ KCM.SimpleKCM {
             // (Spotify-style). Needs the thumbnail master toggle on too.
             enabled: showArtThumbCheckBox.checked
             visible: showBgCheckBox.checked && artBgCheckBox.checked && showMprisCheckBox.checked
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Card material:")
+            visible: showBgCheckBox.checked
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("Tint"),
+                    value: "color"
+                },
+                {
+                    label: i18n("Glass"),
+                    value: "glass"
+                },
+                {
+                    label: i18n("Liquid glass"),
+                    value: "liquid"
+                },
+                {
+                    label: i18n("Solid"),
+                    value: "solid"
+                },
+                {
+                    label: i18n("Atmosphere"),
+                    value: "atmosphere"
+                }
+            ]
+            currentIndex: Math.max(0, ["color", "glass", "liquid", "solid", "atmosphere"].indexOf(root.cfg_surfaceStyle))
+            onActivated: root.cfg_surfaceStyle = currentValue
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Liquid tint:")
+            visible: showBgCheckBox.checked && root.cfg_surfaceStyle === "liquid"
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("Clear"),
+                    value: "clear"
+                },
+                {
+                    label: i18n("Frost"),
+                    value: "frost"
+                },
+                {
+                    label: i18n("From cover"),
+                    value: "cover"
+                }
+            ]
+            currentIndex: Math.max(0, ["clear", "frost", "cover"].indexOf(root.cfg_glassTint))
+            onActivated: root.cfg_glassTint = currentValue
+        }
+
+        QQC.CheckBox {
+            id: glassSpecularCheckBox
+            Kirigami.FormData.label: i18n("Pointer light:")
+            visible: showBgCheckBox.checked && root.cfg_surfaceStyle === "liquid"
+            text: i18n("Highlight follows the pointer")
+        }
+
+        QQC.ComboBox {
+            Kirigami.FormData.label: i18n("Card shadow:")
+            visible: showBgCheckBox.checked
+            textRole: "label"
+            valueRole: "value"
+            model: [
+                {
+                    label: i18n("None"),
+                    value: "none"
+                },
+                {
+                    label: i18n("Soft"),
+                    value: "soft"
+                },
+                {
+                    label: i18n("Lifted"),
+                    value: "lifted"
+                }
+            ]
+            currentIndex: Math.max(0, ["none", "soft", "lifted"].indexOf(root.cfg_cardShadow))
+            onActivated: root.cfg_cardShadow = currentValue
+        }
+
+        QQC.CheckBox {
+            id: edgeHighlightCheckBox
+            Kirigami.FormData.label: i18n("Edge highlight:")
+            visible: showBgCheckBox.checked
+            text: i18n("Thin light line along the top edge")
+        }
+
+        QQC.CheckBox {
+            id: grainCheckBox
+            Kirigami.FormData.label: i18n("Grain:")
+            visible: showBgCheckBox.checked
+            text: i18n("Subtle film grain on the card")
+        }
+
+        QQC.CheckBox {
+            id: bassPulseCheckBox
+            Kirigami.FormData.label: i18n("Bass pulse:")
+            visible: true
+            text: i18n("Accent glow on the edge follows the bass")
+        }
+
+        QQC.CheckBox {
+            id: autoContrastCheckBox
+            Kirigami.FormData.label: i18n("Adapt to light cards:")
+            visible: true
+            text: i18n("Dark text and controls on the Solid material")
         }
 
         QQC.Label {

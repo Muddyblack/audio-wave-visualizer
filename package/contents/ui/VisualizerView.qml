@@ -22,7 +22,7 @@ Item {
     readonly property color coverAccent: coverPalette ? coverPalette.highlight : (coverSampler.item?.accent ?? baseWaveColor)
     Loader {
         id: coverSampler
-        active: !root.coverPalette && root.shouldShow && root.artUrl !== "" && (root.configuration.accentFromArt || root.configuration.vizColorMode === "cover")
+        active: !root.coverPalette && root.shouldShow && root.artUrl !== "" && (root.configuration.accentFromArt || root.configuration.vizColorMode === "cover" || (root.configuration.showBg && (root.configuration.surfaceStyle === "atmosphere" || (root.configuration.surfaceStyle === "liquid" && root.configuration.glassTint === "cover"))))
         sourceComponent: CoverColors {
             source: root.artUrl
             fallback: root.baseWaveColor
@@ -42,9 +42,11 @@ Item {
     property string track: player?.track ?? ""
     property string playerArtUrl: player?.artUrl ?? ""
     readonly property string desktopEntry: player?.desktopEntry ?? ""
-    readonly property color textColor: configuration.useSystemText ? systemTextColor : configuration.customTextColor
+    // Solid cards are light: system text and controls switch to dark ink.
+    readonly property bool lightCard: configuration.showBg && configuration.surfaceStyle === "solid" && !(configuration.showMpris && configuration.artBg && artUrl !== "") && (configuration.autoContrast ?? true)
+    readonly property color textColor: configuration.useSystemText ? (lightCard ? "#1e241d" : systemTextColor) : configuration.customTextColor
     readonly property color waveColor: configuration.accentFromArt ? coverAccent : baseWaveColor
-    readonly property color controlColor: configuration.useSystemControls ? "#ffffff" : configuration.customControlColor
+    readonly property color controlColor: configuration.useSystemControls ? (lightCard ? "#1e241d" : "#ffffff") : configuration.customControlColor
     readonly property color pgStartColor: configuration.useSystemControls ? accentColor : controlColor
     readonly property color pgEndColor: configuration.useSystemControls ? "#ffffff" : controlColor
 
@@ -138,6 +140,10 @@ Item {
             configuration: root.configuration
             artUrl: root.artUrl
             hasPlayer: root.hasPlayer
+            accentColor: root.waveColor
+            coverColor1: root.coverColor1
+            coverColor2: root.coverColor2
+            bass: root.visualizer.bass ?? 0
         }
 
         Loader {

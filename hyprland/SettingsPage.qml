@@ -43,7 +43,7 @@ Rectangle {
         },
         {
             title: "Background",
-            keys: ["showBg", "bgColor", "bgRadius", "artBg", "artBgDim", "artBgBlur", "artBgTransparency", "artBgKeepThumb"]
+            keys: ["showBg", "bgColor", "bgRadius", "artBg", "artBgDim", "artBgBlur", "artBgTransparency", "artBgKeepThumb", "surfaceStyle", "glassTint", "glassSpecular", "cardShadow", "edgeHighlight", "grain", "bassPulse", "autoContrast"]
         }
     ]
     readonly property var ranges: ({
@@ -102,6 +102,9 @@ Rectangle {
             layoutMode: [[qsTr("Classic"), "classic"], [qsTr("Mirrored"), "mirrored"], [qsTr("Inline"), "inline"], [qsTr("Hero wave"), "hero"], [qsTr("Stacked"), "stacked"], [qsTr("Poster"), "poster"], [qsTr("Slim strip"), "strip"], [qsTr("Orbit"), "orbit"]],
             orbitStyle: [[qsTr("Bars"), "bars"], [qsTr("Wave"), "wave"], [qsTr("Dots"), "dots"], [qsTr("Ribbon"), "ribbon"], [qsTr("Sparks"), "sparks"]],
             textAlign: [[qsTr("Left"), "left"], [qsTr("Centre"), "center"], [qsTr("Right"), "right"]],
+            surfaceStyle: [[qsTr("Tint"), "color"], [qsTr("Glass"), "glass"], [qsTr("Liquid glass"), "liquid"], [qsTr("Solid"), "solid"], [qsTr("Atmosphere"), "atmosphere"]],
+            glassTint: [[qsTr("Clear"), "clear"], [qsTr("Frost"), "frost"], [qsTr("From cover"), "cover"]],
+            cardShadow: [[qsTr("None"), "none"], [qsTr("Soft"), "soft"], [qsTr("Lifted"), "lifted"]],
             posterAlign: [[qsTr("Left"), "left"], [qsTr("Centre"), "center"]],
             timeFormat: [[qsTr("1:31 · 3:58"), "total"], [qsTr("1:31 · -2:27"), "remaining"]],
             vizDirection: [[qsTr("Up"), "up"], [qsTr("Down"), "down"]],
@@ -117,6 +120,13 @@ Rectangle {
         const labels = {
             showTimes: qsTr("Time labels"),
             layoutMode: qsTr("Layout"),
+            surfaceStyle: qsTr("Card material"),
+            glassTint: qsTr("Liquid tint"),
+            glassSpecular: qsTr("Pointer light"),
+            cardShadow: qsTr("Card shadow"),
+            edgeHighlight: qsTr("Edge highlight"),
+            bassPulse: qsTr("Bass pulse"),
+            autoContrast: qsTr("Adapt to light cards"),
             artScale: qsTr("Cover size (%)"),
             posterLines: qsTr("Poster title lines"),
             posterVizBehind: qsTr("Poster visualizer texture"),
