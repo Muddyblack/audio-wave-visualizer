@@ -115,6 +115,20 @@ TestCase {
         waitForRendering(subject);
     }
 
+    function test_hoverControlsRecoverWithoutCardHover() {
+        subject.configuration = {
+            useSystemDockBg: true,
+            dockStyle: "hover"
+        };
+        subject.cardHovered = false;
+        mouseMove(testCase, 0, 0);
+        tryCompare(subject, "opacity", 0);
+        mouseMove(subject, subject.width / 2, subject.height / 2);
+        tryCompare(subject, "opacity", 1);
+        mouseMove(testCase, 0, 0);
+        tryCompare(subject, "opacity", 0);
+    }
+
     function clickControl(name) {
         const control = findChild(subject, name);
         verify(control !== null);

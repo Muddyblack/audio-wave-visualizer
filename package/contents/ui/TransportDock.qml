@@ -47,7 +47,13 @@ Item {
     readonly property bool canLoop: !!player && player.canControl !== false && player.loopSupported !== false && (player.loopStatus !== undefined ? player.loopStatus >= 1 : player.loopState !== undefined)
     readonly property bool loopTrack: !!player && (player.loopStatus !== undefined ? player.loopStatus === 3 : player.loopState === 1)
     readonly property bool loopOn: !!player && (player.loopStatus !== undefined ? player.loopStatus >= 2 : (player.loopState ?? 0) > 0)
-    readonly property bool hiddenUntilHover: dockStyle === "hover" && !cardHovered
+    // The parent card's hover state can miss a transition when a child takes
+    // the pointer. Keep the dock itself as a second way to reveal controls.
+    readonly property bool hiddenUntilHover: dockStyle === "hover" && !cardHovered && !dockHover.hovered
+
+    HoverHandler {
+        id: dockHover
+    }
 
     implicitWidth: framed ? Math.max(88, controlRow.implicitWidth + 12) : controlRow.implicitWidth
     implicitHeight: 26
