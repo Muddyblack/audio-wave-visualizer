@@ -14,3 +14,16 @@ repos:
         args: ["--unresolved-type", "info"]
         language: system
         files: \.qml$
+
+      - id: ruff-check
+        name: ruff check
+        entry: nix develop --command ruff check
+        args: ["--fix"]
+        language: system
+        types: [python]
+
+      - id: ruff-format
+        name: ruff format
+        entry: nix develop --command ruff format
+        language: system
+        types: [python]
