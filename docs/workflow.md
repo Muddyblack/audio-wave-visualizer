@@ -290,7 +290,7 @@ masks, blur and GPU effects too. Software snapshots cannot validate those effect
 ### Compare new visualizers with the HTML prototype
 
 `tests/compare_html_visualizers.py` reads `drawWave` and its colour helpers directly
-from `docs/index.html`, including when that local reference is ignored by Git.
+from `docs/website/index.html` (or `docs/website/app.js`), including when that local reference is ignored by Git.
 Use `--html /path/to/index.html` if the reference is elsewhere. It fixes the final
 bar levels, bass/mid/high bands, time, peaks, particles and ripples on both sides;
 synthetic audio smoothing and random particle creation are bypassed. This isolates
@@ -355,7 +355,7 @@ and session buses; no running desktop or sound server is required.
 ## Shared studio assets and the browser demo
 
 The settings page is Qt Quick/QML. GitHub Pages serves the HTML/JavaScript demo
-in `docs/index.html`. They have separate controls and rendering implementations;
+in `docs/website/index.html`. They have separate controls and rendering implementations;
 the browser does not run the installed settings page or change desktop settings.
 The browser demo uses one desktop/panel presentation, without a platform toggle.
 
@@ -372,10 +372,10 @@ python3 tools/sync_studio_assets.py
 python3 tools/sync_studio_assets.py --check
 ```
 
-Commit only the sources. `docs/assets/studio` is an ignored build output, so
+Commit only the sources. `docs/website/assets/studio` is an ignored build output, so
 each wallpaper and the catalogue have one tracked copy. Run `make docs` before
-opening `docs/index.html` locally. Both `make test` and the Pages workflow build
-these outputs and check byte-for-byte agreement. Pages publishes only `docs`,
+opening `docs/website/index.html` locally. Both `make test` and the Pages workflow build
+these outputs and check byte-for-byte agreement. Pages publishes only `docs/website`,
 so the deployed demo also works without repository-relative imports.
 See the wallpaper directory's README for provenance and theme inspiration.
 
@@ -419,3 +419,36 @@ The two renderers and sample/current tracks can still look different.
 Regression checks: `tests/tst_presetcodec.qml` with qmltestrunner, and
 `node tests/test_preset_exchange.cjs` from the repository root. The Node check
 uses the actual HTML defaults and widget `main.xml`, without needing a browser.
+
+## Gallery and retry checks
+
+`make gallery` captures the real QML presets and settings studio directly into
+`readme/`, using `tools/capture_gallery.py` and `readme/Capture.qml.in`.
+It requires Python 3 and Qt 6 qmltestrunner from the development shell.
+Every preset is still rendered and validated on its own, but the published images
+are seven *sheets*: four presets laid out side by side on one shared wallpaper and
+grabbed as a single 2× capture, so nothing is rescaled or pasted together later.
+`SHEETS` in `tools/capture_gallery.py` defines the groups — the run fails if a
+preset is missing from them or listed twice, so adding a preset to `Schema.js`
+forces a decision about where it belongs. The script also regenerates
+[gallery.md](gallery.md) from the preset names and notes; edit the generator, not
+that page. Only `classic`, `liquid` and the studio stay as single captures for the
+README. The full-resolution package icon supplies the sample cover. `captures.json`
+records the renderer and pixel dimensions. Files are published only after all
+captures pass, and stale per-preset PNGs are removed.
+The default software backend works headlessly. For GPU effects on a desktop use
+`make gallery GALLERY_FLAGS="--backend opengl --platform wayland"` (or `xcb`).
+
+`make parity` now runs the existing waveform thresholds and ten Orbit captures.
+Orbit reports pixel differences and saves `/tmp/orbit-*-canvas.png` and
+`/tmp/orbit-*-shader.png`; those measurements require visual acceptance on a GPU.
+The Orbit Canvas loader is inactive while its shader is in use. Motion stays on
+audio timestamps, sparks cap at 32, and shader failure/software/Simple render
+falls back to Canvas. `make shaders` includes Orbit and the marquee fade shader.
+
+The retry audit found that Qt Canvas supports
+[native soft-light and overlay composition](https://doc.qt.io/qt-6/qml-qtquick-context2d.html#globalCompositeOperation-prop)
+under `qt-soft-light` and `qt-overlay`. These can blend with material pixels in
+the same canvas; a separate layer cannot blend with desktop pixels it never receives.
+Perspective tilt uses a [Matrix4x4 transform](https://doc.qt.io/qt-6/qml-qtquick-matrix4x4.html)
+while input stays on the untransformed parent. The lightbox is a transient window.

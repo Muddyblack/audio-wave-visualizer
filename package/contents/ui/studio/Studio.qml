@@ -33,6 +33,8 @@ Rectangle {
     readonly property color accent: draft.useSystemAccent === false ? draft.customColor : previewAccent
     readonly property var monitorOptions: [["", "First available display"], ["all", "Every monitor"]].concat(screenNames.map(name => [name, name]))
     readonly property bool wide: width >= 1000
+    readonly property bool compact: !wide && height < 640
+    readonly property int inset: compact ? 10 : 20
     readonly property bool anyResults: Schema.SECTIONS.some(section => section.rows.some(row => Schema.rowVisible(row, section, draft, env, query.trim().toLowerCase())) && (query.trim() !== "" || section.tab === currentTab))
     property alias backend: tileBackend
     property alias stillBackend: stillBackend
@@ -65,6 +67,19 @@ Rectangle {
             name: name,
             settings: Schema.changedKeys(defaults, draft)
         });
+    }
+    function renameUserPreset(index, name) {
+        const list = userPresetList();
+        const trimmed = String(name).trim();
+        if (!trimmed || !Number.isInteger(index) || index < 0 || index >= list.length)
+            return false;
+        list[index] = Object.assign({}, list[index], {
+            name: trimmed
+        });
+        update({
+            userPresets: JSON.stringify(list)
+        });
+        return true;
     }
     function removeUserPreset(index) {
         const list = userPresetList();
@@ -101,24 +116,25 @@ Rectangle {
 
     Item {
         anchors.horizontalCenter: parent.horizontalCenter
-        y: 20
-        width: Math.max(0, Math.min(1280, parent.width - 40))
-        height: Math.max(0, parent.height - 40)
+        y: studioRoot.inset
+        width: Math.max(0, parent.width - studioRoot.inset * 2)
+        height: Math.max(0, parent.height - studioRoot.inset * 2)
 
         PreviewPane {
             id: pane
+            compact: studioRoot.compact
             studio: studioRoot
             visible: studioRoot.ready
             x: studioRoot.wide ? panel.width + 20 : 0
             width: studioRoot.wide ? parent.width - panel.width - 20 : parent.width
-            height: studioRoot.wide ? Math.min(parent.height, 420) : Math.min(260, parent.height * 0.38)
+            height: studioRoot.wide ? Math.min(parent.height, 420) : studioRoot.compact ? (optionsExpanded ? 250 : 112) : Math.min(260, parent.height * 0.38)
         }
 
         Rectangle {
             id: panel
-            y: studioRoot.wide ? 0 : pane.height + 14
-            width: studioRoot.wide ? Math.min(680, Math.max(380, parent.width * 0.52)) : parent.width
-            height: studioRoot.wide ? parent.height : parent.height - pane.height - 14
+            y: studioRoot.wide ? 0 : pane.height + (studioRoot.compact ? 8 : 14)
+            width: studioRoot.wide ? Math.max(380, (parent.width - 20) * 0.52) : parent.width
+            height: studioRoot.wide ? parent.height : Math.max(0, parent.height - y)
             radius: 18
             border.color: Theme.line2
             border.width: 1
@@ -137,7 +153,7 @@ Rectangle {
             Row {
                 id: header
                 x: 18
-                y: 16
+                y: studioRoot.compact ? 8 : 16
                 width: parent.width - 36
                 spacing: 10
                 Rectangle {
@@ -219,7 +235,7 @@ Rectangle {
                 id: tabs
                 objectName: "studioTabs"
                 x: 12
-                y: header.y + header.height + 12
+                y: header.y + header.height + (studioRoot.compact ? 4 : 12)
                 width: parent.width - 24
                 height: tabRow.implicitHeight
                 Flow {

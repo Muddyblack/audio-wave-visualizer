@@ -247,7 +247,7 @@ ShellRoot {
                 systemTextColor: root.configuration.textColor
                 fallbackIcon: Component {
                     Image {
-                        source: Quickshell.iconPath(view.desktopEntry !== "" ? view.desktopEntry : "audio-x-generic-symbolic", true) || Qt.resolvedUrl("../package/icon.png")
+                        source: (view.desktopEntry !== "" ? Quickshell.iconPath(view.desktopEntry, true) : "") || Qt.resolvedUrl("../package/icon.png")
                         fillMode: Image.PreserveAspectFit
                     }
                 }

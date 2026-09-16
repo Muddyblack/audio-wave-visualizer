@@ -488,6 +488,8 @@ Item {
     }
 
     Text {
+
+        renderType: Text.CurveRendering ?? Text.QtRendering
         objectName: "elapsedTimeLabel"
         anchors.left: parent.left
         anchors.bottom: parent.bottom
@@ -499,6 +501,8 @@ Item {
     }
 
     Text {
+
+        renderType: Text.CurveRendering ?? Text.QtRendering
         objectName: "totalTimeLabel"
         anchors.right: parent.right
         anchors.bottom: parent.bottom
@@ -521,12 +525,14 @@ Item {
 
         Row {
             Text {
+                renderType: Text.CurveRendering ?? Text.QtRendering
                 objectName: "timeOnlyElapsed"
                 text: positionClock.elapsedText
                 color: root.textColor
                 font.pixelSize: 9
             }
             Text {
+                renderType: Text.CurveRendering ?? Text.QtRendering
                 text: " /"
                 color: root.textColor
                 opacity: 0.6
@@ -534,6 +540,7 @@ Item {
             }
         }
         Text {
+            renderType: Text.CurveRendering ?? Text.QtRendering
             objectName: "timeOnlyTotal"
             text: root.totalLabel
             color: root.textColor

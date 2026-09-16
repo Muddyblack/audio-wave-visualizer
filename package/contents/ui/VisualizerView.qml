@@ -11,6 +11,11 @@ Item {
     required property var visualizer
     property var player: null
     property bool isPlaying: false
+    // Synthetic previews must not send sample metadata to lyrics services.
+    property bool samplePlayback: false
+    property Item backdropSource: null
+    // Host scale is separate from logical layout size, for artwork sampling.
+    property real renderScale: scale
     property color accentColor: "#b4befe"
     property color systemTextColor: "#cdd6f4"
     property string defaultFontFamily: Qt.application.font.family
@@ -70,9 +75,38 @@ Item {
     // Hosts that know every running player set these for the player switcher.
     property int playerCount: hasPlayer ? 1 : 0
     property var switchPlayer: null
-    readonly property string lyricLine: lyricsLoader.item?.currentLine ?? ""
+    readonly property bool lyricsEnabled: (configuration.showLyrics ?? false) || layoutMode === "lyrics"
+    readonly property var lyricLines: samplePlayback && lyricsEnabled ? [
+        {
+            time: 0,
+            text: "The light falls softly on the water"
+        },
+        {
+            time: 8,
+            text: "And the city fades to blue"
+        },
+        {
+            time: 16,
+            text: "Let the evening drift away"
+        },
+        {
+            time: 24,
+            text: "There is nothing left to hurry"
+        },
+        {
+            time: 32,
+            text: "Just a little room to stay"
+        },
+        {
+            time: 40,
+            text: "With the rhythm of the rain"
+        }
+    ] : lyricsLoader.item?.lines ?? []
+    readonly property int lyricIndex: samplePlayback && lyricsEnabled ? 2 : lyricsLoader.item?.currentIndex ?? -1
+    readonly property string lyricLine: lyricIndex >= 0 && lyricIndex < lyricLines.length ? lyricLines[lyricIndex].text : ""
+    readonly property string lyricStatus: !hasPlayer ? "idle" : trackUnknown || artist === "" ? "metadata" : samplePlayback ? "ready" : lyricsLoader.item?.status ?? "loading"
 
-    readonly property string detailsMode: !hasPlayer || trackUnknown ? "off" : (configuration.hoverDetails ?? "off")
+    readonly property string detailsMode: layoutMode === "lyrics" || !hasPlayer || trackUnknown ? "off" : (configuration.hoverDetails ?? "off")
     readonly property bool panelForm: layoutMode === "pill" || layoutMode === "pillicon"
     readonly property bool flipEnabled: detailsMode === "flip" && layoutMode !== "strip" && !panelForm
     property bool detailsOpen: false
@@ -162,8 +196,14 @@ Item {
             artUrl = url;
     }
 
-    // Artwork click "zoom" shows the cover large over the card.
+    // Artwork click opens a transient lightbox outside the card bounds.
     property bool zoomOpen: false
+    Loader {
+        active: root.zoomOpen
+        sourceComponent: ArtworkLightbox {
+            view: root
+        }
+    }
     readonly property bool cardHovered: cardHover.hovered
 
     // Behaviour (docs/redesign-plan.md §7.5).
@@ -172,7 +212,7 @@ Item {
     // Hosts report the power source; battery saver caps frames and drops glow.
     property bool onBattery: false
     readonly property bool batterySaving: onBattery && (configuration.batterySaver ?? false)
-    readonly property bool lifted: (configuration.hoverLift ?? false) && cardHovered
+    readonly property bool lifted: layoutMode !== "lyrics" && (configuration.hoverLift ?? false) && cardHovered
 
     function togglePlayback() {
         const p = player;
@@ -202,17 +242,80 @@ Item {
             popupRequested();
     }
 
+    // Scrolling adjusts the system's output volume (via pactl) rather than the
+    // MPRIS player's own volume, which most players don't implement at all.
+    property real systemVolume: -1
+    property real requestedVolume: -1
+    readonly property real displayedVolume: requestedVolume >= 0 ? requestedVolume : Math.max(0, systemVolume)
+    onSystemVolumeChanged: {
+        // pactl reports whole percent, so match the request within that grain.
+        if (requestedVolume >= 0 && Math.abs(systemVolume - requestedVolume) < 0.006) {
+            requestedVolume = -1;
+            volumeRequestTimeout.stop();
+        }
+    }
+    function resetVolumeGesture() {
+        requestedVolume = -1;
+        volumeRequestTimeout.stop();
+        volumeHide.stop();
+        volumeOsd.shown = false;
+    }
+    function queryVolume() {
+        sysVolumeSource.connectSource("pactl get-sink-volume @DEFAULT_SINK@");
+    }
+    function commitVolume() {
+        if (requestedVolume < 0)
+            return;
+        sysVolumeSource.connectSource("pactl set-sink-volume @DEFAULT_SINK@ " + Math.round(requestedVolume * 100) + "%; pactl get-sink-volume @DEFAULT_SINK@");
+    }
+    function scrollSystemVolume(angleDelta, pixelDelta) {
+        if (!volumeWheel.enabled)
+            return false;
+        // A wheel notch is 120 angle units; touchpads can send pixels only.
+        const step = pixelDelta !== 0 ? pixelDelta / 40 * 0.04 : angleDelta / 120 * 0.04;
+        if (!Number.isFinite(step) || step === 0)
+            return false;
+        requestedVolume = Math.max(0, Math.min(1, displayedVolume + step));
+        volumeRequestTimeout.restart();
+        // Coalesce rapid wheel ticks into one shell call instead of one per notch.
+        volumeCommitTimer.restart();
+        volumeOsd.shown = true;
+        volumeHide.restart();
+        return true;
+    }
+    CommandSource {
+        id: sysVolumeSource
+        sourceComponent: root.visualizer?.commandSourceComponent
+        onNewData: function (source, data) {
+            disconnectSource(source);
+            const match = /(\d+)%/.exec(data["stdout"] || "");
+            if (match)
+                root.systemVolume = Math.max(0, Math.min(1, Number(match[1]) / 100));
+        }
+    }
+    Timer {
+        id: volumeCommitTimer
+        interval: 60
+        onTriggered: root.commitVolume()
+    }
+    Timer {
+        id: volumeRequestTimeout
+        interval: 750
+        onTriggered: root.requestedVolume = -1
+    }
     WheelHandler {
+        id: volumeWheel
         objectName: "volumeWheel"
-        enabled: (root.configuration.scrollVolume ?? false) && root.hasPlayer && root.volume >= 0
+        target: null
+        enabled: root.visible && !root.zoomOpen && !root.flipped && root.layoutMode !== "lyrics" && (root.configuration.scrollVolume ?? false) && root.hasPlayer && !!root.visualizer?.commandSourceComponent
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
+        onEnabledChanged: {
+            root.resetVolumeGesture();
+            if (enabled)
+                root.queryVolume();
+        }
         onWheel: event => {
-            const step = event.angleDelta.y / 120 * 0.04;
-            if (step === 0 || !root.player)
-                return;
-            root.player.volume = Math.max(0, Math.min(1, root.volume + step));
-            volumeOsd.shown = true;
-            volumeHide.restart();
+            event.accepted = root.scrollSystemVolume(event.angleDelta.y, event.pixelDelta.y);
         }
     }
     Timer {
@@ -220,12 +323,12 @@ Item {
         interval: 1100
         onTriggered: volumeOsd.shown = false
     }
-    // Vertical volume bar right of the card while scrolling.
+    // Keep the feedback inside the host bounds so panels cannot clip it.
     Rectangle {
         id: volumeOsd
         objectName: "volumeOsd"
         property bool shown: false
-        x: root.width + 12
+        x: Math.max(0, root.width - width - 3)
         y: root.height * 0.08
         width: 6
         height: root.height * 0.84
@@ -244,7 +347,7 @@ Item {
         Rectangle {
             anchors.bottom: parent.bottom
             width: parent.width
-            height: parent.height * Math.max(0, root.volume)
+            height: parent.height * root.displayedVolume
             color: root.waveColor
         }
     }
@@ -255,7 +358,7 @@ Item {
 
     Loader {
         id: lyricsLoader
-        active: (root.configuration.showLyrics ?? false) && root.hasPlayer && !root.trackUnknown
+        active: !root.samplePlayback && root.lyricsEnabled && root.hasPlayer && !root.trackUnknown
         sourceComponent: LyricsSource {
             player: root.player
             isPlaying: root.isPlaying
@@ -263,11 +366,13 @@ Item {
             artist: root.artist
             album: root.album
             positionUnitsPerSecond: root.positionUnitsPerSecond
+            timingOffset: root.configuration.lyricsOffset ?? 0
             visualFrameTime: root.visualFrameTime
         }
     }
 
     onPlayerChanged: {
+        resetVolumeGesture();
         detailsOpen = false;
         zoomOpen = false;
         artUrl = "";
@@ -330,8 +435,11 @@ Item {
         }
 
         CardSurface {
+            backdropSource: root.backdropSource
             anchors.fill: parent
-            configuration: root.configuration
+            configuration: root.layoutMode === "lyrics" ? Object.assign({}, root.configuration, {
+                artBg: false
+            }) : root.configuration
             artUrl: root.artUrl
             hasPlayer: root.hasPlayer
             cardRadius: root.panelForm ? root.height / 2 : root.configuration.bgRadius
@@ -376,65 +484,10 @@ Item {
                     poster: posterLayout,
                     strip: stripLayout,
                     orbit: orbitLayout,
+                    lyrics: lyricsLayout,
                     pill: pillLayout,
                     pillicon: pillIconLayout
                 })[root.layoutMode] ?? classicLayout
-        }
-
-        Rectangle {
-            objectName: "artZoom"
-            anchors.fill: parent
-            radius: root.configuration.bgRadius
-            color: Qt.rgba(0.02, 0.02, 0.03, 0.9)
-            opacity: root.zoomOpen ? 1 : 0
-            // Visible from the moment it opens, so it can be closed mid-fade.
-            visible: root.zoomOpen || opacity > 0
-            Behavior on opacity {
-                NumberAnimation {
-                    duration: 180
-                }
-            }
-
-            Row {
-                anchors.centerIn: parent
-                spacing: 12
-                ArtView {
-                    objectName: "zoomArt"
-                    width: Math.max(0, Math.min(parent.parent.height - 16, 220))
-                    height: width
-                    artUrl: root.artUrl
-                    desktopEntry: root.desktopEntry
-                    fallbackIcon: root.fallbackIcon
-                }
-                Column {
-                    anchors.verticalCenter: parent.verticalCenter
-                    width: Math.max(60, Math.min(220, parent.parent.width - parent.parent.height - 28))
-                    Text {
-                        width: parent.width
-                        text: root.displayTrack
-                        color: root.textColor
-                        font.pixelSize: 13
-                        font.bold: true
-                        wrapMode: Text.Wrap
-                        maximumLineCount: 2
-                        elide: Text.ElideRight
-                    }
-                    Text {
-                        width: parent.width
-                        text: root.artist
-                        color: root.textColor
-                        opacity: 0.7
-                        font.pixelSize: 11
-                        elide: Text.ElideRight
-                    }
-                }
-            }
-            MouseArea {
-                objectName: "artZoomArea"
-                anchors.fill: parent
-                enabled: root.zoomOpen
-                onClicked: root.zoomOpen = false
-            }
         }
     }
 
@@ -556,6 +609,12 @@ Item {
     Component {
         id: pillIconLayout
         Layouts.PillIcon {
+            view: root
+        }
+    }
+    Component {
+        id: lyricsLayout
+        Layouts.Lyrics {
             view: root
         }
     }

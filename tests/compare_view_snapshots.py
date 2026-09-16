@@ -68,7 +68,7 @@ def main():
             "CURRENT_UI": (current / "contents/ui").as_uri(),
             "CONFIGURATION_JS": (REPO / "hyprland/Configuration.js").as_uri(),
             "DEFAULTS_XML": (current / "contents/config/main.xml").as_uri(),
-            "ARTWORK": (REPO / "readme/album_art.png").as_uri(),
+            "ARTWORK": (REPO / "package/icon.png").as_uri(),
             "OUTPUT": str(output),
             "BACKEND": args.backend,
         }.items():

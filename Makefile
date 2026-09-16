@@ -1,7 +1,10 @@
-.PHONY: help view view-h view-hyprland settings-hyprland install doctor pack tag shaders docs
+.PHONY: help view view-h view-hyprland settings-hyprland install doctor pack tag shaders docs gallery
 .DEFAULT_GOAL := help
 
-docs: ## build shared assets for the HTML demo; then open docs/index.html
+gallery: ## capture tightly framed real QML screenshots at 2x resolution
+	@python3 tools/capture_gallery.py $(GALLERY_FLAGS)
+
+docs: ## build shared assets for the HTML demo; then open docs/website/index.html
 	@python3 tools/sync_studio_assets.py
 
 help: ## list targets
@@ -49,14 +52,14 @@ test: ## run the full test suite (software rendering, no desktop needed)
 	fi
 
 parity: ## GPU shader vs Canvas on this desktop (opens a window; saves image pairs)
-	@dir="$${TMPDIR:-/tmp}/audio-visualizer-parity"; rm -rf "$$dir"; mkdir -p "$$dir"; \
-	run="qmltestrunner -input tests/tst_rendererparity.qml -import tests/stubs"; \
-	command -v qmltestrunner >/dev/null 2>&1 || run="nix develop --command $$run"; \
-	QT_QPA_PLATFORMTHEME=generic QML_DISABLE_DISK_CACHE=1 $$run > "$$dir/test.log" 2>&1; status=$$?; \
-	grep -E 'parity |^FAIL|^Totals' "$$dir/test.log" | sed 's/^QDEBUG *: *[^ ]* *//'; \
-	echo "image pairs and log: $$dir"; exit $$status
+	@dir="$${TMPDIR:-/tmp}/audio-visualizer-parity"; mkdir -p "$$dir"; \
+	runner="qmltestrunner"; command -v qmltestrunner >/dev/null 2>&1 || runner="nix develop --command qmltestrunner"; \
+	status=0; for suite in rendererparity orbitparity; do \
+	  QT_QPA_PLATFORMTHEME=generic QML_DISABLE_DISK_CACHE=1 $$runner -input tests/tst_$$suite.qml -import tests/stubs > "$$dir/$$suite.log" 2>&1 || status=1; \
+	  rg 'parity |^FAIL|^Totals' "$$dir/$$suite.log"; \
+	done; echo "logs: $$dir; Orbit captures: /tmp/orbit-*.png"; exit $$status
 
-compare-html: ## render styles 6-15 from docs/index.html and the widget; writes report.html
+compare-html: ## render styles 6-15 from docs/website/index.html and the widget; writes report.html
 	@out="$${TMPDIR:-/tmp}/audio-visualizer-html"; \
 	run="python3 tests/compare_html_visualizers.py --reference qt --extended --output $$out"; \
 	command -v qmltestrunner >/dev/null 2>&1 || run="nix develop --command $$run"; \

@@ -1,10 +1,11 @@
 import QtQuick
+import "../code/GrainDraw.js" as GrainDraw
 
 // Static card material from the HTML `.surf` recipes: glass, liquid, solid and
 // atmosphere, plus the edge line and optional edge highlight. It repaints only
 // when size, settings, cover colours or the liquid pointer light change — never
-// per audio frame. Blur behind the card and liquid refraction are not
-// available to a plain plasmoid and are not drawn.
+// per audio frame. CardSurface separately blurs a supplied wallpaper item;
+// this layer draws only the tint and highlights. Refraction is not simulated.
 Canvas {
     id: card
     objectName: "cardMaterial"
@@ -13,6 +14,7 @@ Canvas {
     property string material: ""
     property real radius: 12
     property string glassTint: "clear"
+    property bool grain: false
     property bool specular: true
     property bool edgeHighlight: false
     property color cover1: "#6c7086"
@@ -27,7 +29,7 @@ Canvas {
         enabled: card.material === "liquid" && card.specular
     }
     readonly property point specularPoint: hover.hovered ? hover.point.position : Qt.point(width * 0.22, -height * 0.1)
-    readonly property var signature: [material, radius, glassTint, specular, edgeHighlight, cover1, cover2, cover3, width, height]
+    readonly property var signature: [material, grain, radius, glassTint, specular, edgeHighlight, cover1, cover2, cover3, width, height]
     onSignatureChanged: requestPaint()
     onSpecularPointChanged: {
         if (material === "liquid" && specular)
@@ -100,13 +102,16 @@ Canvas {
                 ctx.fillStyle = bottom;
                 ctx.fillRect(0, h - 16, w, 16);
                 if (specular) {
-                    // soft-light has no Canvas equivalent; half strength in normal blending.
+                    // Qt exposes the native blend mode under its vendor-prefixed name.
+                    ctx.save();
+                    ctx.globalCompositeOperation = "qt-soft-light";
                     const p = specularPoint;
                     const light = ctx.createRadialGradient(p.x, p.y, 0, p.x, p.y, 180);
-                    light.addColorStop(0, white(0x59 / 2));
+                    light.addColorStop(0, white(0x59));
                     light.addColorStop(0.62, white(0));
                     ctx.fillStyle = light;
                     ctx.fillRect(0, 0, w, h);
+                    ctx.restore();
                 }
                 break;
             }
@@ -127,6 +132,9 @@ Canvas {
                 break;
             }
         }
+
+        if (grain)
+            GrainDraw.draw(ctx, w, h, true);
 
         if (edgeHighlight) {
             ctx.fillStyle = white(0x2e);

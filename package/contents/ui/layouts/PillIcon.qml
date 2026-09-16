@@ -13,7 +13,8 @@ Item {
     implicitWidth: 30
     implicitHeight: 30
 
-    OrbitCanvas {
+    OrbitView {
+        simpleRender: root.cfg.simpleRender ?? false
         objectName: "pillOrbit"
         visible: root.orbit
         anchors.centerIn: parent

@@ -54,6 +54,7 @@ Item {
                     color: root.view.waveColor
                 }
                 Text {
+                    renderType: Text.CurveRendering ?? Text.QtRendering
                     objectName: "posterMeta"
                     Layout.fillWidth: !root.centered
                     Layout.maximumWidth: area.width - 11
@@ -66,6 +67,7 @@ Item {
                 }
             }
             Text {
+                renderType: Text.CurveRendering ?? Text.QtRendering
                 objectName: "posterTitle"
                 Layout.fillWidth: true
                 text: root.view.idleMessage ? qsTr("Nothing playing") : root.view.trackUnknown ? qsTr("No track metadata") : (root.view.displayTrack || " ")
@@ -93,6 +95,7 @@ Item {
                     Layout.preferredHeight: implicitHeight
                 }
                 Text {
+                    renderType: Text.CurveRendering ?? Text.QtRendering
                     objectName: "posterClock"
                     visible: root.showClock
                     text: progress.elapsedText

@@ -105,7 +105,7 @@ Item {
         systemTextColor: root.configuration.textColor ?? "#cdd6f4"
         fallbackIcon: Component {
             Image {
-                source: Quickshell.iconPath(card.desktopEntry !== "" ? card.desktopEntry : "audio-x-generic-symbolic", true) || Qt.resolvedUrl("../package/icon.png")
+                source: (card.desktopEntry !== "" ? Quickshell.iconPath(card.desktopEntry, true) : "") || Qt.resolvedUrl("../package/icon.png")
                 fillMode: Image.PreserveAspectFit
             }
         }

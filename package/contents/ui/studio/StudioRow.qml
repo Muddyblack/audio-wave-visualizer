@@ -20,7 +20,7 @@ Item {
     readonly property bool stacked: !!rowData.full || width - controlWidth - 18 < 190
 
     function commit(value) {
-        studio.update(Schema.rowPatch(rowData, value));
+        studio.update(Schema.rowPatch(rowData, value, studio.draft));
     }
 
     objectName: "row_" + (rowData.k || rowData.id)

@@ -6,8 +6,10 @@ import "studio" as Studio
 // Plasma settings page hosting the shared studio. Plasma sets every cfg_*
 // property (and its *Default) from main.xml and applies them on OK/Apply, so
 // Cancel still reverts. Generated key list: keep in step with main.xml.
-Item {
+// Plasma 6.6 hosts config pages in a Kirigami PageRow and supplies a title.
+Kirigami.Page {
     id: root
+    padding: 0
     implicitWidth: Kirigami.Units.gridUnit * 60
     implicitHeight: Kirigami.Units.gridUnit * 40
 
@@ -121,6 +123,8 @@ Item {
     property real cfg_ribbonFullnessDefault
     property string cfg_surfaceStyle
     property string cfg_surfaceStyleDefault
+    property real cfg_glassBlur
+    property real cfg_glassBlurDefault
     property string cfg_glassTint
     property string cfg_glassTintDefault
     property real cfg_glassRefraction
@@ -181,6 +185,56 @@ Item {
     property bool cfg_marqueeDefault
     property bool cfg_showLyrics
     property bool cfg_showLyricsDefault
+    property string cfg_lyricsFontFamily
+    property string cfg_lyricsFontFamilyDefault
+    property int cfg_lyricsInlineFontSize
+    property int cfg_lyricsInlineFontSizeDefault
+    property int cfg_lyricsFontSize
+    property int cfg_lyricsFontSizeDefault
+    property int cfg_lyricsFontWeight
+    property int cfg_lyricsFontWeightDefault
+    property int cfg_lyricsCurrentWeight
+    property int cfg_lyricsCurrentWeightDefault
+    property bool cfg_lyricsItalic
+    property bool cfg_lyricsItalicDefault
+    property real cfg_lyricsLetterSpacing
+    property real cfg_lyricsLetterSpacingDefault
+    property real cfg_lyricsLineHeight
+    property real cfg_lyricsLineHeightDefault
+    property string cfg_lyricsAlign
+    property string cfg_lyricsAlignDefault
+    property string cfg_lyricsHighlight
+    property string cfg_lyricsHighlightDefault
+    property string cfg_lyricsHighlightColor
+    property string cfg_lyricsHighlightColorDefault
+    property real cfg_lyricsPastOpacity
+    property real cfg_lyricsPastOpacityDefault
+    property real cfg_lyricsFutureOpacity
+    property real cfg_lyricsFutureOpacityDefault
+    property string cfg_lyricsTextStyle
+    property string cfg_lyricsTextStyleDefault
+    property string cfg_lyricsTextStyleColor
+    property string cfg_lyricsTextStyleColorDefault
+    property int cfg_lyricsLineSpacing
+    property int cfg_lyricsLineSpacingDefault
+    property int cfg_lyricsPadding
+    property int cfg_lyricsPaddingDefault
+    property int cfg_lyricsMaxWidth
+    property int cfg_lyricsMaxWidthDefault
+    property bool cfg_lyricsFollow
+    property bool cfg_lyricsFollowDefault
+    property string cfg_lyricsFollowPosition
+    property string cfg_lyricsFollowPositionDefault
+    property bool cfg_lyricsShowScrollbar
+    property bool cfg_lyricsShowScrollbarDefault
+    property bool cfg_lyricsShowHeader
+    property bool cfg_lyricsShowHeaderDefault
+    property int cfg_lyricsWidth
+    property int cfg_lyricsWidthDefault
+    property int cfg_lyricsHeight
+    property int cfg_lyricsHeightDefault
+    property real cfg_lyricsOffset
+    property real cfg_lyricsOffsetDefault
     property string cfg_hoverDetails
     property string cfg_hoverDetailsDefault
     property var cfg_detailFields
@@ -262,6 +316,7 @@ Item {
             ribbonCurvature: root.cfg_ribbonCurvature,
             ribbonFullness: root.cfg_ribbonFullness,
             surfaceStyle: root.cfg_surfaceStyle,
+            glassBlur: root.cfg_glassBlur,
             glassTint: root.cfg_glassTint,
             glassRefraction: root.cfg_glassRefraction,
             glassSpecular: root.cfg_glassSpecular,
@@ -292,6 +347,31 @@ Item {
             showPlayerSwitch: root.cfg_showPlayerSwitch,
             marquee: root.cfg_marquee,
             showLyrics: root.cfg_showLyrics,
+            lyricsFontFamily: root.cfg_lyricsFontFamily,
+            lyricsInlineFontSize: root.cfg_lyricsInlineFontSize,
+            lyricsFontSize: root.cfg_lyricsFontSize,
+            lyricsFontWeight: root.cfg_lyricsFontWeight,
+            lyricsCurrentWeight: root.cfg_lyricsCurrentWeight,
+            lyricsItalic: root.cfg_lyricsItalic,
+            lyricsLetterSpacing: root.cfg_lyricsLetterSpacing,
+            lyricsLineHeight: root.cfg_lyricsLineHeight,
+            lyricsAlign: root.cfg_lyricsAlign,
+            lyricsHighlight: root.cfg_lyricsHighlight,
+            lyricsHighlightColor: root.cfg_lyricsHighlightColor,
+            lyricsPastOpacity: root.cfg_lyricsPastOpacity,
+            lyricsFutureOpacity: root.cfg_lyricsFutureOpacity,
+            lyricsTextStyle: root.cfg_lyricsTextStyle,
+            lyricsTextStyleColor: root.cfg_lyricsTextStyleColor,
+            lyricsLineSpacing: root.cfg_lyricsLineSpacing,
+            lyricsPadding: root.cfg_lyricsPadding,
+            lyricsMaxWidth: root.cfg_lyricsMaxWidth,
+            lyricsFollow: root.cfg_lyricsFollow,
+            lyricsFollowPosition: root.cfg_lyricsFollowPosition,
+            lyricsShowScrollbar: root.cfg_lyricsShowScrollbar,
+            lyricsShowHeader: root.cfg_lyricsShowHeader,
+            lyricsWidth: root.cfg_lyricsWidth,
+            lyricsHeight: root.cfg_lyricsHeight,
+            lyricsOffset: root.cfg_lyricsOffset,
             hoverDetails: root.cfg_hoverDetails,
             detailFields: root.cfg_detailFields,
             idleText: root.cfg_idleText,
@@ -361,6 +441,7 @@ Item {
             ribbonCurvature: root.cfg_ribbonCurvatureDefault,
             ribbonFullness: root.cfg_ribbonFullnessDefault,
             surfaceStyle: root.cfg_surfaceStyleDefault,
+            glassBlur: root.cfg_glassBlurDefault,
             glassTint: root.cfg_glassTintDefault,
             glassRefraction: root.cfg_glassRefractionDefault,
             glassSpecular: root.cfg_glassSpecularDefault,
@@ -391,6 +472,31 @@ Item {
             showPlayerSwitch: root.cfg_showPlayerSwitchDefault,
             marquee: root.cfg_marqueeDefault,
             showLyrics: root.cfg_showLyricsDefault,
+            lyricsFontFamily: root.cfg_lyricsFontFamilyDefault,
+            lyricsInlineFontSize: root.cfg_lyricsInlineFontSizeDefault,
+            lyricsFontSize: root.cfg_lyricsFontSizeDefault,
+            lyricsFontWeight: root.cfg_lyricsFontWeightDefault,
+            lyricsCurrentWeight: root.cfg_lyricsCurrentWeightDefault,
+            lyricsItalic: root.cfg_lyricsItalicDefault,
+            lyricsLetterSpacing: root.cfg_lyricsLetterSpacingDefault,
+            lyricsLineHeight: root.cfg_lyricsLineHeightDefault,
+            lyricsAlign: root.cfg_lyricsAlignDefault,
+            lyricsHighlight: root.cfg_lyricsHighlightDefault,
+            lyricsHighlightColor: root.cfg_lyricsHighlightColorDefault,
+            lyricsPastOpacity: root.cfg_lyricsPastOpacityDefault,
+            lyricsFutureOpacity: root.cfg_lyricsFutureOpacityDefault,
+            lyricsTextStyle: root.cfg_lyricsTextStyleDefault,
+            lyricsTextStyleColor: root.cfg_lyricsTextStyleColorDefault,
+            lyricsLineSpacing: root.cfg_lyricsLineSpacingDefault,
+            lyricsPadding: root.cfg_lyricsPaddingDefault,
+            lyricsMaxWidth: root.cfg_lyricsMaxWidthDefault,
+            lyricsFollow: root.cfg_lyricsFollowDefault,
+            lyricsFollowPosition: root.cfg_lyricsFollowPositionDefault,
+            lyricsShowScrollbar: root.cfg_lyricsShowScrollbarDefault,
+            lyricsShowHeader: root.cfg_lyricsShowHeaderDefault,
+            lyricsWidth: root.cfg_lyricsWidthDefault,
+            lyricsHeight: root.cfg_lyricsHeightDefault,
+            lyricsOffset: root.cfg_lyricsOffsetDefault,
             hoverDetails: root.cfg_hoverDetailsDefault,
             detailFields: root.cfg_detailFieldsDefault,
             idleText: root.cfg_idleTextDefault,

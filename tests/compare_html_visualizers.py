@@ -258,7 +258,7 @@ def main():
     parser.add_argument("--renderer", choices=("canvas", "shader"), default="canvas")
     parser.add_argument("--backend", choices=("software", "opengl", "vulkan"), default="software")
     parser.add_argument("--platform", default="offscreen")
-    parser.add_argument("--html", type=Path, default=REPO / "docs/index.html")
+    parser.add_argument("--html", type=Path, default=REPO / "docs/website/index.html")
     parser.add_argument("--output", type=Path)
     parser.add_argument("--style", type=int, choices=range(6, 16))
     parser.add_argument("--extended", action="store_true", help="Also compare cover/rainbow colours and hanging bars (53 cases)")
@@ -283,8 +283,11 @@ def main():
         parser.error("Qt 6 qmltestrunner must be on PATH")
     output = args.output.resolve() if args.output else Path(tempfile.mkdtemp(prefix="audio-html-comparison-"))
     output.mkdir(parents=True, exist_ok=True)
-    fixtures = cases(args)
     html = args.html.read_text()
+    if "function hexRgb(" not in html:
+        app_js = args.html.parent / "app.js"
+        if app_js.exists():
+            html = app_js.read_text()
     source = reference_source(html)
     (output / "fixtures.json").write_text(json.dumps(fixtures, indent=2) + "\n")
     (output / "manifest.json").write_text(json.dumps({

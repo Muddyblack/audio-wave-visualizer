@@ -90,6 +90,8 @@ TestCase {
         LyricsSource {}
     }
     function init() {
+        testCase.width = 400;
+        testCase.height = 140;
         player = createTemporaryObject(playerComponent, this);
         subject = createTemporaryObject(viewComponent, this, {
             configuration: Object.assign({}, defaults),
@@ -365,6 +367,22 @@ TestCase {
         subject.isPlaying = false;
         backend.frameTimeMs = 1400;
         compare(art.spinAngle, angle, "A paused record stops");
+        subject.isPlaying = true;
+        art.visible = false;
+        backend.frameTimeMs = 1600;
+        backend.frameTimeMs = 1800;
+        compare(art.spinAngle, angle, "Hidden artwork must not spin");
+        art.visible = true;
+        backend.frameTimeMs = 2000;
+        compare(art.spinAngle, angle, "Resuming must not catch up hidden time");
+        backend.frameTimeMs = 2200;
+        verify(art.spinAngle > angle);
+        for (const shape of ["rounded", "sharp", "squircle", "circle"]) {
+            subject.configuration = Object.assign({}, defaults, {
+                artShape: shape
+            });
+            compare(findChild(art, "artFace").rotation, 0, "Switching away from a disc restores an upright cover");
+        }
         player.artUrl = "";
     }
     function test_dockStylesAndToggles() {
@@ -399,8 +417,13 @@ TestCase {
         tryVerify(() => art.coverReady);
         mouseClick(findChild(subject, "artClickArea"));
         verify(subject.zoomOpen);
-        mouseClick(findChild(subject, "artZoomArea"));
-        verify(!subject.zoomOpen);
+        const zoom = findChild(subject, "artZoom");
+        tryVerify(() => zoom.visible);
+        verify(zoom.width > subject.width, "Lightbox is larger than the card");
+        const closeArea = findChild(subject, "artZoomArea");
+        waitForRendering(closeArea);
+        mouseClick(closeArea, 8, 8);
+        tryCompare(subject, "zoomOpen", false);
         player.artUrl = "";
     }
     function test_trackInfoLines() {
@@ -483,6 +506,10 @@ TestCase {
         verify(!art.tilted, "Tilt waits briefly before starting");
         tryCompare(art, "tilted", true);
         wait(220);
+        const face = findChild(art, "artFace");
+        const topLeft = face.mapToItem(art, 0, 0), topRight = face.mapToItem(art, face.width, 0);
+        const bottomLeft = face.mapToItem(art, 0, face.height), bottomRight = face.mapToItem(art, face.width, face.height);
+        verify(Math.abs((topRight.x - topLeft.x) - (bottomRight.x - bottomLeft.x)) > 0.1, "Perspective makes the near and far edges different widths");
         compare(clickArea.mapToItem(subject, 0, 0), coverPosition);
         compare(shuffle.mapToItem(subject, 0, 0), buttonPosition);
         mouseClick(clickArea);
@@ -513,6 +540,34 @@ TestCase {
         });
         compare(texts.marqueeOffset, 0);
     }
+    function test_lyricsOnlyLayout() {
+        testCase.width = 420;
+        testCase.height = 360;
+        subject.samplePlayback = true;
+        subject.configuration = Object.assign({}, defaults, {
+            layoutMode: "lyrics",
+            showLyrics: false,
+            scrollVolume: true
+        });
+        subject.width = 380;
+        subject.height = 320;
+        compare(subject.implicitWidth, 380);
+        compare(subject.implicitHeight, 320);
+        verify(waitForRendering(subject));
+        const document = findChild(subject, "lyricsDocument");
+        verify(document !== null);
+        compare(document.count, 6);
+        compare(document.currentIndex, 2);
+        tryVerify(() => document.currentItem !== null);
+        const current = document.currentItem;
+        tryVerify(() => current.y >= document.contentY && current.y + current.height <= document.contentY + document.height);
+        verify(subject.lyricLine.length > 0);
+        compare(findChild(subject, "playArea"), null);
+        compare(findChild(subject, "canvasLoader"), null);
+        compare(findChild(subject, "classicArt"), null);
+        compare(findChild(subject, "volumeWheel").enabled, false);
+    }
+
     function test_lyricsParsing() {
         const lyrics = createTemporaryObject(lyricsComponent, testCase);
         const lines = lyrics.parse("[00:01.00]first\n[00:03.50][00:05]again\nno tag");
@@ -563,6 +618,64 @@ TestCase {
         fuzzyCompare(player.volume, 0.54, 1e-6);
         verify(findChild(subject, "volumeOsd").shown);
     }
+    function test_volumeHighResolutionAndBounds() {
+        subject.configuration = Object.assign({}, defaults, {
+            scrollVolume: true
+        });
+        verify(!subject.scrollPlayerVolume(0, 0));
+        verify(subject.scrollPlayerVolume(0, 10));
+        fuzzyCompare(player.volume, 0.51, 0.000001);
+        mouseWheel(subject, 100, 50, 120, 0);
+        fuzzyCompare(player.volume, 0.51, 0.000001, "Horizontal scroll must not change volume");
+        mouseWheel(subject, 100, 50, 0, -120);
+        fuzzyCompare(player.volume, 0.47, 0.000001);
+        subject.scrollPlayerVolume(12000, 0);
+        compare(player.volume, 1);
+        subject.scrollPlayerVolume(-12000, 0);
+        compare(player.volume, 0);
+        const osd = findChild(subject, "volumeOsd");
+        verify(osd.x >= 0 && osd.x + osd.width <= subject.width, "Feedback stays inside the widget");
+        subject.configuration = Object.assign({}, defaults, {
+            scrollVolume: false
+        });
+        verify(!subject.scrollPlayerVolume(120, 0));
+        compare(player.volume, 0);
+        verify(!osd.shown);
+    }
+    function test_volumeAccumulatesBeforePlayerAcknowledges() {
+        const requests = [];
+        const delayed = {
+            track: "Track",
+            artist: "Artist",
+            length: 180,
+            position: 60
+        };
+        Object.defineProperty(delayed, "volume", {
+            get: function () {
+                return 0.5;
+            },
+            set: function (value) {
+                requests.push(value);
+            }
+        });
+        subject.player = delayed;
+        subject.configuration = Object.assign({}, defaults, {
+            scrollVolume: true
+        });
+        mouseWheel(subject, 100, 50, 0, 120);
+        mouseWheel(subject, 100, 50, 0, 120);
+        mouseWheel(subject, 100, 50, 0, -120);
+        compare(requests.length, 3);
+        fuzzyCompare(requests[0], 0.54, 0.000001);
+        fuzzyCompare(requests[1], 0.58, 0.000001);
+        fuzzyCompare(requests[2], 0.54, 0.000001);
+        fuzzyCompare(subject.displayedVolume, 0.54, 0.000001);
+        subject.player = player;
+        compare(subject.requestedVolume, -1, "A new player must not inherit pending volume");
+        mouseWheel(subject, 100, 50, 0, 120);
+        fuzzyCompare(player.volume, 0.54, 0.000001);
+    }
+
     function test_panelPill() {
         subject.presentation = "pill";
         subject.configuration = Object.assign({}, defaults, {
@@ -655,7 +768,7 @@ TestCase {
     }
 
     function test_playerChangesClearOldArtwork() {
-        player.artUrl = Qt.resolvedUrl("../readme/album_art.png").toString();
+        player.artUrl = Qt.resolvedUrl("../package/icon.png").toString();
         compare(subject.artUrl, player.artUrl);
         subject.player = null;
         compare(subject.artUrl, "");

@@ -28,7 +28,8 @@ Item {
             Layout.preferredHeight: root.box
             Layout.alignment: Qt.AlignHCenter
 
-            OrbitCanvas {
+            OrbitView {
+                simpleRender: root.cfg.simpleRender ?? false
                 objectName: "orbitCanvas"
                 anchors.fill: parent
                 coverRatio: root.box > 0 ? root.coverSize / root.box : 0.38

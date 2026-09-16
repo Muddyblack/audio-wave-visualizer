@@ -13,11 +13,16 @@ Rectangle {
     property string backdrop: "dusk"
     property string stateName: "normal"
     property string zoom: "fit"
+    property bool compact: false
+    property bool optionsExpanded: false
+    readonly property bool showOptions: !compact || optionsExpanded
+    readonly property real previewTop: showOptions ? topOptions.y + topOptions.height + 8 : 36
+    readonly property real previewBottom: showOptions ? bottomOptions.height + 20 : 8
 
     readonly property var draft: studio.draft
     readonly property var cardSize: LayoutSizes.size(draft)
     readonly property bool pill: Schema.isPill(draft)
-    readonly property real fitScale: Math.max(0.25, Math.min(1, (width - 40) / (cardSize[0] + (pill ? 160 : 0)), (height - 120) / cardSize[1]))
+    readonly property real fitScale: Math.max(0.25, Math.min(1, (width - 40) / (cardSize[0] + (pill ? 160 : 0)), Math.max(0, height - previewTop - previewBottom) / cardSize[1]))
     readonly property real zoomScale: zoom === "fit" ? fitScale : Number(zoom)
 
     radius: 18
@@ -27,6 +32,7 @@ Rectangle {
     clip: true
 
     Backdrop {
+        id: stageWallpaper
         anchors.fill: parent
         anchors.margins: 1
         kind: pane.backdrop
@@ -62,13 +68,16 @@ Rectangle {
 
     Item {
         id: widgetBox
-        anchors.centerIn: parent
+        anchors.horizontalCenter: parent.horizontalCenter
+        y: pane.previewTop + (pane.height - pane.previewTop - pane.previewBottom - height) / 2
         width: pane.cardSize[0] * pane.zoomScale
         height: pane.cardSize[1] * pane.zoomScale
         // Created once the host has supplied a draft.
         Loader {
             active: !!pane.draft && pane.draft.showMpris !== undefined
             sourceComponent: VisualizerView {
+                samplePlayback: true
+                backdropSource: stageWallpaper
                 objectName: "previewWidget"
                 width: pane.cardSize[0]
                 height: pane.cardSize[1]
@@ -132,9 +141,22 @@ Rectangle {
         }
     }
 
+    StudioButton {
+        objectName: "previewOptionsToggle"
+        visible: pane.compact
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.margins: 4
+        height: 28
+        text: pane.optionsExpanded ? "Hide preview options" : "Preview options"
+        onClicked: pane.optionsExpanded = !pane.optionsExpanded
+    }
+
     Flow {
+        id: topOptions
+        visible: pane.showOptions
         x: 12
-        y: 12
+        y: pane.compact ? 40 : 12
         width: parent.width - 24
         spacing: 8
         Chip {
@@ -176,7 +198,16 @@ Rectangle {
                 }
             }
         }
+        Controls.ComboBox {
+            visible: pane.compact
+            width: 180
+            height: 30
+            model: Schema.STATES.map(state => state[1])
+            currentIndex: Schema.STATES.findIndex(state => state[0] === pane.stateName)
+            onActivated: pane.stateName = Schema.STATES[currentIndex][0]
+        }
         Chip {
+            visible: !pane.compact
             ChipLabel {
                 text: "STATE"
             }
@@ -194,6 +225,8 @@ Rectangle {
     }
 
     Flow {
+        id: bottomOptions
+        visible: pane.showOptions
         x: 12
         width: parent.width - 24
         y: parent.height - height - 12

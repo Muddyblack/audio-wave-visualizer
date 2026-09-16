@@ -172,6 +172,9 @@
         <entry name="surfaceStyle" type="String">
             <default>color</default>
         </entry>
+        <entry name="glassBlur" type="Double">
+            <default>0.85</default>
+        </entry>
         <entry name="glassTint" type="String">
             <default>clear</default>
         </entry>
@@ -261,6 +264,81 @@
         </entry>
         <entry name="showLyrics" type="Bool">
             <default>false</default>
+        </entry>
+        <entry name="lyricsFontFamily" type="String">
+            <default></default>
+        </entry>
+        <entry name="lyricsInlineFontSize" type="Int">
+            <default>13</default>
+        </entry>
+        <entry name="lyricsFontSize" type="Int">
+            <default>22</default>
+        </entry>
+        <entry name="lyricsFontWeight" type="Int">
+            <default>400</default>
+        </entry>
+        <entry name="lyricsCurrentWeight" type="Int">
+            <default>600</default>
+        </entry>
+        <entry name="lyricsItalic" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="lyricsLetterSpacing" type="Double">
+            <default>0</default>
+        </entry>
+        <entry name="lyricsLineHeight" type="Double">
+            <default>1.25</default>
+        </entry>
+        <entry name="lyricsAlign" type="String">
+            <default>left</default>
+        </entry>
+        <entry name="lyricsHighlight" type="String">
+            <default>text</default>
+        </entry>
+        <entry name="lyricsHighlightColor" type="Color">
+            <default>#3daee9</default>
+        </entry>
+        <entry name="lyricsPastOpacity" type="Double">
+            <default>0.55</default>
+        </entry>
+        <entry name="lyricsFutureOpacity" type="Double">
+            <default>0.55</default>
+        </entry>
+        <entry name="lyricsTextStyle" type="String">
+            <default>none</default>
+        </entry>
+        <entry name="lyricsTextStyleColor" type="Color">
+            <default>#101318</default>
+        </entry>
+        <entry name="lyricsLineSpacing" type="Int">
+            <default>12</default>
+        </entry>
+        <entry name="lyricsPadding" type="Int">
+            <default>18</default>
+        </entry>
+        <entry name="lyricsMaxWidth" type="Int">
+            <default>600</default>
+        </entry>
+        <entry name="lyricsFollow" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="lyricsFollowPosition" type="String">
+            <default>center</default>
+        </entry>
+        <entry name="lyricsShowScrollbar" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="lyricsShowHeader" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="lyricsWidth" type="Int">
+            <default>380</default>
+        </entry>
+        <entry name="lyricsHeight" type="Int">
+            <default>320</default>
+        </entry>
+        <entry name="lyricsOffset" type="Double">
+            <default>0</default>
         </entry>
         <entry name="hoverDetails" type="String">
             <default>off</default>

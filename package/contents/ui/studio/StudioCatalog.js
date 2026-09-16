@@ -75,6 +75,12 @@ var StudioCatalog = {
             "icon": "M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 11v6M12 7.5v.5"
         },
         {
+            "id": "lyrics",
+            "label": "Lyrics",
+            "nativeOnly": true,
+            "icon": "M4 5h16M4 10h12M4 15h16M4 20h9"
+        },
+        {
             "id": "card",
             "label": "Card",
             "icon": "M7 6h10a4 4 0 0 1 4 4v4a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-4a4 4 0 0 1 4-4zM7 10h6"

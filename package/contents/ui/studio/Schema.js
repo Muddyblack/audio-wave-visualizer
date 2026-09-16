@@ -21,7 +21,7 @@ var BACKDROPS = Catalog.StudioCatalog.wallpapers.map(function (wallpaper) { retu
 var STATES = [["normal", "Playing"], ["paused", "Paused"], ["long", "Long title"], ["nometa", "No metadata"], ["idle", "Nothing playing"], ["backend", "cava missing"]];
 
 // Colour keys "Keep my colours" preserves; placement is never part of a look.
-var COLOR_KEYS = ["useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "hueReactive", "bgColor"];
+var COLOR_KEYS = ["useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "hueReactive", "bgColor", "lyricsHighlightColor", "lyricsTextStyleColor"];
 var PLACEMENT_KEYS = ["monitor", "verticalPosition", "desktopLayer", "pauseWhenCovered", "hAnchor", "widgetWidth", "widgetHeight"];
 
 function isPill(s) {
@@ -104,10 +104,10 @@ var SECTIONS = [
         { k: "showShuffleRepeat", type: "switch", label: "Shuffle & repeat", desc: "For players that support them." }
     ]),
     tab("layout", "Arrangement", [
-        { k: "layoutMode", type: "tiles", full: true, label: "Layout", desc: "Pill layouts show up inside a panel in the preview.", tw: 104,
+        { k: "layoutMode", type: "tiles", full: true, label: "Layout", desc: "Lyrics only shows a scrollable verse with the current line highlighted. Uses online lyrics from LRCLIB.", tw: 104,
           get: layoutValue,
           set: function (v) { return v === "compact" ? { showMpris: false, layoutMode: "classic" } : { layoutMode: v, showMpris: true }; },
-          opts: [["classic", "Classic"], ["mirrored", "Mirrored"], ["inline", "Inline"], ["hero", "Hero wave"], ["stacked", "Stacked"], ["orbit", "Orbit"], ["poster", "Poster"], ["strip", "Slim strip"], ["pill", "Panel pill"], ["pillicon", "Panel icon"], ["compact", "No art"]]
+          opts: [["classic", "Classic"], ["mirrored", "Mirrored"], ["inline", "Inline"], ["hero", "Hero wave"], ["stacked", "Stacked"], ["orbit", "Orbit"], ["lyrics", "Lyrics only"], ["poster", "Poster"], ["strip", "Slim strip"], ["pill", "Panel pill"], ["pillicon", "Panel icon"], ["compact", "No art"]]
               .map(function (o) { return { v: o[0], label: o[1], pv: "diagram" }; }) }
     ]),
     tab("layout", "Panel pill", [
@@ -155,8 +155,47 @@ var SECTIONS = [
         { k: "showAlbum", type: "switch", label: "Album name", desc: "A quiet third line with album and year.", when: notPill },
         { k: "showSource", type: "switch", label: "Player name", desc: "Where the music is coming from.", when: notPill },
         { k: "showPlayerSwitch", type: "switch", label: "Player switcher", desc: "Pick which of several running players the widget follows.", when: notPill },
-        { k: "showLyrics", type: "switch", label: "Synced lyrics line", desc: "Online lookup (LRCLIB), off by default. Sends title, artist, album and length." }
+        { k: "showLyrics", type: "switch", label: "Synced lyrics line", desc: "Online lookup (LRCLIB). Sends title, artist, album and length. For a full verse, choose the Lyrics only layout.", when: function (s) { return s.layoutMode !== "lyrics"; } }
     ]),
+    tab("lyrics", "Display", [
+        { id: "lyricsMode", type: "seg", full: true, label: "Lyrics display", desc: "Online lyrics from LRCLIB. The lookup sends the song title, artist, album and length. Card backgrounds are in the Card tab.",
+          get: function (s) { return s.layoutMode === "lyrics" ? "full" : s.showLyrics ? "line" : "off"; },
+          set: function (v, s) { return v === "full" ? { layoutMode: "lyrics", showMpris: true, showLyrics: true } : { layoutMode: s && s.layoutMode !== "lyrics" ? s.layoutMode : "stacked", showMpris: true, showLyrics: v === "line" }; },
+          opts: [["off", "Off"], ["line", "Line on card"], ["full", "Lyrics only"]] },
+        { k: "lyricsOffset", type: "range", label: "Timing offset (seconds)", desc: "Positive values show lyrics earlier; negative values delay them. Applies to both lyrics displays.", min: -10, max: 10, step: .1, fmt: "fixed1" }
+    ]),
+    tab("lyrics", "Typography", [
+        { k: "lyricsFontFamily", type: "select", label: "Font", opts: [["", "System font"], ["sans-serif", "Sans serif"], ["serif", "Serif"], ["monospace", "Monospace"]] },
+        { k: "lyricsFontSize", type: "range", label: "Font size", min: 12, max: 48, step: 1, fmt: "px", when: function (s) { return s.layoutMode === "lyrics"; } },
+        { k: "lyricsInlineFontSize", type: "range", label: "Card line size", min: 10, max: 24, step: 1, fmt: "px", when: function (s) { return s.layoutMode !== "lyrics"; } },
+        { k: "lyricsFontWeight", when: function (s) { return s.layoutMode === "lyrics"; }, type: "select", label: "Text weight", opts: [[300, "Light"], [400, "Regular"], [500, "Medium"], [600, "Semibold"], [700, "Bold"]] },
+        { k: "lyricsCurrentWeight", type: "select", label: "Current line weight", opts: [[400, "Regular"], [500, "Medium"], [600, "Semibold"], [700, "Bold"], [800, "Extra bold"]] },
+        { k: "lyricsItalic", type: "switch", label: "Italic" },
+        { k: "lyricsLetterSpacing", type: "range", label: "Letter spacing", min: 0, max: 4, step: .2, fmt: "fixed1" },
+        { k: "lyricsLineHeight", when: function (s) { return s.layoutMode === "lyrics"; }, type: "range", label: "Wrapped line height", desc: "Spacing within a verse that wraps across multiple lines.", min: 1, max: 2, step: .05, fmt: "fixed2" },
+        { k: "lyricsAlign", type: "seg", label: "Alignment", opts: [["left", "Left"], ["center", "Centre"], ["right", "Right"]] }
+    ], function (s) { return s.layoutMode === "lyrics" || s.showLyrics; }),
+    tab("lyrics", "Highlight and contrast", [
+        { k: "lyricsHighlight", type: "seg", label: "Current line colour", opts: [["text", "Text"], ["accent", "Accent"], ["custom", "Custom"]] },
+        { k: "lyricsHighlightColor", type: "color", label: "Highlight colour", swatches: SWATCHES, when: function (s) { return s.lyricsHighlight === "custom"; } },
+        { k: "lyricsPastOpacity", when: function (s) { return s.layoutMode === "lyrics"; }, type: "range", label: "Past lines", min: .1, max: 1, step: .05, fmt: "pct" },
+        { k: "lyricsFutureOpacity", when: function (s) { return s.layoutMode === "lyrics"; }, type: "range", label: "Upcoming lines", min: .1, max: 1, step: .05, fmt: "pct" },
+        { k: "lyricsTextStyle", type: "seg", label: "Text edge", desc: "Extra contrast on busy wallpapers.", opts: [["none", "None"], ["outline", "Outline"], ["shadow", "Shadow"]] },
+        { k: "lyricsTextStyleColor", type: "color", label: "Edge colour", swatches: BGSWATCHES, when: function (s) { return s.lyricsTextStyle !== "none"; } }
+    ], function (s) { return s.layoutMode === "lyrics" || s.showLyrics; }),
+    tab("lyrics", "Reading layout", [
+        { k: "lyricsWidth", type: "range", label: "Preferred width", desc: "Desktop hosts can override the preferred size by resizing the widget.", min: 240, max: 900, step: 10, fmt: "px" },
+        { k: "lyricsHeight", type: "range", label: "Preferred height", min: 180, max: 800, step: 10, fmt: "px" },
+        { k: "lyricsPadding", type: "range", label: "Card padding", min: 0, max: 48, step: 2, fmt: "px" },
+        { k: "lyricsMaxWidth", type: "range", label: "Maximum text width", desc: "Keep verses easy to read on a wide card.", min: 160, max: 800, step: 20, fmt: "px" },
+        { k: "lyricsLineSpacing", type: "range", label: "Space between verses", min: 0, max: 40, step: 2, fmt: "px" },
+        { k: "lyricsShowHeader", type: "switch", label: "Song title and artist" },
+        { k: "lyricsShowScrollbar", type: "switch", label: "Show scrollbar" }
+    ], function (s) { return s.layoutMode === "lyrics"; }),
+    tab("lyrics", "Following playback", [
+        { k: "lyricsFollow", type: "switch", label: "Follow current line", desc: "Scrolling pauses following so you can read ahead. Use the button on the card to resume." },
+        { k: "lyricsFollowPosition", type: "seg", label: "Current line position", opts: [["top", "Top"], ["center", "Centre"], ["bottom", "Bottom"]] }
+    ], function (s) { return s.layoutMode === "lyrics"; }),
     tab("info", "On hover", [
         { k: "hoverDetails", type: "seg", label: "Details", desc: "Tooltip and drawer appear on hover. Flip card adds an info button; click it again or press Escape to return.", opts: [["off", "Off"], ["tooltip", "Tooltip"], ["drawer", "Drawer"], ["flip", "Flip card"]] },
         { k: "detailFields", type: "chips", full: true, label: "Show", when: function (s) { return s.hoverDetails !== "off"; },
@@ -170,6 +209,7 @@ var SECTIONS = [
           opts: [["color", "Tint"], ["art", "Cover"], ["glass", "Glass"], ["liquid", "Liquid"], ["solid", "Solid"], ["atmosphere", "Atmosphere"]].map(function (o) { return { v: o[0], label: o[1], pv: "material" }; }) },
         { id: "cardNote", type: "note", full: true, note: "card", when: function (s) { return s.showBg; } },
         { k: "bgColor", type: "color", label: "Tint colour", swatches: BGSWATCHES, when: function (s) { return s.showBg && surfaceValue(s) === "color"; } },
+        { k: "glassBlur", type: "range", label: "Wallpaper blur", desc: "Choose how frosted the glass looks. 0% turns blur off; text and artwork stay sharp.", min: 0, max: 1, step: .01, fmt: "pct", when: function (s) { return s.showBg && !s.artBg && ["glass", "liquid"].indexOf(s.surfaceStyle) !== -1; } },
         { k: "artBgBlur", type: "range", label: "Cover blur", desc: "0 keeps the art crisp.", min: 0, max: 1, step: .02, fmt: "pct", when: function (s) { return s.showBg && s.artBg; } },
         { k: "artBgDim", type: "range", label: "Cover darkness", desc: "Keeps text readable on bright covers.", min: 0, max: 1, step: .02, fmt: "pct", when: function (s) { return s.showBg && s.artBg; } },
         { k: "artBgKeepThumb", type: "switch", label: "Keep sharp thumbnail", when: function (s) { return s.showBg && s.artBg; }, disabled: function (s) { return !s.showArtThumb || layoutValue(s) === "compact"; } },
@@ -222,7 +262,7 @@ var SECTIONS = [
     ]),
     tab("behavior", "Interaction", [
         { k: "hoverLift", type: "switch", label: "Lift on hover" },
-        { k: "scrollVolume", type: "switch", label: "Scroll to change volume", desc: "Sets the player’s own volume, not the system’s." }
+        { k: "scrollVolume", type: "switch", label: "Scroll to change volume", desc: "Adjusts the system output volume, not the player’s own." }
     ]),
     tab("behavior", "Comfort & power", [
         { k: "reducedMotion", type: "switch", label: "Reduced motion", desc: "No ripples, sweeps, spins or scrolling text; the wave still reacts." },
@@ -253,7 +293,7 @@ var SECTIONS = [
 
 var NOTES = {
     card: {
-        kde: "Glass and Liquid are drawn by the widget itself. A desktop widget gets no compositor blur behind it, so there is no blur or refraction; tint, rim light and highlight work everywhere.",
+        kde: "Glass and Liquid blur the desktop wallpaper when it is available, with tint and highlights above it. Text and artwork stay sharp. Wallpaper blur requires GPU rendering; panels and hosts without a wallpaper source keep the translucent tint.",
         hypr: "Glass and Liquid are drawn by the widget. Add a blur layer rule for the audio-wave-visualizer namespace to blur behind them — on a Bottom-layer surface this re-blurs the whole monitor on every frame, so keep the frame rate low."
     },
     pill: {
@@ -282,9 +322,9 @@ function format(kind, v) {
 function rowValue(row, s) {
     return row.get ? row.get(s) : s[row.k];
 }
-function rowPatch(row, value) {
+function rowPatch(row, value, state) {
     if (row.set)
-        return row.set(value);
+        return row.set(value, state);
     var patch = {};
     patch[row.k] = value;
     return patch;
@@ -327,6 +367,7 @@ var PRESETS = [
     preset("ribbon", ["desktop", "adaptive"], "Silk Ribbon", "Bass thickens it, mids bend it, highs light the filaments. Ember palette.", "breeze", { layoutMode: "hero", visualizerType: 15, vizColorMode: "palette", vizPalette: "ember", hueReactive: true, bloom: 1.3, showBg: true, surfaceStyle: "color", bgColor: "#0a0b10", artBgTransparency: .7, bgRadius: 20, progressBarStyle: 1, showTimes: false, dockStyle: "bare", artShape: "circle" }),
     preset("cover", ["current", "desktop"], "Cover Art", "Album art fills the card; the sharp thumbnail stays on top.", "neon", { showBg: true, surfaceStyle: "art", artBgBlur: .44, artBgDim: .3, bgRadius: 22, artBgKeepThumb: true }),
     preset("atmos", ["desktop", "adaptive"], "Album Atmosphere", "Cover colours bleed into the card and drive the accent.", "breeze", { layoutMode: "stacked", showBg: true, surfaceStyle: "atmosphere", artShape: "circle", accentFromArt: true, bgRadius: 26, fillWave: true, dockStyle: "accent", showSource: true, cardShadow: "lifted", titleSize: 12, edgeHighlight: true, vizColorMode: "cover" }),
+    preset("lyricsonly", ["desktop"], "Lyrics only", "Room to read: surrounding lines, a clear current line, and automatic scrolling. Online lyrics from LRCLIB.", "sea", { layoutMode: "lyrics", showLyrics: true, showBg: true, surfaceStyle: "color", bgColor: "#101318", artBgTransparency: .92, bgRadius: 22, titleSize: 14, showArtThumb: false, hoverDetails: "off", cardShadow: "soft" }),
     preset("lyrics", ["desktop", "adaptive"], "Lyrics Card", "Synced lyric line under the artist, Ribbon wave, cover palette.", "sea", { layoutMode: "stacked", showBg: true, surfaceStyle: "atmosphere", showLyrics: true, accentFromArt: true, visualizerType: 10, vizColorMode: "cover", bgRadius: 22, dockStyle: "accent", progressBarStyle: 5, showTimes: false, cardShadow: "soft" }),
     preset("cd", ["desktop"], "CD Player", "Spinning disc art, squiggle seek bar, flips over for track details.", "day", { layoutMode: "inline", artShape: "cd", showBg: true, surfaceStyle: "glass", bgRadius: 18, progressBarStyle: 5, hoverDetails: "flip", detailFields: "album,track,genre,format", cardShadow: "soft", dockStyle: "bare", visualizerType: 9 }),
     preset("solid", ["desktop"], "Soft Solid", "Warm mineral surface and crisp dark text. No blur needed.", "day", { layoutMode: "inline", showBg: true, surfaceStyle: "solid", bgRadius: 14, useSystemAccent: false, customColor: "#5c734c", glowWave: false, progressBarStyle: 6, dockStyle: "bare", visualizerType: 6, cardShadow: "soft", showTimes: false }),

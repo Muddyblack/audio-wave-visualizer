@@ -22,6 +22,19 @@ TestCase {
         }
     }
 
+    function init() {
+        frame.fitContents = true;
+    }
+    function test_readingLayoutReflows() {
+        frame.designSize = Qt.size(380, 320);
+        frame.width = 500;
+        frame.height = 180;
+        frame.fitContents = false;
+        const canvas = findChild(frame, "fittedCanvas");
+        compare(canvas.width, 500);
+        compare(canvas.height, 180);
+        compare(frame.fitScale, 1, "Reading text must not shrink with the host height");
+    }
     function test_preservesProportions_data() {
         return [
             {

@@ -36,22 +36,28 @@ def measure(package, args):
         """ if args.style >= 6 else ""
         if args.style >= 6 and args.renderer == "waveform":
             motion += "\n            attack: root.ticks % 15 === 0\n"
-        component = "Waveform" if args.renderer == "waveform" else "WaveCanvas"
+        component = "OrbitCanvas" if args.renderer == "orbit" else "Waveform" if args.renderer == "waveform" else "WaveCanvas"
+        if args.renderer == "orbit":
+            motion = 'visualFrameTime: root.ticks * 33; high: 0.4; vizColorMode: "palette"'
+        dimensions = (args.size, args.size) if args.size else (320, 44)
+        width, height = dimensions
+        style = f'orbitStyle: "{args.orbit_style}"' if args.renderer == "orbit" else f'visualizerType: {args.style}'
         config = Path(directory) / "benchmark.qml"
         config.write_text(f"""import QtQuick
 import {json.dumps(ui.as_uri())} as Shared
 Window {{
     id: root
     visible: true
-    width: {args.copies * 330}
-    height: 100
+    width: {args.copies * (width + 10)}
+    height: {height + 40}
     property int ticks: 0
     Repeater {{
         model: {args.copies}
         Shared.{component} {{
-            x: index * 330; y: 20; width: 320; height: 44
-            visualizerType: {args.style}
-            hasAudio: true
+            x: index * {width + 10}; y: 20; width: {width}; height: {height}
+            {style}
+            visible: {str(args.state != 'hidden').lower()}
+            hasAudio: {str(args.state != 'idle').lower()}
             glowWave: true
             {motion}
             bars: {{
@@ -111,13 +117,18 @@ def main():
     parser.add_argument("--baseline", type=Path)
     parser.add_argument("--copies", type=int, choices=range(1, 5), default=3)
     parser.add_argument("--style", type=int, choices=range(16), default=1)
-    parser.add_argument("--renderer", choices=("canvas", "waveform"), default="canvas",
+    parser.add_argument("--renderer", choices=("canvas", "waveform", "orbit"), default="canvas",
                         help="waveform includes shared particles, peaks and ripples")
+    parser.add_argument("--size", type=int, help="square comparison size in pixels")
+    parser.add_argument("--orbit-style", choices=("bars", "wave", "dots", "ribbon", "sparks"), default="bars")
     parser.add_argument("--seconds", type=float, default=5)
+    parser.add_argument("--state", choices=("live", "hidden", "idle"), default="live",
+                        help="keep synthetic frames arriving to check inactive renderer work")
     args = parser.parse_args()
     if args.seconds <= 0 or not shutil.which("qml"):
         parser.error("qml must be on PATH and --seconds must be positive")
     print("Software Canvas CPU comparison; GPU glow/compositor/watts are not measured.")
+    print(f"Renderer state: {args.state}")
     if args.baseline:
         measure(args.baseline, args)
     measure(Path(__file__).resolve().parents[1] / "package", args)

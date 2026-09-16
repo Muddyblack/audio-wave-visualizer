@@ -16,7 +16,7 @@ Waveform {
     property real _ambientTime: 0
     Timer {
         interval: Math.round(1000 / Math.max(1, Math.min(20, root.configuration.framerate ?? 30)))
-        running: root.ambient && root.visible && !root.backendFailed
+        running: root.ambient && root.visible && !root.backendFailed && !root.reducedMotion && !root.batterySaving
         repeat: true
         onTriggered: root._ambientTime = Date.now()
     }

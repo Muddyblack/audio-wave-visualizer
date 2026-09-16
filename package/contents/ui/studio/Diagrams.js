@@ -3,6 +3,12 @@
 // Layout tile diagrams extracted from docs/index.html (DIAG, 64 × 36 viewBox).
 // class f: filled .85 · f2: filled .35 · o: outline .6 · s: accent stroke.
 var shapes = {
+ "lyrics": [
+  { "tag": "rect", "cls": "f2", "x": "8", "y": "3", "width": "42", "height": "3", "rx": "1" },
+  { "tag": "rect", "cls": "f2", "x": "8", "y": "11", "width": "48", "height": "3", "rx": "1" },
+  { "tag": "rect", "cls": "f", "x": "8", "y": "19", "width": "46", "height": "4", "rx": "1" },
+  { "tag": "rect", "cls": "f2", "x": "8", "y": "29", "width": "36", "height": "3", "rx": "1" }
+ ],
  "classic": [
   {
    "tag": "rect",

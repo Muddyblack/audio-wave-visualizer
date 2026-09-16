@@ -41,6 +41,7 @@ TestCase {
     function init() {
         failOnWarning(/undefined|TypeError|ReferenceError|Binding loop/);
         testCase.width = 1200;
+        testCase.height = 820;
         studio.visible = true;
         studio.presetFilter = "all";
         studio.defaults = defaults;
@@ -98,6 +99,31 @@ TestCase {
         verify(!studio.anyResults);
         studio.query = "";
     }
+    function test_lyricsSettingsAndSavedLook() {
+        studio.currentTabIndex = tabIndex("lyrics");
+        verify(studio.currentTabIndex >= 0);
+        waitForRendering(studio);
+        verify(findChild(studio, "row_lyricsMode") !== null);
+        const row = Schema.SECTIONS.find(section => section.tab === "lyrics").rows[0];
+        studio.update(Schema.rowPatch(row, "full", studio.draft));
+        compare(studio.draft.layoutMode, "lyrics");
+        verify(studio.draft.showLyrics);
+        waitForRendering(studio);
+        verify(findChild(studio, "row_lyricsFontSize") !== null);
+        studio.update({
+            lyricsFontSize: 32,
+            lyricsFollow: false,
+            lyricsOffset: -1.5
+        });
+        studio.saveUserPreset("Reading");
+        const settings = Schema.parseUserPresets(studio.draft.userPresets)[0].settings;
+        compare(settings.lyricsFontSize, 32);
+        compare(settings.lyricsFollow, false);
+        compare(settings.lyricsOffset, -1.5);
+        compare(Schema.rowPatch(row, "off", {
+            layoutMode: "orbit"
+        }).layoutMode, "orbit");
+    }
 
     function test_tileAndSwitchUpdateDraft() {
         studio.currentTabIndex = tabIndex("viz");
@@ -131,6 +157,53 @@ TestCase {
         compare(Schema.parseUserPresets(studio.draft.userPresets).length, 2);
         studio.removeUserPreset(0);
         compare(Schema.parseUserPresets(studio.draft.userPresets)[0].name, "Shared");
+    }
+
+    function test_glassBlurIsAdjustableAndSaved() {
+        studio.currentTabIndex = tabIndex("card");
+        studio.update({
+            showBg: true,
+            artBg: false,
+            surfaceStyle: "glass"
+        });
+        verify(waitForRendering(studio));
+        verify(findChild(studio, "row_glassBlur").visible);
+        studio.update({
+            glassBlur: 0.27
+        });
+        studio.saveUserPreset("Light frost");
+        compare(studio.userPresetList()[0].settings.glassBlur, 0.27);
+        studio.update({
+            glassBlur: 0
+        });
+        compare(studio.draft.glassBlur, 0);
+        studio.applyLook(studio.userPresetList()[0].settings);
+        compare(studio.draft.glassBlur, 0.27);
+    }
+
+    function test_renameSavedPreset() {
+        studio.saveUserPreset("Original");
+        const before = studio.userPresetList()[0];
+        studio.currentTabIndex = tabIndex("saved");
+        verify(waitForRendering(studio));
+        const tile = findChild(studio, "userPreset_0");
+        mouseClick(findChild(tile, "renamePresetButton"));
+        verify(tile.renaming);
+        const input = findChild(tile, "renamePresetInput");
+        compare(input.text, "Original");
+        input.text = "  Evening glass  ";
+        keyClick(Qt.Key_Return);
+        const after = studio.userPresetList()[0];
+        compare(after.name, "Evening glass");
+        compare(after.id, before.id);
+        compare(JSON.stringify(after.settings), JSON.stringify(before.settings));
+        verify(!studio.renameUserPreset(0, "   "));
+        verify(!studio.renameUserPreset(9, "Missing"));
+        mouseClick(findChild(tile, "renamePresetButton"));
+        input.text = "Discard this";
+        keyClick(Qt.Key_Escape);
+        compare(studio.userPresetList()[0].name, "Evening glass");
+        verify(!tile.renaming);
     }
 
     function test_allTabsRender_data() {
@@ -196,6 +269,28 @@ TestCase {
         if (data.tag === "normal")
             compare(rows.length, 2);
         verify(findChild(studio, "studioBody").y >= tabs.y + tabs.height);
+    }
+
+    function test_smallSettingsWindow() {
+        testCase.width = 590;
+        testCase.height = 448;
+        verify(waitForRendering(studio));
+        const body = findChild(studio, "studioBody");
+        const toggle = findChild(studio, "previewOptionsToggle");
+        verify(toggle.visible);
+        verify(body.height >= 185, "Small dialogs must leave room for settings");
+        const preview = findChild(studio, "previewWidget");
+        verify(preview.scale >= 0.6, "Collapsed options leave a readable live preview");
+        const collapsedHeight = body.height;
+        mouseClick(toggle);
+        verify(waitForRendering(studio));
+        verify(body.height < collapsedHeight);
+        mouseClick(toggle);
+        verify(waitForRendering(studio));
+        compare(body.height, collapsedHeight);
+        studio.currentTabIndex = tabIndex("audio");
+        verify(waitForRendering(studio));
+        verify(studio.anyResults);
     }
 
     function test_savedLooksHaveTheirOwnTab_data() {

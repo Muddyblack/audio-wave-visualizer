@@ -9,7 +9,7 @@ import tempfile
 
 
 SHADER_DIR = Path(__file__).resolve().parent
-FAMILIES = ("visualizer", "viz_linear", "viz_radial", "viz_particles", "viz_ribbon")
+FAMILIES = ("visualizer", "viz_linear", "viz_radial", "viz_particles", "viz_ribbon", "viz_orbit", "text_fade")
 QSB_FLAGS = ("--glsl", "100es,120,150", "--hlsl", "50", "--msl", "12")
 
 
@@ -21,7 +21,7 @@ def build(output_dir, qsb="qsb"):
         for family in FAMILIES:
             source = Path(directory) / f"{family}.frag"
             prelude = common.replace("#version 440\n", f"#version 440\n#define {family.upper()} 1\n", 1)
-            source.write_text(prelude + "\n" + (SHADER_DIR / f"{family}.frag").read_text())
+            source.write_text(("" if family in ("viz_orbit", "text_fade") else prelude + "\n") + (SHADER_DIR / f"{family}.frag").read_text())
             subprocess.run([qsb, *QSB_FLAGS, "-o", str(output_dir / f"{family}.frag.qsb"), str(source)], check=True)
 
 
@@ -40,7 +40,7 @@ def main():
                 name = f"{family}.frag.qsb"
                 if (Path(directory) / name).read_bytes() != (SHADER_DIR / name).read_bytes():
                     raise SystemExit(f"{name} is out of date: run make shaders")
-                print(f"PASS: compiled shader matches {family}.frag + viz_common.glsl")
+                print(f"PASS: compiled shader matches {family}.frag" + ("" if family in ("viz_orbit", "text_fade") else " + viz_common.glsl"))
     else:
         build(args.output_dir, qsb)
 

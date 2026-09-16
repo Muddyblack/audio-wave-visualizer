@@ -76,6 +76,7 @@ Item {
             Layout.alignment: Qt.AlignVCenter
             spacing: 5
             Text {
+                renderType: Text.CurveRendering ?? Text.QtRendering
                 objectName: "pillPrimary"
                 Layout.fillWidth: !root.withArtist
                 Layout.maximumWidth: implicitWidth
@@ -88,6 +89,7 @@ Item {
                 elide: Text.ElideRight
             }
             Text {
+                renderType: Text.CurveRendering ?? Text.QtRendering
                 visible: root.withArtist
                 text: root.content === "artist-title" ? "—" : "·"
                 color: root.view.textColor
@@ -95,6 +97,7 @@ Item {
                 font.pixelSize: 12
             }
             Text {
+                renderType: Text.CurveRendering ?? Text.QtRendering
                 objectName: "pillSecondary"
                 visible: root.withArtist
                 Layout.fillWidth: true

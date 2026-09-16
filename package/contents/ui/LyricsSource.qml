@@ -14,20 +14,33 @@ Item {
     property string album: ""
     property real positionUnitsPerSecond: 0
     property real visualFrameTime: 0
+    property real timingOffset: 0
     property var lines: []
+    property string status: "idle"
+    property var _request: null
+    function cancelRequest() {
+        if (!_request)
+            return;
+        const request = _request;
+        _request = null;
+        request.onreadystatechange = function () {};
+        request.abort();
+    }
+    Component.onDestruction: cancelRequest()
 
     readonly property int durationSeconds: clock.lengthValue > 0 ? Math.round(clock.lengthValue / clock.unitsPerSecond) : 0
     readonly property string requestKey: track !== "" && artist !== "" ? [track, artist, album, durationSeconds].join("") : ""
-    readonly property string currentLine: {
-        const seconds = clock.displayedPosition / clock.unitsPerSecond;
-        let text = "";
-        for (const line of lines) {
-            if (line.time > seconds)
+    readonly property int currentIndex: {
+        const seconds = clock.displayedPosition / clock.unitsPerSecond + Math.max(-10, Math.min(10, timingOffset));
+        let index = -1;
+        for (let i = 0; i < lines.length; i++) {
+            if (lines[i].time > seconds)
                 break;
-            text = line.text;
+            index = i;
         }
-        return text;
+        return index;
     }
+    readonly property string currentLine: currentIndex >= 0 ? lines[currentIndex].text : ""
 
     PlaybackClock {
         id: clock
@@ -51,7 +64,9 @@ Item {
         onTriggered: root.load()
     }
     onRequestKeyChanged: {
+        cancelRequest();
         lines = [];
+        status = requestKey === "" ? "idle" : "loading";
         settle.restart();
     }
 
@@ -77,6 +92,7 @@ Item {
     }
 
     function load() {
+        cancelRequest();
         const key = requestKey;
         if (key === "")
             return;
@@ -93,15 +109,20 @@ Item {
         }
         if (cached && (cached.synced !== "" || Date.now() - cached.fetched < 86400000)) {
             lines = parse(cached.synced);
+            status = lines.length ? "ready" : "missing";
             return;
         }
         const query = "track_name=" + encodeURIComponent(track) + "&artist_name=" + encodeURIComponent(artist) + (album !== "" ? "&album_name=" + encodeURIComponent(album) : "") + (durationSeconds > 0 ? "&duration=" + durationSeconds : "");
+        status = "loading";
         const request = new XMLHttpRequest();
+        _request = request;
         request.open("GET", "https://lrclib.net/api/get?" + query);
         request.setRequestHeader("Lrclib-Client", "plasma-audio-visualizer (https://github.com/Muddyblack/kde-audio-visualizer)");
         request.onreadystatechange = () => {
-            if (request.readyState !== XMLHttpRequest.DONE || key !== root.requestKey)
+            if (!root || request.readyState !== XMLHttpRequest.DONE || request !== root._request || key !== root.requestKey)
                 return;
+            root._request = null;
+            request.onreadystatechange = function () {};
             let synced = "";
             if (request.status === 200) {
                 try {
@@ -110,12 +131,14 @@ Item {
                     synced = "";
                 }
             } else if (request.status !== 404) {
+                root.status = "error";
                 return;
             }
             try {
                 root.database().transaction(tx => tx.executeSql("INSERT OR REPLACE INTO lyrics VALUES (?, ?, ?)", [key, synced, Date.now()]));
             } catch (error) {}
             root.lines = root.parse(synced);
+            root.status = root.lines.length ? "ready" : "missing";
         };
         request.send();
     }

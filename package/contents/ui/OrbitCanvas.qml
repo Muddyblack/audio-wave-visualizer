@@ -5,8 +5,9 @@ import "../code/OrbitDraw.js" as OrbitDraw
 // Orbit layout ring: the visualizer drawn in polar coordinates around the
 // cover. Decorative motion (rotation, ribbon wobble, sparks) rides audio
 // frames; sparks are capped at 32 and advance once per audio timestamp.
-Canvas {
+Item {
     id: orbit
+    property bool shaderEnabled: false
 
     property var bars: []
     property real maxRange: 1000
@@ -37,13 +38,10 @@ Canvas {
 
     readonly property int half: Math.max(12, Math.min(48, numBars))
     readonly property real seconds: visualFrameTime / 1000
-    readonly property real rotation: orbitRotate && !reducedMotion ? seconds * 0.2 : 0
+    readonly property real ringRotation: orbitRotate && !reducedMotion ? (seconds * 0.2) % (Math.PI * 2) : 0
     readonly property bool sparks: orbitStyle === "sparks" && !reducedMotion
     readonly property bool drawing: visible && hasAudio && !backendFailed
     readonly property var colorStops: WaveMath.colorStops(waveColor, vizColorMode, vizPalette, coverColor1, coverColor2, hueReactive, hueReactive && !reducedMotion ? high : 0.5, !reducedMotion && (hueReactive || vizColorMode === "rainbow") ? seconds : 0, reducedMotion)
-
-    antialiasing: true
-    renderStrategy: Canvas.Cooperative
 
     function values() {
         const out = [];
@@ -100,7 +98,7 @@ Canvas {
             const j = (start + k) % n, level = v[j < half ? j : n - 1 - j];
             if (random() < 1 - Math.pow(1 - level * 0.12, step))
                 next.push({
-                    a: j / n * Math.PI * 2 + rotation - Math.PI / 2 + (random() - 0.5) * 0.1,
+                    a: j / n * Math.PI * 2 + ringRotation - Math.PI / 2 + (random() - 0.5) * 0.1,
                     r: g.inner + 3,
                     v: (0.4 + random()) * (1 + level),
                     life: 1,
@@ -112,13 +110,13 @@ Canvas {
     }
 
     function repaint() {
-        if (visible)
-            requestPaint();
+        if (visible && painter.item)
+            painter.item.requestPaint();
     }
 
     onVisualFrameTimeChanged: {
         advance();
-        if (drawing && (rotation !== 0 || orbitStyle === "ribbon" || sparks))
+        if (drawing && (ringRotation !== 0 || orbitStyle === "ribbon" || sparks))
             repaint();
     }
     onBarsChanged: {
@@ -131,6 +129,8 @@ Canvas {
         repaint();
     }
     onParticlesChanged: repaint()
+    onMaxRangeChanged: repaint()
+    onHalfChanged: repaint()
     onWidthChanged: repaint()
     onHeightChanged: repaint()
     onOrbitStyleChanged: repaint()
@@ -142,26 +142,35 @@ Canvas {
     onGlowWaveChanged: repaint()
     onBloomChanged: repaint()
 
-    onPaint: {
-        const ctx = getContext("2d");
-        ctx.reset();
-        if (backendFailed)
-            return;
-        const g = geometry();
-        OrbitDraw.draw(ctx, {
-            width: width,
-            height: height,
-            R: g.inner,
-            reach: g.reach,
-            style: orbitStyle,
-            values: values(),
-            rot: rotation,
-            t: reducedMotion ? 0 : seconds,
-            stops: colorStops,
-            lineWidth: lineWidth,
-            fill: fillWave,
-            glow: glowWave ? Math.max(0, Math.min(2, bloom)) : 0,
-            particles: particles
-        });
+    Loader {
+        id: painter
+        anchors.fill: parent
+        active: !orbit.shaderEnabled
+        sourceComponent: Canvas {
+            antialiasing: true
+            renderStrategy: Canvas.Cooperative
+            onPaint: {
+                const ctx = getContext("2d");
+                ctx.reset();
+                if (orbit.backendFailed)
+                    return;
+                const g = orbit.geometry();
+                OrbitDraw.draw(ctx, {
+                    width: width,
+                    height: height,
+                    R: g.inner,
+                    reach: g.reach,
+                    style: orbit.orbitStyle,
+                    values: orbit.values(),
+                    rot: orbit.ringRotation,
+                    t: orbit.reducedMotion ? 0 : orbit.seconds,
+                    stops: orbit.colorStops,
+                    lineWidth: orbit.lineWidth,
+                    fill: orbit.fillWave,
+                    glow: orbit.glowWave ? Math.max(0, Math.min(2, orbit.bloom)) : 0,
+                    particles: orbit.particles
+                });
+            }
+        }
     }
 }

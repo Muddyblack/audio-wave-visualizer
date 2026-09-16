@@ -14,14 +14,23 @@ PlasmoidItem {
     Layout.minimumHeight: shouldShow ? Math.min(64, LayoutSizes.size(plasmoid.configuration)[1]) : 0
     Layout.preferredWidth: shouldShow ? LayoutSizes.size(plasmoid.configuration)[0] : 0
     Layout.preferredHeight: shouldShow ? LayoutSizes.size(plasmoid.configuration)[1] : 0
+    // Respect Plasma's system animation preference without writing over the
+    // user's own reduced-motion setting.
+    readonly property var effectiveConfiguration: {
+        const source = plasmoid.configuration, copy = {};
+        for (const key of source.keys())
+            copy[key] = source[key];
+        copy.reducedMotion = source.reducedMotion || Kirigami.Units.longDuration === 0;
+        return copy;
+    }
     readonly property bool inPanel: Plasmoid.formFactor === PlasmaCore.Types.Horizontal || Plasmoid.formFactor === PlasmaCore.Types.Vertical
     // In panels the pill (or, in vertical panels, the icon) opens the full card.
     preferredRepresentation: inPanel && plasmoid.configuration.autoPillInPanel ? compactRepresentation : fullRepresentation
     // The popup card: Classic with a card, glass unless a material is chosen,
     // at least 14 px radius, lifted shadow and no hover details.
     readonly property var popupConfiguration: {
-        const source = plasmoid.configuration, copy = {};
-        for (const key of source.keys())
+        const source = root.effectiveConfiguration, copy = {};
+        for (const key of Object.keys(source))
             copy[key] = source[key];
         return Object.assign(copy, {
             layoutMode: "classic",
@@ -31,6 +40,16 @@ PlasmoidItem {
             cardShadow: "lifted",
             hoverDetails: "off"
         });
+    }
+    // Desktop wallpaper is a separate scene item, safe to sample without
+    // capturing our own text or other applets. Panel popups use another window.
+    readonly property Item desktopWallpaper: {
+        if (inPanel)
+            return null;
+        for (let item = root.parent; item; item = item.parent)
+            if (item instanceof ContainmentItem)
+                return item.wallpaper;
+        return null;
     }
     Plasmoid.backgroundHints: "NoBackground"
 
@@ -65,7 +84,7 @@ PlasmoidItem {
     compactRepresentation: VisualizerView {
         id: pill
         presentation: Plasmoid.formFactor === PlasmaCore.Types.Vertical || plasmoid.configuration.layoutMode === "pillicon" ? "pillicon" : "pill"
-        configuration: plasmoid.configuration
+        configuration: root.effectiveConfiguration
         visualizer: vis
         player: mpris2Model.currentPlayer
         isPlaying: player?.playbackStatus === Mpris.PlaybackStatus.Playing
@@ -82,12 +101,14 @@ PlasmoidItem {
         onPopupRequested: root.expanded = !root.expanded
         fallbackIcon: Component {
             Kirigami.Icon {
-                source: pill.desktopEntry !== "" ? pill.desktopEntry : "audio-x-generic-symbolic"
+                source: pill.desktopEntry !== "" ? pill.desktopEntry : Qt.resolvedUrl("../../icon.png")
             }
         }
     }
     fullRepresentation: FittedFrame {
-        readonly property var cardConfiguration: root.inPanel ? root.popupConfiguration : plasmoid.configuration
+        id: fullFrame
+        fitContents: LayoutSizes.mode(cardConfiguration) !== "lyrics"
+        readonly property var cardConfiguration: root.inPanel ? root.popupConfiguration : root.effectiveConfiguration
         designSize: {
             const dimensions = LayoutSizes.size(cardConfiguration);
             return Qt.size(dimensions[0], dimensions[1]);
@@ -96,8 +117,10 @@ PlasmoidItem {
         Layout.preferredHeight: implicitHeight
         VisualizerView {
             id: view
+            backdropSource: root.desktopWallpaper
+            renderScale: fullFrame.fitScale
             anchors.fill: parent
-            configuration: root.inPanel ? root.popupConfiguration : plasmoid.configuration
+            configuration: root.inPanel ? root.popupConfiguration : root.effectiveConfiguration
             visualizer: vis
             player: mpris2Model.currentPlayer
             playerCount: mpris2Model.playerRows
@@ -148,7 +171,7 @@ PlasmoidItem {
             }
             fallbackIcon: Component {
                 Kirigami.Icon {
-                    source: view.desktopEntry !== "" ? view.desktopEntry : "audio-x-generic-symbolic"
+                    source: view.desktopEntry !== "" ? view.desktopEntry : Qt.resolvedUrl("../../icon.png")
                 }
             }
         }

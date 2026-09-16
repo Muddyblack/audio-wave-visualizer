@@ -12,7 +12,7 @@ ColumnLayout {
     property real titleFactor: 1
     property real artistSize: 0.82
     property real albumSize: 0.72
-    property real lyricSize: 0.78
+    property real lyricSize: 1
     property int sourceSize: 7
     // Orbit always centres its texts.
     property int alignmentOverride: -1
@@ -47,6 +47,8 @@ ColumnLayout {
         }
         Text {
             objectName: "sourceChip"
+            renderType: Text.CurveRendering ?? Text.QtRendering
+            font.family: root.view.defaultFontFamily
             Layout.fillWidth: true
             text: root.view.playerName.toUpperCase()
             color: root.view.textColor
@@ -82,8 +84,16 @@ ColumnLayout {
     }
 
     Item {
+        id: titleViewport
         Layout.fillWidth: true
         implicitHeight: title.implicitHeight
+        layer.enabled: root.marquee && GraphicsInfo.api !== GraphicsInfo.Software
+        layer.smooth: true
+        layer.effect: ShaderEffect {
+            property var source
+            property real fadeFraction: Math.min(0.2, 8 / Math.max(1, titleViewport.width))
+            fragmentShader: Qt.resolvedUrl("../../shaders/text_fade.frag.qsb")
+        }
         clip: root.marquee
 
         TrackText {
@@ -91,6 +101,7 @@ ColumnLayout {
             x: root.marquee ? -root.marqueeOffset : 0
             width: root.marquee ? implicitWidth : parent.width
             elide: root.marquee ? Text.ElideNone : Text.ElideRight
+            font.family: root.view.defaultFontFamily
             titleSize: root.ts
             sizeFactor: root.titleFactor
             horizontalAlignment: root.marquee ? Text.AlignLeft : root.alignment
@@ -103,6 +114,7 @@ ColumnLayout {
         TrackText {
             visible: root.marquee
             x: title.x + title.implicitWidth + 40
+            font.family: root.view.defaultFontFamily
             titleSize: root.ts
             sizeFactor: root.titleFactor
             displayTrack: root.view.displayTrack
@@ -115,6 +127,7 @@ ColumnLayout {
     TrackText {
         Layout.fillWidth: true
         secondary: true
+        font.family: root.view.defaultFontFamily
         titleSize: root.ts
         sizeFactor: root.artistSize / 0.82
         horizontalAlignment: root.alignment
@@ -125,6 +138,8 @@ ColumnLayout {
 
     Text {
         objectName: "albumLine"
+        renderType: Text.CurveRendering ?? Text.QtRendering
+        font.family: root.view.defaultFontFamily
         Layout.fillWidth: true
         Layout.topMargin: 1
         visible: (root.cfg.showAlbum ?? false) && root.view.album !== ""
@@ -142,11 +157,17 @@ ColumnLayout {
         Layout.topMargin: 1
         visible: (root.cfg.showLyrics ?? false) && root.view.lyricLine !== ""
         text: root.view.lyricLine
-        horizontalAlignment: root.alignment
-        color: root.view.waveColor
-        opacity: 0.9
-        font.italic: true
-        font.pixelSize: Math.max(1, Math.round(root.ts * root.lyricSize))
+        horizontalAlignment: root.cfg.lyricsAlign === "center" ? Text.AlignHCenter : root.cfg.lyricsAlign === "right" ? Text.AlignRight : Text.AlignLeft
+        color: root.cfg.lyricsHighlight === "custom" ? root.cfg.lyricsHighlightColor : root.cfg.lyricsHighlight === "accent" ? root.view.waveColor : root.view.textColor
+        font.weight: root.cfg.lyricsCurrentWeight ?? Font.Medium
+        font.italic: root.cfg.lyricsItalic ?? false
+        font.letterSpacing: root.cfg.lyricsLetterSpacing ?? 0
+        style: root.cfg.lyricsTextStyle === "outline" ? Text.Outline : root.cfg.lyricsTextStyle === "shadow" ? Text.Raised : Text.Normal
+        styleColor: root.cfg.lyricsTextStyleColor ?? "#101318"
+        font.family: root.cfg.lyricsFontFamily || root.view.defaultFontFamily
+        renderType: Text.CurveRendering ?? Text.QtRendering
+        textFormat: Text.PlainText
+        font.pixelSize: Math.max(10, Math.min(24, root.cfg.lyricsInlineFontSize ?? Math.round(root.ts * root.lyricSize)))
         elide: Text.ElideRight
     }
 }

@@ -9,7 +9,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "package/contents/ui/studio"
-DEST = ROOT / "docs/assets/studio"
+DEST = ROOT / "docs/website/assets/studio"
 
 
 def outputs():

@@ -5,6 +5,7 @@ import QtQuick.Effects
 Item {
     id: root
     required property var configuration
+    property Item backdropSource: null
     property string artUrl: ""
     property bool hasPlayer: false
     property color accentColor: "#ffffff"
@@ -54,16 +55,38 @@ Item {
         }
     }
 
+    Loader {
+        anchors.fill: parent
+        active: (root.configuration.glassBlur ?? 0.85) > 0 && root.configuration.showBg && !root.coverActive && (root.material === "glass" || root.material === "liquid") && !!root.backdropSource && GraphicsInfo.api !== GraphicsInfo.Software
+        opacity: root.configuration.artBgTransparency
+        sourceComponent: BackdropBlur {
+            strength: root.configuration.glassBlur ?? 0.85
+            sourceItem: root.backdropSource
+            radius: root.cardRadius
+        }
+    }
+
     // ── Background card source (rendered offscreen, used by backgroundCardEffect) ──
     // Art image source — must be a sibling, not child of backgroundCard
-    Image {
-        id: bgArtImg
+    Item {
+        id: bgArtSource
+        objectName: "backgroundArtCrop"
         anchors.fill: parent
-        source: (root.configuration.showMpris && root.configuration.artBg) ? root.artUrl : ""
-        fillMode: Image.PreserveAspectCrop
-        asynchronous: true
-        cache: true
+        clip: true
         visible: false
+        // MultiEffect samples an Image's original texture directly. Capture a
+        // clipped item instead so PreserveAspectCrop applies to the card bounds.
+        Image {
+            id: bgArtImg
+            objectName: "backgroundArtImage"
+            anchors.fill: parent
+            source: (root.configuration.showMpris && root.configuration.artBg) ? root.artUrl : ""
+            fillMode: Image.PreserveAspectCrop
+            asynchronous: true
+            cache: true
+            smooth: true
+            mipmap: true
+        }
     }
 
     Rectangle {
@@ -80,7 +103,8 @@ Item {
         // frosted treatment.
         MultiEffect {
             anchors.fill: parent
-            source: bgArtImg
+            objectName: "backgroundArtEffect"
+            source: bgArtSource
             blurEnabled: true
             // User-controlled blur (0 = crisp cover, 1 = heavy frost).
             blur: root.configuration.artBgBlur
@@ -158,6 +182,36 @@ Item {
         }
     }
 
+    // Software sessions cannot run MultiEffect. Preserve the basic card and
+    // cover crop; blur remains a GPU effect.
+    Loader {
+        anchors.fill: parent
+        active: GraphicsInfo.api === GraphicsInfo.Software && root.configuration.showBg && root.material === ""
+        opacity: root.configuration.artBgTransparency
+        sourceComponent: Item {
+            Rectangle {
+                anchors.fill: parent
+                radius: root.cardRadius
+                color: root.coverActive ? "transparent" : root.hasPlayer ? root.configuration.bgColor : Qt.rgba(1, 1, 1, 0.06)
+            }
+            SoftwareCover {
+                anchors.fill: parent
+                source: root.coverActive ? root.artUrl : ""
+                imageSize: bgArtImg.sourceSize
+                // Same second resample as the cover: paint above display size.
+                rasterScale: Math.max(2, Screen.devicePixelRatio) * 2
+                radius: root.cardRadius
+            }
+            Rectangle {
+                anchors.fill: parent
+                radius: root.cardRadius
+                color: "transparent"
+                border.width: 1
+                border.color: "#20ffffff"
+            }
+        }
+    }
+
     // Rounded-rectangle alpha mask for backgroundCardEffect. Rendered to a
     // texture (layer.enabled) so the MultiEffect can sample it; never shown.
     Rectangle {
@@ -210,6 +264,7 @@ Item {
         opacity: root.configuration.artBgTransparency
         sourceComponent: CardMaterial {
             material: root.material
+            grain: root.configuration.grain ?? false
             radius: root.cardRadius
             glassTint: root.configuration.glassTint ?? "clear"
             specular: root.configuration.glassSpecular ?? true
@@ -223,7 +278,7 @@ Item {
 
     Loader {
         anchors.fill: parent
-        active: root.configuration.showBg && (root.configuration.grain ?? false)
+        active: root.configuration.showBg && root.material === "" && (root.configuration.grain ?? false)
         opacity: root.configuration.artBgTransparency
         sourceComponent: CardGrain {
             radius: root.cardRadius

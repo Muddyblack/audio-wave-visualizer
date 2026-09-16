@@ -43,6 +43,8 @@ Column {
                     s: lookSettings
                 })
                 deletable: true
+                renamable: true
+                onRenamed: name => saved.studio.renameUserPreset(index, name)
                 onPicked: saved.studio.applyLook(lookSettings)
                 onRemoved: saved.studio.removeUserPreset(index)
             }

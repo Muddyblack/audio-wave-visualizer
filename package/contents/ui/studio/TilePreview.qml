@@ -62,7 +62,8 @@ Item {
     Component {
         id: orbitComponent
         Item {
-            OrbitCanvas {
+            OrbitView {
+                simpleRender: preview.draft.simpleRender ?? false
                 anchors.centerIn: parent
                 width: 48
                 height: 48

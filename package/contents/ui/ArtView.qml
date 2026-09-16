@@ -22,6 +22,14 @@ Item {
     readonly property bool isPlaying: view ? view.isPlaying : false
     readonly property bool reducedMotion: cfg.reducedMotion ?? false
 
+    readonly property real sampleScale: Math.max(2, Screen.devicePixelRatio * (view ? (view.renderScale ?? 1) : 1))
+    // The software cover is painted into a canvas that is then scaled back onto
+    // the item, and that second resample eats detail: give it twice the samples.
+    readonly property real rasterScale: Math.min(8, sampleScale * 2)
+    // The canvas crops the cover itself, so it needs the artwork's real aspect
+    // ratio, not the square-ish size the Image was asked to decode into.
+    readonly property size artSize: Qt.size(Math.max(1, artImg.implicitWidth), Math.max(1, artImg.implicitHeight))
+    readonly property bool software: GraphicsInfo.api === GraphicsInfo.Software
     readonly property bool coverReady: artImg.status === Image.Ready
     readonly property bool disc: shape === "vinyl" || shape === "cd"
     readonly property real cornerRadius: shape === "sharp" ? 2 : shape === "squircle" ? width * 0.3 : (shape === "circle" || disc) ? width / 2 : roundedRadius
@@ -29,9 +37,16 @@ Item {
     readonly property real ringRadius: (shape === "circle" || disc) ? (width + 8) / 2 : shape === "squircle" ? (width + 8) * 0.32 : 14
     readonly property bool showFallbackArt: !coverReady && fallback !== "icon" && title !== ""
     readonly property bool grayed: (cfg.artGrayPaused ?? false) && !!view && view.hasPlayer && !isPlaying
-    readonly property bool spinning: disc && coverReady && isPlaying && !reducedMotion
+    readonly property bool spinning: visible && disc && coverReady && isPlaying && !reducedMotion
     readonly property bool tiltWanted: (cfg.artTilt ?? false) && !reducedMotion && artHover.hovered && !spinning && !artClickArea.pressed
     property bool tilted: false
+    property real tiltProgress: tilted ? 1 : 0
+    Behavior on tiltProgress {
+        NumberAnimation {
+            duration: root.reducedMotion ? 0 : 200
+            easing.type: Easing.OutCubic
+        }
+    }
     onTiltWantedChanged: {
         if (tiltWanted)
             tiltDelay.restart();
@@ -62,9 +77,10 @@ Item {
     // Vinyl turns every 7 s and a CD every 3 s while playing.
     property real spinAngle: 0
     property real _lastSpinFrame: -1
+    onSpinningChanged: _lastSpinFrame = -1
     Connections {
         target: root.view ?? null
-        enabled: root.disc && !!root.view
+        enabled: root.spinning && !!root.view
         ignoreUnknownSignals: true
         function onVisualFrameTimeChanged() {
             const now = root.view.visualFrameTime;
@@ -102,34 +118,20 @@ Item {
         id: face
         objectName: "artFace"
         anchors.fill: parent
-        rotation: root.spinAngle
+        // A paused disc keeps its angle; ordinary covers are always upright.
+        rotation: root.disc ? root.spinAngle : 0
         transform: [
-            Rotation {
-                origin.x: face.width / 2
-                origin.y: face.height / 2
-                axis.x: 1
-                axis.y: 0
-                axis.z: 0
-                angle: root.tilted ? 6 : 0
-                Behavior on angle {
-                    NumberAnimation {
-                        duration: root.reducedMotion ? 0 : 200
-                        easing.type: Easing.OutCubic
-                    }
-                }
-            },
-            Rotation {
-                origin.x: face.width / 2
-                origin.y: face.height / 2
-                axis.x: 0
-                axis.y: 1
-                axis.z: 0
-                angle: root.tilted ? -9 : 0
-                Behavior on angle {
-                    NumberAnimation {
-                        duration: root.reducedMotion ? 0 : 200
-                        easing.type: Easing.OutCubic
-                    }
+            Matrix4x4 {
+                matrix: {
+                    const x = root.tiltProgress * 6 * Math.PI / 180;
+                    const y = root.tiltProgress * -9 * Math.PI / 180;
+                    const sx = Math.sin(x), cx = Math.cos(x), sy = Math.sin(y), cy = Math.cos(y);
+                    const ox = face.width / 2, oy = face.height / 2;
+                    const distance = Math.max(120, face.width * 2.4);
+                    const wx = sy / distance, wy = -sx * cy / distance;
+                    const a = cy + ox * wx, b = sx * sy + ox * wy;
+                    const c = oy * wx, d = cx + oy * wy;
+                    return Qt.matrix4x4(a, b, 0, ox - a * ox - b * oy, c, d, 0, oy - c * ox - d * oy, 0, 0, 1, 0, wx, wy, 0, 1 - wx * ox - wy * oy);
                 }
             },
             Scale {
@@ -275,14 +277,27 @@ Item {
             }
         }
 
-        Image {
-            id: artImg
+        // MultiEffect samples an Image's raw texture directly, bypassing its
+        // fillMode — crop it into a clipped wrapper first so PreserveAspectCrop
+        // actually applies to the item bounds instead of leaving gaps.
+        Item {
+            id: artImgCrop
             anchors.fill: parent
-            source: root.artUrl
-            fillMode: Image.PreserveAspectCrop
-            asynchronous: true
-            cache: true
+            clip: true
             visible: false
+
+            Image {
+                id: artImg
+                anchors.fill: parent
+                source: root.artUrl
+                fillMode: Image.PreserveAspectCrop
+                // Keep at least 2x samples for small covers and respect HiDPI screens.
+                sourceSize: Qt.size(Math.min(2048, Math.ceil(width * root.sampleScale)), Math.min(2048, Math.ceil(height * root.sampleScale)))
+                smooth: true
+                mipmap: true
+                asynchronous: true
+                cache: true
+            }
         }
 
         // Cover shape. Discs show the cover as a round label (vinyl, 38 %) or a
@@ -293,12 +308,13 @@ Item {
             radius: root.cornerRadius
             visible: false
             layer.enabled: true
+            layer.textureSize: Qt.size(Math.min(2048, Math.ceil(width * root.sampleScale)), Math.min(2048, Math.ceil(height * root.sampleScale)))
         }
 
         MultiEffect {
             anchors.fill: parent
-            visible: !root.disc
-            source: artImg
+            visible: !root.software && !root.disc
+            source: artImgCrop
             maskEnabled: true
             maskSource: artMask
             saturation: root.grayed ? -1 : 0
@@ -311,6 +327,18 @@ Item {
             }
         }
 
+        Loader {
+            anchors.fill: parent
+            active: root.software && !root.disc && root.coverReady
+            sourceComponent: SoftwareCover {
+                source: root.artUrl
+                imageSize: root.artSize
+                rasterScale: root.rasterScale
+                radius: root.cornerRadius
+                grayed: root.grayed
+            }
+        }
+
         Item {
             id: label
             anchors.centerIn: parent
@@ -319,14 +347,23 @@ Item {
             height: width
             opacity: root.shape === "cd" ? 0.35 : 1
 
-            Image {
-                id: labelImg
+            Item {
+                id: labelImgCrop
                 anchors.fill: parent
-                source: label.visible ? root.artUrl : ""
-                fillMode: Image.PreserveAspectCrop
-                asynchronous: true
-                cache: true
+                clip: true
                 visible: false
+
+                Image {
+                    id: labelImg
+                    anchors.fill: parent
+                    source: label.visible ? root.artUrl : ""
+                    fillMode: Image.PreserveAspectCrop
+                    sourceSize: Qt.size(Math.min(2048, Math.ceil(width * root.sampleScale)), Math.min(2048, Math.ceil(height * root.sampleScale)))
+                    smooth: true
+                    mipmap: true
+                    asynchronous: true
+                    cache: true
+                }
             }
             Rectangle {
                 id: labelMask
@@ -334,10 +371,23 @@ Item {
                 radius: width / 2
                 visible: false
                 layer.enabled: true
+                layer.textureSize: Qt.size(Math.min(2048, Math.ceil(width * root.sampleScale)), Math.min(2048, Math.ceil(height * root.sampleScale)))
+            }
+            Loader {
+                anchors.fill: parent
+                active: root.software && root.coverReady
+                sourceComponent: SoftwareCover {
+                    source: root.artUrl
+                    imageSize: root.artSize
+                    rasterScale: root.rasterScale
+                    radius: width / 2
+                    grayed: root.grayed
+                }
             }
             MultiEffect {
                 anchors.fill: parent
-                source: labelImg
+                visible: !root.software
+                source: labelImgCrop
                 maskEnabled: true
                 maskSource: labelMask
                 saturation: root.grayed ? -1 : 0
@@ -385,6 +435,7 @@ Item {
                 anchors.fill: parent
                 visible: false
                 layer.enabled: true
+                layer.textureSize: Qt.size(Math.min(2048, Math.ceil(width * root.sampleScale)), Math.min(2048, Math.ceil(height * root.sampleScale)))
                 gradient: Gradient {
                     GradientStop {
                         position: 0.55
