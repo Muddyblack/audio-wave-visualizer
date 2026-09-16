@@ -26,10 +26,10 @@
               root=$out/share/plasma/plasmoids/${metadata.KPlugin.Id}
               mkdir -p "$root"
               cp -r . "$root/"
-              for script in feeder.sh doctor.sh stereo_capture.sh; do
+              for script in feeder.sh doctor.sh stereo_capture.sh local_lyrics.sh; do
                 chmod +x "$root/contents/code/$script"
                 wrapProgram "$root/contents/code/$script" \
-                  --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.cava pkgs.python3 pkgs.pipewire pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ]}
+                  --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.cava (pkgs.python3.withPackages (ps: [ ps.mutagen ps.pykakasi ps.pypinyin ])) pkgs.pipewire pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ]}
               done
               runHook postInstall
             '';
@@ -46,11 +46,15 @@
       apps = forAllSystems (system:
         let pkgs = nixpkgs.legacyPackages.${system};
         in {
+          ruff = {
+            type = "app";
+            program = "${pkgs.ruff}/bin/ruff";
+          };
           view-hyprland = {
             type = "app";
             program = "${pkgs.writeShellApplication {
               name = "view-hyprland";
-              runtimeInputs = [ pkgs.quickshell pkgs.cava pkgs.python3 pkgs.pipewire pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ];
+              runtimeInputs = [ pkgs.quickshell pkgs.cava (pkgs.python3.withPackages (ps: [ ps.mutagen ps.pykakasi ps.pypinyin ])) pkgs.pipewire pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ];
               text = ''
                 exec bash "$PWD/hyprland/run.sh" "$@"
               '';
@@ -59,7 +63,7 @@
           view = {
             type = "app";
             program = toString (pkgs.writeShellScript "view" ''
-              export PATH=${pkgs.lib.makeBinPath [ pkgs.kdePackages.plasma-sdk ]}:"$PATH"
+              export PATH=${pkgs.lib.makeBinPath [ pkgs.kdePackages.plasma-sdk (pkgs.python3.withPackages (ps: [ ps.mutagen ps.pykakasi ps.pypinyin ])) ]}:"$PATH"
               exec plasmoidviewer \
                 -a "$PWD/package" -f "''${1:-planar}"
             '');
@@ -97,7 +101,8 @@
               qt6.qtshadertools
               # Headless Quickshell integration tests and their process tools.
               quickshell
-              python3
+              (python3.withPackages (ps: [ ps.mutagen ps.pykakasi ps.pypinyin ]))
+              ruff
               dbus
               gnumake
               util-linux

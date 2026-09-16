@@ -75,7 +75,11 @@ switching. Optional album/details and scrolling titles. Opt-in synced lyrics,
 including a **Lyrics only** layout: readable, wrapped verses with the current
 line highlighted. Scroll to read ahead, then choose **Follow current line** to
 resume. Find it under **Lyrics → Lyrics only**, **Layout**, or **Presets**; it
-uses online lyrics from LRCLIB.
+checks local `.lrc` files and embedded ID3 lyrics before LRCLIB. Enhanced LRC
+word/syllable timestamps animate a glowing fill. Use the **− / +** buttons (or
+focus the lyrics view and press **− / +**) to adjust timing in 100 ms steps;
+click the offset value to reset it. See [lyrics setup](docs/lyrics.md) for
+translation sidecars, Romaji, kana and Pinyin.
 
 **Efficiency** — Reduced motion, battery saver, idle/paused states and
 hidden-widget audio suspension. Shared QML components across Plasma and
@@ -374,6 +378,11 @@ on the audio clock. Software covers use a static crop/mask fallback. After editi
 a shader, run `make shaders`.
 
 Regression tests (synthetic audio, no desktop or sound server needed): `nix develop --command python3 tests/run.py`.
+
+Check Python lint and formatting with `make lint-python`; apply formatting with
+`make format-python`. Ruff is also available in `nix develop`, or directly through
+`nix run .#ruff -- check .` and `nix run .#ruff -- format .`. The Ruff workflow runs
+both checks on pull requests and pushes, using the version pinned by `flake.lock`.
 
 ## Credits & Inspiration
 

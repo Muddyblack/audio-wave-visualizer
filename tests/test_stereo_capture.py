@@ -27,8 +27,8 @@ class StereoTests(unittest.TestCase):
         )
         frame = stereo.samples(block)
         self.assertEqual(len(frame), 32)
-        self.assertTrue(any(l < 0 for l, _ in frame))
-        self.assertTrue(any(l > 0 for l, _ in frame))
+        self.assertTrue(any(left < 0 for left, _ in frame))
+        self.assertTrue(any(left > 0 for left, _ in frame))
         for left, right in frame:
             self.assertAlmostEqual(left, -right)
             self.assertLessEqual(abs(left), 1)

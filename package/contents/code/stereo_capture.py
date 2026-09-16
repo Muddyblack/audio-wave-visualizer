@@ -29,7 +29,9 @@ def samples(block, count=32):
         ),
         0,
     )
-    return [(l / 32768, r / 32768) for l, r in frames[start : start + count]]
+    return [
+        (left / 32768, right / 32768) for left, right in frames[start : start + count]
+    ]
 
 
 def lease_alive(path):
@@ -77,7 +79,7 @@ def capture(lease, output, fps):
             complete = len(pending) // 4 * 4
             frame = samples(pending[complete - 512 : complete])
             del pending[:complete]
-            value = ";".join(f"{l:.6f}:{r:.6f}" for l, r in frame)
+            value = ";".join(f"{left:.6f}:{right:.6f}" for left, right in frame)
             temporary = output.with_suffix(".tmp")
             temporary.write_text(f'[General]\nt={time.time():.6f}\nv="{value}"\n')
             temporary.replace(output)

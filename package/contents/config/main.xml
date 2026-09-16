@@ -357,6 +357,12 @@
         <entry name="lyricsHeight" type="Int">
             <default>320</default>
         </entry>
+        <entry name="lyricsLanguage" type="String">
+            <default>auto</default>
+        </entry>
+        <entry name="lyricsReading" type="String">
+            <default>romaji</default>
+        </entry>
         <entry name="lyricsOffset" type="Double">
             <default>0</default>
         </entry>

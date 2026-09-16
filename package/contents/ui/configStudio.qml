@@ -245,6 +245,10 @@ Kirigami.Page {
     property int cfg_lyricsWidthDefault
     property int cfg_lyricsHeight
     property int cfg_lyricsHeightDefault
+    property string cfg_lyricsLanguage
+    property string cfg_lyricsLanguageDefault
+    property string cfg_lyricsReading
+    property string cfg_lyricsReadingDefault
     property real cfg_lyricsOffset
     property real cfg_lyricsOffsetDefault
     property string cfg_hoverDetails
@@ -389,6 +393,8 @@ Kirigami.Page {
             lyricsShowHeader: root.cfg_lyricsShowHeader,
             lyricsWidth: root.cfg_lyricsWidth,
             lyricsHeight: root.cfg_lyricsHeight,
+            lyricsLanguage: root.cfg_lyricsLanguage,
+            lyricsReading: root.cfg_lyricsReading,
             lyricsOffset: root.cfg_lyricsOffset,
             hoverDetails: root.cfg_hoverDetails,
             detailFields: root.cfg_detailFields,
@@ -520,6 +526,8 @@ Kirigami.Page {
             lyricsShowHeader: root.cfg_lyricsShowHeaderDefault,
             lyricsWidth: root.cfg_lyricsWidthDefault,
             lyricsHeight: root.cfg_lyricsHeightDefault,
+            lyricsLanguage: root.cfg_lyricsLanguageDefault,
+            lyricsReading: root.cfg_lyricsReadingDefault,
             lyricsOffset: root.cfg_lyricsOffsetDefault,
             hoverDetails: root.cfg_hoverDetailsDefault,
             detailFields: root.cfg_detailFieldsDefault,

@@ -102,9 +102,10 @@ Item {
             text: "With the rhythm of the rain"
         }
     ] : lyricsLoader.item?.lines ?? []
+    readonly property real lyricPosition: lyricsLoader.item?.positionSeconds ?? 0
     readonly property int lyricIndex: samplePlayback && lyricsEnabled ? 2 : lyricsLoader.item?.currentIndex ?? -1
     readonly property string lyricLine: lyricIndex >= 0 && lyricIndex < lyricLines.length ? lyricLines[lyricIndex].text : ""
-    readonly property string lyricStatus: !hasPlayer ? "idle" : trackUnknown || artist === "" ? "metadata" : samplePlayback ? "ready" : lyricsLoader.item?.status ?? "loading"
+    readonly property string lyricStatus: !hasPlayer ? "idle" : (trackUnknown || artist === "") && !metadata["xesam:url"] ? "metadata" : samplePlayback ? "ready" : lyricsLoader.item?.status ?? "loading"
 
     readonly property string detailsMode: layoutMode === "lyrics" || !hasPlayer || trackUnknown ? "off" : (configuration.hoverDetails ?? "off")
     readonly property bool panelForm: layoutMode === "pill" || layoutMode === "pillicon"
@@ -333,8 +334,12 @@ Item {
 
     Loader {
         id: lyricsLoader
-        active: !root.samplePlayback && root.lyricsEnabled && root.hasPlayer && !root.trackUnknown
+        active: !root.samplePlayback && root.lyricsEnabled && root.hasPlayer && (!root.trackUnknown || !!root.metadata["xesam:url"])
         sourceComponent: LyricsSource {
+            commandSourceComponent: root.visualizer.commandSourceComponent ?? null
+            fileUrl: String(root.metadata["xesam:url"] || "")
+            language: root.configuration.lyricsLanguage ?? "auto"
+            karaokeActive: root.visible && root.layoutMode === "lyrics" && !(root.configuration.reducedMotion ?? false)
             player: root.player
             isPlaying: root.isPlaying
             track: root.displayTrack

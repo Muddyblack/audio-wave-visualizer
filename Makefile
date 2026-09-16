@@ -1,5 +1,12 @@
-.PHONY: help view view-h view-hyprland settings-hyprland install doctor pack tag shaders docs gallery
+.PHONY: help view view-h view-hyprland settings-hyprland install doctor pack tag shaders docs gallery lint-python format-python
 .DEFAULT_GOAL := help
+
+lint-python: ## check Python lint and formatting with Ruff
+	@nix run .#ruff -- check .
+	@nix run .#ruff -- format --check .
+
+format-python: ## format Python with Ruff
+	@nix run .#ruff -- format .
 
 gallery: ## capture tightly framed real QML screenshots at 2x resolution
 	@python3 tools/capture_gallery.py $(GALLERY_FLAGS)

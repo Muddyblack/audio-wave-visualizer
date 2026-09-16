@@ -18,6 +18,7 @@ TestCase {
                 reducedMotion: true
             })
         property var lyricLines: []
+        property real lyricPosition: 1.5
         property int lyricIndex: 5
         property string lyricStatus: "ready"
         property color textColor: "white"
@@ -46,6 +47,49 @@ TestCase {
                     time: i * 5,
                     text: "A line of lyrics with room to breathe " + i
                 }));
+        waitForRendering(subject);
+    }
+    function test_nudgeControlsAndShortcuts() {
+        mouseClick(findChild(subject, "lyricsOffsetPlus"));
+        compare(view.configuration.lyricsOffset, 0.1);
+        keyClick(Qt.Key_Minus);
+        compare(view.configuration.lyricsOffset, 0);
+        keyClick(Qt.Key_Plus);
+        compare(view.configuration.lyricsOffset, 0.1);
+        mouseClick(findChild(subject, "lyricsOffsetReset"));
+        compare(view.configuration.lyricsOffset, 0);
+        view.configuration.lyricsOffset = 10;
+        subject.nudge(1);
+        compare(view.configuration.lyricsOffset, 10);
+        view.configuration.lyricsOffset = -10;
+        subject.nudge(-1);
+        compare(view.configuration.lyricsOffset, -10);
+    }
+    function test_karaokeAndSubtitles() {
+        view.lyricIndex = 0;
+        view.lyricLines = [
+            {
+                time: 1,
+                text: "Hello world",
+                words: [
+                    {
+                        start: 0,
+                        length: 5,
+                        time: 1,
+                        end: 2
+                    }
+                ],
+                translation: "Bonjour",
+                romanized: "Reading"
+            }
+        ];
+        waitForRendering(subject);
+        wait(30);
+        compare(findChild(subject, "lyricsSubtitle_0").text, "Reading\nBonjour");
+        verify(findChild(subject, "lyricsVerse_0") !== null);
+        view.lyricPosition = 0;
+        waitForRendering(subject);
+        view.lyricPosition = 3;
         waitForRendering(subject);
     }
     function test_typographyAndHighlight() {

@@ -23,6 +23,7 @@ FAMILIES = (
     "glass_refraction",
     "viz_orbit",
     "text_fade",
+    "karaoke_fill",
 )
 QSB_FLAGS = ("--glsl", "100es,120,150", "--hlsl", "50", "--msl", "12")
 
@@ -40,7 +41,8 @@ def build(output_dir, qsb="qsb"):
             source.write_text(
                 (
                     ""
-                    if family in ("viz_orbit", "text_fade", "glass_refraction")
+                    if family
+                    in ("viz_orbit", "text_fade", "glass_refraction", "karaoke_fill")
                     else prelude + "\n"
                 )
                 + (SHADER_DIR / f"{family}.frag").read_text()
@@ -113,7 +115,13 @@ def main():
                     f"PASS: compiled shader matches {name.removesuffix('.qsb')}"
                     + (
                         ""
-                        if family in ("viz_orbit", "text_fade", "glass_refraction")
+                        if family
+                        in (
+                            "viz_orbit",
+                            "text_fade",
+                            "glass_refraction",
+                            "karaoke_fill",
+                        )
                         else " + viz_common.glsl"
                     )
                 )

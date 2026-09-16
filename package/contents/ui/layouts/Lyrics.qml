@@ -1,9 +1,11 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls.Basic as Controls
 import "../../code/Layouts.js" as Layouts
+import ".." as Shared
 
 // A reading surface: the whole synced lyric, with playback following the verse.
-Item {
+FocusScope {
     id: root
     required property var view
     readonly property var cfg: view.configuration
@@ -22,6 +24,22 @@ Item {
     onFollowPositionChanged: reposition.restart()
     implicitWidth: Layouts.size(cfg)[0]
     implicitHeight: Layouts.size(cfg)[1]
+
+    function nudge(direction) {
+        cfg.lyricsOffset = Math.max(-10, Math.min(10, Math.round(((cfg.lyricsOffset ?? 0) + direction * 0.1) * 10) / 10));
+    }
+    Keys.onPressed: event => {
+        if (event.key === Qt.Key_Plus || event.key === Qt.Key_Equal) {
+            nudge(1);
+            event.accepted = true;
+        } else if (event.key === Qt.Key_Minus) {
+            nudge(-1);
+            event.accepted = true;
+        }
+    }
+    TapHandler {
+        onTapped: root.forceActiveFocus()
+    }
 
     function followCurrent() {
         if (following && lines.count > 0)
@@ -64,6 +82,7 @@ Item {
         objectName: "lyricsDocument"
         anchors.fill: parent
         anchors.margins: root.padding
+        anchors.bottomMargin: root.padding + timingControls.height + 4
         anchors.topMargin: root.padding + (heading.visible ? heading.implicitHeight + 12 : 0)
         clip: true
         model: root.view.lyricLines
@@ -92,12 +111,15 @@ Item {
             policy: (root.cfg.lyricsShowScrollbar ?? true) ? Controls.ScrollBar.AsNeeded : Controls.ScrollBar.AlwaysOff
         }
         delegate: Item {
+            id: verse
             required property var modelData
             required property int index
             width: lines.width
-            height: words.implicitHeight
+            readonly property bool timed: index === lines.currentIndex && (modelData.words || []).length > 0
+            readonly property color highlight: root.cfg.lyricsHighlight === "custom" ? root.cfg.lyricsHighlightColor : root.cfg.lyricsHighlight === "accent" ? (root.view.waveColor ?? root.view.textColor) : root.view.textColor
+            height: verseText.implicitHeight + (subtitle.visible ? subtitle.implicitHeight + 4 : 0)
             Text {
-                id: words
+                id: verseText
                 objectName: "lyricsVerse_" + parent.index
                 anchors.horizontalCenter: parent.horizontalCenter
                 width: Math.max(1, Math.min(parent.width - 16, root.cfg.lyricsMaxWidth ?? 600))
@@ -112,7 +134,7 @@ Item {
                 font.letterSpacing: root.cfg.lyricsLetterSpacing ?? 0
                 renderType: Text.CurveRendering ?? Text.QtRendering
                 lineHeight: Math.max(1, Math.min(2, root.cfg.lyricsLineHeight ?? 1.25))
-                color: parent.index !== lines.currentIndex ? root.view.textColor : root.cfg.lyricsHighlight === "custom" ? root.cfg.lyricsHighlightColor : root.cfg.lyricsHighlight === "accent" ? (root.view.waveColor ?? root.view.textColor) : root.view.textColor
+                color: verse.timed ? Qt.rgba(root.view.textColor.r, root.view.textColor.g, root.view.textColor.b, 0.35) : verse.index !== lines.currentIndex ? root.view.textColor : verse.highlight
                 style: root.cfg.lyricsTextStyle === "outline" ? Text.Outline : root.cfg.lyricsTextStyle === "shadow" ? Text.Raised : Text.Normal
                 styleColor: root.cfg.lyricsTextStyleColor ?? "#101318"
                 opacity: parent.index === lines.currentIndex ? 1 : Math.max(0.1, Math.min(1, parent.index < lines.currentIndex ? (root.cfg.lyricsPastOpacity ?? 0.55) : (root.cfg.lyricsFutureOpacity ?? 0.55)))
@@ -123,6 +145,78 @@ Item {
                     }
                 }
             }
+            Loader {
+                anchors.fill: verseText
+                active: verse.timed
+                sourceComponent: Shared.KaraokeFill {
+                    textItem: verseText
+                    words: verse.modelData.words || []
+                    position: root.view.lyricPosition ?? 0
+                    highlight: verse.highlight
+                    reducedMotion: root.cfg.reducedMotion ?? false
+                }
+            }
+            Text {
+                id: subtitle
+                objectName: "lyricsSubtitle_" + verse.index
+                anchors.top: verseText.bottom
+                anchors.topMargin: 4
+                anchors.horizontalCenter: verseText.horizontalCenter
+                width: verseText.width
+                text: [root.cfg.lyricsReading === "off" ? "" : root.cfg.lyricsReading === "kana" ? verse.modelData.reading : verse.modelData.romanized, verse.modelData.translation].filter(Boolean).join("\n")
+                visible: text !== ""
+                textFormat: Text.PlainText
+                wrapMode: Text.Wrap
+                horizontalAlignment: root.alignment
+                font.family: root.fontFamily
+                font.pixelSize: Math.max(12, root.textSize * 0.65)
+                color: root.view.textColor
+                opacity: 0.7
+                onImplicitHeightChanged: reposition.restart()
+            }
+        }
+    }
+
+    Row {
+        id: timingControls
+        objectName: "lyricsTimingControls"
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.margins: 4
+        spacing: 3
+        visible: lines.count > 0
+        Controls.ToolButton {
+            objectName: "lyricsOffsetMinus"
+            text: "−"
+            Accessible.name: qsTr("Delay lyrics by 100 milliseconds")
+            Controls.ToolTip.visible: hovered
+            Controls.ToolTip.text: qsTr("Delay lyrics 100 ms (−)")
+            onClicked: {
+                root.nudge(-1);
+                root.forceActiveFocus();
+            }
+        }
+        Controls.ToolButton {
+            objectName: "lyricsOffsetReset"
+            text: ((root.cfg.lyricsOffset ?? 0) >= 0 ? "+" : "") + Math.round((root.cfg.lyricsOffset ?? 0) * 1000) + " ms"
+            Accessible.name: qsTr("Reset lyrics timing offset")
+            Controls.ToolTip.visible: hovered
+            Controls.ToolTip.text: qsTr("Reset timing; positive values show lyrics earlier")
+            onClicked: {
+                root.cfg.lyricsOffset = 0;
+                root.forceActiveFocus();
+            }
+        }
+        Controls.ToolButton {
+            objectName: "lyricsOffsetPlus"
+            text: "+"
+            Accessible.name: qsTr("Advance lyrics by 100 milliseconds")
+            Controls.ToolTip.visible: hovered
+            Controls.ToolTip.text: qsTr("Advance lyrics 100 ms (+)")
+            onClicked: {
+                root.nudge(1);
+                root.forceActiveFocus();
+            }
         }
     }
 
@@ -131,7 +225,7 @@ Item {
         visible: root.autoFollow && !root.following && lines.count > 0
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        anchors.bottomMargin: 8
+        anchors.bottomMargin: timingControls.height + 8
         text: qsTr("Follow current line")
         onClicked: {
             root.following = true;

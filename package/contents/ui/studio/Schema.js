@@ -91,7 +91,8 @@ var SECTIONS = [
         { k: "ribbonCurvature", type: "range", label: "Ribbon curvature", desc: "How far the mids bend the ribbon.", min: .5, max: 1.25, step: .05, fmt: "pct", when: function (s) { return s.visualizerType === 15; } },
         { k: "ribbonFullness", type: "range", label: "Ribbon fullness", desc: "How thick the bass makes it.", min: .6, max: 1.3, step: .05, fmt: "pct", when: function (s) { return s.visualizerType === 15; } },
         { k: "lineWidth", type: "range", label: "Line weight", desc: "Stroke width of lines and dot size.", min: 1, max: 8, step: .2, fmt: "fixed1" },
-        { k: "fillWave", type: "switch", label: "Gradient fill", desc: "Transparent fill under the wave and bars." }
+        { k: "fillWave", type: "switch", label: "Gradient fill", desc: "Transparent fill under the wave.",
+          when: function (s) { return s.visualizerType === 0 && s.layoutMode !== "orbit"; } }
     ]),
     tab("controls", "Progress bar", [
         { id: "customProgressBar", type: "customStyle", full: true, label: "Custom progress bars", desc: "Import a trusted QML progress bar with playback timing and seeking." },
@@ -161,10 +162,12 @@ var SECTIONS = [
         { k: "showLyrics", type: "switch", label: "Synced lyrics line", desc: "Online lookup (LRCLIB). Sends title, artist, album and length. For a full verse, choose the Lyrics only layout.", when: function (s) { return s.layoutMode !== "lyrics"; } }
     ]),
     tab("lyrics", "Display", [
-        { id: "lyricsMode", type: "seg", full: true, label: "Lyrics display", desc: "Online lyrics from LRCLIB. The lookup sends the song title, artist, album and length. Card backgrounds are in the Card tab.",
+        { id: "lyricsMode", type: "seg", full: true, label: "Lyrics display", desc: "Local sidecars and ID3 lyrics first, then LRCLIB. The online lookup sends the song title, artist, album and length. Card backgrounds are in the Card tab.",
           get: function (s) { return s.layoutMode === "lyrics" ? "full" : s.showLyrics ? "line" : "off"; },
           set: function (v, s) { return v === "full" ? { layoutMode: "lyrics", showMpris: true, showLyrics: true } : { layoutMode: s && s.layoutMode !== "lyrics" ? s.layoutMode : "stacked", showMpris: true, showLyrics: v === "line" }; },
           opts: [["off", "Off"], ["line", "Line on card"], ["full", "Lyrics only"]] },
+        { k: "lyricsLanguage", type: "seg", label: "Reading language", desc: "Automatic detects Japanese kana. Select Japanese or Chinese for Han-only text. Requires Python pykakasi / pypinyin.", opts: [["auto", "Automatic"], ["ja", "Japanese"], ["zh", "Chinese"]] },
+        { k: "lyricsReading", type: "seg", label: "Pronunciation subtitle", opts: [["off", "Off"], ["romaji", "Romaji / Pinyin"], ["kana", "Kana"]] },
         { k: "lyricsOffset", type: "range", label: "Timing offset (seconds)", desc: "Positive values show lyrics earlier; negative values delay them. Applies to both lyrics displays.", min: -10, max: 10, step: .1, fmt: "fixed1" }
     ]),
     tab("lyrics", "Typography", [
