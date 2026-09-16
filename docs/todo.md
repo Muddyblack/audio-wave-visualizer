@@ -15,16 +15,6 @@
   - Smoothly interpolate visualizers down to an idle ambient state or gentle undulating wave when audio ceases, preventing abrupt visual snaps.
   - *Technical Scope*: Damping decay in `WaveMotion.qml` during playback pause/silence transitions.
 
----
-
-## 4. Desktop & Compositor Integration (Plasma 6 & Hyprland)
-
-- [ ] **Ambient Desktop LED / Wallpaper Glow** `[High]`
-  - Project a soft, dynamic, sound-reactive ambient glow around the card onto the desktop wallpaper or panel edges.
-  - *Technical Scope*: `CardGlow.qml` expansion with multi-stop radial bleed.
-- [ ] **Smart Window Snapping & Waybar / Caelestia Docking** `[Medium]`
-  - Quickshell layer-shell docking to status bars with automatic margin negotiation and width expansion.
-  - *Technical Scope*: Enhance `hyprland/AudioVisualizerShell.qml` and `PanelPill.qml`.
 
 ---
 
@@ -135,3 +125,13 @@ igh]`
   - Side-by-side or subtitle-style translation lines, with automatic Pinyin / Romaji conversion for Asian languages.
   - Implemented with translation sidecars / paired timestamps and optional local Pinyin, Romaji and kana subtitle conversion. LRCLIB has no documented translation endpoint; see [lyrics setup](lyrics.md).
 
+---
+
+## 4. Desktop & Compositor Integration (Plasma 6 & Hyprland)
+
+- [x] **Ambient Desktop LED / Wallpaper Glow** `[High]`
+  - Project a soft, dynamic, sound-reactive ambient glow around the card onto the desktop wallpaper or panel edges.
+  - *Technical Scope*: `CardGlow.qml` expansion with multi-stop radial bleed.
+- [x] **Smart Window Snapping & Waybar / Caelestia Docking** `[Medium]`
+  - Quickshell layer-shell docking to status bars with automatic margin negotiation and width expansion.
+  - *Technical Scope*: Enhance `hyprland/AudioVisualizerShell.qml` and `PanelPill.qml`.

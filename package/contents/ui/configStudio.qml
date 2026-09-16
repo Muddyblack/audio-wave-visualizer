@@ -161,6 +161,14 @@ Kirigami.Page {
     property bool cfg_grainDefault
     property bool cfg_bassPulse
     property bool cfg_bassPulseDefault
+    property bool cfg_ambientGlow
+    property bool cfg_ambientGlowDefault
+    property real cfg_ambientGlowRadius
+    property real cfg_ambientGlowRadiusDefault
+    property real cfg_ambientGlowIntensity
+    property real cfg_ambientGlowIntensityDefault
+    property string cfg_ambientGlowMode
+    property string cfg_ambientGlowModeDefault
     property string cfg_artShape
     property string cfg_artShapeDefault
     property int cfg_artScale
@@ -285,6 +293,16 @@ Kirigami.Page {
     property bool cfg_simpleRenderDefault
     property string cfg_userPresets
     property string cfg_userPresetsDefault
+    property string cfg_dockMode
+    property string cfg_dockModeDefault
+    property real cfg_dockMargin
+    property real cfg_dockMarginDefault
+    property real cfg_barHeight
+    property real cfg_barHeightDefault
+    property bool cfg_widthExpansion
+    property bool cfg_widthExpansionDefault
+    property string cfg_dockPosition
+    property string cfg_dockPositionDefault
 
     readonly property var draft: ({
             customVisualizer: root.cfg_customVisualizer,
@@ -361,6 +379,10 @@ Kirigami.Page {
             edgeHighlight: root.cfg_edgeHighlight,
             grain: root.cfg_grain,
             bassPulse: root.cfg_bassPulse,
+            ambientGlow: root.cfg_ambientGlow,
+            ambientGlowRadius: root.cfg_ambientGlowRadius,
+            ambientGlowIntensity: root.cfg_ambientGlowIntensity,
+            ambientGlowMode: root.cfg_ambientGlowMode,
             artShape: root.cfg_artShape,
             artScale: root.cfg_artScale,
             artBorder: root.cfg_artBorder,
@@ -422,7 +444,12 @@ Kirigami.Page {
             reducedMotion: root.cfg_reducedMotion,
             batterySaver: root.cfg_batterySaver,
             simpleRender: root.cfg_simpleRender,
-            userPresets: root.cfg_userPresets
+            userPresets: root.cfg_userPresets,
+            dockMode: root.cfg_dockMode,
+            dockMargin: root.cfg_dockMargin,
+            barHeight: root.cfg_barHeight,
+            widthExpansion: root.cfg_widthExpansion,
+            dockPosition: root.cfg_dockPosition
         })
     readonly property var defaults: ({
             customVisualizer: root.cfg_customVisualizerDefault,
@@ -499,6 +526,10 @@ Kirigami.Page {
             edgeHighlight: root.cfg_edgeHighlightDefault,
             grain: root.cfg_grainDefault,
             bassPulse: root.cfg_bassPulseDefault,
+            ambientGlow: root.cfg_ambientGlowDefault,
+            ambientGlowRadius: root.cfg_ambientGlowRadiusDefault,
+            ambientGlowIntensity: root.cfg_ambientGlowIntensityDefault,
+            ambientGlowMode: root.cfg_ambientGlowModeDefault,
             artShape: root.cfg_artShapeDefault,
             artScale: root.cfg_artScaleDefault,
             artBorder: root.cfg_artBorderDefault,
@@ -560,7 +591,12 @@ Kirigami.Page {
             reducedMotion: root.cfg_reducedMotionDefault,
             batterySaver: root.cfg_batterySaverDefault,
             simpleRender: root.cfg_simpleRenderDefault,
-            userPresets: root.cfg_userPresetsDefault
+            userPresets: root.cfg_userPresetsDefault,
+            dockMode: root.cfg_dockModeDefault,
+            dockMargin: root.cfg_dockMarginDefault,
+            barHeight: root.cfg_barHeightDefault,
+            widthExpansion: root.cfg_widthExpansionDefault,
+            dockPosition: root.cfg_dockPositionDefault
         })
 
     function assign(next) {

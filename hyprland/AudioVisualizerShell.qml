@@ -131,6 +131,14 @@ ShellRoot {
         widgetHeight: widgetHeight,
         verticalPosition: verticalPosition,
         hAnchor: "center",
+        dockMode: "none",
+        dockMargin: 8,
+        barHeight: 36,
+        widthExpansion: true,
+        ambientGlow: false,
+        ambientGlowRadius: 80,
+        ambientGlowIntensity: 0.7,
+        ambientGlowMode: "cover",
         monitor: monitor,
         waveColor: waveColor.toString(),
         textColor: textColor.toString(),
@@ -148,14 +156,49 @@ ShellRoot {
         // The default 360 × 104 follows the chosen layout; explicit sizes win.
         const layoutSize = LayoutSizes.size(configuration);
         const defaultSize = configuration.widgetWidth === 360 && configuration.widgetHeight === 104;
-        const width = Math.min(defaultSize ? layoutSize[0] : configuration.widgetWidth, screen.width);
+        let baseWidth = defaultSize ? layoutSize[0] : configuration.widgetWidth;
+
+        // Smart width expansion when docked to status bar (e.g. Waybar / Caelestia)
+        const dock = configuration.dockMode ?? "none";
+        const isDocked = dock !== "none";
+        if (isDocked && (configuration.widthExpansion ?? true)) {
+            if (!player) {
+                baseWidth = Math.min(baseWidth, 220);
+            }
+        }
+
+        const width = Math.min(baseWidth, screen.width);
         const height = defaultSize ? layoutSize[1] : configuration.widgetHeight;
+
+        // Automatic margin negotiation for status bars
+        const barH = configuration.barHeight ?? 36;
+        const gap = configuration.dockMargin ?? 8;
+
+        let yPos;
+        if (dock === "top" || (dock === "auto" && configuration.verticalPosition <= 0.15)) {
+            yPos = screen.y + barH + gap;
+        } else if (dock === "bottom" || (dock === "auto" && configuration.verticalPosition >= 0.85)) {
+            yPos = screen.y + screen.height - height - barH - gap;
+        } else {
+            yPos = screen.y + Math.max(0, Math.min(screen.height - height, screen.height * configuration.verticalPosition));
+        }
+
+        let xPos;
+        if (configuration.hAnchor === "left") {
+            xPos = screen.x + (isDocked ? gap : 0);
+        } else if (configuration.hAnchor === "right") {
+            xPos = screen.x + screen.width - width - (isDocked ? gap : 0);
+        } else {
+            xPos = screen.x + (screen.width - width) / 2;
+        }
+
         return {
             name: screen.name,
-            x: screen.x + (configuration.hAnchor === "left" ? 0 : configuration.hAnchor === "right" ? screen.width - width : (screen.width - width) / 2),
-            y: screen.y + Math.max(0, Math.min(screen.height - height, screen.height * configuration.verticalPosition)),
+            x: xPos,
+            y: yPos,
             width: width,
-            height: height
+            height: height,
+            docked: isDocked
         };
     }
     Occlusion {
@@ -223,7 +266,7 @@ ShellRoot {
             margins.top: widgetRectangle.y - modelData.y
             exclusionMode: ExclusionMode.Ignore
             color: "transparent"
-            WlrLayershell.layer: root.configuration.desktopLayer ? WlrLayer.Bottom : WlrLayer.Top
+            WlrLayershell.layer: widgetRectangle.docked ? WlrLayer.Top : (root.configuration.desktopLayer ? WlrLayer.Bottom : WlrLayer.Top)
             WlrLayershell.namespace: root.configuration.compositorGlass && root.configuration.showBg && ["glass", "liquid"].includes(root.configuration.surfaceStyle) ? "audio-wave-visualizer-glass" : "audio-wave-visualizer"
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 

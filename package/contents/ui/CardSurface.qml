@@ -42,6 +42,55 @@ Item {
         }
     ]
 
+    readonly property bool isPanelForm: root.cardRadius >= height / 2 - 2
+    readonly property real ambientGlowRadius: Math.max(20, Math.min(160, root.configuration.ambientGlowRadius ?? (isPanelForm ? 24 : 80)))
+    readonly property real ambientGlowMargin: isPanelForm ? Math.min(28, ambientGlowRadius) : ambientGlowRadius
+
+    readonly property var ambientGlowStops: {
+        const mode = root.configuration.ambientGlowMode ?? "cover";
+        let c1 = root.coverColor1;
+        let c2 = root.coverColor2;
+        if (mode === "accent" || (!root.coverActive && mode !== "custom")) {
+            c1 = root.accentColor;
+            c2 = root.accentColor;
+        } else if (mode === "custom" && root.configuration.customColor) {
+            c1 = Qt.color(root.configuration.customColor);
+            c2 = c1;
+        }
+        return [[0.0, Qt.rgba(c1.r, c1.g, c1.b, 0.85)], [0.30, Qt.rgba(c1.r * 0.6 + c2.r * 0.4, c1.g * 0.6 + c2.g * 0.4, c1.b * 0.6 + c2.b * 0.4, 0.55)], [0.65, Qt.rgba(c2.r, c2.g, c2.b, 0.22)], [1.0, Qt.rgba(c2.r, c2.g, c2.b, 0.0)]];
+    }
+
+    // Ambient Desktop LED / Wallpaper Glow:
+    // Soft, dynamic sound-reactive multi-stop radial bleed projecting onto
+    // desktop wallpaper and panel edges.
+    Loader {
+        id: ambientGlowLoader
+        objectName: "ambientGlowLoader"
+        anchors.fill: parent
+        anchors.margins: -root.ambientGlowMargin
+        active: (root.configuration.ambientGlow ?? false) && (root.hasPlayer || (root.configuration.alwaysVisible ?? false))
+        opacity: {
+            if (!active)
+                return 0;
+            const base = root.configuration.ambientGlowIntensity ?? 0.7;
+            const reactive = (root.hasPlayer ? Math.max(0, Math.min(1, root.bass)) : 0) * 0.4;
+            return Math.max(0, Math.min(1, base * (0.6 + reactive)));
+        }
+        Behavior on opacity {
+            NumberAnimation {
+                duration: 180
+            }
+        }
+        sourceComponent: CardGlow {
+            objectName: "ambientDesktopGlow"
+            margin: root.ambientGlowMargin
+            radius: root.cardRadius
+            radialBleed: true
+            bleedDistance: root.ambientGlowMargin
+            bleedStops: root.ambientGlowStops
+        }
+    }
+
     // Card shadow: static, behind everything, only with a visible card.
     Loader {
         anchors.fill: parent

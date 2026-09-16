@@ -77,7 +77,7 @@
               name="$(basename "$here")"
               out="$here/$name-$ver.plasmoid"
               rm -f "$out"
-              (cd "$here/package" && ${pkgs.zip}/bin/zip -r "$out" . -x '*.swp' '*~')
+              (cd "$here/package" && ${pkgs.zip}/bin/zip -r "$out" . -x '*.swp' '*~' '*__pycache__*' '*.pyc' '*.pyo' 'contents/shaders/build_shaders.py' 'contents/ui/studio/wallpapers/README.md')
               echo "wrote $out"
             '');
           };

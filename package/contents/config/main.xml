@@ -231,6 +231,18 @@
         <entry name="bassPulse" type="Bool">
             <default>false</default>
         </entry>
+        <entry name="ambientGlow" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="ambientGlowRadius" type="Double">
+            <default>80.0</default>
+        </entry>
+        <entry name="ambientGlowIntensity" type="Double">
+            <default>0.7</default>
+        </entry>
+        <entry name="ambientGlowMode" type="String">
+            <default>cover</default>
+        </entry>
         <entry name="artShape" type="String">
             <default>rounded</default>
         </entry>
@@ -416,6 +428,21 @@
         </entry>
         <entry name="userPresets" type="String">
             <default></default>
+        </entry>
+        <entry name="dockMode" type="String">
+            <default>none</default>
+        </entry>
+        <entry name="dockMargin" type="Double">
+            <default>8.0</default>
+        </entry>
+        <entry name="barHeight" type="Double">
+            <default>36.0</default>
+        </entry>
+        <entry name="widthExpansion" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="dockPosition" type="String">
+            <default>auto</default>
         </entry>
     </group>
 </kcfg>

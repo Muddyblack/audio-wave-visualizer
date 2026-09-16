@@ -21,8 +21,55 @@ Item {
     // Extra overrides on top of hyprland.json.
     property var settings: ({})
 
-    implicitWidth: pill.shouldShow ? pill.implicitWidth : 0
+    property bool autoExpand: configuration.pillAutoExpand ?? true
+    property bool expandOnHover: configuration.pillExpandOnHover ?? true
+    property int maxWidth: configuration.pillMaxWidth ?? 300
+    property int minWidth: 32
+
+    // Automatic margin negotiation & docking direction:
+    property string dockPosition: configuration.dockPosition ?? "auto" // "auto", "top", "bottom"
+    property real dockMargin: configuration.dockMargin ?? 8
+
+    HoverHandler {
+        id: pillHover
+    }
+
+    readonly property bool isHovered: pillHover.hovered
+    readonly property bool isIconOnly: root.icon || root.configuration.layoutMode === "pillicon"
+
+    readonly property bool isBottomDock: {
+        if (dockPosition === "bottom")
+            return true;
+        if (dockPosition === "top")
+            return false;
+        try {
+            const rootY = root.mapToItem(null, 0, 0).y;
+            const screenH = root.Window.window?.screen?.height ?? 1080;
+            return rootY > screenH / 2;
+        } catch (e) {
+            return false;
+        }
+    }
+
+    readonly property real computedWidth: {
+        if (!pill.shouldShow)
+            return 0;
+        let w = pill.implicitWidth;
+        if (root.isIconOnly && root.expandOnHover && root.isHovered) {
+            w = Math.max(w, 160);
+        }
+        return Math.max(root.minWidth, Math.min(root.maxWidth, w));
+    }
+
+    implicitWidth: computedWidth
     implicitHeight: 30
+
+    Behavior on implicitWidth {
+        NumberAnimation {
+            duration: 220
+            easing.type: Easing.OutCubic
+        }
+    }
 
     FileView {
         id: defaultsFile
@@ -114,7 +161,7 @@ Item {
     Card {
         id: pill
         anchors.fill: parent
-        presentation: root.icon || root.configuration.layoutMode === "pillicon" ? "pillicon" : "pill"
+        presentation: root.isIconOnly && (!root.expandOnHover || !root.isHovered) ? "pillicon" : "pill"
         configuration: root.configuration
         onPopupRequested: popup.visible = !popup.visible
     }
@@ -123,8 +170,19 @@ Item {
         id: popup
         readonly property var cardSize: LayoutSizes.size(root.popupConfiguration)
         anchor.item: pill
-        anchor.rect.x: (pill.width - cardSize[0]) / 2
-        anchor.rect.y: pill.height + 12
+        anchor.rect.x: {
+            const desiredX = (pill.width - cardSize[0]) / 2;
+            try {
+                const globalX = root.mapToItem(null, 0, 0).x;
+                const screenW = root.Window.window?.screen?.width ?? 1920;
+                if (globalX + desiredX < root.dockMargin)
+                    return -globalX + root.dockMargin;
+                if (globalX + desiredX + cardSize[0] > screenW - root.dockMargin)
+                    return screenW - root.dockMargin - globalX - cardSize[0];
+            } catch (e) {}
+            return desiredX;
+        }
+        anchor.rect.y: root.isBottomDock ? (-cardSize[1] - root.dockMargin) : (pill.height + root.dockMargin)
         implicitWidth: cardSize[0]
         implicitHeight: cardSize[1]
         color: "transparent"

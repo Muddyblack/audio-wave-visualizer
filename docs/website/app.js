@@ -22,7 +22,7 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 })();
 
 /* ─── config model & schema ─────────────────────────────────────── */
-const HYPR = { monitor: '', verticalPosition: 0.60, desktopLayer: true, pauseWhenCovered: true, hAnchor: 'center' };
+const HYPR = { monitor: '', verticalPosition: 0.60, desktopLayer: true, pauseWhenCovered: true, hAnchor: 'center', dockMode: 'none', dockMargin: 8, barHeight: 36, widthExpansion: true, dockPosition: 'auto' };
 const SCHEMA_ENTRIES = typeof ConfigSchema !== 'undefined' ? ConfigSchema : {};
 const EXISTING = {};
 for (const [k, v] of Object.entries(SCHEMA_ENTRIES)) {

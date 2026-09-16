@@ -237,7 +237,8 @@ var SECTIONS = [
         { k: "cardShadow", type: "seg", label: "Shadow", opts: [["none", "None"], ["soft", "Soft"], ["lifted", "Lifted"]] },
         { k: "edgeHighlight", type: "switch", label: "Edge highlight", desc: "A thin line of light along the top edge." },
         { k: "grain", type: "switch", label: "Film grain", desc: "Stops gradients from banding." },
-        { k: "bassPulse", type: "switch", label: "Bass pulse", desc: "The edge glows in the accent colour on every kick." }
+        { k: "bassPulse", type: "switch", label: "Bass pulse", desc: "The edge glows in the accent colour on every kick." },
+        { k: "ambientGlow", type: "switch", label: "Ambient desktop glow", desc: "Project a soft, sound-reactive ambient glow onto the wallpaper or panel edges." }
     ], function (s) { return s.showBg; }),
     tab("colors", "Accent", [
         { id: "waveSrc", type: "seg", label: "Accent colour", desc: "Drives the wave, progress and play button. System follows your desktop accent.",

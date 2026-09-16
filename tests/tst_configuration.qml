@@ -66,6 +66,17 @@ TestCase {
         compare(defaults.userPresets, "");
         compare(Configuration.defaults('<entry name="fields" type="StringList"><default></default></entry>').fields, []);
     }
+    function test_desktopAndCompositorIntegrationDefaults() {
+        compare(defaults.ambientGlow, false);
+        compare(defaults.ambientGlowRadius, 80.0);
+        compare(defaults.ambientGlowIntensity, 0.7);
+        compare(defaults.ambientGlowMode, "cover");
+        compare(defaults.dockMode, "none");
+        compare(defaults.dockMargin, 8.0);
+        compare(defaults.barHeight, 36.0);
+        compare(defaults.widthExpansion, true);
+        compare(defaults.dockPosition, "auto");
+    }
     function test_displaySelectionAndUnplugFallback() {
         const outputs = [
             {

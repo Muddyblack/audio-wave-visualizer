@@ -87,7 +87,7 @@ pack: ## build .plasmoid archive
 	  name=$$(basename "$$PWD"); \
 	  out="$$PWD/$$name-$$ver.plasmoid"; \
 	  rm -f "$$out"; \
-	  (cd package && zip -r "$$out" . -x '*.swp' '*~'); \
+	  (cd package && zip -r "$$out" . -x '*.swp' '*~' '*__pycache__*' '*.pyc' '*.pyo' 'contents/shaders/build_shaders.py' 'contents/ui/studio/wallpapers/README.md'); \
 	  echo "wrote $$out"; \
 	fi
 

@@ -28,6 +28,10 @@ subprocess.run([sys.executable, str(REPO / "tests/test_track_profile.py")], chec
 subprocess.run([sys.executable, str(REPO / "tests/test_local_lyrics.py")], check=True)
 if shutil.which("node"):
     subprocess.run(["node", str(REPO / "tests/test_lyrics.cjs")], check=True)
+if shutil.which("qs"):
+    subprocess.run(
+        [sys.executable, str(REPO / "tests/test_hyprland_settings.py")], check=True
+    )
 
 # The widget loads the compiled packages. Verify every family and the common
 # prelude with the same builder used by make, so a stale .qsb cannot pass.
