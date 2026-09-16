@@ -15,7 +15,12 @@
 <svg width="0" height="0" style="position:absolute" aria-hidden="true"><filter id="lgRefract" x="0" y="0" width="100%" height="100%" color-interpolation-filters="sRGB"><feTurbulence type="fractalNoise" baseFrequency="0.006 0.011" numOctaves="2" seed="4" result="n"/><feGaussianBlur in="n" stdDeviation="2.5" result="nb"/><feDisplacementMap id="lgMap" in="SourceGraphic" in2="nb" scale="36" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
 <header><div class="hwrap">
   <div class="brand"><img class="brand-icon" src="assets/studio/icon.png" width="36" height="36" alt="">Plasma Audio Visualizer</div>
-  <nav class="jump" aria-label="Main navigation"><a href="#" data-page="looks" aria-current="page">Looks</a><a href="#" data-page="studio">Studio</a></nav>
+  <nav class="jump" aria-label="Main navigation">
+    <a href="#" data-page="looks" aria-current="page">Looks</a>
+    <a href="#" data-page="studio">Studio</a>
+    <a href="https://github.com/Muddyblack/kde-audio-visualizer" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://www.opendesktop.org/p/2359422" target="_blank" rel="noopener">KDE Store</a>
+  </nav>
 </div></header>
 
 <main>
@@ -25,12 +30,13 @@
   <div class="hero-glow"></div>
   <div class="hero-grid">
     <div class="hero-copy">
-      <div class="eyebrow">Your music, your desktop</div>
+      <div class="eyebrow">Audio widget for Plasma &amp; Hyprland</div>
       <h1>Music in view.<br><span>Make it yours.</span></h1>
-      <p>Explore visualizers, layouts and colours for Plasma and Hyprland. Choose a preset, then fine-tune it in the studio with an interactive preview.</p>
+      <p>Explore visualizers, layouts and colours for KDE Plasma 6 and Hyprland. Choose a preset below, audition with live playback, or fine-tune every detail in the studio.</p>
       <div class="hero-cta">
         <a class="primary-link" href="#looks">Start from a look</a>
         <a class="ghost-link" href="#" data-page="studio">Open the studio →</a>
+        <a class="ghost-link" href="https://github.com/Muddyblack/kde-audio-visualizer" target="_blank" rel="noopener">GitHub</a>
       </div>
       <div class="stats" id="stats"></div>
     </div>
@@ -89,8 +95,10 @@
 </div>
 
 </main>
-<footer><span>Plasma Audio Visualizer · sample artwork and playback</span><span>Interactive browser preview — no desktop settings are changed</span></footer>
-
+<footer>
+  <span>Plasma Audio Visualizer · <a href="https://github.com/Muddyblack/kde-audio-visualizer" target="_blank" rel="noopener">GitHub</a> · <a href="https://www.opendesktop.org/p/2359422" target="_blank" rel="noopener">OpenDesktop (KDE Store)</a></span>
+  <span>Interactive browser preview — no desktop settings are changed</span>
+</footer>
 
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
