@@ -51,6 +51,14 @@ TestCase {
         verify(page !== null);
         compare(page.title, "General");
         compare(page.padding, 0);
+        compare(Object.keys(page.draft).sort(), Object.keys(defaults).sort());
+        for (const key of Object.keys(defaults)) {
+            compare(page.draft[key], defaults[key], key + " draft");
+            compare(page.defaults[key], defaults[key], key + " default");
+        }
+        page.cfg_glassBlurDefault = 0.5;
+        compare(page.defaults.glassBlur, 0.5, "Plasma defaults remain reactive");
+        page.cfg_glassBlurDefault = defaults.glassBlur;
         compare(page.cfg_glassBlur, 0.85);
         page.assign({
             glassBlur: 0.32

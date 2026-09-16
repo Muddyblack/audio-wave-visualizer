@@ -29,6 +29,7 @@ TestCase {
         id: backend
         property var bars: [300, 700, 900, 400]
         property real frameTimeMs: 0
+        property real bass: 0
         property int numBars: 4
         property real maxRange: 1000
         property bool hasAudio: true
@@ -90,6 +91,7 @@ TestCase {
         LyricsSource {}
     }
     function init() {
+        backend.bass = 0;
         testCase.width = 400;
         testCase.height = 140;
         player = createTemporaryObject(playerComponent, this);
@@ -888,5 +890,37 @@ TestCase {
         tryVerify(() => subject.coverColor2.b > subject.coverColor2.r + 0.3);
         subject.player = null;
         verify(Qt.colorEqual(loader.item.waveColor, subject.baseWaveColor), "No stale cover accent after player removal");
+    }
+    function test_ambientDesktopGlowSoundReactivity() {
+        subject.isPlaying = true;
+        subject.configuration = Object.assign({}, defaults, {
+            showBg: true,
+            ambientGlow: true,
+            ambientGlowRadius: 75,
+            ambientGlowIntensity: 0.8,
+            ambientGlowMode: "cover"
+        });
+        const ambientGlow = findChild(subject, "ambientDesktopGlow");
+        verify(ambientGlow !== null, "Ambient desktop glow item must exist when enabled");
+        verify(ambientGlow.radialBleed, "Ambient desktop glow must use multi-stop radial bleed");
+        compare(ambientGlow.margin, 75);
+        compare(ambientGlow.bleedStops.length, 4, "Must have 4 stops for multi-stop bleed falloff");
+
+        // Verify sound reactivity: loader opacity increases with bass energy
+        const loader = findChild(subject, "ambientGlowLoader");
+        verify(loader !== null, "ambientGlowLoader must exist");
+        tryCompare(loader, "opacity", 0.48);
+        const calmOpacity = loader.opacity;
+
+        // Surge bass kick
+        backend.bass = 0.95;
+        tryVerify(() => loader.opacity > calmOpacity + 0.1, 500, "Ambient glow opacity must increase on bass kick");
+
+        // When ambientGlow is false, glow item must not exist
+        subject.configuration = Object.assign({}, subject.configuration, {
+            ambientGlow: false
+        });
+        compare(loader.active, false, "Loader must become inactive when ambientGlow is false");
+        tryVerify(() => !findChild(subject, "ambientDesktopGlow"), 500, "Ambient glow item must be destroyed when disabled");
     }
 }
