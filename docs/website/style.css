@@ -92,6 +92,7 @@ h1 span{background:linear-gradient(100deg,var(--brand),#9fc3e6 70%);-webkit-back
 .search{flex:1;display:flex;align-items:center;gap:8px;background:var(--sunk);border:1px solid var(--line2);border-radius:10px;padding:0 11px;height:36px;color:var(--dim)}
 .search svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
 .search input{flex:1;background:none;border:0;outline:0;font-size:12.5px;color:var(--text);min-width:0}
+.search input::placeholder{color:#8b9294;opacity:1}
 .search kbd{font:10px Inter,sans-serif;border:1px solid var(--line2);border-radius:4px;padding:1px 5px;color:var(--dim)}
 .ghost{background:none;border:1px solid var(--line2);border-radius:10px;height:36px;padding:0 12px;font-size:11.5px;color:var(--muted);white-space:nowrap}
 .ghost:hover{color:var(--text);background:var(--studio-hover)}
@@ -99,7 +100,7 @@ h1 span{background:linear-gradient(100deg,var(--brand),#9fc3e6 70%);-webkit-back
 .tabs::-webkit-scrollbar{display:none}
 .tabs button{position:relative;display:flex;align-items:center;gap:6px;background:none;border:0;padding:10px 10px 12px;font-size:12.5px;color:var(--muted);white-space:nowrap}
 .tabs button svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
-.tabs button[aria-selected=true]{color:var(--text)}
+.tabs button:hover,.tabs button[aria-selected=true]{color:#eeefeb}
 .tabs button[aria-selected=true]:after{content:"";position:absolute;left:8px;right:8px;bottom:-1px;height:2px;border-radius:2px;background:var(--brand)}
 .pbody{padding:6px 18px 22px}
 .sec{margin-top:18px}
