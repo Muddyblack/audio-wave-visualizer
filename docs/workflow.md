@@ -423,7 +423,7 @@ uses the actual HTML defaults and widget `main.xml`, without needing a browser.
 ## Gallery and retry checks
 
 `make gallery` captures the real QML presets and settings studio directly into
-`readme/`, using `tools/capture_gallery.py` and `readme/Capture.qml.in`.
+`docs/readme/`, using `tools/capture_gallery.py` and `docs/readme/Capture.qml.in`.
 It requires Python 3 and Qt 6 qmltestrunner from the development shell.
 Every preset is still rendered and validated on its own, but the published images
 are seven *sheets*: four presets laid out side by side on one shared wallpaper and

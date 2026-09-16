@@ -6,6 +6,7 @@ import Quickshell.Wayland
 import Quickshell.Services.Mpris
 import Quickshell.Services.UPower
 import "../package/contents/ui" as Shared
+import "../package/contents/ui/studio" as Studio
 import "Configuration.js" as Configuration
 import "../package/contents/code/Layouts.js" as LayoutSizes
 
@@ -160,6 +161,11 @@ ShellRoot {
         pauseWhenCovered: true
     }, settings, declarativeSettings)
     readonly property var configuration: Object.assign({}, baseline, userSettings)
+    Studio.DailyLookController {
+        defaults: root.defaults
+        configuration: root.configuration
+        onApply: next => root.saveSettings(Configuration.overrides(root.baseline, next))
+    }
     readonly property bool shouldShow: !!player || configuration.alwaysVisible
     readonly property var selectedScreens: Configuration.screens(Quickshell.screens, configuration.monitor)
     readonly property var widgetRectangles: selectedScreens.map(screen => widgetGeometry(screen))

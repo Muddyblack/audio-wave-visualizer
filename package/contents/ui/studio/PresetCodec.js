@@ -1,6 +1,6 @@
 // Portable look format used by the browser and QML. No desktop placement or
 // nested preset library is transferred. Legacy {name, settings} and bare maps work.
-var excluded = ['customProgressBar', 'customProgressBars', 'customVisualizer', 'customVisualizers', 'userPresets', 'monitor', 'verticalPosition', 'desktopLayer',
+var excluded = ['customProgressBar', 'customProgressBars', 'customVisualizer', 'customVisualizers', 'userPresets', 'favoritePresets', 'autoDailyLook', 'dailyLookApplied', 'monitor', 'verticalPosition', 'desktopLayer',
                 'pauseWhenCovered', 'hAnchor', 'widgetWidth', 'widgetHeight', 'dockMode', 'dockMargin', 'barHeight', 'widthExpansion', 'dockPosition'];
 function object(value) {
     return value !== null && typeof value === 'object' && !Array.isArray(value);

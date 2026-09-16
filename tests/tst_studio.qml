@@ -51,6 +51,31 @@ TestCase {
         studio.keepColors = false;
     }
 
+    function test_navigationStaysAboveScrolledSettings() {
+        studio.selectTab("viz");
+        verify(waitForRendering(studio));
+        const nav = findChild(studio, "appearanceNavigation");
+        const before = nav.mapToItem(studio, 0, 0).y;
+        const body = findChild(studio, "studioBody");
+        body.contentY = 120;
+        compare(nav.mapToItem(studio, 0, 0).y, before);
+        verify(body.y >= nav.y + nav.height);
+    }
+
+    function test_favoritesAndDailyCopiesSurviveApplyingLooks() {
+        studio.toggleFavorite("glass");
+        studio.saveDaily();
+        studio.toggleFavorite(studio.daily.id);
+        studio.applyLook(Schema.PRESETS[1].s);
+        verify(studio.favorites.indexOf("glass") !== -1);
+        verify(studio.favorites.indexOf(studio.daily.id) !== -1);
+        studio.saveDaily();
+        compare(studio.userPresetList().length, 1);
+        studio.removeUserPreset(0);
+        verify(studio.favorites.indexOf(studio.daily.id) === -1);
+        verify(studio.favorites.indexOf("glass") !== -1);
+    }
+
     function test_presetsKeepPlacementAndOptionallyColours() {
         studio.draft = Object.assign({}, defaults, {
             verticalPosition: 0.3,
@@ -172,7 +197,8 @@ TestCase {
         verify(tile !== null);
         mouseClick(tile);
         compare(studio.draft.visualizerType, 7);
-        mouseClick(findChild(studio, "tabButton_" + tabIndex("card")));
+        studio.query = "";
+        mouseClick(findChild(studio, "subTab_card"));
         compare(studio.currentTabIndex, tabIndex("card"));
         waitForRendering(studio);
         verify(findChild(studio, "row_showBg") !== null);
@@ -295,19 +321,26 @@ TestCase {
         testCase.width = data.width;
         verify(waitForRendering(studio));
         const tabs = findChild(studio, "studioTabs");
-        const rows = [];
-        for (let index = 0; index < Schema.TABS.length; index++) {
-            const tab = findChild(studio, "tabButton_" + index);
-            const position = tab.mapToItem(tabs, 0, 0);
-            verify(position.x >= 0 && position.x + tab.width <= tabs.width + 0.5);
-            verify(position.y >= 0 && position.y + tab.height <= tabs.height + 0.5);
-            if (rows.indexOf(position.y) === -1)
-                rows.push(position.y);
+        compare(tabs.height, 36, "Main navigation always stays on one line");
+        for (const entry of Schema.MAIN_TABS) {
+            const tab = findChild(studio, "mainTab_" + entry.id);
+            verify(tab !== null);
+            const scroller = findChild(studio, "mainTabScroller");
+            scroller.contentX = Math.max(0, Math.min(tab.x, scroller.contentWidth - scroller.width));
+            verify(waitForRendering(studio));
             mouseClick(tab);
-            compare(studio.currentTabIndex, index);
+            compare(studio.currentGroup, entry.id);
         }
-        if (data.tag === "normal")
-            compare(rows.length, 2);
+        studio.selectTab("viz");
+        for (const id of Schema.APPEARANCE_TABS) {
+            const tab = findChild(studio, "subTab_" + id);
+            verify(tab !== null);
+            const scroller = findChild(studio, "appearanceScroller");
+            scroller.contentX = Math.max(0, Math.min(tab.parent.x, scroller.contentWidth - scroller.width));
+            verify(waitForRendering(studio));
+            mouseClick(tab);
+            compare(studio.currentTab, id);
+        }
         verify(findChild(studio, "studioBody").y >= tabs.y + tabs.height);
     }
 
@@ -318,7 +351,7 @@ TestCase {
         const body = findChild(studio, "studioBody");
         const toggle = findChild(studio, "previewOptionsToggle");
         verify(toggle.visible);
-        verify(body.height >= 185, "Small dialogs must leave room for settings");
+        verify(body.height >= 140, "Small dialogs must leave room for settings below fixed navigation");
         const preview = findChild(studio, "previewWidget");
         verify(preview.scale >= 0.6, "Collapsed options leave a readable live preview");
         const collapsedHeight = body.height;
@@ -333,7 +366,7 @@ TestCase {
         verify(studio.anyResults);
     }
 
-    function test_savedLooksHaveTheirOwnTab_data() {
+    function test_savedLooksHaveTheirOwnSubpage_data() {
         return [
             {
                 tag: "narrow",
@@ -346,19 +379,19 @@ TestCase {
         ];
     }
 
-    function test_savedLooksHaveTheirOwnTab(data) {
+    function test_savedLooksHaveTheirOwnSubpage(data) {
         testCase.width = data.width;
         studio.presetFilter = "adaptive";
         verify(waitForRendering(studio));
         const looks = findChild(studio, "section_presets_0");
         const saved = findChild(studio, "section_saved_1");
-        verify(!saved.visible, "My presets has its own tab");
-        compare(findChild(studio, "userPresetName"), null);
+        verify(!saved.visible, "My presets is a subpage of Presets");
+
         const builtIn = findChild(studio, "preset_halo");
         verify(builtIn.visible);
         verify(builtIn.mapToItem(looks, 0, builtIn.height).y <= looks.height);
         studio.saveUserPreset("My look");
-        mouseClick(findChild(studio, "tabButton_" + tabIndex("saved")));
+        mouseClick(findChild(studio, "presetView_mine"));
         verify(waitForRendering(studio));
         verify(saved.visible && !looks.visible);
         compare(findChild(studio, "preset_halo"), null);

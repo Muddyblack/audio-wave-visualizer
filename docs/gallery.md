@@ -14,7 +14,7 @@ captures on a desktop, run
 
 ## Classic cards
 
-<img src="../readme/sheet-cards.png" width="848" alt="Classic cards — real QML screenshot">
+<img src="readme/sheet-cards.png" width="848" alt="Classic cards — real QML screenshot">
 
 - **Classic** — Exactly today’s defaults — nothing changes for current users.
 - **Glass Classic** — The layout people know, on a frosted card with a soft lift.
@@ -23,7 +23,7 @@ captures on a desktop, run
 
 ## Surfaces & players
 
-<img src="../readme/sheet-surfaces.png" width="848" alt="Surfaces & players — real QML screenshot">
+<img src="readme/sheet-surfaces.png" width="848" alt="Surfaces & players — real QML screenshot">
 
 - **Soft Solid** — Warm mineral surface and crisp dark text. No blur needed.
 - **CD Player** — Spinning disc art, squiggle seek bar, flips over for track details.
@@ -32,7 +32,7 @@ captures on a desktop, run
 
 ## Stacked glass
 
-<img src="../readme/sheet-stacked.png" width="768" alt="Stacked glass — real QML screenshot">
+<img src="readme/sheet-stacked.png" width="768" alt="Stacked glass — real QML screenshot">
 
 - **Liquid Glass** — Clear glass, a light rim that follows your pointer, colour from the cover.
 - **Quiet Glass** — Title leads, calm mirror bars, one soft accent, round play button.
@@ -41,7 +41,7 @@ captures on a desktop, run
 
 ## Posters & heroes
 
-<img src="../readme/sheet-posters.png" width="848" alt="Posters & heroes — real QML screenshot">
+<img src="readme/sheet-posters.png" width="848" alt="Posters & heroes — real QML screenshot">
 
 - **Poster** — The title set big, the music as a soft texture behind it, and a large clock.
 - **Poster · Hanging bars** — A centred two-line title with bars hanging from the top edge behind it.
@@ -50,7 +50,7 @@ captures on a desktop, run
 
 ## Orbits & lyrics
 
-<img src="../readme/sheet-orbits.png" width="888" alt="Orbits & lyrics — real QML screenshot">
+<img src="readme/sheet-orbits.png" width="888" alt="Orbits & lyrics — real QML screenshot">
 
 - **Orbit** — The cover is the centre; bars circle it, rotate slowly, and the cover breathes with the bass.
 - **Halo** — A spinning record inside a soft ribbon halo, with a progress ring. Iris palette.
@@ -59,7 +59,7 @@ captures on a desktop, run
 
 ## Slim & minimal
 
-<img src="../readme/sheet-minimal.png" width="1048" alt="Slim & minimal — real QML screenshot">
+<img src="readme/sheet-minimal.png" width="1048" alt="Slim & minimal — real QML screenshot">
 
 - **Slim Strip** — A wide, low bar for the bottom of the screen.
 - **Mirrored Minimal** — Art on the right, dotted progress, no card, controls on hover.
@@ -68,7 +68,7 @@ captures on a desktop, run
 
 ## Panel layouts
 
-<img src="../readme/sheet-panels.png" width="1328" alt="Panel layouts — real QML screenshot">
+<img src="readme/sheet-panels.png" width="1328" alt="Panel layouts — real QML screenshot">
 
 - **Panel Pill** — Clean text pill for Plasma panels. Static EQ — zero animation cost.
 - **Ribbon Pill** — A glowing silk ribbon living in the panel, Aurora palette.

@@ -30,7 +30,7 @@
 </p>
 
 <p align="center">
-  <img src="./readme/demo.svg" alt="Widget demo" width="680"/>
+  <img src="./docs/readme/demo.svg" alt="Widget demo" width="680"/>
 </p>
 
 
@@ -93,9 +93,9 @@ Presets are rendered side by side into one capture per family at 2× resolution 
 no rescaling, no collage afterwards. These captures use Qt’s software renderer;
 GPU-only blur, reflection and shader effects require an OpenGL capture.
 
-<img src="readme/sheet-cards.png" width="760" alt="Classic, Glass Classic, Cover Art and Neon Night">
+<img src="docs/readme/sheet-cards.png" width="760" alt="Classic, Glass Classic, Cover Art and Neon Night">
 
-<img src="readme/sheet-orbits.png" width="600" alt="Orbit, Halo, Sunburst and Lyrics only">
+<img src="docs/readme/sheet-orbits.png" width="600" alt="Orbit, Halo, Sunburst and Lyrics only">
 
 [Browse all 28 presets](docs/gallery.md) across seven sheets. Rebuild the gallery
 and that page with `make gallery`.
@@ -300,7 +300,7 @@ Open the widget's settings (right-click in Quickshell). The studio previews your
 changes while you edit; **Apply/OK** commits them and **Cancel** discards them.
 The charcoal interface uses Midnight Marina accents; widget colours are independent.
 
-<img src="readme/studio.png" width="760" alt="Settings studio">
+<img src="docs/readme/studio.png" width="760" alt="Settings studio">
 
 | Tab | Settings |
 |---|---|

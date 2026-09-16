@@ -64,7 +64,7 @@ Item {
             track: root.view.track
             positionUnitsPerSecond: root.view.positionUnitsPerSecond
             visualFrameTime: root.view.visualFrameTime
-            accentColor: root.view.waveColor
+            accentColor: root.view.progressWaveColor
             cornerRadius: art.shape === "circle" || art.disc ? (art.width + 6) / 2 : 13
         }
 

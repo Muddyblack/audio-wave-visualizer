@@ -99,6 +99,11 @@ var StudioCatalog = {
             "id": "audio",
             "label": "Audio",
             "icon": "M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"
+        },
+        {
+            "id": "about",
+            "label": "Info",
+            "icon": "M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 11v6M12 7.5v.5"
         }
     ],
     "theme": {

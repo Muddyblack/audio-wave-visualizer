@@ -94,6 +94,7 @@ const appName = d => d.t.app || 'Player';
 const lyricIndexAt = t => Math.min(t.lyrics.length - 1, Math.floor(P.pos / (t.len / t.lyrics.length)));
 const lyricAt = t => t.lyrics[lyricIndexAt(t)];
 
+let colorTime = 0;
 function derive(s, status) {
   const t = TRACKS[P.track];
   const hasPlayer = status !== 'idle';
@@ -103,13 +104,18 @@ function derive(s, status) {
   const ink = '#1e241d';
   const accent = s.accentFromArt ? t.pal.accent : s.useSystemAccent ? P.sysAccent : s.customColor;
   const text = s.useSystemText ? (light && s.autoContrast ? ink : '#eff0f1') : s.customTextColor;
-  const control = s.useSystemControls ? (light && s.autoContrast ? ink : '#ffffff') : s.customControlColor;
+  const baseControl = s.useSystemControls ? (light && s.autoContrast ? ink : '#ffffff') : s.customControlColor;
   const dock = s.useSystemDockBg ? (light ? '#2a33241a' : '#00000047') : `color-mix(in srgb,${s.customDockBgColor} 55%,transparent)`;
-  const pg1 = s.useSystemControls ? accent : control;
-  const pg2 = s.useSystemControls ? (light ? accent : '#ffffff') : control;
-  return { t, hasPlayer, playing, surf, light, accent, text, control, dock, pg1, pg2 };
+  const stops = s.controlsColorSource === 'visualizer' || s.progressColorSource === 'visualizer'
+    ? WaveMath.colorStops(accent, s.vizColorMode, s.vizPalette, t.pal.p1, t.pal.p2, s.hueReactive, bands(colorTime).high, colorTime, s.reducedMotion) : [accent];
+  const linked = ColourStyle.resolve(s, accent, baseControl, s.useSystemControls ? accent : baseControl,
+    s.useSystemControls ? (light ? accent : '#ffffff') : baseControl, stops);
+  const control = ColourStyle.hex(linked.control), controlAccent = ColourStyle.hex(linked.controlAccent);
+  const progress = ColourStyle.hex(linked.progressWave), pg1 = ColourStyle.hex(linked.start), pg2 = ColourStyle.hex(linked.end);
+  const pgStops = linked.progressStops.map(ColourStyle.hex);
+  return { t, hasPlayer, playing, surf, light, accent, text, control, controlAccent, progress, dock, pg1, pg2, pgStops };
 }
-const colorVars = d => `--accent:${d.accent};--text:${d.text};--control:${d.control};--dock:${d.dock};--pg1:${d.pg1};--pg2:${d.pg2};`;
+const colorVars = d => `--accent:${d.accent};--text:${d.text};--control:${d.control};--control-accent:${d.controlAccent};--progress:${d.progress};--dock:${d.dock};--pg1:${d.pg1};--pg2:${d.pg2};${d.pgStops.length ? `--pg-fill:linear-gradient(90deg,${(d.pgStops.length === 1 ? [d.pgStops[0], d.pgStops[0]] : d.pgStops).join(',')});--ring-fill:conic-gradient(${d.pgStops.map((c,i) => `${c} calc(var(--p) * ${i / Math.max(1,d.pgStops.length-1)*360}deg)`).join(',')},#ffffff26 0);` : ''}`;
 
 function artHTML(s, d, size, o) {
   const shape = s.artShape, cls = ['art', shape, 'b-' + s.artBorder];
@@ -332,6 +338,7 @@ let registry = [];
 const memo = new Map();
 function mount(container, html, cfg) {
   container.innerHTML = html;
+  $$('.w', container).forEach(el => { el._studioState = cfg.getS; el._studioStatus = cfg.getStatus; });
   $$('canvas[data-c]', container).forEach((el, i) => registry.push({ el, kind: el.dataset.c, ...cfg, key: `${cfg.key}:${el.dataset.c}:${i}` }));
 }
 function prepCanvas(e) {
@@ -558,14 +565,14 @@ function drawSeek(e, t) {
     const n = Math.floor(w / 5), hs = seedHeights(d.t.title + d.t.artist, n);
     for (let i = 0; i < n; i++) {
       const x = i * 5, played = x + 1.5 < px, bh = Math.max(2, hs[i] * h * (played ? 1 : .45));
-      ctx.fillStyle = played ? hexRgba(d.accent, .9) : hexRgba(d.text, .25);
+      ctx.fillStyle = played ? (d.pgStops.length ? paintFor(ctx, d.pgStops, Math.max(1, px)) : hexRgba(d.progress, .9)) : hexRgba(d.text, .25);
       ctx.beginPath(); rr(ctx, x, (h - bh) / 2, 3, bh, 1.5); ctx.fill();
     }
     if (prog > 0 && prog < 1) { ctx.fillStyle = hexRgba(d.control, .95); ctx.fillRect(px - 1, 0, 2, h); }
   } else if (style === 5) {
     st.amp += ((d.playing && !s.reducedMotion ? 2.2 : 0) - st.amp) * .1;
     ctx.lineWidth = 2; ctx.lineCap = 'round';
-    ctx.strokeStyle = hexRgba(d.pg1, 1); ctx.beginPath();
+    ctx.strokeStyle = d.pgStops.length ? paintFor(ctx, d.pgStops, Math.max(1, px)) : hexRgba(d.pg1, 1); ctx.beginPath();
     for (let x = 1; x <= px; x += 1) { const y = h / 2 + Math.sin(x * .38 - t * 6) * st.amp; x > 1 ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
     ctx.stroke();
     ctx.strokeStyle = hexRgba(d.text, .25); ctx.beginPath(); ctx.moveTo(Math.min(w - 1, px + 5), h / 2); ctx.lineTo(w - 1, h / 2); ctx.stroke();
@@ -573,7 +580,7 @@ function drawSeek(e, t) {
   } else {
     for (let x = 3; x < w; x += 6) {
       const played = x < px;
-      ctx.fillStyle = played ? d.accent : hexRgba(d.text, .3);
+      ctx.fillStyle = played ? (d.pgStops.length ? paintFor(ctx, d.pgStops, Math.max(1, px)) : d.progress) : hexRgba(d.text, .3);
       ctx.beginPath(); ctx.arc(x, h / 2, played ? 1.6 : 1.1, 0, 7); ctx.fill();
     }
     ctx.fillStyle = d.control; ctx.beginPath(); ctx.arc(Math.max(3, Math.min(w - 3, px)), h / 2, 3.2, 0, 7); ctx.fill();
@@ -584,6 +591,7 @@ let lastT = performance.now();
 function frame(now) {
   const dt = Math.min(.1, (now - lastT) / 1000); lastT = now;
   const t = now / 1000;
+  colorTime = t;
   if (P.playing && stageStatus !== 'idle' && stageStatus !== 'paused') {
     P.pos += dt;
     if (P.pos >= TRACKS[P.track].len) { P.pos = 0; if (!P.repeat) P.track = (P.track + 1) % TRACKS.length; renderPlayers(); }
@@ -599,7 +607,18 @@ function frame(now) {
   }
   const tr = TRACKS[P.track], prog = String(P.pos / tr.len), txt = fmtTime(P.pos), rem = '-' + fmtTime(tr.len - P.pos), ly = lyricAt(tr);
   const bass = P.playing && stageStatus !== 'idle' ? bands(t).bass : 0;
-  $$('.w').forEach(el => el.style.setProperty('--p', prog));
+  $$('.w').forEach(el => {
+    el.style.setProperty('--p', prog);
+    if (!el._studioState) return;
+    const state = el._studioState();
+    if (state.controlsColorSource !== 'visualizer' && state.progressColorSource !== 'visualizer') return;
+    const d = derive(state, el._studioStatus());
+    // Keep markup and playback controls intact while updating animated colours.
+    for (const declaration of colorVars(d).split(';')) {
+      const colon = declaration.indexOf(':');
+      if (colon !== -1) el.style.setProperty(declaration.slice(0, colon), declaration.slice(colon + 1));
+    }
+  });
   $$('.w.bass').forEach(el => el.style.setProperty('--bass', bass.toFixed(3)));
   $$('.w [data-el]').forEach(el => { if (el.textContent !== txt) el.textContent = txt; });
   $$('.w [data-rem]').forEach(el => { if (el.textContent !== rem) el.textContent = rem; });
@@ -760,7 +779,7 @@ document.addEventListener('pointermove', e => {
 });
 
 /* ─── presets ──────────────────────────────────────────────────── */
-const FILTERS = [['all', 'All'], ['current', 'Today’s options'], ['desktop', 'Desktop'], ['panel', 'Panel'], ['glass', 'Glass'], ['adaptive', 'Adaptive colour']];
+const FILTERS = Schema.FILTERS;
 $('#filters').innerHTML = FILTERS.map(([k, l]) => `<button data-f="${k}" aria-pressed="${k === presetFilter}">${l}</button>`).join('');
 $('#filters').addEventListener('click', e => {
   const b = e.target.closest('[data-f]'); if (!b) return;
@@ -827,7 +846,7 @@ $('#presets').addEventListener('click', e => {
 let keepColors = false, pickFilter = 'all', playerRev = 0, presetDirty = false;
 
 function applyPreset(p) {
-  const next = { ...DEFAULTS, ...p.s };
+  const next = { ...DEFAULTS, ...p.s, autoDailyLook: S.autoDailyLook, dailyLookApplied: S.dailyLookApplied };
   if (keepColors) for (const k of COLOR_KEYS) next[k] = S[k];
   for (const k of Object.keys(HYPR)) next[k] = S[k];
   next.hAnchor = S.hAnchor;
@@ -853,29 +872,99 @@ function fillGrid(grid, list, keyPrefix, extraFn) {
 }
 function activateOnKey(grid, find) {
   grid.addEventListener('keydown', e => {
-    if (e.key !== 'Enter' && e.key !== ' ') return;
+    if (e.target.closest('button') || (e.key !== 'Enter' && e.key !== ' ')) return;
     const t = e.target.closest('[data-pid]'); if (!t) return;
     e.preventDefault(); applyPreset(find(t.dataset.pid));
   });
 }
 
+function dailyPreset() {
+  const p = Schema.dailyLook(Schema.localDay());
+  return {...p, s: PresetCodec.browser(p.s)};
+}
+function savedPresets() { return loadUser().map(p => ({...p, bd: 'breeze', cat: ['mine']})); }
+function favoriteIds() { try { return Schema.favoriteIds(localStorage.getItem('pav-favorites')); } catch (_) { return []; } }
+function favoriteButton(p) {
+  const on = favoriteIds().includes(p.id);
+  return `<button class="favorite" data-favorite="${esc(p.id)}" aria-label="${on ? 'Remove from' : 'Add to'} favourites" aria-pressed="${on}">${on ? '★' : '☆'}</button>`;
+}
+function saveDaily() {
+  const p = dailyPreset(), all = loadUser();
+  if (!all.some(u => u.id === p.id)) { all.push({id:p.id, name:p.name, s:p.s}); saveUser(all); }
+}
+function toggleFavorite(id) {
+  if (id === dailyPreset().id) saveDaily();
+  const ids = favoriteIds();
+  try { localStorage.setItem('pav-favorites', JSON.stringify(ids.includes(id) ? ids.filter(x => x !== id) : [...ids, id])); }
+  catch (error) { toast('Could not save favourites in this browser'); }
+  syncSettings();
+}
+const projectCounts = {};
+function renderProjectInfo(el) {
+  el.innerHTML = `<div class="project-info">
+    <div class="project-heading"><img src="assets/studio/icon.png" alt="Plasma Audio Visualizer project icon"><h3>${ProjectInfo.name}</h3></div>
+    <div class="project-author"><span class="profile-image"><span aria-hidden="true">M</span><img alt="Muddyblack’s profile picture" hidden></span><div><a href="${ProjectInfo.profile}" target="_blank" rel="noopener">Created by ${ProjectInfo.author} ↗</a></div></div>
+    <p>An open-source music visualizer for Plasma and Hyprland. Explore the project, get updates, or help improve it.</p>
+    <div class="project-links">${ProjectInfo.links.map(([label, url]) => `<a class="ghost-link" href="${url}" target="_blank" rel="noopener">${label} ↗</a>`).join('')}</div>
+    <div class="project-stats">${ProjectInfo.statistics.map(stat => `<div data-project-stat="${stat.id}" hidden><b></b><span>${stat.label}</span></div>`).join('')}</div>
+    <p>Enjoying the visualizer? A star on GitHub helps others discover it. Thank you for supporting the project.</p>
+    <a class="ghost-link star-link" href="${ProjectInfo.repository}" target="_blank" rel="noopener">☆ Star on GitHub ↗</a>
+    <p>Have a design idea? Open an issue — I might add it. A sketch, mockup, or annotated screenshot helps explain what you have in mind.</p>
+    <a class="ghost-link" href="${ProjectInfo.repository}/issues/new" target="_blank" rel="noopener">Suggest a design ↗</a></div>`;
+  const avatar = $('.profile-image img', el);
+  avatar.onload = () => { avatar.hidden = false; };
+  avatar.onerror = () => { avatar.hidden = true; };
+  return () => {
+    if (activeTab !== 'about' && !query) return;
+    if (!avatar.hasAttribute('src')) avatar.src = ProjectInfo.avatar;
+    for (const stat of ProjectInfo.statistics) {
+      const item = $(`[data-project-stat="${stat.id}"]`, el), value = projectCounts[stat.id];
+      item.hidden = !value;
+      $('b', item).textContent = value || '';
+    }
+  };
+}
+
 function renderPresetPicker(el) {
-  el.innerHTML = `<div class="pp-top"><div class="seg">${FILTERS.map(([k, l]) => `<button data-pf="${k}">${l}</button>`).join('')}</div><label class="keep"><input type="checkbox" class="switch" data-keep>Keep my colours</label></div><div class="pp-grid"></div>`;
+  el.innerHTML = `<div class="pp-top"><select class="sel" data-preset-category aria-label="Preset category">${FILTERS.map(([k, l]) => `<option value="${k}">${k === 'all' ? 'All categories' : l}</option>`).join('')}</select><label class="keep"><input type="checkbox" class="switch" data-keep>Keep my colours</label></div>
+    <p class="rd" data-daily-note hidden></p><div class="pp-grid"></div>
+    <button class="ghost" data-save-daily hidden>Save today’s look</button>
+    <label class="keep daily-auto" data-auto-row hidden><input type="checkbox" class="switch" data-auto-daily>Apply today’s look automatically</label>
+    <p class="rd" data-auto-note hidden>Once per day when opened or left running. Manual changes stay until tomorrow. In this web studio, this affects only this browser.</p>`;
   const grid = $('.pp-grid', el);
   let builtFor = '';
-  const find = id => PRESETS.find(p => p.id === id);
-  $$('[data-pf]', el).forEach(b => b.onclick = () => { pickFilter = b.dataset.pf; syncSettings(); });
+  const list = () => pickFilter === 'daily' ? [dailyPreset()] : pickFilter === 'favorites'
+    ? [...PRESETS, ...savedPresets()].filter(p => favoriteIds().includes(p.id))
+    : PRESETS.filter(p => pickFilter === 'all' || p.cat.includes(pickFilter));
+  const find = id => list().find(p => p.id === id);
+  $('[data-preset-category]', el).onchange = e => { pickFilter = e.target.value; syncSettings(); };
   $('[data-keep]', el).onchange = e => { keepColors = e.target.checked; };
-  grid.addEventListener('click', e => { const t = e.target.closest('[data-pid]'); if (t) applyPreset(find(t.dataset.pid)); });
+  $('[data-save-daily]', el).onclick = () => { saveDaily(); syncSettings(); toast('Saved to My presets'); };
+  $('[data-auto-daily]', el).onchange = e => { S.autoDailyLook = e.target.checked; save(); checkDailyLook(); syncSettings(); };
+  grid.addEventListener('click', e => {
+    const star = e.target.closest('[data-favorite]');
+    if (star) { toggleFavorite(star.dataset.favorite); return; }
+    const t = e.target.closest('[data-pid]'); if (t) applyPreset(find(t.dataset.pid));
+  });
   activateOnKey(grid, find);
   return () => {
-    const want = pickFilter + ':' + playerRev;
+    const want = pickFilter + ':' + playerRev + ':' + Schema.localDay() + ':' + JSON.stringify(favoriteIds()) + ':' + JSON.stringify(loadUser());
     if (builtFor !== want) {
       builtFor = want;
-      fillGrid(grid, PRESETS.filter(p => pickFilter === 'all' || p.cat.includes(pickFilter)), 'pick-', p => p.cat.includes('current') ? '<span class="new exist">Today</span>' : '');
+      fillGrid(grid, list(), 'pick-', favoriteButton);
+      if (!list().length) grid.innerHTML = '<p class="rd">Star a built-in or saved look to find it here.</p>';
     }
-    $$('[data-pf]', el).forEach(b => b.setAttribute('aria-pressed', b.dataset.pf === pickFilter));
+    $('[data-preset-category]', el).hidden = ['daily', 'favorites'].includes(pickFilter);
+    $('[data-preset-category]', el).value = pickFilter;
     $('[data-keep]', el).checked = keepColors;
+    $('[data-daily-note]', el).hidden = pickFilter !== 'daily';
+    $('[data-daily-note]', el).textContent = dailyPreset().note + '. One look all day. Save it to keep it.';
+    $('[data-save-daily]', el).hidden = pickFilter !== 'daily';
+    $('[data-save-daily]', el).disabled = loadUser().some(p => p.id === dailyPreset().id);
+    $('[data-auto-row]', el).hidden = pickFilter !== 'daily';
+    $('[data-auto-note]', el).hidden = pickFilter !== 'daily';
+    $('[data-auto-daily]', el).checked = !!S.autoDailyLook;
+    $$('[data-pf]', el).forEach(b => b.setAttribute('aria-pressed', b.dataset.pf === pickFilter));
     $$('[data-pid]', grid).forEach(t => t.setAttribute('aria-pressed', t.dataset.pid === activePreset && !presetDirty));
   };
 }
@@ -885,10 +974,12 @@ const saveUser = list => { try { localStorage.setItem('pav-user-presets', JSON.s
 const diffOf = st => PresetCodec.browser(PresetCodec.decode(PresetCodec.encode('Saved look', st, LOOK_DEFAULTS, true), LOOK_DEFAULTS, false).settings);
 
 function renderUserPresets(el) {
-  el.innerHTML = `<div class="pp-grid"></div>
+  el.innerHTML = `<div class="pp-top"><label class="keep"><input type="checkbox" class="switch" data-keep>Keep my colours</label></div><div class="pp-grid"></div>
     <div class="saverow"><input placeholder="Name this look…" maxlength="32" aria-label="Preset name"><button class="primary" data-save>Save current</button></div>
-    <div class="saverow"><button class="ghost" data-export>Copy current as JSON</button><button class="ghost" data-import>Import JSON…</button></div>`;
-  const grid = $('.pp-grid', el), name = $('input', el);
+    <div class="saverow"><button class="ghost" data-export>Copy current as JSON</button><button class="ghost" data-import>Import JSON…</button></div>
+    <p class="rd share-help">To share a saved look, select it, then Copy current as JSON. Others can use Import JSON. Custom QML files are not included. To suggest a built-in preset for everyone, contribute the JSON and a screenshot in a pull request. <a href="${Schema.SHARE_URL}" target="_blank" rel="noopener">How to contribute ↗</a></p>`;
+  const grid = $('.pp-grid', el), name = $('.saverow input', el);
+  $('[data-keep]', el).onchange = e => { keepColors = e.target.checked; };
   let builtFor = '';
   const list = () => loadUser().map(u => ({ ...u, bd: 'breeze', cat: ['mine'] }));
   const find = id => list().find(u => u.id === id);
@@ -913,14 +1004,17 @@ function renderUserPresets(el) {
     } catch (e) { toast(e.message || 'That is not a valid look'); }
   };
   grid.addEventListener('click', e => {
+    const star = e.target.closest('[data-favorite]');
+    if (star) { toggleFavorite(star.dataset.favorite); return; }
     const del = e.target.closest('[data-del]');
     if (del) { e.stopPropagation(); saveUser(loadUser().filter(u => u.id !== del.dataset.del)); syncSettings(); return; }
     const t = e.target.closest('[data-pid]'); if (t) applyPreset(find(t.dataset.pid));
   });
   activateOnKey(grid, find);
   return () => {
-    const L = list(), want = L.map(u => u.id).join() + ':' + playerRev;
-    if (builtFor !== want) { builtFor = want; fillGrid(grid, L, 'mine-', u => `<button class="del" data-del="${u.id}" aria-label="Delete ${esc(u.name)}">×</button>`); }
+    $('[data-keep]', el).checked = keepColors;
+    const L = list(), want = JSON.stringify(L) + ':' + playerRev + ':' + JSON.stringify(favoriteIds());
+    if (builtFor !== want) { builtFor = want; fillGrid(grid, L, 'mine-', u => `${favoriteButton(u)}<button class="del" data-del="${u.id}" aria-label="Delete ${esc(u.name)}">×</button>`); }
     $$('[data-pid]', grid).forEach(t => t.setAttribute('aria-pressed', t.dataset.pid === activePreset && !presetDirty));
   };
 }
@@ -931,7 +1025,7 @@ function renderDiagSVG(k) {
   return shapes.map(s => `<${s.tag} class="${s.cls || ''}" ${Object.entries(s).filter(([attr]) => attr !== 'tag' && attr !== 'cls').map(([attr, val]) => `${attr}="${val}"`).join(' ')}/>`).join('');
 }
 const diag = k => `<svg class="diag" viewBox="0 0 64 36" aria-hidden="true">${renderDiagSVG(k)}</svg>`;
-const TABS = StudioCatalog.tabs.filter(tab => !tab.nativeOnly).map(tab => ({ ...tab, ic: `<path d="${tab.icon}"/>` }));
+const TABS = Schema.MAIN_TABS.filter(tab => !tab.nativeOnly).map(tab => ({ ...tab, ic: `<path d="${tab.icon}"/>` }));
 
 function platformNote(topic) {
   const kde = env === 'kde';
@@ -1048,6 +1142,8 @@ function buildRow(r) {
     };
   } else if (r.type === 'presets') {
     sync = renderPresetPicker(el);
+  } else if (r.type === 'projectInfo') {
+    sync = renderProjectInfo(el);
   } else if (r.type === 'userPresets') {
     sync = renderUserPresets(el);
   } else if (r.type === 'note') {
@@ -1070,6 +1166,7 @@ function buildRow(r) {
 function renderSettings() {
   $('#tabs').innerHTML = TABS.map(t => `<button role="tab" data-tab="${t.id}" aria-selected="${t.id === activeTab}"><svg viewBox="0 0 24 24">${t.ic}</svg>${t.label}</button>`).join('');
   const body = $('#pbody');
+  if (!$('#subtabs')) $('#tabs').insertAdjacentHTML('afterend', '<div id="subtabs" class="studio-subtabs"></div>');
   body.innerHTML = '';
   rows = [];
   for (const sec of Schema.SECTIONS) {
@@ -1101,11 +1198,30 @@ function syncSettings() {
     if (!sec.hidden) any = true;
   });
   $('.empty-search').hidden = any;
-  $$('#tabs [data-tab]').forEach(b => b.setAttribute('aria-selected', !q && b.dataset.tab === activeTab));
+  const group = Schema.tabGroup(activeTab);
+  $$('#tabs [data-tab]').forEach(b => b.setAttribute('aria-selected', !q && b.dataset.tab === group));
+  const sub = $('#subtabs');
+  sub.hidden = !!q || !['presets', 'appearance'].includes(group);
+  const choices = group === 'presets' ? Schema.PRESET_VIEWS : StudioCatalog.tabs.filter(t => Schema.APPEARANCE_TABS.includes(t.id)).map(t => [t.id, t.label, t.icon]);
+  const selected = group === 'presets' ? activeTab === 'saved' ? 'mine' : ['daily', 'favorites'].includes(pickFilter) ? pickFilter : 'all' : activeTab;
+  const signature = group + ':' + selected;
+  if (sub.dataset.signature !== signature) {
+    sub.dataset.signature = signature;
+    sub.innerHTML = `<div class="seg">${choices.map(([id, label, icon]) => `<button data-sub="${id}" aria-pressed="${id === selected}">${icon ? `<svg viewBox="0 0 24 24" aria-hidden="true"><path d="${icon}"/></svg>` : ""}${label}</button>`).join('')}</div>`;
+    sub.onclick = e => {
+      const button = e.target.closest('[data-sub]'); if (!button) return;
+      if (group === 'presets') { pickFilter = button.dataset.sub; activeTab = pickFilter === 'mine' ? 'saved' : 'presets'; }
+      else activeTab = button.dataset.sub;
+      $('#pbody').scrollTop = 0; syncSettings();
+    };
+    const keep = $('[data-keep]', sub);
+    if (keep) keep.onchange = e => { keepColors = e.target.checked; };
+  }
+  if ($('[data-keep]', sub)) $('[data-keep]', sub).checked = keepColors;
 }
 $('#tabs').addEventListener('click', e => {
   const b = e.target.closest('[data-tab]'); if (!b) return;
-  activeTab = b.dataset.tab; query = ''; $('#search').value = ''; syncSettings();
+  activeTab = b.dataset.tab === 'appearance' ? 'viz' : b.dataset.tab; query = ''; $('#pbody').scrollTop = 0; $('#search').value = ''; syncSettings();
 });
 $('#search').addEventListener('input', e => { query = e.target.value; syncSettings(); });
 document.addEventListener('keydown', e => {
@@ -1139,7 +1255,7 @@ $('#copyCfg').onclick = async () => {
 $('#resetAll').onclick = () => { S = structuredClone(DEFAULTS); activePreset = 'classic'; onChange(); renderPresets(); toast('Back to the shipped defaults'); };
 $('#shuffle').onclick = () => {
   const pick = a => a[Math.floor(Math.random() * a.length)], coin = p => Math.random() < p;
-  S = { ...DEFAULTS,
+  S = { ...DEFAULTS, autoDailyLook: S.autoDailyLook, dailyLookApplied: S.dailyLookApplied,
     layoutMode: pick(['classic', 'classic', 'mirrored', 'inline', 'hero', 'stacked', 'strip', 'pill', 'orbit', 'orbit', 'poster', 'lyrics']), vizDirection: pick(['up', 'up', 'down']), orbitStyle: pick(['bars', 'wave', 'dots', 'ribbon', 'sparks']), visualizerType: Math.floor(Math.random() * VIZ.length), progressBarStyle: Math.floor(Math.random() * PBS.length),
     showBg: coin(.8), surfaceStyle: pick(['color', 'art', 'glass', 'liquid', 'atmosphere', 'solid']), bgRadius: pick([10, 14, 18, 22, 26]),
     artShape: pick(['sharp', 'rounded', 'squircle', 'circle', 'vinyl', 'cd']), dockStyle: pick(['glass', 'bare', 'accent']),
@@ -1154,27 +1270,20 @@ $('#stats').innerHTML = [[VIZ.length, 'visualizers'], [PBS.length, 'progress bar
 
 // Shields uses the same download sources as the README and supports browser requests.
 async function loadProjectCounts() {
-  const kdeQuery = new URLSearchParams({
-    url: 'https://api.pling.com/ocs/v1/content/data?search=audio+wave+visualizer&format=json',
-    query: '$.data[0].downloads', label: 'Downloads'
-  });
-  const sources = {
-    stars: 'https://img.shields.io/github/stars/Muddyblack/kde-audio-visualizer.json',
-    downloads: 'https://img.shields.io/github/downloads/Muddyblack/kde-audio-visualizer/total.json',
-    kde: `https://img.shields.io/badge/dynamic/json.json?${kdeQuery}`
-  };
+  const sources = Object.fromEntries(ProjectInfo.statistics.map(stat => [stat.id, stat.url]));
   await Promise.allSettled(Object.entries(sources).map(async ([key, url]) => {
     try {
       const response = await fetch(url, {signal: AbortSignal.timeout(8000)});
       if (!response.ok) return;
-      const badge = await response.json();
-      const count = String(badge.value ?? '').trim();
-      if (badge.isError || !/^\d[\d,. ]*[kmbt]?\+?$/i.test(count)) return;
+      const count = ProjectInfo.count(await response.text());
+      if (!count) return;
+      projectCounts[key] = count;
       $$(`[data-count="${key}"]`).forEach(node => {
         node.textContent = count;
         node.setAttribute('aria-label', `${count} ${key === 'stars' ? 'stars' : 'downloads'}`);
       });
-    } catch (_) { /* Keep unavailable counts neutral; links remain usable. */ }
+      syncSettings();
+    } catch (_) { /* Keep unavailable counts hidden; links remain usable. */ }
   }));
 }
 loadProjectCounts();
@@ -1195,7 +1304,21 @@ function onChange() {
 }
 function renderPlayers() { playerRev++; renderMain(); renderPresets(); renderHero(); syncSettings(); }
 
+function checkDailyLook() {
+  const next = Schema.dailyUpdate(LOOK_DEFAULTS, nativeState(S), Schema.localDay());
+  if (!next) return;
+  S = PresetCodec.browser(next);
+  activePreset = dailyPreset().id;
+  presetDirty = false;
+  onChange();
+}
+setInterval(() => { checkDailyLook(); syncSettings(); }, 30000);
+document.addEventListener('visibilitychange', () => {
+  if (!document.hidden) { checkDailyLook(); syncSettings(); }
+});
+
 renderSettings();
+checkDailyLook();
 onChange();
 renderPresets();
 renderHero();

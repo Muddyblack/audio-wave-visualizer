@@ -100,6 +100,46 @@ TestCase {
         verify(subject !== null);
         waitForRendering(subject);
     }
+    function test_sharedColourModeReachesProgressAndControls_data() {
+        return [0, 1, 2, 3, 4, 5, 6, 7, 8, 10].map(style => ({
+                    tag: "progress-" + style,
+                    style: style
+                }));
+    }
+    function test_sharedColourModeReachesProgressAndControls(data) {
+        failOnWarning(/ReferenceError|TypeError|undefined/);
+        subject.configuration = Object.assign({}, defaults, {
+            progressBarStyle: data.style,
+            progressColorSource: "visualizer",
+            controlsColorSource: "visualizer",
+            vizColorMode: "rainbow",
+            showArtThumb: true,
+            showSkipButtons: true,
+            reducedMotion: false
+        });
+        backend.frameTimeMs = 1000;
+        verify(waitForRendering(subject));
+        compare(subject.progressColors.length, 6);
+        verify(Qt.colorEqual(subject.controlColor, subject.progressColors[0]));
+        verify(Qt.colorEqual(subject.pgStartColor, subject.progressColors[0]));
+        const initial = subject.controlColor.toString();
+        backend.frameTimeMs = 2500;
+        verify(waitForRendering(subject));
+        verify(subject.controlColor.toString() !== initial, "Rainbow animates controls and progress together");
+        subject.configuration = Object.assign({}, subject.configuration, {
+            reducedMotion: true
+        });
+        const still = subject.controlColor.toString();
+        backend.frameTimeMs = 3500;
+        compare(subject.controlColor.toString(), still, "Reduced motion freezes shared rainbow colours");
+        subject.configuration = Object.assign({}, subject.configuration, {
+            progressColorSource: "custom",
+            customProgressColor: "#123456",
+            controlsColorSource: "legacy"
+        });
+        verify(Qt.colorEqual(subject.progressWaveColor, "#123456"));
+        verify(Qt.colorEqual(subject.controlColor, "#ffffff"));
+    }
     function test_progressWheelSeeksWithoutChangingVolume() {
         subject.configuration = Object.assign({}, defaults, {
             scrollVolume: true,

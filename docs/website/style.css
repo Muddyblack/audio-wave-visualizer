@@ -95,7 +95,7 @@ h1 span{background:linear-gradient(100deg,var(--brand),#9fc3e6 70%);-webkit-back
 .search kbd{font:10px Inter,sans-serif;border:1px solid var(--line2);border-radius:4px;padding:1px 5px;color:var(--dim)}
 .ghost{background:none;border:1px solid var(--line2);border-radius:10px;height:36px;padding:0 12px;font-size:11.5px;color:var(--muted);white-space:nowrap}
 .ghost:hover{color:var(--text);background:var(--studio-hover)}
-.tabs{display:flex;flex-wrap:wrap;gap:2px;padding:12px 12px 0;border-bottom:1px solid var(--line)}
+.tabs{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:2px;padding:12px 12px 0;border-bottom:1px solid var(--line)}
 .tabs::-webkit-scrollbar{display:none}
 .tabs button{position:relative;display:flex;align-items:center;gap:6px;background:none;border:0;padding:10px 10px 12px;font-size:12.5px;color:var(--muted);white-space:nowrap}
 .tabs button svg{width:15px;height:15px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -296,7 +296,7 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:20px 32px;max-wi
 .art.empty.fb-gradient{background:linear-gradient(135deg,hsl(var(--fh) 70% 60%),hsl(calc(var(--fh) + 60) 70% 35%))}
 .art.empty.fb-letters{background:linear-gradient(135deg,#ffffff1f,var(--studio-hover))}
 .art.empty b{font-size:calc(var(--a)*.36);font-weight:700;letter-spacing:-.5px;opacity:.8}
-.artwrap .rg{position:absolute;inset:-4px;border-radius:14px;padding:2px;background:conic-gradient(var(--accent) calc(var(--p)*360deg),#ffffff26 0);-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.artwrap .rg{position:absolute;inset:-4px;border-radius:14px;padding:2px;background:var(--ring-fill,conic-gradient(var(--progress,var(--accent)) calc(var(--p)*360deg),#ffffff26 0));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
 .artwrap.round .rg{border-radius:50%}
 .artwrap.sq .rg{border-radius:32%}
 
@@ -308,10 +308,10 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:20px 32px;max-wi
 .dock button.play{width:26px;opacity:.9}
 .dock svg{width:12px;height:12px;fill:currentColor}
 .dock button.xs{opacity:.45}.dock button.xs svg{width:10px;height:10px}
-.dock button.xs.on{opacity:1;color:var(--accent)}
+.dock button.xs.on{opacity:1;color:var(--control-accent,var(--accent))}
 .dock.bare{background:none;border-color:transparent;box-shadow:none;min-width:0}
 .dock.accent{background:none;border-color:transparent;box-shadow:none;gap:5px;min-width:0}
-.dock.accent .play{width:24px;height:24px;border-radius:50%;background:var(--accent);color:#11140f;opacity:1;box-shadow:0 2px 8px color-mix(in srgb,var(--accent) 45%,transparent)}
+.dock.accent .play{width:24px;height:24px;border-radius:50%;background:var(--control-accent,var(--accent));color:#11140f;opacity:1;box-shadow:0 2px 8px color-mix(in srgb,var(--accent) 45%,transparent)}
 .dock.accent .play svg{width:10px;height:10px}
 .dock.hover{opacity:0;transform:translateY(3px)}
 .w:hover .dock.hover{opacity:1;transform:none}
@@ -567,3 +567,52 @@ footer a:hover{color:var(--text);text-decoration:underline}
 .hwrap .icon-link:hover{color:var(--text);background:var(--studio-hover)}
 .hwrap .icon-link svg{width:14px;height:14px;fill:currentColor}
 
+
+/* Preset library and grouped Studio navigation. */
+.studio-subtabs{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
+.studio-subtabs .seg{flex-wrap:wrap}
+.pp .favorite{position:absolute;top:9px;left:9px;z-index:3;width:26px;height:26px;border-radius:7px;border:0;background:#101214dd;color:white;font-size:18px;line-height:1}
+.pp .favorite[aria-pressed=true]{color:var(--brand)}
+.pp .favorite:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.share-help{margin-top:14px;line-height:1.6}
+.share-help a{color:var(--brand)}
+.daily-auto{margin-top:14px}
+
+.studio-subtabs button{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.studio-subtabs button svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+
+/* Keep navigation visible while the settings themselves scroll. */
+.studio > .panel{display:flex;flex-direction:column;max-height:calc(100dvh - 110px);position:sticky;top:80px}
+.studio > .panel > .phead,.studio > .panel > .tabs,.studio-subtabs{flex-shrink:0}
+.studio > .panel > .pbody{overflow-y:auto;min-height:0;overscroll-behavior:contain}
+.studio-subtabs:has([data-sub="viz"]){padding:10px 18px;flex-wrap:nowrap;overflow-x:auto}
+.studio-subtabs:has([data-sub="viz"]) .seg{flex-wrap:nowrap;flex-shrink:0}
+.studio-subtabs button{min-height:28px}
+@media(max-width:700px){.studio > .panel{position:relative;top:auto;max-height:80dvh}}
+
+.studio-subtabs{padding:10px 18px;flex-wrap:nowrap;overflow-x:auto}
+.studio-subtabs .seg{flex-wrap:nowrap;flex-shrink:0}
+.pp-top .keep{margin-left:auto}
+.sec[data-tab="presets"]>h4,.sec[data-tab="saved"]>h4{display:none}
+.sec[data-tab="presets"]>.card,.sec[data-tab="saved"]>.card{background:none;border:0;padding:0}
+
+.project-info{width:100%;display:grid;gap:18px;color:var(--muted);font-size:12px;line-height:1.6}
+.project-info p{margin:0}
+.project-author{display:flex;gap:14px;align-items:center}
+.project-author h3{margin:0;color:var(--text);font-size:18px}
+.project-author a{color:var(--brand)}
+.profile-image{position:relative;width:64px;height:64px;flex-shrink:0;border-radius:50%;overflow:hidden;background:var(--sunk);display:grid;place-items:center;color:var(--brand);font-size:28px}
+.profile-image img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.project-links,.project-stats{display:flex;gap:12px;flex-wrap:wrap}
+.project-stats>div{display:flex;flex-direction:column}
+.project-stats b{color:var(--text);font-size:22px}
+.project-info>.star-link{justify-self:start}
+
+/* Linked progress colours follow the same stops as the visualizer. */
+.w[style*="--pg-fill"] .pb .fill{background:var(--pg-fill)}
+.w[style*="--pg-fill"] .pb6 .fill{mask-image:repeating-linear-gradient(90deg,#000 0 7px,transparent 7px 9px)}
+
+.project-heading{display:flex;align-items:center;gap:14px}
+.project-heading>img{width:64px;height:64px;object-fit:contain}
+.project-heading h3{margin:0;color:var(--text);font-size:18px}
+.project-author .profile-image{width:40px;height:40px;font-size:20px}

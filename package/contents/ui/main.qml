@@ -5,10 +5,20 @@ import org.kde.plasma.core as PlasmaCore
 import org.kde.plasma.plasma5support as Plasma5Support
 import org.kde.plasma.private.mpris as Mpris
 import org.kde.kirigami as Kirigami
+import "studio" as Studio
 import "../code/Layouts.js" as LayoutSizes
 
 PlasmoidItem {
     id: root
+    Studio.DailyLookController {
+        configuration: root.effectiveConfiguration
+        onApply: next => {
+            for (const key of plasmoid.configuration.keys()) {
+                if (next[key] !== undefined && next[key] !== plasmoid.configuration[key])
+                    plasmoid.configuration[key] = next[key];
+            }
+        }
+    }
     readonly property bool shouldShow: !!mpris2Model.currentPlayer || plasmoid.configuration.alwaysVisible
     Layout.minimumWidth: shouldShow ? Math.min(160, LayoutSizes.size(plasmoid.configuration)[0]) : 0
     Layout.minimumHeight: shouldShow ? Math.min(64, LayoutSizes.size(plasmoid.configuration)[1]) : 0

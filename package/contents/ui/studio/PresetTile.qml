@@ -11,6 +11,8 @@ Item {
     property string name: ""
     property string backdrop: "dusk"
     property var settings: ({})
+    property bool favorite: false
+    signal favoriteToggled
     property bool active: false
     property bool deletable: false
     property bool renamable: false
@@ -124,6 +126,29 @@ Item {
         cursorShape: Qt.PointingHandCursor
         enabled: !tile.renaming
         onClicked: tile.picked()
+    }
+    Controls.ToolButton {
+        objectName: "favoritePresetButton"
+        x: 8
+        y: 7
+        width: 24
+        height: 24
+        text: tile.favorite ? "★" : "☆"
+        Accessible.name: tile.favorite ? "Remove from favourites" : "Add to favourites"
+        Controls.ToolTip.visible: hovered
+        Controls.ToolTip.text: Accessible.name
+        contentItem: Text {
+            text: parent.text
+            color: tile.favorite ? Theme.brand : "white"
+            font.pixelSize: 17
+            horizontalAlignment: Text.AlignHCenter
+            verticalAlignment: Text.AlignVCenter
+        }
+        background: Rectangle {
+            radius: 6
+            color: "#cc101214"
+        }
+        onClicked: tile.favoriteToggled()
     }
     Controls.ToolButton {
         objectName: "renamePresetButton"

@@ -49,7 +49,7 @@ Item {
                 track: root.view.track
                 positionUnitsPerSecond: root.view.positionUnitsPerSecond
                 visualFrameTime: root.view.visualFrameTime
-                accentColor: root.view.waveColor
+                accentColor: root.view.progressWaveColor
                 cornerRadius: parent.shape === "circle" || parent.disc ? (parent.width + 6) / 2 : 9
             }
         }
@@ -171,7 +171,7 @@ Item {
             height: parent.height
             // A new width only when the fill reaches another pixel.
             width: Math.round(parent.width * underlineClock.progress)
-            color: root.view.waveColor
+            color: root.view.progressWaveColor
         }
     }
 }

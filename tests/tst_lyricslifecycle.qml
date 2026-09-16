@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.LocalStorage
 import QtTest
 import "../package/contents/ui" as Shared
 
@@ -37,6 +38,164 @@ TestCase {
             }
         }
     }
+    Component {
+        id: onlineSource
+        Shared.LyricsSource {
+            property var requests: []
+            property var testDatabase: null
+            function database() {
+                if (testDatabase)
+                    return testDatabase;
+                throw new Error("No persistent cache in network tests");
+            }
+            function createRequest() {
+                const result = {
+                    readyState: 0,
+                    status: 0,
+                    responseText: "",
+                    aborted: false,
+                    onreadystatechange: function () {},
+                    open: function () {},
+                    setRequestHeader: function () {},
+                    send: function () {},
+                    abort: function () {
+                        this.aborted = true;
+                    }
+                };
+                requests.push(result);
+                return result;
+            }
+        }
+    }
+
+    function complete(request, status, body) {
+        request.status = status;
+        request.responseText = body;
+        request.readyState = XMLHttpRequest.DONE;
+        request.onreadystatechange();
+    }
+
+    function test_cacheMigrationAndPlainRoundTrip() {
+        const lyrics = createTemporaryObject(onlineSource, this, {
+            track: "Song",
+            artist: "Artist"
+        });
+        const db = LocalStorage.openDatabaseSync("LyricsTest-" + Date.now() + "-" + Math.random(), "1", "Test", 100000);
+        lyrics.testDatabase = db;
+        db.transaction(tx => {
+            tx.executeSql("CREATE TABLE lyrics(key TEXT PRIMARY KEY, synced TEXT, fetched INTEGER)");
+            tx.executeSql("INSERT INTO lyrics VALUES (?, ?, ?)", [lyrics.onlineKey, "[00:01]Cached", Date.now()]);
+        });
+        lyrics.load();
+        compare(lyrics.lines[0].text, "Cached");
+        compare(lyrics.requests.length, 0);
+        lyrics.track = "Plain";
+        lyrics.load();
+        complete(lyrics.requests[0], 200, JSON.stringify({
+            plainLyrics: "Plain lyrics"
+        }));
+        lyrics.lines = [];
+        lyrics.load();
+        compare(lyrics.lines[0].text, "Plain lyrics");
+        compare(lyrics.synced, false);
+        compare(lyrics.requests.length, 1);
+        lyrics.track = "Broken";
+        lyrics.load();
+        complete(lyrics.requests[1], 200, "{}");
+        compare(lyrics.status, "error");
+        db.transaction(tx => {
+            compare(tx.executeSql("SELECT * FROM lyrics_v2 WHERE key = ?", [lyrics.onlineKey]).rows.length, 0);
+            tx.executeSql("DROP TABLE lyrics_v2");
+            tx.executeSql("DROP TABLE lyrics");
+        });
+    }
+
+    function test_httpsFallbackAndStaleCompletion() {
+        const lyrics = createTemporaryObject(onlineSource, this, {
+            track: "Song",
+            artist: "Artist",
+            commandSourceComponent: commandComponent
+        });
+        lyrics.load();
+        complete(lyrics.requests[0], 0, "");
+        verify(lyrics._command.indexOf("--online") >= 0);
+        const reader = findChild(lyrics, "lyricsLocalReader");
+        const command = lyrics._command;
+        reader.item.newData(command, {
+            stdout: JSON.stringify({
+                status: 200,
+                body: {
+                    syncedLyrics: "[00:01]Recovered"
+                }
+            })
+        });
+        compare(lyrics.status, "ready");
+        compare(lyrics.lines[0].text, "Recovered");
+        lyrics.track = "Other";
+        reader.item.newData(command, {
+            stdout: JSON.stringify({
+                status: 200,
+                body: {
+                    syncedLyrics: "[00:01]Stale"
+                }
+            })
+        });
+        compare(lyrics.lines.length, 0);
+    }
+
+    function test_plainOnlineAndRetry() {
+        const lyrics = createTemporaryObject(onlineSource, this, {
+            track: "Song",
+            artist: "Artist"
+        });
+        lyrics.load();
+        complete(lyrics.requests[0], 503, "");
+        compare(lyrics.status, "error");
+        const retry = findChild(lyrics, "lyricsRetry");
+        verify(retry.running);
+        retry.stop();
+        retry.triggered();
+        complete(lyrics.requests[1], 200, JSON.stringify({
+            plainLyrics: "First\nSecond"
+        }));
+        compare(lyrics.status, "ready");
+        compare(lyrics.synced, false);
+        compare(lyrics.currentIndex, -1);
+        compare(lyrics.lines.length, 2);
+        lyrics.load();
+        complete(lyrics.requests[2], 200, "broken JSON");
+        compare(lyrics.status, "error");
+        verify(retry.running);
+        lyrics.track = "Changed";
+        verify(!retry.running);
+        compare(lyrics._retryCount, 0);
+    }
+
+    function test_networkTimeoutAndRetryLimit() {
+        const lyrics = createTemporaryObject(onlineSource, this, {
+            track: "Song",
+            artist: "Artist"
+        });
+        lyrics.load();
+        const timeout = findChild(lyrics, "lyricsNetworkTimeout");
+        verify(timeout.running);
+        timeout.triggered();
+        verify(lyrics.requests[0].aborted);
+        compare(lyrics.status, "error");
+        const retry = findChild(lyrics, "lyricsRetry");
+        for (let i = 0; i < 2; ++i) {
+            verify(retry.running);
+            retry.stop();
+            retry.triggered();
+            complete(lyrics.requests[i + 1], 500, "");
+        }
+        verify(!retry.running);
+        lyrics.load();
+        complete(lyrics.requests[3], 404, "");
+        compare(lyrics.status, "missing");
+        verify(!retry.running);
+    }
+
     function test_localLookupAndStaleResult() {
         const lyrics = createTemporaryObject(source, this, {
             commandSourceComponent: commandComponent,

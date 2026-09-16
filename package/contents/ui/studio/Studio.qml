@@ -51,6 +51,39 @@ Rectangle {
     onCurrentTabIndexChanged: body.contentY = 0
     property bool keepColors: false
     property string presetFilter: "all"
+    property string day: Schema.localDay()
+    readonly property var daily: Schema.dailyLook(day)
+    readonly property var favorites: Schema.favoriteIds(draft.favoritePresets)
+    function toggleFavorite(id) {
+        update({
+            favoritePresets: JSON.stringify(favorites.indexOf(id) === -1 ? favorites.concat([id]) : favorites.filter(value => value !== id))
+        });
+    }
+    function saveDaily() {
+        const id = daily.id;
+        if (!userPresetList().some(p => p.id === id))
+            update({
+                userPresets: JSON.stringify(userPresetList().concat([
+                    {
+                        id: id,
+                        name: daily.name,
+                        settings: daily.s
+                    }
+                ]))
+            });
+    }
+    Timer {
+        interval: 30000
+        repeat: true
+        running: studioRoot.onScreen
+        triggeredOnStart: true
+        onTriggered: studioRoot.day = Schema.localDay()
+    }
+    readonly property string currentGroup: Schema.tabGroup(currentTab)
+    function selectTab(id) {
+        currentTabIndex = Schema.TABS.findIndex(t => t.id === id);
+        query = "";
+    }
     property bool canDiscard: false
     signal edited(var draft)
     signal discard
@@ -114,7 +147,9 @@ Rectangle {
     }
     function removeUserPreset(index) {
         const list = userPresetList();
-        list.splice(index, 1);
+        const removed = list.splice(index, 1)[0];
+        if (removed && favorites.indexOf(removed.id) !== -1)
+            toggleFavorite(removed.id);
         update({
             userPresets: JSON.stringify(list)
         });
@@ -281,72 +316,83 @@ Rectangle {
                 x: 12
                 y: header.y + header.height + (studioRoot.compact ? 4 : 12)
                 width: parent.width - 24
-                height: tabRow.implicitHeight
-                Flow {
-                    id: tabRow
-                    width: parent.width
-                    spacing: 2
-                    Repeater {
-                        id: tabRepeater
-                        model: Schema.TABS
-                        Item {
-                            id: tab
-                            required property var modelData
-                            required property int index
-                            readonly property bool selected: studioRoot.query.trim() === "" && studioRoot.currentTabIndex === index
-                            objectName: "tabButton_" + index
-                            width: tabContent.width + 16
-                            height: 36
-                            Row {
-                                id: tabContent
-                                x: 8
-                                anchors.verticalCenter: parent.verticalCenter
-                                anchors.verticalCenterOffset: -1
-                                spacing: 6
-                                Canvas {
+                height: 36
+                clip: true
+                Flickable {
+                    id: mainTabScroller
+                    objectName: "mainTabScroller"
+                    anchors.fill: parent
+                    Controls.ScrollBar.horizontal: Controls.ScrollBar {
+                        policy: Controls.ScrollBar.AsNeeded
+                    }
+                    contentWidth: tabRow.width
+                    contentHeight: height
+                    boundsBehavior: Flickable.StopAtBounds
+                    Row {
+                        id: tabRow
+                        spacing: 2
+                        Repeater {
+                            id: tabRepeater
+                            model: Schema.MAIN_TABS
+                            Item {
+                                id: tab
+                                required property var modelData
+                                required property int index
+                                readonly property bool selected: studioRoot.query.trim() === "" && studioRoot.currentGroup === modelData.id
+                                objectName: "mainTab_" + modelData.id
+                                width: tabContent.width + 16
+                                height: 36
+                                Row {
+                                    id: tabContent
+                                    x: 8
                                     anchors.verticalCenter: parent.verticalCenter
-                                    width: 15
-                                    height: 15
-                                    readonly property var signature: [tab.selected, tabArea.containsMouse]
-                                    onSignatureChanged: requestPaint()
-                                    onPaint: {
-                                        const ctx = getContext("2d");
-                                        ctx.reset();
-                                        ctx.scale(15 / 24, 15 / 24);
-                                        ctx.strokeStyle = tab.selected || tabArea.containsMouse ? Theme.text : Theme.muted;
-                                        ctx.lineWidth = 1.7;
-                                        ctx.lineCap = "round";
-                                        ctx.lineJoin = "round";
-                                        ctx.path = tab.modelData.icon;
-                                        ctx.stroke();
+                                    anchors.verticalCenterOffset: -1
+                                    spacing: 6
+                                    Canvas {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        width: 15
+                                        height: 15
+                                        readonly property var signature: [tab.selected, tabArea.containsMouse]
+                                        onSignatureChanged: requestPaint()
+                                        onPaint: {
+                                            const ctx = getContext("2d");
+                                            ctx.reset();
+                                            ctx.scale(15 / 24, 15 / 24);
+                                            ctx.strokeStyle = tab.selected || tabArea.containsMouse ? Theme.text : Theme.muted;
+                                            ctx.lineWidth = 1.7;
+                                            ctx.lineCap = "round";
+                                            ctx.lineJoin = "round";
+                                            ctx.path = tab.modelData.icon;
+                                            ctx.stroke();
+                                        }
+                                    }
+                                    Text {
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        text: tab.modelData.label
+                                        color: tab.selected || tabArea.containsMouse ? Theme.text : Theme.muted
+                                        font.family: Theme.fontFamily
+                                        font.pixelSize: 12
                                     }
                                 }
-                                Text {
-                                    anchors.verticalCenter: parent.verticalCenter
-                                    text: tab.modelData.label
-                                    color: tab.selected || tabArea.containsMouse ? Theme.text : Theme.muted
-                                    font.family: Theme.fontFamily
-                                    font.pixelSize: 12
+                                Rectangle {
+                                    x: 8
+                                    width: parent.width - 16
+                                    height: 2
+                                    radius: 1
+                                    anchors.bottom: parent.bottom
+                                    color: Theme.brand
+                                    visible: tab.selected
                                 }
-                            }
-                            Rectangle {
-                                x: 8
-                                width: parent.width - 16
-                                height: 2
-                                radius: 1
-                                anchors.bottom: parent.bottom
-                                color: Theme.brand
-                                visible: tab.selected
-                            }
-                            MouseArea {
-                                id: tabArea
-                                anchors.fill: parent
-                                hoverEnabled: true
-                                cursorShape: Qt.PointingHandCursor
-                                onClicked: {
-                                    studioRoot.currentTabIndex = tab.index;
-                                    studioRoot.query = "";
-                                    body.contentY = 0;
+                                MouseArea {
+                                    id: tabArea
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    onClicked: {
+                                        studioRoot.selectTab(tab.modelData.id === "appearance" ? "viz" : tab.modelData.id);
+                                        studioRoot.query = "";
+                                        body.contentY = 0;
+                                    }
                                 }
                             }
                         }
@@ -360,10 +406,60 @@ Rectangle {
                 color: Theme.line
             }
 
+            Item {
+                id: appearanceNavigation
+                objectName: "appearanceNavigation"
+                x: 18
+                y: tabs.y + tabs.height + 1
+                width: parent.width - 36
+                height: visible ? 48 : 0
+                visible: studioRoot.query.trim() === "" && ["appearance", "presets"].indexOf(studioRoot.currentGroup) !== -1
+                PresetNavigation {
+                    anchors.fill: parent
+                    studio: studioRoot
+                    visible: studioRoot.currentGroup === "presets"
+                }
+                Flickable {
+                    objectName: "appearanceScroller"
+                    anchors.fill: parent
+                    visible: studioRoot.currentGroup === "appearance"
+                    Controls.ScrollBar.horizontal: Controls.ScrollBar {
+                        policy: Controls.ScrollBar.AsNeeded
+                    }
+                    contentWidth: appearanceRow.width
+                    contentHeight: height
+                    clip: true
+                    boundsBehavior: Flickable.StopAtBounds
+                    Row {
+                        id: appearanceRow
+                        y: 10
+                        spacing: 6
+                        Repeater {
+                            model: Schema.TABS.filter(t => Schema.APPEARANCE_TABS.indexOf(t.id) !== -1)
+                            StudioButton {
+                                required property var modelData
+                                text: modelData.label
+                                icon: modelData.icon
+                                compact: true
+                                primary: studioRoot.currentTab === modelData.id
+                                areaName: "subTab_" + modelData.id
+                                onClicked: studioRoot.selectTab(modelData.id)
+                            }
+                        }
+                    }
+                }
+                Rectangle {
+                    anchors.bottom: parent.bottom
+                    width: parent.width
+                    height: 1
+                    color: Theme.line
+                }
+            }
+
             Flickable {
                 id: body
                 objectName: "studioBody"
-                y: tabs.y + tabs.height + 1
+                y: appearanceNavigation.y + appearanceNavigation.height
                 width: parent.width
                 height: parent.height - y
                 contentHeight: sections.height + 28

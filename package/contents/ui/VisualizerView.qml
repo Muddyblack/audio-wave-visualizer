@@ -4,6 +4,8 @@ import QtQuick.Controls.Basic as Controls
 import "layouts" as Layouts
 import "../code/Layouts.js" as LayoutSizes
 import "../code/AudioFormat.js" as AudioFormat
+import "../code/WaveMath.js" as WaveMath
+import "../code/ColourStyle.js" as ColourStyle
 
 Item {
     id: root
@@ -145,9 +147,15 @@ Item {
     readonly property bool lightCard: configuration.showBg && configuration.surfaceStyle === "solid" && !(configuration.showMpris && configuration.artBg && artUrl !== "") && (configuration.autoContrast ?? true)
     readonly property color textColor: configuration.useSystemText ? (lightCard ? "#1e241d" : systemTextColor) : configuration.customTextColor
     readonly property color waveColor: (configuration.accentFromArt || configuration.vizColorMode === "cover") ? coverAccent : baseWaveColor
-    readonly property color controlColor: configuration.useSystemControls ? (lightCard ? "#1e241d" : "#ffffff") : configuration.customControlColor
-    readonly property color pgStartColor: configuration.useSystemControls ? accentColor : controlColor
-    readonly property color pgEndColor: configuration.useSystemControls ? "#ffffff" : controlColor
+    readonly property color baseControlColor: configuration.useSystemControls ? (lightCard ? "#1e241d" : "#ffffff") : configuration.customControlColor
+    readonly property var linkedColorStops: configuration.controlsColorSource === "visualizer" || configuration.progressColorSource === "visualizer" ? WaveMath.colorStops(waveColor, configuration.vizColorMode, configuration.vizPalette, coverColor1, coverColor2, configuration.hueReactive, visualizer.high ?? 0, visualFrameTime / 1000, configuration.reducedMotion ?? false) : [waveColor]
+    readonly property var linkedColors: ColourStyle.resolve(configuration, waveColor, baseControlColor, configuration.useSystemControls ? accentColor : baseControlColor, configuration.useSystemControls ? "#ffffff" : baseControlColor, linkedColorStops)
+    readonly property color controlColor: linkedColors.control
+    readonly property color controlsAccent: linkedColors.controlAccent
+    readonly property color progressWaveColor: linkedColors.progressWave
+    readonly property var progressColors: linkedColors.progressStops
+    readonly property color pgStartColor: linkedColors.start
+    readonly property color pgEndColor: linkedColors.end
 
     // Well-behaved sources (Spotify, a normal youtube.com tab, tagged local
     // files) publish xesam:title and never reach any of this. What follows is

@@ -7,6 +7,48 @@
 // ("kde" or "hypr") to the `when` predicates; `s` is the current draft.
 
 var TABS = Catalog.StudioCatalog.tabs;
+var APPEARANCE_TABS = ["viz", "controls", "layout", "art", "card", "colors"];
+function tabGroup(id) {
+    return id === "saved" ? "presets" : APPEARANCE_TABS.indexOf(id) !== -1 ? "appearance" : id;
+}
+var MAIN_TABS = TABS.filter(function (t) { return t.id !== "saved" && (APPEARANCE_TABS.indexOf(t.id) === -1 || t.id === "viz"); }).map(function (t) {
+    return t.id === "viz" ? {id: "appearance", label: "Appearance", icon: t.icon} : t;
+});
+var PRESET_VIEWS = [
+    ["all", "All", TABS[0].icon], ["mine", "My presets", TABS[1].icon],
+    ["favorites", "Favourites", "M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"],
+    ["daily", "Today’s look", "M5 5h14v16H5zM8 3v4M16 3v4M5 10h14M9 14h2M13 17h2"]
+];
+var SHARE_URL = "https://github.com/Muddyblack/kde-audio-visualizer/blob/HEAD/docs/sharing-presets.md";
+function localDay(date) {
+    var d = date || new Date();
+    return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);
+}
+// Fixed inputs only: opening Studio or changing the draft cannot reroll the look.
+function dailyLook(day) {
+    var seed = 2166136261;
+    var key = "daily-v1:" + day;
+    for (var i = 0; i < key.length; i++) seed = Math.imul(seed ^ key.charCodeAt(i), 16777619) >>> 0;
+    function pick(values) {
+        seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0;
+        return values[Math.floor(seed / 4294967296 * values.length)];
+    }
+    var base = pick(PRESETS);
+    var palette = pick(Object.keys(PALETTES));
+    var settings = Object.assign({}, base.s, {
+        useSystemAccent: false, accentFromArt: false, customColor: PALETTES[palette][0],
+        vizColorMode: "palette", vizPalette: palette, bgRadius: pick([12, 18, 24]),
+        glowWave: pick([true, false]), cardShadow: pick(["none", "soft"])
+    });
+    return {id: "daily-" + day, name: "Today’s look · " + day, note: "A daily variation of " + base.name,
+        bd: base.bd, cat: ["daily"], s: settings};
+}
+function favoriteIds(text) {
+    try {
+        var list = JSON.parse(text || "[]");
+        return Array.isArray(list) ? list.filter(function (id) { return typeof id === "string"; }) : [];
+    } catch (error) { return []; }
+}
 
 var VIZ = ["Smooth Wave", "Rounded Bars", "Mirror Bars", "Tech Line", "Floating Dots", "Floating Dots Bold", "Peak Bars", "LED Meter", "Mountain", "Oscilloscope", "Ribbon", "Radial Burst", "Pixel Matrix", "Pulse Orb", "Sparkles", "Silk Ribbon", "Neon Terrain", "Audio Tunnel", "Liquid Plasma", "CRT Oscilloscope", "Stereo Lissajous", "Gravity Sparks"];
 var PBS = ["Glassy Sleek", "Ultra Minimal", "Glowing Pulse", "Bold Pill", "Waveform", "Squiggle", "Segmented", "Dotted", "Capsule", "Time only", "Cover ring"];
@@ -21,7 +63,7 @@ var BACKDROPS = Catalog.StudioCatalog.wallpapers.map(function (wallpaper) { retu
 var STATES = [["normal", "Playing"], ["paused", "Paused"], ["long", "Long title"], ["nometa", "No metadata"], ["idle", "Nothing playing"], ["backend", "cava missing"]];
 
 // Colour keys "Keep my colours" preserves; placement is never part of a look.
-var COLOR_KEYS = ["useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "hueReactive", "bgColor", "lyricsHighlightColor", "lyricsTextStyleColor"];
+var COLOR_KEYS = ["controlsColorSource", "progressColorSource", "customProgressColor", "useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "hueReactive", "bgColor", "lyricsHighlightColor", "lyricsTextStyleColor"];
 var PLACEMENT_KEYS = ["monitor", "verticalPosition", "desktopLayer", "pauseWhenCovered", "hAnchor", "widgetWidth", "widgetHeight"];
 
 function isPill(s) {
@@ -249,8 +291,8 @@ var SECTIONS = [
           set: function (v) { return { accentFromArt: v === "art", useSystemAccent: v !== "custom" }; } },
         { k: "customColor", type: "color", label: "Custom colour", swatches: SWATCHES, when: function (s) { return !s.accentFromArt && !s.useSystemAccent; } }
     ]),
-    tab("colors", "Visualizer colour & light", [
-        { k: "vizColorMode", type: "seg", label: "Colour mode", desc: "Solid uses the accent selected above; other modes blend or animate colours.", opts: [["solid", "Solid"], ["gradient", "Gradient"], ["cover", "Cover"], ["palette", "Palette"], ["rainbow", "Rainbow"]] },
+    tab("colors", "Colour mode & visualizer light", [
+        { k: "vizColorMode", type: "seg", label: "Colour mode", desc: "Used by the visualizer. Choose Colour mode for progress and controls below to share its palette or animated rainbow.", opts: [["solid", "Solid"], ["gradient", "Gradient"], ["cover", "Cover"], ["palette", "Palette"], ["rainbow", "Rainbow"]] },
         { k: "vizPalette", type: "tiles", full: true, label: "Palette", desc: "Curated palettes with bounded hues, so they never turn muddy.", tw: 84,
           when: function (s) { return s.vizColorMode === "palette"; },
           opts: Object.keys(PALETTES).map(function (k) { return { v: k, label: k[0].toUpperCase() + k.slice(1), pv: "palette" }; }) },
@@ -258,12 +300,16 @@ var SECTIONS = [
         { k: "glowWave", type: "switch", label: "Glow", desc: "Soft light around the visualizer." },
         { k: "bloom", type: "range", label: "Bloom", desc: "How far the glow spreads.", min: 0, max: 1.5, step: .05, fmt: "pct", when: function (s) { return s.glowWave; } }
     ]),
+    tab("colors", "Progress colour", [
+        { k: "progressColorSource", type: "seg", label: "Progress bar & cover ring", desc: "Colour mode shares the visualizer’s palette, gradient or rainbow. Automatic keeps the original controls-based colours.", opts: [["legacy", "Automatic"], ["accent", "Accent"], ["visualizer", "Colour mode"], ["custom", "Custom"]] },
+        { k: "customProgressColor", type: "color", label: "Custom progress colour", swatches: SWATCHES, when: function (s) { return s.progressColorSource === "custom"; } }
+    ]),
     tab("colors", "Text & controls", [
         { id: "textSrc", type: "seg", label: "Text colour", opts: [[true, "System"], [false, "Custom"]], get: function (s) { return s.useSystemText; }, set: function (v) { return { useSystemText: v }; } },
         { k: "customTextColor", type: "color", label: "Custom text colour", swatches: SWATCHES, when: function (s) { return !s.useSystemText; } },
         { k: "autoContrast", type: "switch", label: "Adapt to light cards", desc: "Dark text and icons on the Solid material.", when: function (s) { return s.useSystemText || s.useSystemControls; } },
-        { id: "ctlSrc", type: "seg", label: "Controls colour", desc: "Buttons, knob and playhead.", opts: [[true, "System"], [false, "Custom"]], get: function (s) { return s.useSystemControls; }, set: function (v) { return { useSystemControls: v }; } },
-        { k: "customControlColor", type: "color", label: "Custom controls colour", swatches: SWATCHES, when: function (s) { return !s.useSystemControls; } },
+        { id: "ctlSrc", type: "seg", label: "Controls colour", desc: "Colour mode follows the visualizer, including rainbow animation. System keeps contrast-aware icons.", opts: [["system", "System"], ["accent", "Accent"], ["visualizer", "Colour mode"], ["custom", "Custom"]], get: function (s) { return s.controlsColorSource && s.controlsColorSource !== "legacy" ? s.controlsColorSource : s.useSystemControls ? "system" : "custom"; }, set: function (v) { return { controlsColorSource: v === "system" || v === "custom" ? "legacy" : v, useSystemControls: v !== "custom" }; } },
+        { k: "customControlColor", type: "color", label: "Custom controls colour", swatches: SWATCHES, when: function (s) { return (!s.controlsColorSource || s.controlsColorSource === "legacy") && !s.useSystemControls; } },
         { id: "dockSrc", type: "seg", label: "Dock background", opts: [[true, "Glass"], [false, "Custom"]], get: function (s) { return s.useSystemDockBg; }, set: function (v) { return { useSystemDockBg: v }; } },
         { k: "customDockBgColor", type: "color", label: "Custom dock colour", swatches: SWATCHES, when: function (s) { return !s.useSystemDockBg; } }
     ]),
@@ -311,7 +357,8 @@ var SECTIONS = [
         { k: "sensitivity", type: "range", label: "Sensitivity", desc: "Raise it if quiet music barely moves the wave.", min: 10, max: 300, step: 5, fmt: "percent" },
         { k: "noiseReduction", type: "range", label: "Smoothing", desc: "Higher glides gently; lower snaps to every beat.", min: 0, max: 1, step: .05, fmt: "fixed2" },
         { k: "framerate", type: "range", label: "Frame rate", desc: "Lower saves power. 30 Hz already looks smooth.", min: 15, max: 144, step: 5, fmt: "hz" }
-    ])
+    ]),
+    tab("about", "About the project", [{id: "projectInfo", type: "projectInfo", full: true, label: "", desc: "Muddyblack GitHub OpenDesktop KDE Store downloads stars support project"}])
 ];
 
 var NOTES = {
@@ -370,7 +417,7 @@ function rowVisible(row, section, s, env, query) {
     return query === "" || searchText(row).indexOf(query) !== -1;
 }
 
-var FILTERS = [["all", "All"], ["current", "Today’s options"], ["desktop", "Desktop"], ["panel", "Panel"], ["glass", "Glass"], ["adaptive", "Adaptive colour"]];
+var FILTERS = [["all", "All"], ["current", "Classic"], ["desktop", "Desktop"], ["panel", "Panel"], ["glass", "Glass"], ["adaptive", "Adaptive colour"]];
 
 function preset(id, cat, name, note, bd, s, env) {
     return { id: id, cat: cat, name: name, note: note, bd: bd, s: normalize(s), env: env || "" };
@@ -421,7 +468,7 @@ function applyPreset(defaults, current, settings, keepColors) {
         next[key] = settings[key];
     if (keepColors)
         COLOR_KEYS.forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
-    PLACEMENT_KEYS.concat(["customVisualizers", "customProgressBars"]).forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
+    PLACEMENT_KEYS.concat(["customVisualizers", "customProgressBars", "userPresets", "favoritePresets", "autoDailyLook", "dailyLookApplied"]).forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
     return next;
 }
 
@@ -437,7 +484,7 @@ function same(a, b) {
 function changedKeys(defaults, current) {
     var out = {};
     for (var key in current) {
-        if (key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || PLACEMENT_KEYS.indexOf(key) !== -1 || defaults[key] === undefined)
+        if (key === "autoDailyLook" || key === "dailyLookApplied" || key === "favoritePresets" || key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || PLACEMENT_KEYS.indexOf(key) !== -1 || defaults[key] === undefined)
             continue;
         if (!same(current[key], defaults[key]))
             out[key] = current[key];
@@ -448,7 +495,7 @@ function changedKeys(defaults, current) {
 function matchesPreset(defaults, current, p) {
     var target = applyPreset(defaults, current, p.s, false);
     for (var key in defaults) {
-        if (key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || PLACEMENT_KEYS.indexOf(key) !== -1)
+        if (key === "autoDailyLook" || key === "dailyLookApplied" || key === "favoritePresets" || key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || PLACEMENT_KEYS.indexOf(key) !== -1)
             continue;
         if (current[key] !== undefined && !same(current[key], target[key]))
             return false;
@@ -487,4 +534,31 @@ function surprise(defaults, current) {
 
 function exportPreset(name, settings, known) {
     return PresetCodec.encode(name, settings, known, false);
+}
+
+// Only appearance changes automatically; audio, placement and libraries stay intact.
+function dailyUpdate(defaults, current, day) {
+    if (!current.autoDailyLook || current.dailyLookApplied === day) return null;
+    var keys = ["customVisualizer", "customProgressBar", "showMpris", "artBg"];
+    SECTIONS.filter(function (section) { return APPEARANCE_TABS.indexOf(section.tab) !== -1; }).forEach(function (section) {
+        section.rows.forEach(function (row) { if (row.k) keys.push(row.k); });
+    });
+    PRESETS.forEach(function (preset) { keys = keys.concat(Object.keys(preset.s)); });
+    var next = copy(current);
+    keys.forEach(function (key) {
+        if (PLACEMENT_KEYS.indexOf(key) === -1 && defaults[key] !== undefined) next[key] = defaults[key];
+    });
+    Object.assign(next, dailyLook(day).s);
+    next.dailyLookApplied = day;
+    return next;
+}
+function defaultsFromXml(xml) {
+    var defaults = {}, match;
+    var entries = /<entry\s+name="([^"]+)"\s+type="([^"]+)"\s*>\s*<default>([^<]*)<\/default>/g;
+    while ((match = entries.exec(xml)) !== null) {
+        var type = match[2], value = match[3];
+        defaults[match[1]] = type === "Bool" ? value === "true" : type === "Int" || type === "Double" ? Number(value)
+            : type === "StringList" ? (value ? value.split(",") : []) : value;
+    }
+    return defaults;
 }

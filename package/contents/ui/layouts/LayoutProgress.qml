@@ -33,7 +33,8 @@ ProgressBar {
     track: view.trackIdentity
     artist: view.artist
     textColor: view.textColor
-    waveColor: view.waveColor
+    waveColor: view.progressWaveColor
+    colorStops: view.progressColors
     controlColor: view.controlColor
     pgStartColor: view.pgStartColor
     pgEndColor: view.pgEndColor

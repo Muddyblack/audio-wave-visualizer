@@ -12,6 +12,6 @@ TransportDock {
     player: view.player
     isPlaying: view.isPlaying
     controlColor: view.controlColor
-    accentColor: view.waveColor
+    accentColor: view.controlsAccent
     cardHovered: view.cardHovered
 }

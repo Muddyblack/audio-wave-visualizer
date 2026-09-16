@@ -115,17 +115,17 @@ TestCase {
 
     function test_tabsSwitchSections() {
         compare(page.currentTabIndex, 0);
-        const tab1 = findChild(page, "tabButton_1");
+        const tab1 = findChild(page, "presetView_mine");
         verify(tab1 !== null);
         mouseClick(tab1);
         compare(page.currentTabIndex, 1);
 
-        const tab3 = findChild(page, "tabButton_3");
+        const tab3 = findChild(page, "mainTab_appearance");
         verify(tab3 !== null);
         mouseClick(tab3);
-        compare(page.currentTabIndex, 3);
+        compare(page.currentTabIndex, 2);
 
-        const tab0 = findChild(page, "tabButton_0");
+        const tab0 = findChild(page, "mainTab_presets");
         verify(tab0 !== null);
         mouseClick(tab0);
         compare(page.currentTabIndex, 0);

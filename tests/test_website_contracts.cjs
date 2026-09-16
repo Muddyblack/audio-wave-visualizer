@@ -103,7 +103,7 @@ const element = () => ({innerHTML:'',dataset:{},style:{setProperty(){}},classLis
 context.document = {createElement:element, activeElement:null};
 context.$ = (selector, parent) => parent.querySelector(selector);
 context.$$ = (selector, parent) => parent.querySelectorAll(selector);
-context.renderPresetPicker = context.renderUserPresets = context.renderAnchor = () => () => {};
+context.renderProjectInfo = context.renderPresetPicker = context.renderUserPresets = context.renderAnchor = () => () => {};
 context.diag = () => '';
 context.platformNote = () => '';
 vm.runInContext('let S = structuredClone(DEFAULTS); const SCREENS = [];', context);
@@ -116,3 +116,37 @@ vm.runInContext(`
   }
 `, context);
 console.log('PASS: every shared settings row builds and synchronizes');
+
+vm.runInContext(`
+  const daily = Schema.dailyLook('2026-09-16');
+  assert.equal(JSON.stringify(daily), JSON.stringify(Schema.dailyLook('2026-09-16')));
+  assert.notEqual(JSON.stringify(daily.s), JSON.stringify(Schema.dailyLook('2026-09-17').s));
+  const scheduled = Schema.dailyUpdate(LOOK_DEFAULTS, {...LOOK_DEFAULTS, autoDailyLook:true, inputSource:'my-monitor', favoritePresets:'["glass"]'}, '2026-09-16');
+  assert.equal(scheduled.inputSource, 'my-monitor');
+  assert.equal(scheduled.favoritePresets, '["glass"]');
+  assert.equal(Schema.dailyUpdate(LOOK_DEFAULTS, {...scheduled, customColor:'#123456'}, '2026-09-16'), null);
+  assert.equal(ProjectInfo.count('{"value":"1.2k"}'), '1.2k');
+  assert.equal(ProjectInfo.count('{"value":"0"}'), '0');
+  assert.equal(ProjectInfo.count('{"value":"not found","isError":true}'), '');
+  assert.equal(ProjectInfo.count('<html>offline</html>'), '');
+`, context);
+console.log('PASS: daily determinism, automatic appearance preservation, optional project statistics');
+
+const readme = fs.readFileSync(path.resolve(root, '../../README.md'), 'utf8');
+const badgeUrl = new URL(readme.match(/src="([^"\n]+)" alt="KDE Store Downloads"/)[1]);
+const studioBadge = new URL(vm.runInContext("ProjectInfo.statistics.find(s => s.id === 'kde').url", context));
+assert.equal(studioBadge.searchParams.get('url'), badgeUrl.searchParams.get('url'));
+assert.equal(studioBadge.searchParams.get('query'), badgeUrl.searchParams.get('query'));
+vm.runInContext(`
+  for (const mode of ['solid', 'gradient', 'cover', 'palette', 'rainbow']) {
+    const state = {...DEFAULTS, vizColorMode:mode, controlsColorSource:'visualizer', progressColorSource:'visualizer'};
+    const d = derive(state, 'normal');
+    assert(d.pgStops.length > 0);
+    assert.equal(d.control, d.pgStops[0]);
+    for (const style of [4, 5, 7]) {
+      const el = {clientWidth:160, clientHeight:18, width:0, height:0, dataset:{}, getContext:()=>canvas};
+      drawSeek({el, key:'linked-'+mode+'-'+style, pbs:style, getS:()=>state, getStatus:()=> 'normal'}, 2);
+    }
+  }
+`, context);
+console.log('PASS: README download source parity and linked colours for every progress canvas');

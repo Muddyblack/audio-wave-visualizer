@@ -5,7 +5,7 @@ import "../code/Lyrics.js" as Lyrics
 // Opt-in lyrics: local sidecars / ID3 first, then LRCLIB. The owner creates
 // this only for an enabled lyrics display. Online results,
 // including misses, are cached on disk with LocalStorage; misses are retried
-// after a day. Network failures show nothing.
+// after a day. Transport failures use a Python HTTPS fallback and bounded retries.
 Item {
     id: root
     property Component commandSourceComponent: null
@@ -29,9 +29,12 @@ Item {
     property real timingOffset: 0
     property var lines: []
     property string status: "idle"
+    property int _retryCount: 0
     property var _request: null
     function cancelRequest() {
         localTimeout.stop();
+        networkTimeout.stop();
+        retry.stop();
         if (_command) {
             const command = _command;
             _command = "";
@@ -88,6 +91,7 @@ Item {
     }
     onRequestKeyChanged: {
         cancelRequest();
+        _retryCount = 0;
         lines = [];
         status = onlineKey === "" && fileUrl === "" ? "idle" : "loading";
         synced = true;
@@ -147,6 +151,10 @@ Item {
             try {
                 value = JSON.parse(data["stdout"] || "{}");
             } catch (error) {}
+            if (mode === "online") {
+                root.finishOnline(value.status || 0, value.body || {});
+                return;
+            }
             root.localWarning = value.warning || "";
             if (mode === "readings") {
                 root.lines = root.decorate(root.lines.slice(), Object.assign({}, value, root._secondary));
@@ -175,16 +183,19 @@ Item {
 
     Timer {
         id: localTimeout
-        interval: 5000
+        interval: root._commandMode === "online" ? 15000 : 5000
         onTriggered: {
             const mode = root._commandMode;
             root.cancelRequest();
             if (mode === "local")
                 root.loadOnline();
+            else if (mode === "online")
+                root.onlineFailed();
         }
     }
 
     function load() {
+        settle.stop();
         cancelRequest();
         if (fileUrl.startsWith("file:") && runHelper(quote(fileUrl), "local"))
             return;
@@ -205,45 +216,120 @@ Item {
         let cached = null;
         try {
             database().transaction(tx => {
+                tx.executeSql("CREATE TABLE IF NOT EXISTS lyrics_v2(key TEXT PRIMARY KEY, synced TEXT, plain TEXT, fetched INTEGER)");
+                // Preserve previously downloaded lyrics, but retry old misses:
+                // the old cache also recorded plain-only and malformed replies as misses.
                 tx.executeSql("CREATE TABLE IF NOT EXISTS lyrics(key TEXT PRIMARY KEY, synced TEXT, fetched INTEGER)");
-                const result = tx.executeSql("SELECT synced, fetched FROM lyrics WHERE key = ?", [key]);
+                tx.executeSql("INSERT OR IGNORE INTO lyrics_v2 SELECT key, synced, '', fetched FROM lyrics WHERE synced != ''");
+                const result = tx.executeSql("SELECT synced, plain, fetched FROM lyrics_v2 WHERE key = ?", [key]);
                 if (result.rows.length)
                     cached = result.rows.item(0);
             });
         } catch (error) {
             cached = null;
         }
-        if (cached && (cached.synced !== "" || Date.now() - cached.fetched < 86400000)) {
-            acceptSynced(cached.synced, true);
+        if (cached && (cached.synced !== "" || cached.plain !== "" || Date.now() - cached.fetched < 86400000)) {
+            acceptOnline(cached.synced, cached.plain);
             return;
         }
-        const query = "track_name=" + encodeURIComponent(track) + "&artist_name=" + encodeURIComponent(artist) + (album !== "" ? "&album_name=" + encodeURIComponent(album) : "") + (durationSeconds > 0 ? "&duration=" + durationSeconds : "");
         status = "loading";
-        const request = new XMLHttpRequest();
+        const request = createRequest();
         _request = request;
-        request.open("GET", "https://lrclib.net/api/get?" + query);
+        request.open("GET", "https://lrclib.net/api/get?" + onlineQuery());
         request.setRequestHeader("Lrclib-Client", "plasma-audio-visualizer (https://github.com/Muddyblack/kde-audio-visualizer)");
         request.onreadystatechange = () => {
             if (!root || request.readyState !== XMLHttpRequest.DONE || request !== root._request || generationKey !== root.requestKey)
                 return;
+            networkTimeout.stop();
             root._request = null;
             request.onreadystatechange = function () {};
-            let synced = "";
-            if (request.status === 200) {
-                try {
-                    synced = JSON.parse(request.responseText).syncedLyrics || "";
-                } catch (error) {
-                    synced = "";
-                }
-            } else if (request.status !== 404) {
-                root.status = "error";
+            if (request.status === 0) {
+                root.fallbackOnline();
                 return;
             }
-            try {
-                root.database().transaction(tx => tx.executeSql("INSERT OR REPLACE INTO lyrics VALUES (?, ?, ?)", [key, synced, Date.now()]));
-            } catch (error) {}
-            root.acceptSynced(synced, true);
+            let value = ({});
+            if (request.status === 200) {
+                try {
+                    value = JSON.parse(request.responseText);
+                } catch (error) {
+                    root.onlineFailed();
+                    return;
+                }
+            }
+            root.finishOnline(request.status, value);
         };
+        networkTimeout.restart();
         request.send();
+    }
+
+    function createRequest() {
+        return new XMLHttpRequest();
+    }
+
+    function onlineQuery() {
+        return "track_name=" + encodeURIComponent(track) + "&artist_name=" + encodeURIComponent(artist) + (album !== "" ? "&album_name=" + encodeURIComponent(album) : "") + (durationSeconds > 0 ? "&duration=" + durationSeconds : "");
+    }
+
+    function fallbackOnline() {
+        if (!runHelper("--online " + quote(onlineQuery()), "online"))
+            onlineFailed();
+    }
+
+    function onlineFailed() {
+        status = "error";
+        if (_retryCount < 2) {
+            ++_retryCount;
+            retry.restart();
+        }
+    }
+
+    function acceptOnline(syncedText, plainText) {
+        if (syncedText && parse(syncedText).length) {
+            acceptSynced(syncedText, true);
+        } else if (plainText) {
+            synced = false;
+            lines = plainText.split(/\r?\n/).map(text => ({
+                        text: text,
+                        time: 0,
+                        words: []
+                    }));
+            status = "ready";
+        } else {
+            acceptSynced("", false);
+        }
+    }
+
+    function finishOnline(code, value) {
+        if (code !== 200 && code !== 404) {
+            onlineFailed();
+            return;
+        }
+        if (code === 200 && (!value || typeof value !== "object" || Array.isArray(value) || !("syncedLyrics" in value || "plainLyrics" in value || value.instrumental === true))) {
+            onlineFailed();
+            return;
+        }
+        const syncedText = code === 200 && typeof value.syncedLyrics === "string" ? value.syncedLyrics : "";
+        const plainText = code === 200 && typeof value.plainLyrics === "string" ? value.plainLyrics : "";
+        try {
+            database().transaction(tx => tx.executeSql("INSERT OR REPLACE INTO lyrics_v2 VALUES (?, ?, ?, ?)", [onlineKey, syncedText, plainText, Date.now()]));
+        } catch (error) {}
+        acceptOnline(syncedText, plainText);
+    }
+
+    Timer {
+        id: networkTimeout
+        objectName: "lyricsNetworkTimeout"
+        interval: 15000
+        onTriggered: {
+            root.cancelRequest();
+            root.fallbackOnline();
+        }
+    }
+
+    Timer {
+        id: retry
+        objectName: "lyricsRetry"
+        interval: 3000 * root._retryCount
+        onTriggered: root.loadOnline()
     }
 }

@@ -65,7 +65,8 @@ Item {
                     track: root.view.trackIdentity
                     positionUnitsPerSecond: root.view.positionUnitsPerSecond
                     visualFrameTime: root.view.visualFrameTime
-                    accentColor: root.view.waveColor
+                    accentColor: root.view.progressWaveColor
+                    colorStops: root.view.progressColors
                     cornerRadius: artBox.ringRadius
                 }
             }
@@ -80,7 +81,7 @@ Item {
                 player: root.view.player
                 isPlaying: root.view.isPlaying
                 controlColor: root.view.controlColor
-                accentColor: root.view.waveColor
+                accentColor: root.view.controlsAccent
                 cardHovered: root.view.cardHovered
             }
 

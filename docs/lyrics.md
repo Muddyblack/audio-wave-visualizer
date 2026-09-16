@@ -11,6 +11,11 @@ For `Song.mp3`, lookup order is:
 2. Embedded ID3 `SYLT` (millisecond timestamps), then `USLT`.
 3. Cached LRCLIB lyrics, then an online lookup using title, artist, album and duration.
 
+If the host's Qt HTTPS connection fails or stalls, lookup falls back to Python's
+HTTPS client (with certificate verification). Temporary failures retry twice;
+failed requests are never cached as missing lyrics. Plain online lyrics are
+shown in Lyrics only when synced lyrics are unavailable.
+
 UTF-8 and BOM-marked UTF-16 sidecars are supported. Plain USLT lyrics appear as
 an untimed document in Lyrics only; no timing is fabricated. SYLT using MPEG
 frame counts is skipped because those values are not milliseconds. Embedded

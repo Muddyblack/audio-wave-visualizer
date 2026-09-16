@@ -83,6 +83,12 @@ Kirigami.Page {
     property bool cfg_useSystemTextDefault
     property string cfg_customTextColor
     property string cfg_customTextColorDefault
+    property string cfg_controlsColorSource
+    property string cfg_controlsColorSourceDefault
+    property string cfg_progressColorSource
+    property string cfg_progressColorSourceDefault
+    property string cfg_customProgressColor
+    property string cfg_customProgressColorDefault
     property bool cfg_useSystemControls
     property bool cfg_useSystemControlsDefault
     property string cfg_customControlColor
@@ -305,6 +311,12 @@ Kirigami.Page {
     property bool cfg_batterySaverDefault
     property bool cfg_simpleRender
     property bool cfg_simpleRenderDefault
+    property bool cfg_autoDailyLook
+    property bool cfg_autoDailyLookDefault
+    property string cfg_dailyLookApplied
+    property string cfg_dailyLookAppliedDefault
+    property string cfg_favoritePresets
+    property string cfg_favoritePresetsDefault
     property string cfg_userPresets
     property string cfg_userPresetsDefault
     property string cfg_dockMode
@@ -354,6 +366,9 @@ Kirigami.Page {
             glowWave: root.cfg_glowWave,
             useSystemText: root.cfg_useSystemText,
             customTextColor: root.cfg_customTextColor,
+            controlsColorSource: root.cfg_controlsColorSource,
+            progressColorSource: root.cfg_progressColorSource,
+            customProgressColor: root.cfg_customProgressColor,
             useSystemControls: root.cfg_useSystemControls,
             customControlColor: root.cfg_customControlColor,
             useSystemDockBg: root.cfg_useSystemDockBg,
@@ -465,6 +480,9 @@ Kirigami.Page {
             reducedMotion: root.cfg_reducedMotion,
             batterySaver: root.cfg_batterySaver,
             simpleRender: root.cfg_simpleRender,
+            autoDailyLook: root.cfg_autoDailyLook,
+            dailyLookApplied: root.cfg_dailyLookApplied,
+            favoritePresets: root.cfg_favoritePresets,
             userPresets: root.cfg_userPresets,
             dockMode: root.cfg_dockMode,
             dockMargin: root.cfg_dockMargin,
@@ -508,6 +526,9 @@ Kirigami.Page {
             glowWave: root.cfg_glowWaveDefault,
             useSystemText: root.cfg_useSystemTextDefault,
             customTextColor: root.cfg_customTextColorDefault,
+            controlsColorSource: root.cfg_controlsColorSourceDefault,
+            progressColorSource: root.cfg_progressColorSourceDefault,
+            customProgressColor: root.cfg_customProgressColorDefault,
             useSystemControls: root.cfg_useSystemControlsDefault,
             customControlColor: root.cfg_customControlColorDefault,
             useSystemDockBg: root.cfg_useSystemDockBgDefault,
@@ -619,6 +640,9 @@ Kirigami.Page {
             reducedMotion: root.cfg_reducedMotionDefault,
             batterySaver: root.cfg_batterySaverDefault,
             simpleRender: root.cfg_simpleRenderDefault,
+            autoDailyLook: root.cfg_autoDailyLookDefault,
+            dailyLookApplied: root.cfg_dailyLookAppliedDefault,
+            favoritePresets: root.cfg_favoritePresetsDefault,
             userPresets: root.cfg_userPresetsDefault,
             dockMode: root.cfg_dockModeDefault,
             dockMargin: root.cfg_dockMarginDefault,

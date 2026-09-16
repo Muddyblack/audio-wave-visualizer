@@ -96,6 +96,15 @@
         <entry name="customTextColor" type="String">
             <default>#ffffff</default>
         </entry>
+        <entry name="controlsColorSource" type="String">
+            <default>legacy</default>
+        </entry>
+        <entry name="progressColorSource" type="String">
+            <default>legacy</default>
+        </entry>
+        <entry name="customProgressColor" type="String">
+            <default>#3daee9</default>
+        </entry>
         <entry name="useSystemControls" type="Bool">
             <default>true</default>
         </entry>
@@ -432,6 +441,15 @@
         </entry>
         <entry name="simpleRender" type="Bool">
             <default>false</default>
+        </entry>
+        <entry name="autoDailyLook" type="Bool">
+            <default>false</default>
+        </entry>
+        <entry name="dailyLookApplied" type="String">
+            <default></default>
+        </entry>
+        <entry name="favoritePresets" type="String">
+            <default></default>
         </entry>
         <entry name="userPresets" type="String">
             <default></default>

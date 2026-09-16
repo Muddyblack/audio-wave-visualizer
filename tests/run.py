@@ -28,6 +28,7 @@ subprocess.run([sys.executable, str(REPO / "tests/test_stereo_capture.py")], che
 subprocess.run([sys.executable, str(REPO / "tests/test_track_profile.py")], check=True)
 subprocess.run([sys.executable, str(REPO / "tests/test_media_metadata.py")], check=True)
 subprocess.run([sys.executable, str(REPO / "tests/test_local_lyrics.py")], check=True)
+subprocess.run([sys.executable, str(REPO / "tests/test_online_lyrics.py")], check=True)
 if shutil.which("node"):
     subprocess.run(["node", str(REPO / "tests/test_lyrics.cjs")], check=True)
 if shutil.which("qs"):

@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Effects
+import "../code/ColourStyle.js" as ColourStyle
 
 Item {
     id: root
@@ -17,6 +18,24 @@ Item {
     property color textColor: "#ffffff"
     property color waveColor: "#ffffff"
     property color controlColor: "#ffffff"
+    property var colorStops: []
+    function colorAt(position) {
+        return ColourStyle.sample(colorStops.length ? colorStops : [waveColor], position);
+    }
+    function gradientPaint(ctx, width) {
+        if (!colorStops.length)
+            return pgStartColor;
+        const gradient = ctx.createLinearGradient(0, 0, width, 0);
+        for (let i = 0; i < colorStops.length; i++)
+            gradient.addColorStop(i / Math.max(1, colorStops.length - 1), colorStops[i]);
+        return gradient;
+    }
+    onColorStopsChanged: {
+        if (waveformSeek.visible)
+            waveformSeek.requestPaint();
+        if (lineSeek.visible)
+            lineSeek.requestPaint();
+    }
     property color pgStartColor: "#ffffff"
     property color pgEndColor: "#ffffff"
     property real positionUnitsPerSecond: 0
@@ -204,7 +223,7 @@ Item {
                 const bh = played ? Math.max(2, barHeights[i] * h) : Math.max(2, barHeights[i] * h * 0.45);
                 const y = (h - bh) / 2;
 
-                ctx.fillStyle = played ? playedColor : unplayedColor;
+                ctx.fillStyle = played ? (root.colorStops.length ? root.colorAt(x / Math.max(1, playheadX)) : playedColor) : unplayedColor;
 
                 const r = barW / 2;
                 ctx.beginPath();
@@ -291,7 +310,7 @@ Item {
             if (root.pbStyle === 5) {
                 ctx.lineWidth = 2;
                 ctx.lineCap = "round";
-                ctx.strokeStyle = root.pgStartColor;
+                ctx.strokeStyle = root.gradientPaint(ctx, Math.max(1, px));
                 ctx.beginPath();
                 for (let x = 1; x <= px; x += 1) {
                     const y = h / 2 + Math.sin(x * 0.38 - phase * 6) * amplitude;
@@ -321,7 +340,7 @@ Item {
                         ctx.moveTo(x + r, h / 2);
                         ctx.arc(x, h / 2, r, 0, Math.PI * 2);
                     }
-                    ctx.fillStyle = played ? root.waveColor : Qt.rgba(root.textColor.r, root.textColor.g, root.textColor.b, 0.3);
+                    ctx.fillStyle = played ? root.colorAt(x / Math.max(1, px)) : Qt.rgba(root.textColor.r, root.textColor.g, root.textColor.b, 0.3);
                     ctx.fill();
                 }
                 ctx.fillStyle = root.controlColor;
@@ -382,7 +401,7 @@ Item {
             Rectangle {
                 anchors.fill: parent
                 radius: progressTrack.radius
-                visible: root.pbStyle !== 1 && root.pbStyle !== 6 && root.pbStyle !== 8
+                visible: !root.colorStops.length && root.pbStyle !== 1 && root.pbStyle !== 6 && root.pbStyle !== 8
                 gradient: Gradient {
                     GradientStop {
                         position: 0.0
@@ -406,11 +425,44 @@ Item {
                 }
             }
 
+            Rectangle {
+                anchors.fill: parent
+                radius: progressTrack.radius
+                visible: root.colorStops.length > 0 && root.pbStyle !== 6
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop {
+                        position: 0
+                        color: root.colorAt(0)
+                    }
+                    GradientStop {
+                        position: 0.2
+                        color: root.colorAt(0.2)
+                    }
+                    GradientStop {
+                        position: 0.4
+                        color: root.colorAt(0.4)
+                    }
+                    GradientStop {
+                        position: 0.6
+                        color: root.colorAt(0.6)
+                    }
+                    GradientStop {
+                        position: 0.8
+                        color: root.colorAt(0.8)
+                    }
+                    GradientStop {
+                        position: 1
+                        color: root.colorAt(1)
+                    }
+                }
+            }
+
             // Style 1 — flat solid fill (Ultra Minimal)
             Rectangle {
                 anchors.fill: parent
                 radius: progressTrack.radius
-                visible: root.pbStyle === 1
+                visible: !root.colorStops.length && root.pbStyle === 1
                 color: Qt.rgba(root.pgStartColor.r, root.pgStartColor.g, root.pgStartColor.b, 0.75)
             }
 
@@ -418,7 +470,7 @@ Item {
             Rectangle {
                 anchors.fill: parent
                 radius: progressTrack.radius
-                visible: root.pbStyle === 8
+                visible: !root.colorStops.length && root.pbStyle === 8
                 color: root.pgStartColor
             }
 
@@ -430,7 +482,7 @@ Item {
                     x: index * 9
                     width: 7
                     height: progressTrack.height
-                    color: root.pgStartColor
+                    color: root.colorStops.length ? root.colorAt(x / Math.max(1, root.progressPixel)) : root.pgStartColor
                 }
             }
 
@@ -485,7 +537,7 @@ Item {
         // Style 8 — white capsule knob with a small drop shadow.
         Rectangle {
             objectName: "capsuleKnob"
-            visible: root.pbStyle === 8
+            visible: !root.colorStops.length && root.pbStyle === 8
             width: 16
             height: 9
             radius: 4.5

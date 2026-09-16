@@ -15,7 +15,7 @@ Item {
     readonly property var rowData: section.rows[rowIndex]
     readonly property var value: Schema.rowValue(rowData, studio.draft)
     readonly property bool disabledRow: !!rowData.disabled && rowData.disabled(studio.draft)
-    readonly property bool hasHead: !!rowData.label && rowData.type !== "customStyle"
+    readonly property bool hasHead: !!rowData.label && ["customStyle", "presets", "userPresets"].indexOf(rowData.type) === -1
     readonly property real controlWidth: control.item ? control.item.implicitWidth : 0
     readonly property bool stacked: !!rowData.full || width - controlWidth - 18 < 190
 
@@ -87,11 +87,19 @@ Item {
                     tiles: tilesComponent,
                     note: noteComponent,
                     presets: presetsComponent,
+                    projectInfo: projectInfoComponent,
                     userPresets: userPresetsComponent,
                     customStyle: customStyleComponent,
                     anchor: anchorComponent,
                     diagnostics: diagnosticsComponent
                 })[row.rowData.type] ?? null
+        }
+    }
+
+    Component {
+        id: projectInfoComponent
+        ProjectInfoPane {
+            studio: row.studio
         }
     }
 

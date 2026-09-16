@@ -143,7 +143,7 @@ def write_gallery(path, catalogue, dimensions):
             f"## {title}",
             "",
             (
-                f'<img src="../readme/{name}.png" width="{width // 2}" '
+                f'<img src="readme/{name}.png" width="{width // 2}" '
                 f'alt="{title} — real QML screenshot">'
             ),
             "",
@@ -157,7 +157,7 @@ def write_gallery(path, catalogue, dimensions):
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--output", type=Path, default=ROOT / "readme")
+    parser.add_argument("--output", type=Path, default=ROOT / "docs" / "readme")
     parser.add_argument("--backend", choices=("opengl", "software"), default="software")
     parser.add_argument("--platform", default="offscreen")
     args = parser.parse_args()
@@ -172,7 +172,7 @@ def main():
     check_sheets(catalogue)
     with tempfile.TemporaryDirectory(prefix="audio-gallery-") as directory:
         staging = Path(directory)
-        template = (ROOT / "readme/Capture.qml.in").read_text()
+        template = (ROOT / "docs/readme/Capture.qml.in").read_text()
         values = {
             "UI": ui.as_uri(),
             "STUDIO": (ui / "studio").as_uri(),

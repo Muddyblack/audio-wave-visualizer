@@ -36,7 +36,8 @@ Item {
             track: root.view.track
             positionUnitsPerSecond: root.view.positionUnitsPerSecond
             visualFrameTime: root.view.visualFrameTime
-            accentColor: root.view.waveColor
+            accentColor: root.view.progressWaveColor
+            colorStops: root.view.progressColors
             cornerRadius: artView.ringRadius
         }
     }
