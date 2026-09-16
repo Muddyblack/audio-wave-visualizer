@@ -2,7 +2,7 @@
 """Read desktop power telemetry without changing the widget or requiring root.
 
 Run once with the widget stopped and again while visible, keeping other work
-unchanged: python3 tests/measure_power.py --seconds 10
+unchanged: python3 tools/measure_power.py --seconds 10
 Add --json for machine-readable output. Quickshell is optional; --qs can select
 its executable when it is not on PATH. All sensor and runtime access is read-only.
 """

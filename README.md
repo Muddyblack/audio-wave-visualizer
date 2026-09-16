@@ -209,11 +209,11 @@ The shared waveform uses one GPU glow effect instead of blurring each bar on
 the CPU. Progress decorations follow audio updates instead of running a separate
 continuous animation. Software rendering omits the unsupported GPU glow.
 For a repeatable CPU comparison against a saved older package, run
-`python3 tests/benchmark_rendering.py --baseline /path/to/older/package`.
-`python3 tests/benchmark_frames.py` measures the current view's frame submissions.
+`python3 tools/benchmark_rendering.py --baseline /path/to/older/package`.
+`python3 tools/benchmark_frames.py` measures the current view's frame submissions.
 These offscreen benchmarks measure CPU drawing and frame submissions, not GPU
 cost or system power; compare actual watts in your desktop session.
-`python3 tests/measure_power.py` reads live package power, GPU clocks and capture
+`python3 tools/measure_power.py` reads live package power, GPU clocks and capture
 status without root. Compare the same music and visible displays, with other
 work kept steady. Hardware domains overlap, so their watt readings must not be
 added together. Turning off waveform glow alone does not necessarily reduce

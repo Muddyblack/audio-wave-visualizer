@@ -2,10 +2,10 @@
 """Compare new QML visualizers with drawWave extracted from the HTML prototype.
 
 Headless geometry check (the HTML drawing code runs on Qt Canvas):
-  python3 tests/compare_html_visualizers.py --reference qt
+  python3 tools/compare_html_visualizers.py --reference qt
 
 Actual Chromium/Qt pixel comparison, including bloom, on a desktop:
-  python3 tests/compare_html_visualizers.py --reference chromium \
+  python3 tools/compare_html_visualizers.py --reference chromium \
       --backend opengl --platform xcb --renderer shader --glow
 
 The Qt reference verifies the drawing formulas on the same raster engine. It

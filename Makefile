@@ -61,7 +61,7 @@ parity: ## GPU shader vs Canvas on this desktop (opens a window; saves image pai
 
 compare-html: ## render styles 6-15 from docs/website/index.html and the widget; writes report.html
 	@out="$${TMPDIR:-/tmp}/audio-visualizer-html"; \
-	run="python3 tests/compare_html_visualizers.py --reference qt --extended --output $$out"; \
+	run="python3 tools/compare_html_visualizers.py --reference qt --extended --output $$out"; \
 	command -v qmltestrunner >/dev/null 2>&1 || run="nix develop --command $$run"; \
 	$$run; status=$$?; echo "report: $$out/report.html"; exit $$status
 

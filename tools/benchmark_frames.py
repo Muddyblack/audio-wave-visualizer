@@ -2,8 +2,8 @@
 """Count Qt window submissions during steady synthetic audio playback.
 
 Run with Qt's `qml` runner on PATH:
-    python3 tests/benchmark_frames.py
-    python3 tests/benchmark_frames.py --baseline /tmp/audio-power-before --no-glow
+    python3 tools/benchmark_frames.py
+    python3 tools/benchmark_frames.py --baseline /tmp/audio-power-before --no-glow
 
 The source and baseline trees must contain package/. This excludes cava, MPRIS,
 the GPU and the desktop compositor: submissions are not screen FPS or watts.

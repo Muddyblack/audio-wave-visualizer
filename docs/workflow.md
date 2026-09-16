@@ -276,8 +276,8 @@ For refactors that must preserve the card's appearance, compare the working tree
 against a Git revision or a saved copy of `VisualizerView.qml`:
 
 ```sh
-python3 tests/compare_view_snapshots.py --baseline-ref <revision>
-python3 tests/compare_view_snapshots.py --baseline-view /tmp/VisualizerView.qml
+python3 tools/compare_view_snapshots.py --baseline-ref <revision>
+python3 tools/compare_view_snapshots.py --baseline-view /tmp/VisualizerView.qml
 ```
 
 The comparison renders both versions with identical inputs in the same process,
@@ -289,7 +289,7 @@ masks, blur and GPU effects too. Software snapshots cannot validate those effect
 
 ### Compare new visualizers with the HTML prototype
 
-`tests/compare_html_visualizers.py` reads `drawWave` and its colour helpers directly
+`tools/compare_html_visualizers.py` reads `drawWave` and its colour helpers directly
 from `docs/website/index.html` (or `docs/website/app.js`), including when that local reference is ignored by Git.
 Use `--html /path/to/index.html` if the reference is elsewhere. It fixes the final
 bar levels, bass/mid/high bands, time, peaks, particles and ripples on both sides;
@@ -299,7 +299,7 @@ drawing from capture and animation timing.
 Run the exact source comparison without a desktop:
 
 ```sh
-python3 tests/compare_html_visualizers.py --reference qt \
+python3 tools/compare_html_visualizers.py --reference qt \
   --output /tmp/audio-html-comparison
 ```
 
@@ -321,7 +321,7 @@ For the actual browser and shader comparison, run on a desktop with Chromium or
 Chrome, Qt 6 and an OpenGL scene graph:
 
 ```sh
-python3 tests/compare_html_visualizers.py --reference chromium \
+python3 tools/compare_html_visualizers.py --reference chromium \
   --backend opengl --platform xcb --renderer shader --glow \
   --output /tmp/audio-browser-comparison
 ```

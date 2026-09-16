@@ -2,8 +2,8 @@
 """Compare VisualizerView pixels against a saved view or Git revision.
 
 Run before merging a visual-preserving refactor, for example:
-  python3 tests/compare_view_snapshots.py --baseline-ref HEAD
-  python3 tests/compare_view_snapshots.py --baseline-view /tmp/VisualizerView.qml
+  python3 tools/compare_view_snapshots.py --baseline-ref HEAD
+  python3 tools/compare_view_snapshots.py --baseline-view /tmp/VisualizerView.qml
 
 Both versions render in the same Qt process, with identical fonts, colors,
 artwork, spectrum and a frozen playback clock. This avoids platform-dependent

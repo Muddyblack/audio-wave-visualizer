@@ -2,8 +2,8 @@
 """Measure software CPU work with synthetic audio; this does not measure GPU power.
 
 Save a pre-change copy of package/ first, then compare it with the working tree:
-  python3 tests/benchmark_rendering.py --baseline /tmp/audio-power-before/package
-  python3 tests/benchmark_rendering.py --style 15 --renderer waveform
+  python3 tools/benchmark_rendering.py --baseline /tmp/audio-power-before/package
+  python3 tools/benchmark_rendering.py --style 15 --renderer waveform
 
 The software scene graph intentionally omits the new GPU glow. This isolates
 the CPU raster work removed by moving the blur out of Canvas; use the real
