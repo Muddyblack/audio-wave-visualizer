@@ -49,13 +49,15 @@ function browser(settings) {
     if (Array.isArray(out.detailFields)) out.detailFields = out.detailFields.join(',');
     return out;
 }
-function encode(name, settings, known, fromBrowser) {
-    var input = Object.assign({}, settings);
-    if (fromBrowser) {
-        input.showMpris = input.layoutMode === 'compact' ? false
-            : (input.layoutMode === 'pill' || input.layoutMode === 'pillicon') ? input.showMpris !== false : true;
-        input.artBg = input.surfaceStyle === 'art';
-    }
+function fromBrowser(settings) {
+    return canonical(Object.assign({}, settings, {
+        showMpris: settings.layoutMode === 'compact' ? false
+            : (settings.layoutMode === 'pill' || settings.layoutMode === 'pillicon') ? settings.showMpris !== false : true,
+        artBg: settings.surfaceStyle === 'art'
+    }));
+}
+function encode(name, settings, known, browserState) {
+    var input = browserState ? fromBrowser(settings) : settings;
     return JSON.stringify({format: 'plasma-audio-visualizer-look', version: 1,
         name: String(name || 'Shared look'), settings: clean(input, known)});
 }
@@ -72,4 +74,4 @@ function decode(text, known, forBrowser) {
 }
 
 // Browser namespace; QML also exposes the top-level functions through its import.
-var PresetCodec = {encode: encode, decode: decode, browser: browser};
+var PresetCodec = {encode: encode, decode: decode, browser: browser, fromBrowser: fromBrowser};

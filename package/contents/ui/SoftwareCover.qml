@@ -8,6 +8,7 @@ Item {
     property size imageSize: Qt.size(1, 1)
     property real radius: 10
     property bool grayed: false
+    property bool ready: false
     property real rasterScale: Math.max(1, Screen.devicePixelRatio)
 
     Canvas {
@@ -24,15 +25,21 @@ Item {
         smooth: true
         antialiasing: true
         function loadSource() {
+            cover.ready = false;
             if (loadedSource.toString() !== "")
                 unloadImage(loadedSource);
             loadedSource = cover.source;
-            if (cover.source.toString() !== "")
+            if (cover.source.toString() !== "") {
                 loadImage(cover.source);
+                cover.ready = isImageLoaded(cover.source);
+            }
             requestPaint();
         }
         Component.onCompleted: loadSource()
-        onImageLoaded: requestPaint()
+        onImageLoaded: {
+            cover.ready = isImageLoaded(cover.source);
+            requestPaint();
+        }
         onWidthChanged: requestPaint()
         onHeightChanged: requestPaint()
         Connections {

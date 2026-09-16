@@ -62,12 +62,15 @@ TestCase {
         subject.bars = bars;
         subject.hasAudio = true;
         const canvas = createTemporaryObject(canvasComponent, testCase, {
-            numBars: bars.length
+            numBars: bars.length,
+            bars: bars,
+            hasAudio: true
         });
+        tryVerify(() => canvas._drawCache.levels?.length === bars.length);
         const values = uploaded();
         compare(effect.barCount, bars.length);
         for (let i = 0; i < bars.length; i++)
-            fuzzyCompare(values[i], bars[i] / 1000 * canvas._tapers[i], 1e-6, "Bar " + i + " must match WaveCanvas");
+            fuzzyCompare(values[i], canvas._drawCache.levels[i], 1e-6, "Bar " + i + " must match WaveCanvas");
         compare(values[6], 0, "Unused slots stay empty");
         compare(values[7], 0, "Unused slots stay empty");
     }

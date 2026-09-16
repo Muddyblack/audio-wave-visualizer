@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Effects
 import "../code/ColourStyle.js" as ColourStyle
+import "../code/ProgressDraw.js" as ProgressDraw
 
 Item {
     id: root
@@ -21,14 +22,6 @@ Item {
     property var colorStops: []
     function colorAt(position) {
         return ColourStyle.sample(colorStops.length ? colorStops : [waveColor], position);
-    }
-    function gradientPaint(ctx, width) {
-        if (!colorStops.length)
-            return pgStartColor;
-        const gradient = ctx.createLinearGradient(0, 0, width, 0);
-        for (let i = 0; i < colorStops.length; i++)
-            gradient.addColorStop(i / Math.max(1, colorStops.length - 1), colorStops[i]);
-        return gradient;
     }
     onColorStopsChanged: {
         if (waveformSeek.visible)
@@ -140,19 +133,7 @@ Item {
                 return;
             numBars = n;
             waveformKey = key;
-            let seed = 0;
-            const s = root.track + root.artist;
-            for (let c = 0; c < s.length; c++)
-                seed = (seed * 31 + s.charCodeAt(c)) >>> 0;
-            const heights = [];
-            for (let i = 0; i < n; i++) {
-                seed = (seed * 1664525 + 1013904223) >>> 0;
-                const r = (seed >>> 16) / 65535;
-                const pos = n > 1 ? i / (n - 1) : 0;
-                const taper = Math.sin(pos * Math.PI);
-                heights.push(0.15 + r * 0.85 * taper);
-            }
-            barHeights = heights;
+            barHeights = ProgressDraw.seedHeights(root.track + root.artist, n);
             requestPaint();
         }
 
@@ -207,48 +188,22 @@ Item {
         onPaint: {
             const ctx = getContext("2d");
             ctx.reset();
-            if (barHeights.length === 0)
-                return;
-            const gap = 2;
-            const barW = 3;
-            const n = barHeights.length;
-            const h = height;
-            const playheadX = playheadPx;
-            const playedColor = Qt.rgba(root.waveColor.r, root.waveColor.g, root.waveColor.b, 0.90);
-            const unplayedColor = Qt.rgba(root.textColor.r, root.textColor.g, root.textColor.b, 0.25);
-
-            for (let i = 0; i < n; i++) {
-                const x = i * (barW + gap);
-                const played = (x + barW / 2) < playheadX;
-                const bh = played ? Math.max(2, barHeights[i] * h) : Math.max(2, barHeights[i] * h * 0.45);
-                const y = (h - bh) / 2;
-
-                ctx.fillStyle = played ? (root.colorStops.length ? root.colorAt(x / Math.max(1, playheadX)) : playedColor) : unplayedColor;
-
-                const r = barW / 2;
-                ctx.beginPath();
-                if (bh > r * 2) {
-                    ctx.moveTo(x + r, y);
-                    ctx.arc(x + r, y + r, r, Math.PI, 0);
-                    ctx.lineTo(x + barW, y + bh - r);
-                    ctx.arc(x + r, y + bh - r, r, 0, Math.PI);
-                    ctx.closePath();
-                } else {
-                    ctx.arc(x + r, y + bh / 2, r, 0, Math.PI * 2);
-                }
-                ctx.fill();
-            }
-
-            // playhead line
-            if (showPlayhead) {
-                ctx.fillStyle = Qt.rgba(root.controlColor.r, root.controlColor.g, root.controlColor.b, 0.95);
-                const phX = playheadX - 1;
-                ctx.fillRect(phX, 0, 2, h);
-            }
+            ProgressDraw.draw(ctx, {
+                width: width,
+                height: height,
+                style: 4,
+                playhead: playheadPx,
+                heights: barHeights,
+                showPlayhead: showPlayhead,
+                waveColor: root.waveColor,
+                textColor: root.textColor,
+                controlColor: root.controlColor,
+                stops: root.colorStops
+            });
         }
     }
 
-    // ── Styles 5 (Squiggle) and 7 (Dotted) — HTML drawSeek ──
+    // ── Styles 5 (Squiggle) and 7 (Dotted) ──
     Canvas {
         id: lineSeek
         objectName: "lineSeek"
@@ -304,50 +259,19 @@ Item {
         onPaint: {
             const ctx = getContext("2d");
             ctx.reset();
-            const w = width, h = height, px = playheadPx;
-            if (w <= 0)
-                return;
-            if (root.pbStyle === 5) {
-                ctx.lineWidth = 2;
-                ctx.lineCap = "round";
-                ctx.strokeStyle = root.gradientPaint(ctx, Math.max(1, px));
-                ctx.beginPath();
-                for (let x = 1; x <= px; x += 1) {
-                    const y = h / 2 + Math.sin(x * 0.38 - phase * 6) * amplitude;
-                    if (x > 1)
-                        ctx.lineTo(x, y);
-                    else
-                        ctx.moveTo(x, y);
-                }
-                ctx.stroke();
-                ctx.strokeStyle = Qt.rgba(root.textColor.r, root.textColor.g, root.textColor.b, 0.25);
-                ctx.beginPath();
-                ctx.moveTo(Math.min(w - 1, px + 5), h / 2);
-                ctx.lineTo(w - 1, h / 2);
-                ctx.stroke();
-                ctx.fillStyle = root.controlColor;
-                ctx.beginPath();
-                ctx.roundedRect(px - 1.5, 0, 3, h, 1.5, 1.5);
-                ctx.fill();
-            } else {
-                // Dots of one colour share a path; the raster matches per-dot fills.
-                for (const played of [true, false]) {
-                    ctx.beginPath();
-                    const r = played ? 1.6 : 1.1;
-                    for (let x = 3; x < w; x += 6) {
-                        if ((x < px) !== played)
-                            continue;
-                        ctx.moveTo(x + r, h / 2);
-                        ctx.arc(x, h / 2, r, 0, Math.PI * 2);
-                    }
-                    ctx.fillStyle = played ? root.colorAt(x / Math.max(1, px)) : Qt.rgba(root.textColor.r, root.textColor.g, root.textColor.b, 0.3);
-                    ctx.fill();
-                }
-                ctx.fillStyle = root.controlColor;
-                ctx.beginPath();
-                ctx.arc(Math.max(3, Math.min(w - 3, px)), h / 2, 3.2, 0, Math.PI * 2);
-                ctx.fill();
-            }
+            ProgressDraw.draw(ctx, {
+                width: width,
+                height: height,
+                style: root.pbStyle,
+                playhead: playheadPx,
+                amplitude: amplitude,
+                time: phase,
+                startColor: root.pgStartColor,
+                waveColor: root.waveColor,
+                textColor: root.textColor,
+                controlColor: root.controlColor,
+                stops: root.colorStops
+            });
         }
     }
 

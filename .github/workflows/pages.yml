@@ -8,6 +8,7 @@ on:
     paths:
       - docs/**
       - package/icon.png
+      - package/metadata.json
       - package/contents/config/main.xml
       - package/contents/code/*.js
       - package/contents/ui/studio/*.js

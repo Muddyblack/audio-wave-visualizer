@@ -311,8 +311,10 @@ and session buses; no running desktop or sound server is required.
 ## Shared studio assets and the browser demo
 
 The settings page is Qt Quick/QML. GitHub Pages serves the HTML/JavaScript demo
-in `docs/website/index.html`. They have separate controls and rendering implementations;
-the browser does not run the installed settings page or change desktop settings.
+in `docs/website/index.html`. The hosts have separate QML and DOM controls, but share
+JavaScript settings rules, presets, colour selection, all Canvas visualizers, progress
+canvas styles, preview audio and particle motion. The browser does not execute QML
+or change desktop settings. The desktop also retains its GPU shader path.
 The browser demo uses one desktop/panel presentation, without a platform toggle.
 
 Both now use the tab, wallpaper and Midnight Marina interface palette in
@@ -321,7 +323,19 @@ in `package/contents/ui/studio/wallpapers`. The catalogue retains stable backdro
 IDs so existing presets keep selecting the corresponding scene. QML loads static
 images at bounded decode sizes; no wallpaper animation timer is needed.
 
-After editing the catalogue or wallpapers:
+Maintain behaviour in `package/contents/code` and the studio schema, not in a second
+browser implementation. `app.js` connects these modules to DOM events, Canvas contexts,
+local storage and sample playback; HTML/CSS still own the browser layout and styling.
+A new setting using an existing schema row type appears in both studios automatically.
+The header version comes from `package/metadata.json`; changing the manifest also
+triggers the Pages build.
+A new QML component or row type still needs a browser presentation adapter.
+
+The build discovers shared namespaces used by `app.js`, follows their `.import`
+dependencies and emits one `Runtime.js` in dependency order. There is no second module
+list or script ordering to maintain in HTML. Missing or circular imports fail the build.
+
+After editing shared code, the catalogue or wallpapers:
 
 ```sh
 python3 tools/sync_studio_assets.py

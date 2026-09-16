@@ -12,6 +12,8 @@ for (const [, file] of html.matchAll(/<script src="([^"]+)"/g)) {
   if (file !== 'app.js') vm.runInContext(fs.readFileSync(path.join(root, file), 'utf8'), context, {filename:file});
 }
 const source = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
+const manifest = JSON.parse(fs.readFileSync(path.resolve(root, '../../package/metadata.json'), 'utf8'));
+assert.equal(vm.runInContext('ProjectManifest.version', context), manifest.KPlugin.Version);
 vm.runInContext(source.slice(source.indexOf('const HYPR ='), source.indexOf('let lastT =')), context);
 vm.runInContext(source.slice(source.indexOf('const presetState ='), source.indexOf('function renderPresets()')), context);
 vm.runInContext(`

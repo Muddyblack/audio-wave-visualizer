@@ -1,5 +1,5 @@
 import QtQuick
-import QtQuick.Effects
+import ".." as Shared
 import "Theme.js" as Theme
 import "ProjectInfo.js" as Project
 
@@ -82,33 +82,22 @@ Column {
             height: 40
             radius: 20
             color: Theme.sunk
-            layer.enabled: avatar.status === Image.Ready
-            layer.effect: MultiEffect {
-                maskEnabled: true
-                maskSource: Rectangle {
-                    width: 40
-                    height: 40
-                    radius: 20
-                    color: "white"
-                    layer.enabled: true
-                    visible: false
-                }
-            }
             Text {
+                objectName: "authorAvatarFallback"
                 anchors.centerIn: parent
                 text: "M"
                 color: Theme.brand
                 font.pixelSize: 20
-                visible: avatar.status !== Image.Ready
+                visible: !avatar.ready
             }
-            Image {
+            Shared.SoftwareCover {
                 id: avatar
+                objectName: "authorAvatar"
                 anchors.fill: parent
                 source: info.onlineEnabled ? Project.avatar : ""
-                sourceSize.width: 128
-                sourceSize.height: 128
-                asynchronous: true
-                visible: status === Image.Ready
+                imageSize: Qt.size(128, 128)
+                radius: 20
+                Accessible.name: Project.author + " GitHub avatar"
             }
         }
         StudioButton {

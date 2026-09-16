@@ -8,14 +8,15 @@ import Quickshell.Services.UPower
 import "../package/contents/ui" as Shared
 import "../package/contents/ui/studio" as Studio
 import "Configuration.js" as Configuration
+import "../package/contents/code/HostDefaults.js" as HostDefaults
 import "../package/contents/code/Layouts.js" as LayoutSizes
 
 ShellRoot {
     id: root
     property int widgetWidth: 360
     property int widgetHeight: 104
-    property real verticalPosition: 0.60
-    property string monitor: ""
+    property real verticalPosition: HostDefaults.hyprland.verticalPosition
+    property string monitor: HostDefaults.hyprland.monitor
     // Optional same-window wallpaper provider; a compositor layer is not a texture.
     property Component backdropComponent: null
     property color waveColor: "#b4befe"
@@ -23,7 +24,7 @@ ShellRoot {
     property int visualizerType: defaults.visualizerType
     property bool showMpris: defaults.showMpris
     property bool showBackground: defaults.showBg
-    property bool desktopLayer: true
+    property bool desktopLayer: HostDefaults.hyprland.desktopLayer
     // All keys use the Plasma configuration names (see contents/config/main.xml).
     property var settings: ({})
     property alias audio: audioDefaults
@@ -126,7 +127,7 @@ ShellRoot {
         blockLoading: true
     }
     readonly property var defaults: Configuration.defaults(defaultsFile.text())
-    readonly property var baseline: Object.assign({}, defaults, {
+    readonly property var baseline: Object.assign({}, defaults, HostDefaults.hyprland, {
         visualizerType: visualizerType,
         showMpris: showMpris,
         showBg: showBackground,
@@ -145,11 +146,6 @@ ShellRoot {
         widgetWidth: widgetWidth,
         widgetHeight: widgetHeight,
         verticalPosition: verticalPosition,
-        hAnchor: "center",
-        dockMode: "none",
-        dockMargin: 8,
-        barHeight: 36,
-        widthExpansion: true,
         ambientGlow: false,
         ambientGlowRadius: 80,
         ambientGlowIntensity: 0.7,
@@ -157,8 +153,7 @@ ShellRoot {
         monitor: monitor,
         waveColor: waveColor.toString(),
         textColor: textColor.toString(),
-        desktopLayer: desktopLayer,
-        pauseWhenCovered: true
+        desktopLayer: desktopLayer
     }, settings, declarativeSettings)
     readonly property var configuration: Object.assign({}, baseline, userSettings)
     Studio.DailyLookController {

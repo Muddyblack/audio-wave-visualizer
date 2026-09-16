@@ -1,9 +1,8 @@
 const fs = require('fs'), vm = require('vm'), assert = require('assert');
 const appJs = fs.readFileSync('docs/website/app.js', 'utf8');
 const context = vm.createContext({});
-vm.runInContext(fs.readFileSync('package/contents/ui/studio/PresetCodec.js', 'utf8'), context);
+vm.runInContext(fs.readFileSync('docs/website/assets/studio/Runtime.js', 'utf8'), context);
 vm.runInContext(fs.readFileSync('hyprland/Configuration.js', 'utf8'), context);
-vm.runInContext(fs.readFileSync('docs/website/assets/studio/ConfigSchema.js', 'utf8'), context);
 context.xml = fs.readFileSync('package/contents/config/main.xml', 'utf8');
 vm.runInContext(appJs.slice(appJs.indexOf('const HYPR ='), appJs.indexOf('const VIZ =')) + '\nvar webDefaults = DEFAULTS; var webKnown = LOOK_DEFAULTS; var qmlKnown = defaults(xml);', context);
 vm.runInContext(`

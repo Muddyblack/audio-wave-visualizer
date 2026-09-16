@@ -464,8 +464,6 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:20px 32px;max-wi
 .po-foot .pb{flex:1}
 .po-clock{font:600 calc(var(--ts)*1.25) ui-monospace,"JetBrains Mono","Noto Sans Mono",monospace;font-variant-numeric:tabular-nums;opacity:.85;letter-spacing:-.02em}
 /* bars that hang from the top edge */
-.wavebox.dir-down canvas{transform:scaleY(-1)}
-#panel.dir-down .tpv>canvas[data-c=wave][data-i="1"],#panel.dir-down .tpv>canvas[data-c=wave][data-i="6"],#panel.dir-down .tpv>canvas[data-c=wave][data-i="7"],#panel.dir-down .tpv>canvas[data-c=wave][data-i="8"]{transform:scaleY(-1)}
 /* preset picker inside settings */
 .pp-top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}
 .pp-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
@@ -609,3 +607,4 @@ footer a:hover{color:var(--text);text-decoration:underline}
 .project-heading{display:flex;align-items:center;gap:14px}
 .project-heading>img{width:64px;height:64px;object-fit:contain}
 .project-heading h3{margin:0;color:var(--text);font-size:18px}
+.studio-version { font-size: .85em; opacity: .65; margin-left: .35em; white-space: nowrap; }

@@ -10,16 +10,21 @@ function count(requested, width, style) {
     return Math.max(6, Math.min(n, Math.floor(width / (dense ? 4 : 2.5))));
 }
 
-function levels(bars, n, range) {
-    const result = new Array(n);
-    for (let i = 0; i < n; i++) {
-        const p = n > 1 ? i / (n - 1) : 0.5;
-        const edge = 0.15;
-        const weight = p < edge ? p / edge : (p > 1 - edge ? (1 - p) / edge : 1);
-        const taper = weight < 1 ? 0.5 - 0.5 * Math.cos(weight * Math.PI) : 1;
-        result[i] = range > 0 ? (bars[i] || 0) / range * taper : 0;
+function levels(bars, n, range, cache) {
+    cache = cache || {};
+    if (!cache.tapers || cache.tapers.length !== n) {
+        cache.tapers = new Array(n);
+        cache.levels = new Array(n);
+        for (let i = 0; i < n; i++) {
+            const p = n > 1 ? i / (n - 1) : 0.5;
+            const edge = 0.15;
+            const weight = p < edge ? p / edge : (p > 1 - edge ? (1 - p) / edge : 1);
+            cache.tapers[i] = weight < 1 ? 0.5 - 0.5 * Math.cos(weight * Math.PI) : 1;
+        }
     }
-    return result;
+    for (let i = 0; i < n; i++)
+        cache.levels[i] = range > 0 ? (bars[i] || 0) / range * cache.tapers[i] : 0;
+    return cache.levels;
 }
 
 var palettes = {

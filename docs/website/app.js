@@ -1,6 +1,7 @@
 'use strict';
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+$$('[data-project-version]').forEach(el => { el.textContent = 'v' + ProjectManifest.version; });
 
 /* ─── page tab switcher ─── */
 (function() {
@@ -22,26 +23,11 @@ const $$ = (s, r = document) => [...r.querySelectorAll(s)];
 })();
 
 /* ─── config model & schema ─────────────────────────────────────── */
-const HYPR = { monitor: '', verticalPosition: 0.60, desktopLayer: true, pauseWhenCovered: true, hAnchor: 'center', dockMode: 'none', dockMargin: 8, barHeight: 36, widthExpansion: true, dockPosition: 'auto' };
-const SCHEMA_ENTRIES = typeof ConfigSchema !== 'undefined' ? ConfigSchema : {};
-const EXISTING = {};
-for (const [k, v] of Object.entries(SCHEMA_ENTRIES)) {
-  EXISTING[k] = v.default;
-}
+const HYPR = HostDefaults.hyprland;
+const EXISTING = Object.fromEntries(Object.entries(ConfigSchema).map(([key, entry]) => [key, entry.default]));
 const LOOK_DEFAULTS = { ...EXISTING, ...HYPR };
-// The HTML renderer uses compact/art aliases; shared QML modules use the
-// canonical settings. Convert only at that boundary, including list fields.
 const DEFAULTS = PresetCodec.browser(LOOK_DEFAULTS);
-function nativeState(state) {
-  return {
-    ...state,
-    layoutMode: state.layoutMode === 'compact' ? (state._cardLayout || 'classic') : state.layoutMode,
-    showMpris: state.layoutMode !== 'compact',
-    surfaceStyle: state.surfaceStyle === 'art' ? (state._cardSurface || 'color') : state.surfaceStyle,
-    artBg: state.surfaceStyle === 'art',
-    detailFields: Schema.fields(state.detailFields)
-  };
-}
+const nativeState = PresetCodec.fromBrowser;
 
 const VIZ = Schema.VIZ;
 const PBS = Schema.PBS;
@@ -50,11 +36,9 @@ const PALETTES = Schema.PALETTES;
 const SWATCHES = Schema.SWATCHES;
 const BGSWATCHES = Schema.BGSWATCHES;
 const isPill = s => Schema.isPill(s);
-const SIZES = Layouts.SIZES;
 const sizeOf = s => Layouts.size(nativeState(s));
 const pct = Schema.pct;
 const PRESETS = Schema.PRESETS.map(p => ({ ...p, s: PresetCodec.browser(p.s) }));
-const COLOR_KEYS = Schema.COLOR_KEYS;
 
 /* ─── sample music ─────────────────────────────────────────────── */
 const svgUrl = s => `url('data:image/svg+xml,${encodeURIComponent(s).replace(/'/g, '%27')}')`;
@@ -98,16 +82,11 @@ function derive(s, status) {
   const hasPlayer = status !== 'idle';
   const playing = hasPlayer && (status === 'demo' || (status !== 'paused' && P.playing));
   const surf = s.showBg ? s.surfaceStyle : 'none';
-  const light = surf === 'solid';
-  const ink = '#1e241d';
-  const accent = s.accentFromArt ? t.pal.accent : s.useSystemAccent ? P.sysAccent : s.customColor;
-  const text = s.useSystemText ? (light && s.autoContrast ? ink : '#eff0f1') : s.customTextColor;
-  const baseControl = s.useSystemControls ? (light && s.autoContrast ? ink : '#ffffff') : s.customControlColor;
+  const canonical = nativeState(s);
+  const appearance = ColourStyle.appearance(canonical, P.sysAccent, '#eff0f1', t.pal.accent, hasPlayer && status !== 'nocover');
+  const {light, text} = appearance, accent = ColourStyle.hex(appearance.wave);
   const dock = s.useSystemDockBg ? (light ? '#2a33241a' : '#00000047') : `color-mix(in srgb,${s.customDockBgColor} 55%,transparent)`;
-  const stops = s.controlsColorSource === 'visualizer' || s.progressColorSource === 'visualizer'
-    ? WaveMath.colorStops(accent, s.vizColorMode, s.vizPalette, t.pal.p1, t.pal.p2, s.hueReactive, bands(colorTime).high, colorTime, s.reducedMotion) : [accent];
-  const linked = ColourStyle.resolve(s, accent, baseControl, s.useSystemControls ? accent : baseControl,
-    s.useSystemControls ? (light ? accent : '#ffffff') : baseControl, stops);
+  const linked = ColourStyle.linked(canonical, accent, appearance.control, P.sysAccent, t.pal.p1, t.pal.p2, bands(colorTime).high, colorTime);
   const control = ColourStyle.hex(linked.control), controlAccent = ColourStyle.hex(linked.controlAccent);
   const progress = ColourStyle.hex(linked.progressWave), pg1 = ColourStyle.hex(linked.start), pg2 = ColourStyle.hex(linked.end);
   const pgStops = linked.progressStops.map(ColourStyle.hex);
@@ -215,7 +194,7 @@ function widgetHTML(s, status, opt = {}) {
   const scaled = (def, cap) => Math.min(cap, def * s.artScale / 100);
   const dock = () => d.hasPlayer ? dockHTML(s, d.playing) : '';
   const faded = s.fadeVizWhenPaused && d.hasPlayer && !d.playing;
-  const wave = `<div style="overflow:${s.vizVerticalOffset ? 'hidden' : 'visible'}" class="wavebox ${faded ? 'faded' : ''} ${[1, 6, 7, 8].includes(s.visualizerType) && s.vizDirection === 'down' ? 'dir-down' : ''}"><canvas data-c="wave" style="translate:0 ${Math.max(-1, Math.min(1, s.vizVerticalOffset || 0)) * 100}%"></canvas>${status === 'backend' ? '<div class="bmsg"><span>cava is not installed</span><code>sudo pacman -S cava</code></div>' : ''}</div>`;
+  const wave = `<div style="overflow:${s.vizVerticalOffset ? 'hidden' : 'visible'}" class="wavebox ${faded ? 'faded' : ''}"><canvas data-c="wave" style="translate:0 ${Math.max(-1, Math.min(1, s.vizVerticalOffset || 0)) * 100}%"></canvas>${status === 'backend' ? '<div class="bmsg"><span>cava is not installed</span><code>sudo pacman -S cava</code></div>' : ''}</div>`;
   const pb = d.hasPlayer && (!(ringMode && showArt) || s.showTimes) ? pbHTML(ringMode && showArt ? 9 : pbStyle, s, d.playing, d.t.len) : '';
   const marq = s.marquee && title.length > 26;
   const titleInner = marq ? `<span class="mi"><span>${esc(title)}</span><span>${esc(title)}</span></span>` : esc(title);
@@ -301,35 +280,11 @@ function panelHTML(inner, env, popupHTML, width) {
 const popupState = s => ({ ...s, layoutMode: 'classic', showBg: true, surfaceStyle: s.showBg ? s.surfaceStyle : 'glass', bgRadius: Math.max(14, s.bgRadius), cardShadow: 'lifted', hoverDetails: 'off' });
 
 /* ─── audio analysis & wave rendering ──────────────────────────── */
-function hexRgb(hex) {
-  const h = hex.replace('#', '');
-  const n = parseInt(h.length === 3 ? h.split('').map(c => c + c).join('') : h.slice(0, 6), 16);
-  return [n >> 16 & 255, n >> 8 & 255, n & 255];
-}
-const hexRgba = (hex, a) => { const [r, g, b] = hexRgb(hex); return `rgba(${r},${g},${b},${a})`; };
-
-function bands(t) {
-  const bass = Math.pow(.5 + .5 * Math.sin(t * 7.4), 7);
-  return { bass, mid: .5 + .5 * Math.sin(t * 1.3), high: .5 + .5 * Math.sin(t * 5.1 + 1), attack: bass > .86 };
-}
-function spectrum(i, n, t) {
-  const p = n > 1 ? i / (n - 1) : .5;
-  const env = Math.pow(Math.sin(p * Math.PI), .85);
-  const beat = Math.pow(.5 + .5 * Math.sin(t * 7.4), 7);
-  const a = .5 + .5 * Math.sin(t * 2.3 + i * .61 + Math.sin(t * .7 + i * .13) * 2);
-  const b = .5 + .5 * Math.sin(t * 3.9 - i * .37);
-  return env * (.16 + .58 * a * b + .34 * beat * env);
-}
+const bands = PreviewAudio.bands;
+const spectrum = PreviewAudio.spectrum;
 function colorStops(s, d, t) {
   return WaveMath.colorStops(d.accent, s.vizColorMode, s.vizPalette,
     d.t.pal.p1, d.t.pal.p2, s.hueReactive, bands(t).high, t, s.reducedMotion);
-}
-
-function paintFor(ctx, stops, w) {
-  if (stops.length === 1) return stops[0];
-  const g = ctx.createLinearGradient(0, 0, w, 0);
-  stops.forEach((c, i) => g.addColorStop(i / (stops.length - 1), c));
-  return g;
 }
 
 let registry = [];
@@ -359,220 +314,81 @@ function prepCanvas(e) {
   ctx.clearRect(0, 0, w, h);
   return { ctx, w, h, k };
 }
-function rr(ctx, x, y, w, h, r) {
-  if (ctx.roundRect) ctx.roundRect(x, y, w, h, Math.max(0, Math.min(r, w / 2, h / 2))); else ctx.rect(x, y, w, h);
-}
-function smoothTrace(ctx, pts, move) {
-  if (move) ctx.moveTo(pts[0][0], pts[0][1]); else ctx.lineTo(pts[0][0], pts[0][1]);
-  for (let i = 1; i < pts.length - 1; i++) ctx.quadraticCurveTo(pts[i][0], pts[i][1], (pts[i][0] + pts[i + 1][0]) / 2, (pts[i][1] + pts[i + 1][1]) / 2);
-  ctx.lineTo(pts[pts.length - 1][0], pts[pts.length - 1][1]);
-}
-
+// Browser adapters: shared modules own geometry, physics and progress drawing.
 function drawWave(e, t) {
   const s = e.getS(), status = e.getStatus(), d = derive(s, status);
   const cv = prepCanvas(e); if (!cv) return;
-  const { ctx, w, h, k } = cv;
+  const {ctx, w, h, k} = cv;
   let st = memo.get(e.key);
-  if (!st) memo.set(e.key, st = { v: new Float32Array(200), peak: new Float32Array(200), energy: 0, parts: [], ripples: [], amp: 0 });
-  const idle = status === 'idle';
+  if (!st) memo.set(e.key, st = {bars: [], energy: 0, cache: {}, peaks: [], particles: [], ripples: [], randomSeed: 1});
+  const idle = status === 'idle', tt = idle ? t * .35 : t;
   const target = d.playing && status !== 'backend' ? 1 : idle && s.idleAmbient ? .22 : 0;
   st.energy += (target - st.energy) * .08;
-  const type = e.viz ?? s.visualizerType;
-  if (st.type !== type) { st.parts = []; st.ripples = []; st.type = type; }
-  const n = Math.max(6, Math.min(s.numBars, Math.floor(w / ([4, 5, 7, 12, 14, 21].includes(type) ? 4 : 2.5))));
-  const sm = .3 + .62 * s.noiseReduction;
-  const tt = idle ? t * .35 : t;
-  for (let i = 0; i < n; i++) {
-    const tg = Math.min(1, spectrum(i, n, tt) * st.energy * s.sensitivity / 100);
-    st.v[i] = st.v[i] * sm + tg * (1 - sm);
-  }
-  const B = bands(tt), stops = colorStops(s, d, t), paint = paintFor(ctx, stops, w);
-  const lw = s.lineWidth, c = h / 2, amp = i => st.v[i] * (c - lw);
-  const glow = s.glowWave && !s.batterySaver ? s.bloom : 0;
-  ctx.lineJoin = 'round'; ctx.lineCap = 'round';
-  if (glow > 0) { ctx.shadowColor = typeof paint === 'string' ? paint : stops[Math.floor(stops.length / 2)]; ctx.shadowBlur = 7 * glow * k; }
-  ctx.strokeStyle = paint; ctx.fillStyle = paint; ctx.lineWidth = lw;
-
-  const step = Math.min(3, Math.max(0, (t - (st.time ?? t - 1 / 30)) * 30));
-  st.time = t;
-  for (let i = 0; i < n; i++) st.peak[i] = Math.max(st.v[i], st.peak[i] - .01 * step);
-  if (s.reducedMotion || target === 0) { st.parts = []; st.ripples = []; }
-  else {
-    if (type === 14) {
-      const slot = w / n;
-      for (let i = 0; i < n; i++) if (Math.random() < st.v[i] * .22 * step && st.parts.length < 32)
-        st.parts.push({ x: (i + .5) * slot, y: c + (Math.random() - .5) * st.v[i] * h, vy: -(.2 + Math.random() * .8), r: .6 + Math.random() * 1.4, life: 1 });
-      st.parts = st.parts.filter(p => { p.y += p.vy * step; return (p.life -= .025 * step) > 0; });
-    }
-    if (type === 21) {
-      const slot = w / n;
-      for (let i = 0; i < n; i++) if (Math.random() < st.v[i] * .22 * step && st.parts.length < 32)
-        st.parts.push({ x: (i + .5) * slot, y: c + (Math.random() - .5) * st.v[i] * h, vx: (Math.random() - .5) * 2, vy: -(.2 + Math.random() * .8), r: .6 + Math.random() * 1.4, life: 1 });
-      st.parts = st.parts.filter(p => { p.vx += Math.sin(p.y * .055 + t * 2 + p.x * .023) * .035 * step; p.x += p.vx * step; p.vy += .018 * step; p.y += p.vy * step; return (p.life -= .025 * step) > 0; });
-    }
-    if (type === 15 && B.attack && !st.attack && st.energy > .5 && st.ripples.length < 4)
-      st.ripples.push({ x: w * (.2 + Math.random() * .6), age: 0 });
-    st.ripples = st.ripples.filter(p => (p.age += .03 * step) < 1);
-  }
-  st.beatPulse = s.reducedMotion ? 0 : B.attack && !st.attack ? 1 : (st.beatPulse || 0) * Math.exp(-step / 4.5);
-  st.attack = B.attack;
-  st.previousStereo = st.stereoSamples || [];
-  // Synthetic preview only: desktop scopes receive real signed stereo PCM.
-  st.stereoSamples = Array.from({length:32}, (_, i) => [Math.sin(i / 31 * Math.PI * 4) * .75, Math.sin(i / 31 * Math.PI * 4 + Math.sin(t) * 1.4) * .75]);
-
-  // Styles 6-21 share the desktop drawing implementation.
-  if (type >= 6) {
-    ctx.save();
-    ctx.shadowBlur = 0;
-    if (s.vizDirection === 'down' && [6, 7, 8].includes(type)) { ctx.translate(0, h); ctx.scale(1, -1); }
-    WaveDraw.draw(ctx, {
-      width: w, height: h, lineWidth: lw, levels: st.v.subarray(0, n), peaks: st.peak.subarray(0, n),
-      stereoSamples: st.stereoSamples, previousStereo: st.previousStereo, beatPulse: st.beatPulse,
-      particles: st.parts, ripples: st.ripples, time: tt, stops, type, glow: glow > 0, fill: s.fillWave,
-      reducedMotion: s.reducedMotion, energy: st.energy, bass: B.bass, mid: B.mid, high: B.high,
-      colorMode: s.vizColorMode, bloom: s.bloom, curvature: s.ribbonCurvature, fullness: s.ribbonFullness,
-      hueShifted: s.hueReactive
-    });
-    ctx.restore();
-    ctx.shadowBlur = 0;
-    return;
-  }
-
-  switch (type) {
-    case 0: {
-      ctx.globalAlpha = 1;
-      const up = [], dn = [];
-      for (let i = 0; i < n; i++) {
-        const x = lw + i / (n - 1) * (w - 2 * lw), a = amp(i);
-        up.push([x, c - a]); dn.push([x, c + a]);
-      }
-      if (s.fillWave) {
-        ctx.save(); ctx.shadowBlur = 0; ctx.beginPath(); smoothTrace(ctx, up, true); smoothTrace(ctx, [...dn].reverse(), false); ctx.closePath();
-        ctx.globalAlpha = .32; ctx.fill(); ctx.restore();
-      }
-      ctx.beginPath(); smoothTrace(ctx, up, true); ctx.stroke();
-      ctx.beginPath(); smoothTrace(ctx, dn, true); ctx.stroke();
-      break;
-    }
-    case 1: case 2: {
-      const slot = w / n, bw = Math.max(1.5, slot * .58);
-      ctx.beginPath();
-      for (let i = 0; i < n; i++) {
-        const bh = Math.max(Math.min(lw, 2), st.v[i] * h * .96);
-        rr(ctx, i * slot + (slot - bw) / 2, type === 2 ? c - bh / 2 : h - bh, bw, bh, bw / 2);
-      }
-      if (s.fillWave) ctx.globalAlpha = .75;
-      ctx.fill(); ctx.globalAlpha = 1;
-      break;
-    }
-    case 3: {
-      const slot = w / n;
-      for (const sign of [-1, 1]) {
-        ctx.beginPath(); ctx.moveTo(0, c);
-        for (let i = 0; i < n; i++) { const y = c + sign * amp(i); ctx.lineTo(i * slot, y); ctx.lineTo((i + 1) * slot, y); }
-        ctx.lineTo(w, c); ctx.lineJoin = 'miter'; ctx.stroke();
-      }
-      break;
-    }
-    case 4: case 5: {
-      const bold = type === 5, r = (bold ? 1.7 : 1.05) * Math.max(.8, lw / 1.8), slot = w / n;
-      ctx.beginPath();
-      for (let i = 0; i < n; i++) {
-        const x = (i + .5) * slot, a = st.v[i] * (c - r);
-        ctx.moveTo(x + r, c - a); ctx.arc(x, c - a, r, 0, 7);
-        ctx.moveTo(x + r, c + a); ctx.arc(x, c + a, r, 0, 7);
-        if (bold && a > 4 * r) { ctx.moveTo(x + r * .7, c - a / 2); ctx.arc(x, c - a / 2, r * .7, 0, 7); ctx.moveTo(x + r * .7, c + a / 2); ctx.arc(x, c + a / 2, r * .7, 0, 7); }
-      }
-      ctx.fill();
-      ctx.shadowBlur = 0; ctx.globalAlpha = .25; ctx.beginPath();
-      for (let i = 0; i < n; i += 2) { const x = (i + .5) * slot; ctx.moveTo(x + r * .6, c); ctx.arc(x, c, r * .6, 0, 7); }
-      ctx.fill(); ctx.globalAlpha = 1;
-      break;
-    }
-  }
-  ctx.shadowBlur = 0;
+  const type = (e.viz ?? s.visualizerType) === 21 && s.reducedMotion ? 4 : (e.viz ?? s.visualizerType);
+  const n = WaveMath.count(s.numBars, w, type), sm = .3 + .62 * s.noiseReduction;
+  for (let i = 0; i < n; i++) st.bars[i] = (st.bars[i] || 0) * sm + Math.min(1, spectrum(i, n, tt) * st.energy * s.sensitivity / 100) * (1 - sm);
+  st.bars.length = n;
+  const B = bands(tt), stops = colorStops(s, d, t);
+  const signature = [type, w, h, n, s.reducedMotion, target > 0].join(':');
+  if (st.signature !== signature) { WaveMotion.reset(st); st.signature = signature; }
+  Object.assign(st, {style: type, width: w, height: h, numBars: n, maxRange: 1, lineWidth: s.lineWidth,
+    frameTime: t * 1000, active: target > 0, reducedMotion: s.reducedMotion, attack: B.attack && !st.attackHeld});
+  WaveMotion.advance(st);
+  st.attackHeld = B.attack;
+  const previousStereo = st.stereoSamples || [];
+  st.stereoSamples = PreviewAudio.stereo(t);
+  const options = {width: w, height: h, type, lineWidth: s.lineWidth,
+    levels: WaveMath.levels(st.bars, n, 1, st.cache), stops, colored: s.vizColorMode !== 'solid' || s.hueReactive,
+    peaks: st.peaks, particles: st.particles, ripples: st.ripples, beatPulse: st.beatPulse,
+    stereoSamples: st.stereoSamples, previousStereo, time: tt, fill: s.fillWave,
+    glow: s.glowWave && !s.batterySaver, bloom: s.bloom, reducedMotion: s.reducedMotion,
+    energy: st.energy, bass: B.bass, mid: B.mid, high: B.high, colorMode: s.vizColorMode,
+    curvature: s.ribbonCurvature, fullness: s.ribbonFullness, hueShifted: s.hueReactive};
+  ctx.save();
+  if (s.vizDirection === 'down' && [1, 6, 7, 8].includes(type)) { ctx.translate(0, h); ctx.scale(1, -1); }
+  if (type < 6) {
+    if (options.glow) { ctx.shadowColor = String(stops[0]); ctx.shadowBlur = 7 * s.bloom * k; }
+    ClassicWaveDraw.draw(ctx, options, st.cache);
+  } else WaveDraw.draw(ctx, options);
+  ctx.restore();
 }
 
 function drawOrbit(e, t) {
   const s = e.getS(), status = e.getStatus(), d = derive(s, status);
   const cv = prepCanvas(e); if (!cv) return;
-  const { ctx, w, h, k } = cv;
+  const {ctx, w, h} = cv;
   let st = memo.get(e.key);
-  if (!st) memo.set(e.key, st = { v: new Float32Array(160), energy: 0, parts: [] });
+  if (!st) memo.set(e.key, st = {bars: [], energy: 0, particles: [], _seed: 1, _lastFrame: -1});
   const target = d.playing && status !== 'backend' ? 1 : status === 'idle' && s.idleAmbient ? .22 : 0;
   st.energy += (target - st.energy) * .08;
-  const style = e.orbit ?? ORBITS.map(o => o.toLowerCase()).indexOf(s.orbitStyle);
-  const S0 = Math.min(w, h) / 2, small = S0 < 30;
-  const half = Math.max(12, Math.min(small ? 14 : 48, s.numBars)), n = half * 2;
-  const sm = .3 + .62 * s.noiseReduction;
-  for (let i = 0; i < half; i++) {
-    const tg = Math.min(1, spectrum(i * .5 + half * .5, half * 2, t) * st.energy * s.sensitivity / 100);
-    st.v[i] = st.v[i] * sm + tg * (1 - sm);
-  }
-  const R = S0 * Number(e.el.dataset.r || .38) + (small ? 1.5 : 4);
-  const reach = Math.max(2, (S0 - R - 2) * 1.3 * s.orbitReach);
-  const rot = s.orbitRotate && !s.reducedMotion ? t * .2 : 0;
-  const stops = colorStops(s, d, t);
-  const glow = s.glowWave && !s.batterySaver ? s.bloom : 0;
-  const ang = j => j / n * Math.PI * 2 + rot - Math.PI / 2;
-  const step = Math.min(3, Math.max(0, (t - (st.time ?? t - 1 / 30)) * 30));
-  st.time = t;
-  if (s.reducedMotion || target === 0) st.parts = [];
-  else if (style === 4) {
-    for (let j = 0; j < n; j++) if (Math.random() < st.v[j < half ? j : n - 1 - j] * .12 * step && st.parts.length < 64)
-      st.parts.push({ a: ang(j), r: R + 3, v: (.4 + Math.random()) * (small ? .3 : 1), life: 1, s: .6 + Math.random() });
-    st.parts = st.parts.filter(p => { p.r += p.v * step; return (p.life -= .02 * step) > 0 && p.r < S0; });
-  }
-  OrbitDraw.draw(ctx, {
-    width: w, height: h, values: st.v.subarray(0, half), R, reach, lineWidth: s.lineWidth, t,
-    rot, stops, particles: st.parts, style: ORBITS[style] ? ORBITS[style].toLowerCase() : 'bars', glow, fill: s.fillWave,
-    reducedMotion: s.reducedMotion
-  });
+  const style = e.orbit === undefined ? s.orbitStyle : ORBITS[e.orbit].toLowerCase();
+  const n = s.numBars, sm = .3 + .62 * s.noiseReduction;
+  for (let i = 0; i < n; i++) st.bars[i] = (st.bars[i] || 0) * sm + Math.min(1, spectrum(i, n, t) * st.energy * s.sensitivity / 100) * (1 - sm);
+  st.bars.length = n;
+  Object.assign(st, {width: w, height: h, half: Math.max(12, Math.min(48, n)), maxRange: 1,
+    coverRatio: Number(e.el.dataset.r || .38), orbitReach: s.orbitReach, visualFrameTime: t * 1000,
+    ringRotation: s.orbitRotate && !s.reducedMotion ? (t * .2) % (Math.PI * 2) : 0,
+    sparks: style === 'sparks' && !s.reducedMotion, drawing: target > 0});
+  OrbitMotion.advance(st);
+  const g = OrbitMotion.geometry(st);
+  OrbitDraw.draw(ctx, {width: w, height: h, values: OrbitMotion.values(st), R: g.inner, reach: g.reach,
+    lineWidth: s.lineWidth, t, rot: st.ringRotation, stops: colorStops(s, d, t), particles: st.particles, style,
+    glow: s.glowWave && !s.batterySaver ? s.bloom : 0, fill: s.fillWave, reducedMotion: s.reducedMotion});
   ctx.shadowBlur = 0; ctx.globalAlpha = 1;
 }
 
-function seedHeights(key, n) {
-  let seed = 0;
-  for (let c = 0; c < key.length; c++) seed = (seed * 31 + key.charCodeAt(c)) >>> 0;
-  const out = [];
-  for (let i = 0; i < n; i++) {
-    seed = (seed * 1664525 + 1013904223) >>> 0;
-    out.push(.15 + (seed >>> 16) / 65535 * .85 * Math.sin((n > 1 ? i / (n - 1) : 0) * Math.PI));
-  }
-  return out;
-}
 function drawSeek(e, t) {
-  const s = e.getS(), d = derive(s, e.getStatus());
-  const style = e.pbs ?? s.progressBarStyle;
+  const s = e.getS(), d = derive(s, e.getStatus()), style = e.pbs ?? s.progressBarStyle;
   if (![4, 5, 7].includes(style)) return;
   const cv = prepCanvas(e); if (!cv) return;
-  const { ctx, w, h } = cv;
-  const prog = e.fixedP ?? P.pos / d.t.len, px = prog * w;
-  let st = memo.get(e.key); if (!st) memo.set(e.key, st = { amp: 0 });
-  if (style === 4) {
-    const n = Math.floor(w / 5), hs = seedHeights(d.t.title + d.t.artist, n);
-    for (let i = 0; i < n; i++) {
-      const x = i * 5, played = x + 1.5 < px, bh = Math.max(2, hs[i] * h * (played ? 1 : .45));
-      ctx.fillStyle = played ? (d.pgStops.length ? paintFor(ctx, d.pgStops, Math.max(1, px)) : hexRgba(d.progress, .9)) : hexRgba(d.text, .25);
-      ctx.beginPath(); rr(ctx, x, (h - bh) / 2, 3, bh, 1.5); ctx.fill();
-    }
-    if (prog > 0 && prog < 1) { ctx.fillStyle = hexRgba(d.control, .95); ctx.fillRect(px - 1, 0, 2, h); }
-  } else if (style === 5) {
-    st.amp += ((d.playing && !s.reducedMotion ? 2.2 : 0) - st.amp) * .1;
-    ctx.lineWidth = 2; ctx.lineCap = 'round';
-    ctx.strokeStyle = d.pgStops.length ? paintFor(ctx, d.pgStops, Math.max(1, px)) : hexRgba(d.pg1, 1); ctx.beginPath();
-    for (let x = 1; x <= px; x += 1) { const y = h / 2 + Math.sin(x * .38 - t * 6) * st.amp; x > 1 ? ctx.lineTo(x, y) : ctx.moveTo(x, y); }
-    ctx.stroke();
-    ctx.strokeStyle = hexRgba(d.text, .25); ctx.beginPath(); ctx.moveTo(Math.min(w - 1, px + 5), h / 2); ctx.lineTo(w - 1, h / 2); ctx.stroke();
-    ctx.fillStyle = d.control; ctx.beginPath(); rr(ctx, px - 1.5, 0, 3, h, 1.5); ctx.fill();
-  } else {
-    for (let x = 3; x < w; x += 6) {
-      const played = x < px;
-      ctx.fillStyle = played ? (d.pgStops.length ? paintFor(ctx, d.pgStops, Math.max(1, px)) : d.progress) : hexRgba(d.text, .3);
-      ctx.beginPath(); ctx.arc(x, h / 2, played ? 1.6 : 1.1, 0, 7); ctx.fill();
-    }
-    ctx.fillStyle = d.control; ctx.beginPath(); ctx.arc(Math.max(3, Math.min(w - 3, px)), h / 2, 3.2, 0, 7); ctx.fill();
-  }
+  const {ctx, w, h} = cv, progress = e.fixedP ?? P.pos / d.t.len;
+  let st = memo.get(e.key); if (!st) memo.set(e.key, st = {amp: 0});
+  st.amp += ((d.playing && !s.reducedMotion ? 2.2 : 0) - st.amp) * .1;
+  const key = d.t.title + '\0' + d.t.artist + '\0' + w;
+  if (st.key !== key) { st.heights = ProgressDraw.seedHeights(d.t.title + d.t.artist, Math.floor(w / 5)); st.key = key; }
+  ProgressDraw.draw(ctx, {width: w, height: h, style, playhead: Math.round(progress * w),
+    heights: st.heights, showPlayhead: progress > 0 && progress < 1, amplitude: st.amp, time: t,
+    waveColor: d.progress, textColor: d.text, controlColor: d.control, startColor: d.pg1, stops: d.pgStops});
 }
 
 let lastT = performance.now();
@@ -649,7 +465,6 @@ function renderMain() {
   fitStage();
   const d = derive(S, 'demo');
   $('#panel').setAttribute('style', colorVars(d) + '--cover:' + d.t.cover + ';--p1:' + d.t.pal.p1 + ';--p2:' + d.t.pal.p2 + ';--p3:' + d.t.pal.p3 + ';--ts:11px;--p:.58');
-  $('#panel').classList.toggle('dir-down', S.vizDirection === 'down');
   $('#lgMap').setAttribute('scale', (S.glassRefraction * 80).toFixed(0));
   const info = `${W} × ${H} px · ${isP ? (env === 'kde' ? 'Plasma panel mock' : 'Hyprland bar mock') : S.layoutMode}`;
   $('#sizeInfo').textContent = info;
@@ -834,11 +649,8 @@ $('#presets').addEventListener('click', e => {
 let keepColors = false, pickFilter = 'all', playerRev = 0, presetDirty = false;
 
 function applyPreset(p) {
-  const next = { ...DEFAULTS, ...p.s, autoDailyLook: S.autoDailyLook, dailyLookApplied: S.dailyLookApplied };
-  if (keepColors) for (const k of COLOR_KEYS) next[k] = S[k];
-  for (const k of Object.keys(HYPR)) next[k] = S[k];
-  next.hAnchor = S.hAnchor;
-  S = next; activePreset = p.id; presetDirty = false;
+  S = PresetCodec.browser(Schema.applyPreset(LOOK_DEFAULTS, nativeState(S), nativeState(presetState(p)), keepColors));
+  activePreset = p.id; presetDirty = false;
   popupOpen = true;
   onChange(); renderPresets();
   toast(`Applied “${p.name}”${keepColors ? ' · kept your colours' : ''}`);
@@ -1015,25 +827,8 @@ const diag = k => `<svg class="diag" viewBox="0 0 64 36" aria-hidden="true">${re
 const TABS = Schema.MAIN_TABS.filter(tab => !tab.nativeOnly).map(tab => ({ ...tab, ic: `<path d="${tab.icon}"/>` }));
 
 function platformNote(topic) {
-  const kde = env === 'kde';
-  const who = kde ? 'On Plasma' : 'On Hyprland';
-  let body;
-  if (topic === 'card') {
-    const m = S.showBg ? S.surfaceStyle : 'none';
-    body = m === 'art' ? `${who}: album cover backdrop is <b>fully supported</b> with live blur &amp; dimming.`
-      : m === 'glass' ? `${who}: acrylic blur works on desktop surfaces.`
-      : m === 'liquid' ? `${who}: liquid refraction active with specular hover highlights.`
-      : `${who}: styled cards render smoothly across both frontends.`;
-  } else if (topic === 'pill') {
-    body = `${who}: pills live in panels and taskbars, offering lightweight playback status.`;
-  } else if (topic === 'place') {
-    body = 'Configure window layer and screen anchor offsets.';
-  } else if (topic === 'lyrics') {
-    body = '<b>Sample verses</b> — LRCLIB synced lyrics are available in full lyrics layout.';
-  } else {
-    body = `${who}: custom settings active.`;
-  }
-  return `<div class="note"><i>◇</i><div>${body}</div></div>`;
+  const text = Schema.NOTES[topic]?.[env] || '';
+  return `<div class="note"><i>◇</i><div><b>${env === 'kde' ? 'On Plasma' : 'On Hyprland'}</b>: ${esc(text)}</div></div>`;
 }
 
 function renderAnchor(el) {
@@ -1051,11 +846,9 @@ function buildRow(r) {
   const el = document.createElement('div');
   el.className = 'row' + (r.full ? ' full' : '');
   const options = r.opts === 'audioSources' ? [['auto', 'Default output monitor (desktop app lists live sources)']] : r.opts === 'screens' ? [['', 'First available display'], ['all', 'Every monitor']] : (r.opts || []);
-  const optLabels = options.map(o => Array.isArray(o) ? o[1] : (o.label || ''));
-  el.dataset.search = `${r.label || ''} ${r.desc || ''} ${r.k || ''} ${optLabels.join(' ')}`.toLowerCase();
   const get = state => Schema.rowValue(r, nativeState(state));
   const set = value => PresetCodec.browser(Schema.rowPatch(r, value, nativeState(S)));
-  const isNew = r.isNew || (r.k && SCHEMA_ENTRIES[r.k] && !['visualizerType', 'progressBarStyle', 'numBars', 'sensitivity', 'framerate', 'noiseReduction', 'inputMethod', 'showMpris', 'alwaysVisible', 'useSystemAccent', 'customColor', 'lineWidth', 'fillWave', 'showBg', 'bgColor', 'bgRadius', 'glowWave', 'useSystemText', 'customTextColor', 'useSystemControls', 'customControlColor', 'useSystemDockBg', 'customDockBgColor', 'artBg', 'artBgDim', 'artBgBlur', 'artBgTransparency', 'showArtThumb', 'artBgKeepThumb'].includes(r.k));
+  const isNew = r.isNew;
   const isHypr = r.isHypr || (r.k && HYPR.hasOwnProperty(r.k));
   const badges = `${isNew ? '<span class="new">New</span>' : ''}${isHypr ? '<span class="new hypr">Hyprland</span>' : ''}`;
   const head = r.label ? `<div class="rh"><div class="rt">${r.label}${badges}</div>${r.desc ? `<div class="rd">${r.desc}</div>` : ''}</div>` : '';
@@ -1168,10 +961,9 @@ function renderSettings() {
 
 function syncSettings() {
   $$('[data-acc]').forEach(b => b.setAttribute('aria-pressed', !S.useSystemAccent && !S.accentFromArt && b.dataset.acc === S.customColor));
-  const q = query.trim().toLowerCase();
+  const q = query.trim().toLowerCase(), state = nativeState(S);
   for (const row of rows) {
-    const vis = row.r.when ? row.r.when(nativeState(S), env) : true;
-    row.el.hidden = !vis || (q && !row.el.dataset.search.includes(q));
+    row.el.hidden = !Schema.rowVisible(row.r, {}, state, env, q);
     row.el.classList.toggle('disabled', !!(row.r.disabled && row.r.disabled(nativeState(S), env)));
     if (!row.el.hidden) row.sync(S);
   }

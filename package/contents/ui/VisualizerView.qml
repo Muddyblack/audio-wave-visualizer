@@ -4,7 +4,6 @@ import QtQuick.Controls.Basic as Controls
 import "layouts" as Layouts
 import "../code/Layouts.js" as LayoutSizes
 import "../code/AudioFormat.js" as AudioFormat
-import "../code/WaveMath.js" as WaveMath
 import "../code/ColourStyle.js" as ColourStyle
 
 Item {
@@ -144,12 +143,12 @@ Item {
     readonly property bool detailsVisible: (detailsMode === "tooltip" || detailsMode === "drawer" || (detailsMode === "flip" && (layoutMode === "strip" || panelForm))) && cardHovered
     readonly property string detailsPopupMode: detailsMode === "drawer" ? "drawer" : "tooltip"
     // Solid cards are light: system text and controls switch to dark ink.
-    readonly property bool lightCard: configuration.showBg && configuration.surfaceStyle === "solid" && !(configuration.showMpris && configuration.artBg && artUrl !== "") && (configuration.autoContrast ?? true)
-    readonly property color textColor: configuration.useSystemText ? (lightCard ? "#1e241d" : systemTextColor) : configuration.customTextColor
-    readonly property color waveColor: (configuration.accentFromArt || configuration.vizColorMode === "cover") ? coverAccent : baseWaveColor
-    readonly property color baseControlColor: configuration.useSystemControls ? (lightCard ? "#1e241d" : "#ffffff") : configuration.customControlColor
-    readonly property var linkedColorStops: configuration.controlsColorSource === "visualizer" || configuration.progressColorSource === "visualizer" ? WaveMath.colorStops(waveColor, configuration.vizColorMode, configuration.vizPalette, coverColor1, coverColor2, configuration.hueReactive, visualizer.high ?? 0, visualFrameTime / 1000, configuration.reducedMotion ?? false) : [waveColor]
-    readonly property var linkedColors: ColourStyle.resolve(configuration, waveColor, baseControlColor, configuration.useSystemControls ? accentColor : baseControlColor, configuration.useSystemControls ? "#ffffff" : baseControlColor, linkedColorStops)
+    readonly property var appearance: ColourStyle.appearance(configuration, accentColor, systemTextColor, coverAccent, artUrl !== "")
+    readonly property bool lightCard: appearance.light
+    readonly property color textColor: appearance.text
+    readonly property color waveColor: appearance.wave
+    readonly property color baseControlColor: appearance.control
+    readonly property var linkedColors: ColourStyle.linked(configuration, waveColor, baseControlColor, accentColor, coverColor1, coverColor2, visualizer.high ?? 0, visualFrameTime / 1000)
     readonly property color controlColor: linkedColors.control
     readonly property color controlsAccent: linkedColors.controlAccent
     readonly property color progressWaveColor: linkedColors.progressWave
