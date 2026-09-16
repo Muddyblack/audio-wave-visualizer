@@ -50,11 +50,14 @@ TestCase {
             property real length: 180
             property real position: 60
             property bool canSeek: true
+            property bool canGoPrevious: true
+            property bool canGoNext: true
             property bool positionSupported: true
             property bool shuffle: false
             property int loopState: 0
             property string album: "Album"
             property string identity: "Spotify"
+            property var metadata: undefined
             property real volume: 0.5
             property int previousCalls: 0
             property int playCalls: 0
@@ -167,6 +170,34 @@ TestCase {
         player.canSeek = false;
         mouseClick(seek, seek.width / 4, seek.height / 2);
         verify(Math.abs(player.position - 90) < 2);
+    }
+
+    function test_unavailableSkipControls() {
+        const previous = findChild(subject, "prevArea");
+        const next = findChild(subject, "nextArea");
+        player.canGoPrevious = false;
+        player.canGoNext = false;
+        compare(previous.enabled, false);
+        compare(next.enabled, false);
+        compare(previous.parent.opacity, 0.25);
+        compare(next.parent.opacity, 0.25);
+        player.canGoPrevious = true;
+        player.canGoNext = true;
+        compare(previous.enabled, true);
+        compare(next.enabled, true);
+    }
+
+    function test_browserIconLoadsFromSiteWhileCacheStarts() {
+        player.identity = "Mozilla Zen";
+        player.desktopEntry = "zen";
+        player.metadata = {
+            "xesam:url": "https://www.youtube.com/watch?v=abc"
+        };
+        subject.configuration = Object.assign({}, defaults, {
+            showSource: true
+        });
+        compare(subject.sourceHost, "www.youtube.com");
+        compare(subject.faviconUrl, "https://www.youtube.com/favicon.ico");
     }
 
     function test_progressUsesAudioFramesWithSlowFallback() {
@@ -530,7 +561,7 @@ TestCase {
         const details = createTemporaryObject(detailsComponent, testCase, {
             view: subject
         });
-        compare(details.rows.map(row => row[0]), ["Album", "Player", "Length", "Volume"]);
+        compare(details.rows.map(row => row[0]), ["Album", "Source", "Length", "Volume"]);
         compare(details.rows[2][1], "3:00");
     }
     function test_flipRequiresExplicitClickAndKeepsControlsReachable() {

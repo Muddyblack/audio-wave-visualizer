@@ -40,17 +40,31 @@ ColumnLayout {
         opacity: 0.65
 
         Rectangle {
+            id: sourceDot
             implicitWidth: 5
             implicitHeight: 5
             radius: 2.5
             color: root.view.waveColor
+            visible: sourceIcon.status !== Image.Ready
+        }
+        Image {
+            id: sourceIcon
+            source: root.view.faviconUrl ?? ""
+            visible: status === Image.Ready
+            Layout.preferredWidth: visible ? 10 : 0
+            Layout.preferredHeight: visible ? 10 : 0
+            sourceSize.width: 32
+            sourceSize.height: 32
+            fillMode: Image.PreserveAspectFit
+            asynchronous: true
+            cache: true
         }
         Text {
             objectName: "sourceChip"
             renderType: Text.CurveRendering ?? Text.QtRendering
             font.family: root.view.defaultFontFamily
             Layout.fillWidth: true
-            text: root.view.playerName.toUpperCase()
+            text: root.view.sourceName.toUpperCase()
             color: root.view.textColor
             font.pixelSize: root.sourceSize
             font.letterSpacing: 1.3

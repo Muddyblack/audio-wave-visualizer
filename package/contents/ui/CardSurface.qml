@@ -15,6 +15,9 @@ Item {
 
     // A loaded cover background (the "Cover" material) wins over surfaceStyle.
     readonly property bool coverActive: configuration.showMpris && configuration.artBg && artUrl !== ""
+    // Blur samples beyond the card edge. Overscan both the texture and effect
+    // so its transparent outer pixels never enter the visible card.
+    readonly property real coverOverscan: coverActive && configuration.artBgBlur > 0 ? 96 : 0
     readonly property string material: ["glass", "liquid", "solid", "atmosphere"].indexOf(configuration.surfaceStyle) !== -1 && !coverActive ? configuration.surfaceStyle : ""
     // Layouts may override it: the panel pill is fully rounded.
     property real cardRadius: configuration.bgRadius
@@ -124,6 +127,7 @@ Item {
         id: bgArtSource
         objectName: "backgroundArtCrop"
         anchors.fill: parent
+        anchors.margins: -root.coverOverscan
         clip: true
         visible: false
         // MultiEffect samples an Image's original texture directly. Capture a
@@ -155,6 +159,7 @@ Item {
         // frosted treatment.
         MultiEffect {
             anchors.fill: parent
+            anchors.margins: -root.coverOverscan
             objectName: "backgroundArtEffect"
             source: bgArtSource
             blurEnabled: true

@@ -2,6 +2,7 @@ import QtQuick
 import QtTest
 import "../package/contents/ui"
 import "../package/contents/code/AudioFormat.js" as AudioFormat
+import "../package/contents/code/MediaSource.js" as MediaSource
 
 TestCase {
     name: "MediaMetadata"
@@ -49,6 +50,39 @@ TestCase {
             "bitrate": "invalid",
             "bitsPerSample": 999
         }), []);
+    }
+    function test_browserSourceName() {
+        compare(MediaSource.displayName("Mozilla Zen", "zen", "", {
+            "xesam:url": "https://music.youtube.com/watch?v=abc"
+        }), "YouTube Music");
+        compare(MediaSource.displayName("Mozilla Firefox", "firefox", "", {
+            "xesam:url": "https://www.youtube.com/watch?v=abc"
+        }), "YouTube");
+        compare(MediaSource.displayName("Chromium", "chromium", "", {
+            "xesam:url": "https://artist.bandcamp.com/track/song"
+        }), "Bandcamp");
+        compare(MediaSource.displayName("Brave", "brave", "", {
+            "xesam:url": "https://example.org/music"
+        }), "example.org");
+        compare(MediaSource.displayName("Mozilla Zen", "zen", "", {}), "Mozilla Zen");
+        compare(MediaSource.displayName("Spotify", "spotify", "", {
+            "xesam:url": "https://music.youtube.com/watch?v=abc"
+        }), "Spotify");
+        compare(MediaSource.siteHost("Mozilla Zen", "zen", "", {
+            "xesam:url": "https://music.youtube.com/watch?v=abc"
+        }), "music.youtube.com");
+        compare(MediaSource.siteHost("Mozilla Zen", "zen", "", {
+            "xesam:url": "https://www.youtube.com/watch?v=abc"
+        }), "www.youtube.com");
+        compare(MediaSource.displayName("Mozilla Zen", "zen", "", {
+            "xesam:url": "https://music.apple.com/album/example"
+        }), "Apple Music");
+        compare(MediaSource.siteHost("Mozilla Zen", "zen", "", {
+            "xesam:url": "https://unknown.example/song"
+        }), "unknown.example");
+        compare(MediaSource.siteHost("Spotify", "spotify", "", {
+            "xesam:url": "https://music.youtube.com/watch?v=abc"
+        }), "");
     }
     function test_lookupLifecycle() {
         const lookup = createTemporaryObject(lookupComponent, this, {

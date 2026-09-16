@@ -29,7 +29,7 @@ Item {
         case "length":
             return view.lengthText !== "" ? [qsTr("Length"), view.lengthText] : null;
         case "player":
-            return view.playerName !== "" ? [qsTr("Player"), view.playerName] : null;
+            return view.sourceName !== "" ? [qsTr("Source"), view.sourceName] : null;
         case "volume":
             return view.volume >= 0 ? [qsTr("Volume"), "", view.volume] : null;
         default:

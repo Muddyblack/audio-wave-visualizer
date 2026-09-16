@@ -41,6 +41,18 @@ TestCase {
                 tag: "square",
                 w: 240,
                 h: 240
+            },
+            {
+                tag: "wide-blurred",
+                w: 460,
+                h: 90,
+                blur: 0.44
+            },
+            {
+                tag: "portrait-blurred",
+                w: 180,
+                h: 360,
+                blur: 1
             }
         ];
     }
@@ -48,14 +60,17 @@ TestCase {
         failOnWarning(/ReferenceError|TypeError|Binding loop/);
         card.width = data.w;
         card.height = data.h;
+        card.configuration = Object.assign({}, card.configuration, {
+            artBgBlur: data.blur ?? 0
+        });
         const source = findChild(card, "backgroundArtImage");
         const crop = findChild(card, "backgroundArtCrop");
         const effect = findChild(card, "backgroundArtEffect");
         tryCompare(source, "status", Image.Ready);
         compare(effect.source, crop);
         verify(crop.clip);
-        compare(crop.width, data.w);
-        compare(crop.height, data.h);
+        compare(crop.width, data.w + 2 * card.coverOverscan);
+        compare(crop.height, data.h + 2 * card.coverOverscan);
         compare(source.fillMode, Image.PreserveAspectCrop);
         wait(500);
         const picture = grabImage(card);

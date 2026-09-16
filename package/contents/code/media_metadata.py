@@ -3,6 +3,7 @@
 
 import fcntl
 import hashlib
+from html.parser import HTMLParser
 import json
 import os
 from pathlib import Path
@@ -10,8 +11,8 @@ import re
 import subprocess
 import sys
 import time
-from urllib.parse import urlencode
-from urllib.request import Request, urlopen
+from urllib.parse import urlencode, urljoin, urlsplit
+from urllib.request import HTTPRedirectHandler, Request, build_opener, urlopen
 
 ROOT = "org.mpris.MediaPlayer2"
 PATH = "/org/mpris/MediaPlayer2"
@@ -145,6 +146,119 @@ def request_json(url):
         return json.loads(data)
 
 
+class IconLinks(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.hrefs = []
+
+    def handle_starttag(self, tag, attrs):
+        if tag != "link":
+            return
+        values = dict(attrs)
+        if "icon" in values.get("rel", "").lower().split() and values.get("href"):
+            self.hrefs.append(values["href"])
+
+
+def _favicon_host(host):
+    """Accept public-looking DNS names, never literal or local addresses."""
+    if not isinstance(host, str) or len(host) > 253:
+        return ""
+    host = host.lower().rstrip(".")
+    labels = host.split(".")
+    if len(labels) < 2 or host.endswith(
+        (".local", ".localhost", ".internal", ".test", ".invalid")
+    ):
+        return ""
+    if not all(
+        re.fullmatch(r"[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?", label) for label in labels
+    ):
+        return ""
+    if labels[-1].isdigit():
+        return ""
+    return host
+
+
+def _fetch_favicon_bytes(url, host, limit):
+    hosts = {host, host[4:] if host.startswith("www.") else "www." + host}
+
+    class SameHostRedirect(HTTPRedirectHandler):
+        def redirect_request(self, request, fp, code, msg, headers, newurl):
+            if (
+                urlsplit(newurl).scheme != "https"
+                or urlsplit(newurl).hostname not in hosts
+            ):
+                raise ValueError("Cross-host favicon redirect")
+            return super().redirect_request(request, fp, code, msg, headers, newurl)
+
+    request = Request(url, headers={"User-Agent": "PlasmaAudioVisualizer/3.0"})
+    with build_opener(SameHostRedirect()).open(request, timeout=5) as response:
+        return response.read(limit + 1)
+
+
+def _favicon_format(data):
+    if data.startswith(b"\x89PNG\r\n\x1a\n"):
+        return ".png"
+    if data.startswith(b"\x00\x00\x01\x00"):
+        return ".ico"
+    return ""
+
+
+def favicon(host):
+    """Discover and cache the playing website's own favicon by hostname."""
+    host = _favicon_host(host)
+    if not host:
+        return {"status": "unsupported"}
+    directory = (
+        Path(os.environ.get("XDG_CACHE_HOME", str(Path.home() / ".cache")))
+        / "plasma-audio-visualizer"
+        / "favicons"
+    )
+    for suffix in (".png", ".ico"):
+        cache = directory / (host + suffix)
+        if cache.is_file() and cache.stat().st_size > 0:
+            return {"status": "ready", "url": cache.as_uri()}
+
+    home = f"https://{host}/"
+    hosts = {host, host[4:] if host.startswith("www.") else "www." + host}
+
+    def try_candidates(candidates):
+        for href in candidates[:8]:
+            url = urljoin(home, href)
+            parts = urlsplit(url)
+            if parts.scheme != "https" or parts.hostname not in hosts:
+                continue
+            try:
+                data = _fetch_favicon_bytes(url, host, 128 * 1024)
+            except (OSError, ValueError):
+                continue
+            suffix = _favicon_format(data) if len(data) <= 128 * 1024 else ""
+            if suffix:
+                return data, suffix
+        return b"", ""
+
+    data, suffix = try_candidates(["/favicon.ico"])
+    if not suffix:
+        try:
+            page = _fetch_favicon_bytes(home, host, 256 * 1024)
+            links = IconLinks()
+            links.feed(page.decode("utf-8", errors="ignore"))
+            candidates = sorted(
+                links.hrefs, key=lambda href: 0 if ".png" in href.lower() else 1
+            )
+            data, suffix = try_candidates(candidates)
+        except (OSError, ValueError):
+            pass
+    if not suffix:
+        return {"status": "error"}
+
+    cache = directory / (host + suffix)
+    directory.mkdir(parents=True, exist_ok=True)
+    temporary = cache.with_suffix(f".{os.getpid()}.tmp")
+    temporary.write_bytes(data)
+    temporary.replace(cache)
+    return {"status": "ready", "url": cache.as_uri()}
+
+
 def info(artist, album):
     artist, album = artist.strip()[:240], album.strip()[:240]
     if not artist:
@@ -248,6 +362,8 @@ def main():
         data = json.loads(payload)
         if mode == "info":
             result = info(data.get("artist", ""), data.get("album", ""))
+        elif mode == "favicon":
+            result = favicon(data.get("host", ""))
         else:
             service = resolve_player(data)
             result = (

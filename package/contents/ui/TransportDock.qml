@@ -142,7 +142,9 @@ Item {
         // Previous Button
         Item {
             id: prevBtn
+            readonly property bool available: !!root.player && root.player.canGoPrevious !== false && (typeof root.player.previous === "function" || typeof root.player.Previous === "function")
             visible: root.showSkip
+            opacity: available ? 1 : 0.25
             Layout.preferredWidth: 22
             Layout.preferredHeight: 22
             scale: prevArea.pressed ? 0.94 : (prevArea.containsMouse ? 1.07 : 1.0)
@@ -182,8 +184,9 @@ Item {
                 objectName: "prevArea"
                 anchors.fill: parent
                 anchors.margins: -2
+                enabled: prevBtn.available
                 hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
+                cursorShape: prevBtn.available ? Qt.PointingHandCursor : Qt.ArrowCursor
                 onClicked: {
                     const p = root.player;
                     if (!p || p.canGoPrevious === false)
@@ -290,7 +293,9 @@ Item {
         // Next Button
         Item {
             id: nextBtn
+            readonly property bool available: !!root.player && root.player.canGoNext !== false && (typeof root.player.next === "function" || typeof root.player.Next === "function")
             visible: root.showSkip
+            opacity: available ? 1 : 0.25
             Layout.preferredWidth: 22
             Layout.preferredHeight: 22
             scale: nextArea.pressed ? 0.94 : (nextArea.containsMouse ? 1.07 : 1.0)
@@ -330,8 +335,9 @@ Item {
                 objectName: "nextArea"
                 anchors.fill: parent
                 anchors.margins: -2
+                enabled: nextBtn.available
                 hoverEnabled: true
-                cursorShape: Qt.PointingHandCursor
+                cursorShape: nextBtn.available ? Qt.PointingHandCursor : Qt.ArrowCursor
                 onClicked: {
                     const p = root.player;
                     if (!p || p.canGoNext === false)

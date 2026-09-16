@@ -1,5 +1,6 @@
 import importlib.util
 from pathlib import Path
+import tempfile
 import unittest
 from unittest.mock import patch
 
@@ -12,6 +13,42 @@ spec.loader.exec_module(media)
 
 
 class MediaTests(unittest.TestCase):
+    def test_favicon_discovers_any_public_site_and_caches_by_host(self):
+        def fetch(url, _host, _limit):
+            if url == "https://music.example.org/favicon.ico":
+                raise OSError("missing conventional icon")
+            if url == "https://music.example.org/":
+                return b'<link rel="icon" href="/assets/music.png">'
+            self.assertEqual(url, "https://music.example.org/assets/music.png")
+            return b"\x89PNG\r\n\x1a\n" + b"icon"
+
+        with (
+            tempfile.TemporaryDirectory() as directory,
+            patch.dict(media.os.environ, {"XDG_CACHE_HOME": directory}),
+            patch.object(media, "_fetch_favicon_bytes", side_effect=fetch) as request,
+        ):
+            self.assertEqual(media.favicon("localhost"), {"status": "unsupported"})
+            self.assertEqual(media.favicon("127.0.0.1"), {"status": "unsupported"})
+            first = media.favicon("music.example.org")
+            self.assertEqual(first["status"], "ready")
+            self.assertTrue(first["url"].endswith("/music.example.org.png"))
+            self.assertEqual(media.favicon("music.example.org"), first)
+            self.assertEqual(request.call_count, 3)
+
+    def test_favicon_falls_back_to_standard_path(self):
+        def fetch(url, _host, _limit):
+            self.assertEqual(url, "https://example.org/favicon.ico")
+            return b"\x00\x00\x01\x00" + b"icon"
+
+        with (
+            tempfile.TemporaryDirectory() as directory,
+            patch.dict(media.os.environ, {"XDG_CACHE_HOME": directory}),
+            patch.object(media, "_fetch_favicon_bytes", side_effect=fetch),
+        ):
+            self.assertTrue(
+                media.favicon("example.org")["url"].endswith("/example.org.ico")
+            )
+
     def test_busctl_variants(self):
         self.assertEqual(
             media.unwrap(

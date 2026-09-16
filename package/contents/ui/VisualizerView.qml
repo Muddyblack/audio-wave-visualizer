@@ -5,6 +5,7 @@ import "layouts" as Layouts
 import "../code/Layouts.js" as LayoutSizes
 import "../code/AudioFormat.js" as AudioFormat
 import "../code/ColourStyle.js" as ColourStyle
+import "../code/MediaSource.js" as MediaSource
 
 Item {
     id: root
@@ -86,6 +87,18 @@ Item {
     readonly property int trackNumber: Number(metadata["xesam:trackNumber"] ?? 0) || 0
     readonly property string year: String(metadata["xesam:contentCreated"] ?? "").slice(0, 4)
     readonly property string playerName: player?.identity ?? ""
+    readonly property string sourceName: MediaSource.displayName(playerName, desktopEntry, player?.dbusName ?? "", metadata)
+    readonly property string sourceHost: MediaSource.siteHost(playerName, desktopEntry, player?.dbusName ?? "", metadata)
+    readonly property string faviconUrl: faviconLookup.status === "ready" ? faviconLookup.result.url ?? "" : sourceHost !== "" ? "https://" + sourceHost + "/favicon.ico" : ""
+    MediaLookup {
+        id: faviconLookup
+        mode: "favicon"
+        active: root.hasPlayer && root.visible && !root.samplePlayback && (root.configuration.showSource || root.configuration.showPlayerSwitch) && root.sourceHost !== ""
+        payload: ({
+                host: root.sourceHost
+            })
+        commandSourceComponent: root.visualizer.commandSourceComponent ?? null
+    }
     readonly property real volume: player && player.volume !== undefined ? player.volume : -1
     readonly property string lengthText: {
         const length = player ? (player.length || player.mprisLength || 0) : 0;
