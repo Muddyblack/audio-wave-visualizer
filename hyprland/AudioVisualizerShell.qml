@@ -294,7 +294,6 @@ ShellRoot {
             errorMessage: root.settingsError
             onApply: draft => {
                 root.saveSettings(Configuration.overrides(root.baseline, draft));
-                root.settingsOpen = false;
             }
             onReset: {
                 root.saveSettings({});
