@@ -28,12 +28,11 @@ import hashlib
 import json
 import math
 import os
-from pathlib import Path
 import re
 import shutil
 import subprocess
 import tempfile
-
+from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 STYLES = (
@@ -319,7 +318,7 @@ def browser_capture(args, output):
         ]
         if args.browser_no_sandbox:
             command.insert(1, "--no-sandbox")
-        result = subprocess.run(command, capture_output=True, text=True, timeout=40)
+        result = subprocess.run(command, check=False, capture_output=True, text=True, timeout=40)
         (output / "chromium.log").write_text(result.stderr)
         if result.returncode:
             raise RuntimeError(
@@ -499,7 +498,7 @@ def main():
             env["QSG_RHI_BACKEND"] = args.backend
         result = subprocess.run(
             [runner, "-input", str(test)],
-            env=env,
+            check=False, env=env,
             capture_output=True,
             text=True,
             timeout=120,

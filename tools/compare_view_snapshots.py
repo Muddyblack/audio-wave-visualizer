@@ -19,12 +19,11 @@ import argparse
 import io
 import json
 import os
-from pathlib import Path
 import shutil
 import subprocess
 import tarfile
 import tempfile
-
+from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -107,7 +106,7 @@ def main():
         command = [runner, "-input", str(test)]
         if args.case:
             command.append("VisualizerViewSnapshots::test_snapshots:" + args.case)
-        result = subprocess.run(command, env=env, timeout=120)
+        result = subprocess.run(command, check=False, env=env, timeout=120)
         print(f"Before/after snapshots: {output}", flush=True)
         raise SystemExit(result.returncode)
 

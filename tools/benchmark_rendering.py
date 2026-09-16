@@ -13,13 +13,13 @@ desktop to measure the resulting GPU/compositor cost and power consumption.
 import argparse
 import json
 import os
-from pathlib import Path
 import re
 import resource
 import shutil
 import subprocess
 import tempfile
 import time
+from pathlib import Path
 
 
 def measure(package, args):
@@ -103,7 +103,7 @@ Window {{
         start = time.monotonic()
         result = subprocess.run(
             ["qml", str(config)],
-            env=env,
+            check=False, env=env,
             capture_output=True,
             text=True,
             timeout=args.seconds + 15,

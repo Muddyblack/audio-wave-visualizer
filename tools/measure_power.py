@@ -13,13 +13,12 @@ import glob
 import json
 import math
 import os
-from pathlib import Path
 import re
 import shutil
 import statistics
 import subprocess
 import time
-
+from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 

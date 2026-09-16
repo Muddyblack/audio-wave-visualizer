@@ -14,12 +14,11 @@ to isolate scheduling from old versions' expensive software shadows.
 import argparse
 import json
 import os
-from pathlib import Path
 import shutil
 import subprocess
 import tempfile
 import xml.etree.ElementTree as ET
-
+from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
 
@@ -64,7 +63,7 @@ def harness(source, windows, fps, seconds, style, glow):
             onFrameSwapped: if (benchmark.measuring) benchmark.frames[%d]++
             %s
         }
-        """
+        """  # noqa: UP031
         % (index, view)
         for index in range(1, windows)
     )
@@ -147,7 +146,7 @@ Window {
     %s
     %s
 }
-""" % (
+""" % (  # noqa: UP031
         json.dumps(settings),
         json.dumps([0] * windows),
         round(1000 / fps),
@@ -174,7 +173,7 @@ def measure(qml, source, windows, fps, seconds, style, glow):
         }
         result = subprocess.run(
             [qml, str(script)],
-            env=env,
+            check=False, env=env,
             text=True,
             capture_output=True,
             timeout=seconds + 15,
