@@ -19,7 +19,7 @@ var PRESET_VIEWS = [
     ["favorites", "Favourites", "M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"],
     ["daily", "Today’s look", "M5 5h14v16H5zM8 3v4M16 3v4M5 10h14M9 14h2M13 17h2"]
 ];
-var SHARE_URL = "https://github.com/Muddyblack/kde-audio-visualizer/blob/HEAD/docs/sharing-presets.md";
+var SHARE_URL = "https://github.com/Muddyblack/audio-wave-visualizer/blob/HEAD/docs/sharing-presets.md";
 function localDay(date) {
     var d = date || new Date();
     return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);

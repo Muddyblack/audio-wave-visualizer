@@ -13,8 +13,8 @@
   <a href="https://www.opendesktop.org/p/2359422/">
     <img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.pling.com%2Focs%2Fv1%2Fcontent%2Fdata%3Fsearch%3Daudio%2Bwave%2Bvisualizer%26format%3Djson&query=%24.data%5B0%5D.downloads&label=Downloads&style=for-the-badge&color=1d99f3&logo=kde&logoColor=white" alt="KDE Store Downloads" />
   </a>
-  <a href="https://github.com/Muddyblack/kde-audio-visualizer/releases">
-    <img src="https://img.shields.io/github/downloads/Muddyblack/kde-audio-visualizer/total?style=for-the-badge&logo=github&logoColor=white&label=GitHub%20Downloads&color=blue" alt="GitHub Downloads" />
+  <a href="https://github.com/Muddyblack/audio-wave-visualizer/releases">
+    <img src="https://img.shields.io/github/downloads/Muddyblack/audio-wave-visualizer/total?style=for-the-badge&logo=github&logoColor=white&label=GitHub%20Downloads&color=blue" alt="GitHub Downloads" />
   </a>
 </p>
 
@@ -208,7 +208,7 @@ current declarative defaults (or `shell.qml`/Plasma defaults when none are suppl
 To start at login, add this to your Hyprland configuration (use your actual path):
 
 ```ini
-exec-once = bash /absolute/path/to/plasma-audio-visualizer/hyprland/run.sh
+exec-once = bash /absolute/path/to/audio-wave-visualizer/hyprland/run.sh
 ```
 
 The Quickshell backend keeps its status and `cava.log` under
@@ -242,8 +242,8 @@ render-loop startup details in that instance's Quickshell log.
   <summary><b>Manual (any distro)</b></summary>
 
 ```bash
-git clone https://github.com/muddyblack/plasma-audio-visualizer.git
-cd plasma-audio-visualizer
+git clone https://github.com/Muddyblack/audio-wave-visualizer.git
+cd audio-wave-visualizer
 kpackagetool6 -t Plasma/Applet -i package
 # or, to update an existing install:
 kpackagetool6 -t Plasma/Applet -u package
@@ -265,7 +265,7 @@ kpackagetool6 -t Plasma/Applet -r org.muddyblack.plasmaAudioVisualizer
 ```nix
 # flake.nix
 {
-  inputs.audio-wave.url = "github:muddyblack/plasma-audio-visualizer";
+  inputs.audio-wave.url = "github:Muddyblack/audio-wave-visualizer";
 
   outputs = { self, nixpkgs, audio-wave, ... }: {
     nixosConfigurations.mybox = nixpkgs.lib.nixosSystem {
@@ -289,7 +289,7 @@ kpackagetool6 -t Plasma/Applet -r org.muddyblack.plasmaAudioVisualizer
 
 ```bash
 ./pack.sh
-# produces plasma-audio-visualizer-<version>.plasmoid
+# produces audio-wave-visualizer-<version>.plasmoid
 ```
 
 </details>

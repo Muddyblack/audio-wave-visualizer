@@ -9,7 +9,7 @@ import "Configuration.js" as Configuration
 
 // Panel pill for Quickshell bars. In your bar:
 //
-//   import "/path/to/plasma-audio-visualizer/hyprland" as AudioVisualizer
+//   import "/path/to/audio-wave-visualizer/hyprland" as AudioVisualizer
 //   AudioVisualizer.PanelPill { icon: false }
 //
 // It reads the same hyprland.json settings as the desktop widget (the pill*

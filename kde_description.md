@@ -37,8 +37,8 @@ bash ~/.local/share/plasma/plasmoids/org.muddyblack.plasmaAudioVisualizer/conten
 [b]Quick Install (Terminal)[/b]
 
 [code]
-git clone https://github.com/muddyblack/plasma-audio-visualizer.git
-cd plasma-audio-visualizer
+git clone https://github.com/Muddyblack/audio-wave-visualizer.git
+cd audio-wave-visualizer
 kpackagetool6 -t Plasma/Applet -i package
 [/code]
 

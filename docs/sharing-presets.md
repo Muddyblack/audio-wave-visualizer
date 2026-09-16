@@ -11,7 +11,7 @@ installed separately. Never treat an unfamiliar QML file as a harmless preset.
 
 ## Suggest a preset for everyone
 
-1. Fork [the repository](https://github.com/Muddyblack/kde-audio-visualizer).
+1. Fork [the repository](https://github.com/Muddyblack/audio-wave-visualizer).
 2. Add the exported JSON as `docs/preset-submissions/your-look.json` in your fork.
 3. Open a pull request with a short description, a screenshot, and the name you
    want credited. Use built-in styles so other users can reproduce the look.

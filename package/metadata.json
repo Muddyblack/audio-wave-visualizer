@@ -14,7 +14,7 @@
         "License": "GPL-3.0-or-later",
         "Name": "Plasma Audio Visualizer",
         "Version": "3.0.0",
-        "Website": "https://github.com/Muddyblack/kde-audio-visualizer"
+        "Website": "https://github.com/Muddyblack/audio-wave-visualizer"
     },
     "X-Plasma-API-Minimum-Version": "6.0"
 }

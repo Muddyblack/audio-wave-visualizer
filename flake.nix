@@ -38,7 +38,7 @@
               description = "Plasma 6 audio visualizer widget (cava-backed)";
               license = licenses.gpl3Plus;
               platforms = platforms.linux;
-              homepage = "https://github.com/muddyblack/kde-audio-visualizer";
+              homepage = "https://github.com/Muddyblack/audio-wave-visualizer";
             };
           };
         });

@@ -236,7 +236,7 @@ Item {
         const request = createRequest();
         _request = request;
         request.open("GET", "https://lrclib.net/api/get?" + onlineQuery());
-        request.setRequestHeader("Lrclib-Client", "plasma-audio-visualizer (https://github.com/Muddyblack/kde-audio-visualizer)");
+        request.setRequestHeader("Lrclib-Client", "plasma-audio-visualizer (https://github.com/Muddyblack/audio-wave-visualizer)");
         request.onreadystatechange = () => {
             if (!root || request.readyState !== XMLHttpRequest.DONE || request !== root._request || generationKey !== root.requestKey)
                 return;

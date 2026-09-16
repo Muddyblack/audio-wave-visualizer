@@ -134,7 +134,7 @@ def request_json(url):
     request = Request(
         url,
         headers={
-            "User-Agent": "PlasmaAudioVisualizer/3.0 (https://github.com/Muddyblack/kde-audio-visualizer)",
+            "User-Agent": "PlasmaAudioVisualizer/3.0 (https://github.com/Muddyblack/audio-wave-visualizer)",
             "Accept": "application/json",
         },
     )
