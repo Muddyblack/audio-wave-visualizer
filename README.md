@@ -18,9 +18,6 @@
   </a>
 </p>
 
-<p align="center">
-  <img src="./readme/demo.svg" alt="Widget demo" width="680"/>
-</p>
 
 <p align="center">
   <a href="#features">Features</a> ·
@@ -32,15 +29,17 @@
   <a href="#credits--inspiration">Credits & Inspiration</a>
 </p>
 
+<p align="center">
+  <img src="./readme/demo.svg" alt="Widget demo" width="680"/>
+</p>
+
+
 ---
 
 An audio visualizer for KDE Plasma 6 and Hyprland/Quickshell. Reacts to system-wide
 audio through [cava], with album artwork, MPRIS playback controls and a live
 settings studio for building your own look.
 
-<p align="center">
-  <img src="./readme/liquid.png" alt="Preview" width="368"/>
-</p>
 
 ## Features
 
@@ -55,8 +54,6 @@ The portable extractor uses RGB quantization and HSL tones, not Google's HCT eng
 New styles include Neon Terrain, Audio Tunnel, Liquid Plasma, CRT Oscilloscope,
 Stereo Lissajous, and Gravity Sparks. The original **Sparkles** design remains
 unchanged at style 14; Gravity Sparks is a separate style (21).
-See [shader effects and stereo capture](docs/shader-effects.md) for host requirements.
-
 **Layouts** — Classic, mirrored, inline, hero, stacked, strip, poster and Orbit
 cards, plus panel pills/icons. Album-cover backgrounds, glass/liquid styling,
 card shadows, artwork effects and perspective tilt with stationary controls,

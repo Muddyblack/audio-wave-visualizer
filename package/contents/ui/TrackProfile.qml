@@ -6,6 +6,7 @@ Item {
     property Component commandSourceComponent: null
     property string fileUrl: ""
     property bool active: true
+    property bool wantPeaks: true
     property var peaks: []
     property var chapters: []
     property string status: "idle"
@@ -31,11 +32,12 @@ Item {
         if (!worker.item || !active || !fileUrl)
             return;
         const script = decodeURIComponent(Qt.resolvedUrl("../code/track_profile.sh").toString().replace(/^file:\/\//, ""));
-        _command = "bash " + quote(script) + " " + quote(fileUrl) + " # " + (++_generation);
+        _command = "bash " + quote(script) + " " + quote(fileUrl) + (wantPeaks ? "" : " --chapters-only") + " # " + (++_generation);
         worker.connectSource(_command);
     }
     onFileUrlChanged: reset()
     onActiveChanged: reset()
+    onWantPeaksChanged: reset()
     Component.onDestruction: {
         if (_command) {
             worker.cancelSource(_command);
@@ -49,6 +51,7 @@ Item {
     }
     CommandSource {
         id: worker
+        objectName: "trackProfileWorker"
         sourceComponent: root.commandSourceComponent
         onLoaded: {
             if (root.active && root.fileUrl)

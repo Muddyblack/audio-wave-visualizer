@@ -13,6 +13,12 @@ Item {
     property real displayedPosition: 0
     property real anchorPosition: 0
     property real anchorMs: Date.now()
+    property real loopStart: -1
+    property real loopEnd: -1
+    property bool loopEnabled: false
+    property real _lastLoopSeek: 0
+    readonly property bool validLoop: loopStart >= 0 && loopEnd <= 1 && loopEnd > loopStart && lengthValue > 0
+    readonly property bool canSeek: !!player && player.canControl !== false && player.canSeek !== false && player.positionSupported !== false && lengthValue > 0
     property real unitScale: 0
     property int updateInterval: 50
     readonly property real unitsPerSecond: unitScale > 0 ? unitScale : lengthValue >= 1000000 ? 1000000 : lengthValue >= 10000 ? 1000 : 1
@@ -64,6 +70,23 @@ Item {
         return true;
     }
 
+    function seekRelative(seconds) {
+        return Number.isFinite(seconds) && lengthValue > 0 && seekToFraction((displayedPosition + seconds * unitsPerSecond) / lengthValue);
+    }
+    function clearLoop() {
+        loopEnabled = false;
+        loopStart = -1;
+        loopEnd = -1;
+        _lastLoopSeek = 0;
+    }
+    function checkLoop() {
+        if (!active || !playing || !loopEnabled || !validLoop || !canSeek)
+            return;
+        if (displayedPosition >= loopEnd * lengthValue && Date.now() - _lastLoopSeek >= 250) {
+            _lastLoopSeek = Date.now();
+            seekToFraction(loopStart);
+        }
+    }
     function syncFromPlayer(hard) {
         const len = player ? Math.max(0, player.length || player.mprisLength || 0) : 0;
         // Some players briefly clear length while updating metadata.
@@ -85,6 +108,7 @@ Item {
     function tick() {
         if (lengthValue > 0)
             displayedPosition = predictedPosition();
+        checkLoop();
     }
 
     function twoDigits(value) {
@@ -99,6 +123,7 @@ Item {
     }
 
     onPlayerChanged: {
+        clearLoop();
         // A different player must not inherit the previous player's duration.
         // Only transient empty metadata from the same player is retained.
         lengthValue = 0;
@@ -106,7 +131,10 @@ Item {
         syncFromPlayer(true);
     }
     onPlayingChanged: syncFromPlayer(true)
-    onTrackChanged: syncFromPlayer(true)
+    onTrackChanged: {
+        clearLoop();
+        syncFromPlayer(true);
+    }
     onActiveChanged: {
         if (active)
             tick();

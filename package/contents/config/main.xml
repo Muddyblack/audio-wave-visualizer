@@ -20,6 +20,21 @@
         <entry name="visualizerType" type="Int">
             <default>0</default>
         </entry>
+        <entry name="wheelSeekSeconds" type="Double">
+            <default>5</default>
+        </entry>
+        <entry name="seekHover" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="seekGestures" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="reactiveProgress" type="Bool">
+            <default>true</default>
+        </entry>
+        <entry name="showChapters" type="Bool">
+            <default>true</default>
+        </entry>
         <entry name="progressBarStyle" type="Int">
             <default>0</default>
         </entry>

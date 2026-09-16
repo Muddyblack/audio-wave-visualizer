@@ -26,10 +26,10 @@
               root=$out/share/plasma/plasmoids/${metadata.KPlugin.Id}
               mkdir -p "$root"
               cp -r . "$root/"
-              for script in feeder.sh doctor.sh stereo_capture.sh local_lyrics.sh; do
+              for script in feeder.sh doctor.sh stereo_capture.sh local_lyrics.sh track_profile.sh; do
                 chmod +x "$root/contents/code/$script"
                 wrapProgram "$root/contents/code/$script" \
-                  --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.cava (pkgs.python3.withPackages (ps: [ ps.mutagen ps.pykakasi ps.pypinyin ])) pkgs.pipewire pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ]}
+                  --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.cava (pkgs.python3.withPackages (ps: [ ps.mutagen ps.pykakasi ps.pypinyin ])) pkgs.pipewire pkgs.ffmpeg pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ]}
               done
               runHook postInstall
             '';
@@ -54,7 +54,7 @@
             type = "app";
             program = "${pkgs.writeShellApplication {
               name = "view-hyprland";
-              runtimeInputs = [ pkgs.quickshell pkgs.cava (pkgs.python3.withPackages (ps: [ ps.mutagen ps.pykakasi ps.pypinyin ])) pkgs.pipewire pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ];
+              runtimeInputs = [ pkgs.quickshell pkgs.cava (pkgs.python3.withPackages (ps: [ ps.mutagen ps.pykakasi ps.pypinyin ])) pkgs.pipewire pkgs.ffmpeg pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ];
               text = ''
                 exec bash "$PWD/hyprland/run.sh" "$@"
               '';
@@ -97,6 +97,8 @@
             name = "plasma-audio-visualizer-dev";
             packages = with pkgs; [
               qt6.qtdeclarative
+              qt6.qtsvg
+              kdePackages.kirigami
               # qsb, for `make shaders`
               qt6.qtshadertools
               # Headless Quickshell integration tests and their process tools.
@@ -117,12 +119,13 @@
               mawk
               nawk
             ];
-            # Desktop NixOS sessions export this, CI runners do not; without it
-            # qmltestrunner and qmllint cannot resolve e.g. `import QtCore`.
+            # Supply QML modules and SVG decoding explicitly: CI runners have
+            # no desktop Qt paths for qmltestrunner or qmllint to inherit.
             shellHook = ''
               # Qt's propagated tools can put the unwrapped D-Bus first.
               export PATH="${sessionBus}/bin:$PATH"
-              export NIXPKGS_QT6_QML_IMPORT_PATH="${pkgs.qt6.qtdeclarative}/${pkgs.qt6.qtbase.qtQmlPrefix}''${NIXPKGS_QT6_QML_IMPORT_PATH:+:$NIXPKGS_QT6_QML_IMPORT_PATH}"
+              export NIXPKGS_QT6_QML_IMPORT_PATH="${pkgs.lib.makeSearchPath pkgs.qt6.qtbase.qtQmlPrefix [ pkgs.qt6.qtdeclarative pkgs.kdePackages.kirigami ]}''${NIXPKGS_QT6_QML_IMPORT_PATH:+:$NIXPKGS_QT6_QML_IMPORT_PATH}"
+              export QT_PLUGIN_PATH="${pkgs.qt6.qtsvg}/${pkgs.qt6.qtbase.qtPluginPrefix}''${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}"
               pre-commit install -f --install-hooks
               echo "plasma-audio-visualizer dev shell ready"
               echo "  make help        — list targets (view, install, pack, tag)"

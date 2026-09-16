@@ -35,6 +35,7 @@ Item {
     readonly property real bassSmoothed: analysis.bassSmoothed
     // One accepted sample pulse; the first sample after a reset only primes it.
     readonly property bool attack: analysis.attack
+    readonly property real energyPulse: analysis.attack ? Math.max(0, Math.min(1, (analysis.bass - analysis.bassSmoothed) * 2)) : 0
 
     QtObject {
         id: analysis

@@ -20,6 +20,15 @@ Item {
     property color pgStartColor: "#ffffff"
     property color pgEndColor: "#ffffff"
     property real positionUnitsPerSecond: 0
+    property var peaks: []
+    property var chapters: []
+    property real wheelSeekSeconds: 5
+    property bool seekHover: true
+    property bool seekGestures: true
+    property bool reactiveProgress: true
+    property real bass: 0
+    property real energyPulse: 0
+    readonly property real transientPulse: reactiveProgress && !reducedMotion && hasAudio && playbackActive ? Math.max(0, Math.min(1, energyPulse + bass * .25)) : 0
     property real visualFrameTime: 0
     property bool reducedMotion: false
     property bool showTimes: true
@@ -45,8 +54,8 @@ Item {
     readonly property int pbStyle: root.style === 10 ? 0 : root.style
 
     readonly property real lengthValue: positionClock.lengthValue
-    readonly property real progress: positionClock.progress
-    readonly property int progressPixel: Math.round(positionClock.progress * progressTrack.width)
+    readonly property real progress: pbArea.scrubbing ? pbArea.fraction : positionClock.progress
+    readonly property int progressPixel: Math.round(root.progress * progressTrack.width)
     readonly property bool animateDecorations: root.isPlaying && root.hasAudio && positionClock.active
     readonly property real sweep: {
         if (!animateDecorations)
@@ -69,7 +78,7 @@ Item {
         unitScale: root.positionUnitsPerSecond
         // Audio frames tick the clock while the waveform moves.
         // A slow fallback keeps silent playback/time labels correct.
-        updateInterval: 1000
+        updateInterval: positionClock.loopEnabled && positionClock.validLoop ? 50 : 1000
         player: root.player
         playing: root.isPlaying
         track: root.track
@@ -85,6 +94,7 @@ Item {
     // ── Style 4 — Android Waveform seekbar ───────────────────
     Canvas {
         id: waveformSeek
+        objectName: "waveformSeek"
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
@@ -94,7 +104,7 @@ Item {
         antialiasing: true
         renderStrategy: Canvas.Cooperative
 
-        // seeded pseudo-random waveform heights, unique per track
+        // Real cached acoustic peaks, aggregated to the available display width.
         property var barHeights: []
         property int numBars: 0
         property string waveformKey: ""
@@ -106,24 +116,17 @@ Item {
             const gap = 2;
             const barW = 3;
             const n = Math.floor(w / (barW + gap));
-            const key = root.track + "\u0000" + root.artist;
+            const key = root.track + "\u0000" + root.peaks.join(",");
             if (n === numBars && barHeights.length === n && waveformKey === key)
                 return;
             numBars = n;
             waveformKey = key;
-            // hash track title for a stable seed
-            let seed = 0;
-            const s = root.track + root.artist;
-            for (let c = 0; c < s.length; c++)
-                seed = (seed * 31 + s.charCodeAt(c)) >>> 0;
             const heights = [];
             for (let i = 0; i < n; i++) {
-                seed = (seed * 1664525 + 1013904223) >>> 0;
-                const r = (seed >>> 16) / 65535;
-                // shape: taper at edges, random in middle
-                const pos = n > 1 ? i / (n - 1) : 0;
-                const taper = Math.sin(pos * Math.PI);
-                heights.push(0.15 + r * 0.85 * taper);
+                let peak = 0;
+                for (let j = Math.floor(i * root.peaks.length / n); j < Math.ceil((i + 1) * root.peaks.length / n); j++)
+                    peak = Math.max(peak, root.peaks[j] || 0);
+                heights.push(peak);
             }
             barHeights = heights;
             requestPaint();
@@ -144,6 +147,9 @@ Item {
         Connections {
             target: root
             function onTrackChanged() {
+                waveformSeek.buildWaveform();
+            }
+            function onPeaksChanged() {
                 waveformSeek.buildWaveform();
             }
             function onArtistChanged() {
@@ -193,7 +199,8 @@ Item {
             for (let i = 0; i < n; i++) {
                 const x = i * (barW + gap);
                 const played = (x + barW / 2) < playheadX;
-                const bh = played ? Math.max(2, barHeights[i] * h) : Math.max(2, barHeights[i] * h * 0.45);
+                // Playback changes colour, never the acoustic amplitude profile.
+                const bh = Math.max(2, barHeights[i] * h);
                 const y = (h - bh) / 2;
 
                 ctx.fillStyle = played ? playedColor : unplayedColor;
@@ -331,7 +338,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: root.pbStyle === 1 ? 4 : root.pbStyle === 8 ? 3 : 2
         visible: !root.customReady && root.pbStyle !== 4 && root.pbStyle !== 5 && root.pbStyle !== 7 && root.pbStyle !== 9
-        height: root.pbStyle === 1 ? 1 : root.pbStyle === 2 || root.pbStyle === 6 ? (pbArea.containsMouse ? (root.pbStyle === 6 ? 5 : 6) : 4) : root.pbStyle === 3 ? (pbArea.containsMouse ? 8 : 6) : root.pbStyle === 8 ? (pbArea.containsMouse ? 6 : 5) : (pbArea.containsMouse ? 5 : 3)
+        height: root.transientPulse * 2 + (root.pbStyle === 1 ? 1 : root.pbStyle === 2 || root.pbStyle === 6 ? (pbArea.containsMouse ? (root.pbStyle === 6 ? 5 : 6) : 4) : root.pbStyle === 3 ? (pbArea.containsMouse ? 8 : 6) : root.pbStyle === 8 ? (pbArea.containsMouse ? 6 : 5) : (pbArea.containsMouse ? 5 : 3))
         radius: height / 2
         color: root.pbStyle === 6 ? "transparent" : root.pbStyle === 1 ? Qt.rgba(root.textColor.r, root.textColor.g, root.textColor.b, 0.06) : Qt.rgba(root.textColor.r, root.textColor.g, root.textColor.b, 0.12)
         border.color: Qt.rgba(1, 1, 1, 0.10)
@@ -468,10 +475,10 @@ Item {
                 shadowEnabled: true
                 shadowColor: root.pgStartColor
                 shadowOpacity: root.pbStyle === 2 ? (root.isPlaying ? 0.75 : 0.42) : (root.isPlaying ? 0.55 : 0.22)
-                shadowBlur: root.pbStyle === 2 ? 0.60 : 0.40
+                shadowBlur: Math.min(1, (root.pbStyle === 2 ? 0.60 : 0.40) + root.transientPulse * .3)
             }
 
-            scale: root.animateDecorations && (root.pbStyle === 0 || root.pbStyle === 2) ? 1.05 - 0.13 * Math.cos(2 * Math.PI * (root.visualFrameTime % 1400) / 1400) : 1
+            scale: root.transientPulse * .25 + (root.animateDecorations && (root.pbStyle === 0 || root.pbStyle === 2) ? 1.05 - 0.13 * Math.cos(2 * Math.PI * (root.visualFrameTime % 1400) / 1400) : 1)
         }
 
         // Style 8 — white capsule knob with a small drop shadow.
@@ -559,18 +566,30 @@ Item {
         }
     }
 
-    MouseArea {
+    // Short pulse along the played track, driven entirely by the audio clock.
+    Rectangle {
+        visible: !root.customReady && root.transientPulse > .02
+        x: Math.max(0, root.progressPixel - width)
+        y: pbArea.trackCenter - height / 2
+        width: Math.min(root.progressPixel, 8 + 22 * root.transientPulse)
+        height: 4 + 7 * root.transientPulse
+        radius: height / 2
+        color: root.waveColor
+        opacity: root.transientPulse * .22
+    }
+    SeekInteraction {
         id: pbArea
+        anchors.fill: parent
         visible: !root.customReady
         enabled: !root.customReady
-        objectName: "pbArea"
-        anchors.fill: parent
-        hoverEnabled: true
-        cursorShape: Qt.PointingHandCursor
-
-        onClicked: mouse => {
-            const ratio = progressTrack.width > 0 ? (mouse.x - progressTrack.x) / progressTrack.width : 0;
-            positionClock.seekToFraction(ratio);
-        }
+        clock: positionClock
+        chapters: root.chapters
+        accentColor: root.waveColor
+        textColor: root.textColor
+        wheelStep: root.wheelSeekSeconds
+        hoverTips: root.seekHover
+        gestures: root.seekGestures
+        reducedMotion: root.reducedMotion
+        trackCenter: root.pbStyle === 4 ? 10 : progressTrack.y + progressTrack.height / 2
     }
 }

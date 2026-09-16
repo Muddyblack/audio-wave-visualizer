@@ -18,6 +18,11 @@ TestCase {
                 reducedMotion: true
             })
         property var lyricLines: []
+        function setLyricsOffset(value) {
+            configuration = Object.assign({}, configuration, {
+                lyricsOffset: value
+            });
+        }
         property real lyricPosition: 1.5
         property int lyricIndex: 5
         property string lyricStatus: "ready"
@@ -52,6 +57,7 @@ TestCase {
     function test_nudgeControlsAndShortcuts() {
         mouseClick(findChild(subject, "lyricsOffsetPlus"));
         compare(view.configuration.lyricsOffset, 0.1);
+        compare(findChild(subject, "lyricsOffsetReset").text, "+100 ms");
         keyClick(Qt.Key_Minus);
         compare(view.configuration.lyricsOffset, 0);
         keyClick(Qt.Key_Plus);

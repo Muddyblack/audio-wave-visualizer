@@ -25,8 +25,14 @@ FocusScope {
     implicitWidth: Layouts.size(cfg)[0]
     implicitHeight: Layouts.size(cfg)[1]
 
+    function setOffset(value) {
+        if (typeof view.setLyricsOffset === "function")
+            view.setLyricsOffset(value);
+        else
+            cfg.lyricsOffset = value;
+    }
     function nudge(direction) {
-        cfg.lyricsOffset = Math.max(-10, Math.min(10, Math.round(((cfg.lyricsOffset ?? 0) + direction * 0.1) * 10) / 10));
+        setOffset(Math.max(-10, Math.min(10, Math.round(((cfg.lyricsOffset ?? 0) + direction * 0.1) * 10) / 10)));
     }
     Keys.onPressed: event => {
         if (event.key === Qt.Key_Plus || event.key === Qt.Key_Equal) {
@@ -203,7 +209,7 @@ FocusScope {
             Controls.ToolTip.visible: hovered
             Controls.ToolTip.text: qsTr("Reset timing; positive values show lyrics earlier")
             onClicked: {
-                root.cfg.lyricsOffset = 0;
+                root.setOffset(0);
                 root.forceActiveFocus();
             }
         }

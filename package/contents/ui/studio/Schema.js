@@ -91,13 +91,18 @@ var SECTIONS = [
         { k: "ribbonCurvature", type: "range", label: "Ribbon curvature", desc: "How far the mids bend the ribbon.", min: .5, max: 1.25, step: .05, fmt: "pct", when: function (s) { return s.visualizerType === 15; } },
         { k: "ribbonFullness", type: "range", label: "Ribbon fullness", desc: "How thick the bass makes it.", min: .6, max: 1.3, step: .05, fmt: "pct", when: function (s) { return s.visualizerType === 15; } },
         { k: "lineWidth", type: "range", label: "Line weight", desc: "Stroke width of lines and dot size.", min: 1, max: 8, step: .2, fmt: "fixed1" },
-        { k: "fillWave", type: "switch", label: "Gradient fill", desc: "Transparent fill under the wave.",
-          when: function (s) { return s.visualizerType === 0 && s.layoutMode !== "orbit"; } }
+        { k: "fillWave", type: "switch", label: "Gradient fill", desc: "Fill waves and liquid shapes, or soften Peak Bars with transparency.",
+          when: function (s) { return s.layoutMode === "orbit" ? s.orbitStyle === "wave" : [0, 6, 10, 18].indexOf(s.visualizerType) !== -1; } }
     ]),
     tab("controls", "Progress bar", [
         { id: "customProgressBar", type: "customStyle", full: true, label: "Custom progress bars", desc: "Import a trusted QML progress bar with playback timing and seeking." },
         { k: "progressBarStyle", type: "tiles", full: true, label: "Style", desc: "Click anywhere on it in the widget to seek.", tw: 104,
           opts: PBS.map(function (l, i) { return { v: i, label: l, pv: "progress" }; }) },
+        { k: "seekHover", type: "switch", label: "Seek preview", desc: "Target time, jump delta and a ghost playhead." },
+        { k: "seekGestures", type: "switch", label: "Seek gestures", desc: "Wheel seeks; double-click the outer thirds to jump 10 seconds." },
+        { k: "wheelSeekSeconds", type: "range", label: "Wheel seek step", min: 0, max: 10, step: 1, fmt: "s", desc: "Seconds per notch; 0 disables wheel seeking." },
+        { k: "reactiveProgress", type: "switch", label: "Audio-reactive progress", desc: "Bass swells the track and playhead; reduced motion disables pulses." },
+        { k: "showChapters", type: "switch", label: "Chapter marks", desc: "Uses player chapter metadata or local embedded chapters and cue files." },
         { k: "showTimes", type: "switch", label: "Time labels", desc: "Elapsed and total time under the bar." },
         { k: "timeFormat", type: "seg", label: "Time format", opts: [["total", "1:31 · 3:58"], ["remaining", "1:31 · -2:27"]], when: function (s) { return s.showTimes || s.progressBarStyle === 9; } }
     ]),
@@ -323,6 +328,7 @@ function format(kind, v) {
     case "fixed2": return Number(v).toFixed(2);
     case "bars": return Math.round(v) + " bars";
     case "hz": return Math.round(v) + " Hz";
+    case "s": return Number(v) + " s";
     default: return String(v);
     }
 }

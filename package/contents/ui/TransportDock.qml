@@ -14,6 +14,27 @@ Item {
     property color controlColor: "#ffffff"
     property color accentColor: "#ffffff"
     property bool cardHovered: false
+    property real positionUnitsPerSecond: 0
+    PlaybackClock {
+        id: seekClock
+        player: root.player
+        playing: root.isPlaying
+        unitScale: root.positionUnitsPerSecond
+        active: false
+    }
+    WheelHandler {
+        target: null
+        enabled: root.visible && !root.hiddenUntilHover && (root.configuration.seekGestures ?? true)
+        onWheel: event => {
+            const step = root.configuration.wheelSeekSeconds ?? 5;
+            if (step <= 0) {
+                event.accepted = false;
+                return;
+            }
+            seekClock.tick();
+            event.accepted = seekClock.seekRelative((event.angleDelta.y ? event.angleDelta.y / 120 : event.pixelDelta.y / 40) * step);
+        }
+    }
 
     readonly property string dockStyle: configuration.dockStyle ?? "glass"
     readonly property bool framed: dockStyle === "glass" || dockStyle === "hover"

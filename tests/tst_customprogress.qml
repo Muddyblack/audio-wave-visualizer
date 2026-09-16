@@ -94,6 +94,8 @@ TestCase {
         compare(subject.implicitHeight, 10);
         subject.customProgressBar = "";
         tryCompare(subject, "customReady", false);
+        verify(!findChild(subject, "pbArea").enabled, "The built-in control also respects canSeek");
+        player.canSeek = true;
         verify(findChild(subject, "pbArea").enabled);
     }
     function test_nativeMicrosecondSeeking() {

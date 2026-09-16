@@ -14,7 +14,12 @@ Item {
     property color accentColor: "#ffffff"
     property real cornerRadius: 14
     property real band: 2
-    readonly property real progress: clock.progress
+    property bool circularDial: false
+    property real wheelSeekSeconds: 5
+    property bool _dragging: false
+    property real _preview: 0
+    readonly property var playbackClock: clock
+    readonly property real progress: _dragging ? _preview : clock.progress
 
     readonly property bool canSeek: !!player && player.canControl !== false && player.canSeek !== false && player.positionSupported !== false && (player.length || player.mprisLength || 0) > 0
 
@@ -34,11 +39,14 @@ Item {
         // the centre artwork or the empty corners of a circular cover.
         return insideRoundedRect(x, y, -3) && !insideRoundedRect(x, y, band + 3);
     }
-    function seekAt(x, y) {
+    function fractionAt(x, y) {
         // Match the conic paint sweep: top = 0, clockwise to right = 25%.
         const turn = 2 * Math.PI;
         const fraction = ((Math.atan2(y - height / 2, x - width / 2) + Math.PI / 2 + turn) % turn) / turn;
-        return clock.seekToFraction(fraction);
+        return fraction;
+    }
+    function seekAt(x, y) {
+        return clock.seekToFraction(fractionAt(x, y));
     }
 
     MouseArea {
@@ -49,7 +57,29 @@ Item {
         enabled: ring.canSeek
         hoverEnabled: true
         cursorShape: ring.onBand(mouseX - 3, mouseY - 3) ? Qt.PointingHandCursor : Qt.ArrowCursor
-        onPressed: mouse => mouse.accepted = ring.onBand(mouse.x - 3, mouse.y - 3)
+        preventStealing: true
+        onPressed: mouse => {
+            mouse.accepted = ring.onBand(mouse.x - 3, mouse.y - 3);
+            ring._dragging = mouse.accepted;
+            ring._preview = ring.fractionAt(mouse.x - 3, mouse.y - 3);
+        }
+        onPositionChanged: mouse => {
+            if (pressed && ring._dragging)
+                ring._preview = ring.fractionAt(mouse.x - 3, mouse.y - 3);
+        }
+        onReleased: {
+            if (ring._dragging)
+                clock.seekToFraction(ring._preview);
+            ring._dragging = false;
+        }
+        onCanceled: ring._dragging = false
+        onWheel: wheel => {
+            if (!ring.onBand(wheel.x - 3, wheel.y - 3)) {
+                wheel.accepted = false;
+                return;
+            }
+            wheel.accepted = ring.wheelSeekSeconds > 0 && clock.seekRelative((wheel.angleDelta.y ? wheel.angleDelta.y / 120 : wheel.pixelDelta.y / 40) * ring.wheelSeekSeconds);
+        }
         onClicked: mouse => {
             if (ring.onBand(mouse.x - 3, mouse.y - 3))
                 ring.seekAt(mouse.x - 3, mouse.y - 3);
@@ -75,6 +105,7 @@ Item {
     Canvas {
         id: ringCanvas
         objectName: "ringCanvas"
+        visible: !ring.circularDial
         anchors.fill: parent
         antialiasing: true
         renderStrategy: Canvas.Cooperative

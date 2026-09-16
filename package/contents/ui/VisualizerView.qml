@@ -9,6 +9,10 @@ Item {
 
     required property var configuration
     required property var visualizer
+    // Plasma's configuration is observable; JS-object hosts supply their save path.
+    property var setLyricsOffset: function (value) {
+        configuration.lyricsOffset = value;
+    }
     property var player: null
     property bool isPlaying: false
     // Synthetic previews must not send sample metadata to lyrics services.
@@ -330,6 +334,26 @@ Item {
 
     HoverHandler {
         id: cardHover
+    }
+
+    readonly property string mediaUrl: String(metadata["xesam:url"] || player?.trackUrl || "")
+    readonly property string trackIdentity: String(metadata["mpris:trackid"] || mediaUrl || track) + "\u001f" + track
+    readonly property var acousticPeaks: profileLoader.item?.peaks ?? []
+    readonly property var trackChapters: chapterModel.chapters
+    Loader {
+        id: profileLoader
+        active: !root.samplePlayback && root.visible && root.shouldShow && root.mediaUrl !== "" && ((root.configuration.progressBarStyle ?? 0) === 4 || (root.configuration.showChapters ?? true))
+        sourceComponent: TrackProfile {
+            wantPeaks: (root.configuration.progressBarStyle ?? 0) === 4
+            commandSourceComponent: root.visualizer.commandSourceComponent ?? null
+            fileUrl: root.mediaUrl
+        }
+    }
+    ChapterModel {
+        id: chapterModel
+        metadata: (root.configuration.showChapters ?? true) ? root.metadata : ({})
+        localChapters: (root.configuration.showChapters ?? true) ? (profileLoader.item?.chapters ?? []) : []
+        duration: root.player ? (root.player.length || root.player.mprisLength || 0) / (root.positionUnitsPerSecond > 0 ? root.positionUnitsPerSecond : (root.player.length || root.player.mprisLength || 0) >= 1000000 ? 1000000 : (root.player.length || root.player.mprisLength || 0) >= 10000 ? 1000 : 1) : 0
     }
 
     Loader {

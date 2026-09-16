@@ -3,6 +3,7 @@ import QtQuick.Layouts
 import ".."
 
 TransportDock {
+    positionUnitsPerSecond: view.positionUnitsPerSecond
     required property var view
     Layout.preferredWidth: implicitWidth
     Layout.preferredHeight: 26

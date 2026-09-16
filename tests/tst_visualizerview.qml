@@ -100,6 +100,18 @@ TestCase {
         verify(subject !== null);
         waitForRendering(subject);
     }
+    function test_progressWheelSeeksWithoutChangingVolume() {
+        subject.configuration = Object.assign({}, defaults, {
+            scrollVolume: true,
+            seekGestures: true,
+            wheelSeekSeconds: 5
+        });
+        const seek = findChild(subject, "pbArea");
+        const volume = player.volume, position = player.position;
+        mouseWheel(seek, seek.width / 2, seek.height / 2, 0, 120);
+        compare(player.volume, volume);
+        compare(player.position, position + 5 * findChild(subject, "positionClock").unitsPerSecond);
+    }
     function test_controlsAndSeeking() {
         mouseClick(findChild(subject, "prevArea"));
         mouseClick(findChild(subject, "playArea"));

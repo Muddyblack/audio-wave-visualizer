@@ -24,7 +24,8 @@ Item {
         desktopEntry: root.view.desktopEntry
         fallbackIcon: root.view.fallbackIcon
 
-        CoverRing {
+        ArcProgress {
+            wheelSeekSeconds: root.view.configuration.wheelSeekSeconds ?? 5
             objectName: "coverRing"
             anchors.fill: parent
             anchors.margins: -4

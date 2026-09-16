@@ -12,6 +12,14 @@ ProgressBar {
 
     objectName: "progressBar"
     customProgressBar: view.configuration.customProgressBar ?? ""
+    peaks: view.acousticPeaks
+    chapters: view.trackChapters
+    wheelSeekSeconds: view.configuration.wheelSeekSeconds ?? 5
+    seekHover: view.configuration.seekHover ?? true
+    seekGestures: view.configuration.seekGestures ?? true
+    reactiveProgress: view.configuration.reactiveProgress ?? true
+    bass: view.visualizer.bass ?? 0
+    energyPulse: view.visualizer.energyPulse ?? 0
     player: view.player
     isPlaying: view.isPlaying
     hasAudio: view.visualizer.hasAudio
@@ -22,7 +30,7 @@ ProgressBar {
     timeFormat: view.configuration.timeFormat ?? "total"
     centerTimes: view.configuration.textAlign === "center"
     reducedMotion: view.configuration.reducedMotion ?? false
-    track: view.track
+    track: view.trackIdentity
     artist: view.artist
     textColor: view.textColor
     waveColor: view.waveColor

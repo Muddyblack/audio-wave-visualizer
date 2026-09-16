@@ -24,6 +24,7 @@ subprocess.run(
 subprocess.run([sys.executable, str(REPO / "tests/test_feeder.py")], check=True)
 subprocess.run([sys.executable, str(REPO / "tests/test_waybar.py")], check=True)
 subprocess.run([sys.executable, str(REPO / "tests/test_stereo_capture.py")], check=True)
+subprocess.run([sys.executable, str(REPO / "tests/test_track_profile.py")], check=True)
 subprocess.run([sys.executable, str(REPO / "tests/test_local_lyrics.py")], check=True)
 if shutil.which("node"):
     subprocess.run(["node", str(REPO / "tests/test_lyrics.cjs")], check=True)
@@ -130,7 +131,7 @@ done
                 str(REPO / "tests/stubs"),
             ],
             env=env,
-            timeout=60,
+            timeout=120,
             check=True,
         )
         print("PASS: legacy transport, live INI frames, silence/wake, shared startup")

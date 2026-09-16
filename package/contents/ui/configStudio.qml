@@ -23,6 +23,16 @@ Kirigami.Page {
     property string cfg_customProgressBarsDefault
     property int cfg_visualizerType
     property int cfg_visualizerTypeDefault
+    property real cfg_wheelSeekSeconds
+    property real cfg_wheelSeekSecondsDefault
+    property bool cfg_seekHover
+    property bool cfg_seekHoverDefault
+    property bool cfg_seekGestures
+    property bool cfg_seekGesturesDefault
+    property bool cfg_reactiveProgress
+    property bool cfg_reactiveProgressDefault
+    property bool cfg_showChapters
+    property bool cfg_showChaptersDefault
     property int cfg_progressBarStyle
     property int cfg_progressBarStyleDefault
     property int cfg_numBars
@@ -282,6 +292,11 @@ Kirigami.Page {
             customProgressBar: root.cfg_customProgressBar,
             customProgressBars: root.cfg_customProgressBars,
             visualizerType: root.cfg_visualizerType,
+            wheelSeekSeconds: root.cfg_wheelSeekSeconds,
+            seekHover: root.cfg_seekHover,
+            seekGestures: root.cfg_seekGestures,
+            reactiveProgress: root.cfg_reactiveProgress,
+            showChapters: root.cfg_showChapters,
             progressBarStyle: root.cfg_progressBarStyle,
             numBars: root.cfg_numBars,
             sensitivity: root.cfg_sensitivity,
@@ -415,6 +430,11 @@ Kirigami.Page {
             customProgressBar: root.cfg_customProgressBarDefault,
             customProgressBars: root.cfg_customProgressBarsDefault,
             visualizerType: root.cfg_visualizerTypeDefault,
+            wheelSeekSeconds: root.cfg_wheelSeekSecondsDefault,
+            seekHover: root.cfg_seekHoverDefault,
+            seekGestures: root.cfg_seekGesturesDefault,
+            reactiveProgress: root.cfg_reactiveProgressDefault,
+            showChapters: root.cfg_showChaptersDefault,
             progressBarStyle: root.cfg_progressBarStyleDefault,
             numBars: root.cfg_numBarsDefault,
             sensitivity: root.cfg_sensitivityDefault,

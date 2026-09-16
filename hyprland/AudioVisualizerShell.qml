@@ -244,6 +244,9 @@ ShellRoot {
                 backdropSource: backdrop.item
                 anchors.fill: parent
                 configuration: root.configuration
+                setLyricsOffset: value => root.saveSettings(Object.assign({}, root.userSettings, {
+                        lyricsOffset: value
+                    }))
                 visualizer: backend
                 player: root.player
                 isPlaying: root.player?.isPlaying ?? false

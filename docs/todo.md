@@ -55,35 +55,35 @@
 
 ## 7. Interactive Controls & Next-Gen Progress Bar Innovations
 
-- [ ] **Acoustic Waveform Profile Seekbar (Real Audio Peak Cache)** `[High]`
+- [x] **Acoustic Waveform Profile Seekbar (Real Audio Peak Cache)** `[High]`
   - Replace synthetic pseudo-random bars (Style 4) with real acoustic amplitude peaks extracted from local audio files or cached stream analysis (SoundCloud/Audiomack style).
   - Show actual track dynamics: intros, drops, breakdowns, and quiet bridges right on the progress track.
   - *Technical Scope*: Background worker (`audiowaveform` CLI / `ffmpeg` / Python helper) generating 128 normalized float peaks into `~/.cache/plasma-audio-visualizer/peaks/<sha1>.json`; load asynchronously in `ProgressBar.qml` / `WaveArea.qml`.
-- [ ] **Scrubbing Hover Tooltip, Time Delta & Ghost Playhead** `[High]`
+- [x] **Scrubbing Hover Tooltip, Time Delta & Ghost Playhead** `[High]`
   - Hovering over the progress bar displays a floating glass pill tooltip with target timestamp (e.g. `2:45`) and relative jump delta (e.g. `+0:32` / `-1:10`).
   - Render a subtle "ghost" needle tracing cursor position before committing the seek.
   - *Technical Scope*: Add hover tracking (`hoverEnabled: true`, `containsMouse`, `mouseX`) in `ProgressBar.qml` with an animated tooltip anchored above the track.
-- [ ] **Interactive Gesture Controls: Wheel Seeking & Double-Tap Jumps** `[High]`
+- [x] **Interactive Gesture Controls: Wheel Seeking & Double-Tap Jumps** `[High]`
   - Scroll wheel over the progress bar or transport dock performs fine-grained seeks (configurable, e.g. ±2s or ±5s per notch).
   - Double-click on the left third of the bar skips back 10s; double-click on the right third skips forward 10s (YouTube / mobile style) with quick directional ripple animations.
   - *Technical Scope*: Add `WheelHandler` and click timestamp/coordinate heuristics to `ProgressBar.qml` `MouseArea`.
-- [ ] **Multi-Speed Fine Scrubbing (iOS / Pro Audio Style)** `[Medium]`
+- [x] **Multi-Speed Fine Scrubbing (iOS / Pro Audio Style)** `[Medium]`
   - Dragging the seekbar horizontally seeks normally (1x); dragging the pointer vertically away from the bar decreases scrub velocity (0.5x half-speed, 0.25x quarter-speed, 0.1x fine-scrub) for pinpoint lyric and beat seeking.
   - Dynamic UI badge showing current scrubbing speed multiplier (`1x`, `½x`, `¼x`, `fine`).
   - *Technical Scope*: Calculate vertical mouse drag delta `Math.abs(mouseY - trackCenterY)` in `ProgressBar.qml` `MouseArea` to scale horizontal scrub ratio increments.
-- [ ] **Dynamic Audio-Reactive Seekbar Pulses & Transient Bloom** `[Medium]`
+- [x] **Dynamic Audio-Reactive Seekbar Pulses & Transient Bloom** `[Medium]`
   - Progress track reacts dynamically to live audio energy: filled track thickness, glow radius, or playhead knob swells on bass kicks ($dE/dt$).
   - Subtle animated neon ripples or sparks emit from the playhead thumb along the played track during high-energy musical segments.
   - *Technical Scope*: Bind `progressTrack.height` and `MultiEffect.shadowBlur` in `ProgressBar.qml` to `VisualizerCore.bass` and `energyPulse` properties.
-- [ ] **Chapter Marks, Podcast Cues & Track Partitions** `[Medium]`
+- [x] **Chapter Marks, Podcast Cues & Track Partitions** `[Medium]`
   - Display discrete visual notch dividers and labeled segments along the progress bar for audiobooks, podcasts, DJ sets, or albums with embedded chapter marks or cue sheets.
   - Hovering over a segment previews the chapter title; clicking snaps the playhead to the chapter start.
   - *Technical Scope*: Query MPRIS track metadata (`mpris:trackid`, chapter tags) or local `.cue`/`.chapters` files in `LyricsSource.qml` or new `ChapterModel.qml`; render tick overlays in `ProgressBar.qml`.
-- [ ] **A-B Looping Range Selector** `[Nice to have]`
+- [x] **A-B Looping Range Selector** `[Nice to have]`
   - Allow setting an In-point (A) and Out-point (B) marker along the progress bar to loop a specific musical phrase, guitar solo, or speech segment repeatedly.
   - Drag-to-adjust loop start and end flags with active loop range highlight.
   - *Technical Scope*: `PlaybackClock.qml` monitor that triggers `seekToFraction()` back to point A when `position >= pointB`; exposed via right-click context menu on progress bar.
-- [ ] **Circular & Arc Progress Dial for Cover Art / Disc Layouts** `[Nice to have]`
+- [x] **Circular & Arc Progress Dial for Cover Art / Disc Layouts** `[Nice to have]`
   - Interactive radial progress ring embracing circular album covers or vinyl disc layouts (`LayoutArt.qml`), supporting circular angular scrubbing (`atan2`).
   - Sleek neon gradient arc with orbiting playhead dot.
   - *Technical Scope*: `ArcProgress.qml` component using QML `ShapePath` conical gradient, replacing `CoverProgressRing` with interactive angular seek math.
@@ -113,7 +113,8 @@
 - [x] **Sparkles & Starfield Shader (GLSL)** `[Medium]`
   - Dynamic twinkling starfield with sound-reactive twinkle rates and frequency-driven nebulae.
   - *Technical Scope*: `viz_sparkles.frag` using audio energy harmonics.
-- [x] **Custom QML Visualizer & Progress Bar Style Loader** `[High]`
+- [x] **Custom QML Visualizer & Progress Bar Style Loader** `[His unavailable. I’ll share the seek, gesture, and loop logic across the existing linear bar styles.
+igh]`
   - User-extensible plugin architecture allowing arbitrary custom `.qml` visualizer and seekbar components loaded dynamically.
   - *Technical Scope*: `CustomVisualizer.qml`, `CustomProgressBar.qml`, `CustomStylePicker.qml`, and schema validation.
 

@@ -53,7 +53,8 @@ Item {
                 fallbackIcon: root.view.fallbackIcon
                 view: root.view
 
-                CoverRing {
+                ArcProgress {
+                    wheelSeekSeconds: root.view.configuration.wheelSeekSeconds ?? 5
                     objectName: "coverRing"
                     anchors.fill: parent
                     anchors.margins: -4
@@ -61,7 +62,7 @@ Item {
                     player: root.view.player
                     isPlaying: root.view.isPlaying
                     playbackActive: root.view.visualizer.plasmoidVisible
-                    track: root.view.track
+                    track: root.view.trackIdentity
                     positionUnitsPerSecond: root.view.positionUnitsPerSecond
                     visualFrameTime: root.view.visualFrameTime
                     accentColor: root.view.waveColor
@@ -70,6 +71,7 @@ Item {
             }
 
             TransportDock {
+                positionUnitsPerSecond: root.view.positionUnitsPerSecond
                 Layout.alignment: Qt.AlignHCenter
                 Layout.preferredWidth: implicitWidth
                 Layout.preferredHeight: 26
@@ -118,6 +120,14 @@ Item {
                 Layout.preferredHeight: implicitHeight
                 Layout.topMargin: 1
                 Layout.bottomMargin: 1
+                peaks: root.view.acousticPeaks
+                chapters: root.view.trackChapters
+                wheelSeekSeconds: root.view.configuration.wheelSeekSeconds ?? 5
+                seekHover: root.view.configuration.seekHover ?? true
+                seekGestures: root.view.configuration.seekGestures ?? true
+                reactiveProgress: root.view.configuration.reactiveProgress ?? true
+                bass: root.view.visualizer.bass ?? 0
+                energyPulse: root.view.visualizer.energyPulse ?? 0
                 player: root.view.player
                 isPlaying: root.view.isPlaying
                 hasAudio: root.view.visualizer.hasAudio
@@ -128,7 +138,7 @@ Item {
                 timeFormat: root.view.configuration.timeFormat ?? "total"
                 centerTimes: root.view.configuration.textAlign === "center"
                 reducedMotion: root.view.configuration.reducedMotion ?? false
-                track: root.view.track
+                track: root.view.trackIdentity
                 artist: root.view.artist
                 textColor: root.view.textColor
                 waveColor: root.view.waveColor

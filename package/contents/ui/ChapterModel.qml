@@ -6,10 +6,10 @@ QtObject {
     property real duration: 0
     // Chapter metadata is player-specific; these adapters use seconds.
     readonly property var chapters: {
-        const source = metadata["chapters"] || metadata["xesam:chapters"] || localChapters;
-        if (!Array.isArray(source))
+        const source = metadata["chapters"] || metadata["xesam:chapters"] || metadata["mpris:chapters"] || localChapters;
+        if (!source || typeof source === "string" || typeof source.length !== "number")
             return [];
-        const result = source.map((c, i) => ({
+        const result = Array.from(source).filter(c => c && typeof c === "object").map((c, i) => ({
                     start: Number(c.start ?? c.start_time),
                     title: String(c.title || "Chapter " + (i + 1)).slice(0, 160)
                 })).filter(c => Number.isFinite(c.start) && c.start >= 0 && (duration <= 0 || c.start < duration)).sort((a, b) => a.start - b.start);

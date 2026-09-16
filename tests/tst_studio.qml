@@ -369,6 +369,45 @@ TestCase {
         verify(name.mapToItem(saved, 0, name.height).y <= saved.height);
     }
 
+    function test_fillControlMatchesRendererSupport_data() {
+        const cases = [];
+        for (let type = 0; type < Schema.VIZ.length; type++) {
+            cases.push({
+                tag: Schema.VIZ[type],
+                layout: "stacked",
+                type: type,
+                orbitStyle: "wave",
+                supported: [0, 6, 10, 18].indexOf(type) !== -1
+            });
+        }
+        for (const style of Schema.ORBITS) {
+            for (const type of [0, 1]) {
+                cases.push({
+                    tag: "Orbit " + style + " with type " + type,
+                    layout: "orbit",
+                    type: type,
+                    orbitStyle: style.toLowerCase(),
+                    supported: style === "Wave"
+                });
+            }
+        }
+        return cases;
+    }
+
+    function test_fillControlMatchesRendererSupport(data) {
+        studio.currentTabIndex = tabIndex("viz");
+        studio.draft = Object.assign({}, defaults, {
+            layoutMode: data.layout,
+            visualizerType: data.type,
+            orbitStyle: data.orbitStyle,
+            fillWave: false
+        });
+        verify(waitForRendering(studio));
+        const row = findChild(studio, "row_fillWave");
+        compare(row !== null && row.visible, data.supported);
+        compare(studio.draft.fillWave, false, "Changing styles preserves the fill preference");
+    }
+
     function test_colourControlsLiveTogether() {
         studio.currentTabIndex = tabIndex("viz");
         verify(waitForRendering(studio));

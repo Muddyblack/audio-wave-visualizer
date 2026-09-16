@@ -84,6 +84,9 @@ Rectangle {
                 scale: pane.zoomScale
                 transformOrigin: Item.TopLeft
                 configuration: pane.draft
+                setLyricsOffset: value => pane.studio.update({
+                        lyricsOffset: value
+                    })
                 visualizer: stageBackend
                 player: pane.stateName === "idle" ? null : stagePlayer
                 isPlaying: pane.stateName !== "paused"
