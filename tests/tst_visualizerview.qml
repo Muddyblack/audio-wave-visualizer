@@ -269,17 +269,42 @@ TestCase {
         compare(player.position, 0);
     }
 
-    function test_coverRingReplacesBar() {
+    function test_coverRingReplacesBar_data() {
+        return [
+            {
+                tag: "classic"
+            },
+            {
+                tag: "inline"
+            }
+        ];
+    }
+    function test_coverRingReplacesBar(data) {
         subject.configuration = Object.assign({}, defaults, {
-            progressBarStyle: 10
+            layoutMode: data.tag,
+            progressBarStyle: 10,
+            showTimes: false
         });
         const bar = findChild(subject, "progressBar");
         const ring = findChild(subject, "coverRing");
         verify(!bar.visible, "The ring shows progress instead of the bar");
         verify(ring.visible);
         fuzzyCompare(ring.progress, 1 / 3, 0.01);
-        verify(ring.parent.width <= 66, "The cover shrinks to make room for the ring");
+        if (data.tag === "classic")
+            verify(ring.parent.width <= 66, "The cover shrinks to make room for the ring");
         subject.configuration = Object.assign({}, defaults, {
+            layoutMode: data.tag,
+            progressBarStyle: 10,
+            showTimes: true,
+            timeFormat: "remaining"
+        });
+        verify(bar.visible, "The ring can also display time labels");
+        compare(bar.style, 9);
+        verify(findChild(bar, "timeOnlyRow").visible);
+        compare(findChild(bar, "timeOnlyTotal").text, "-2:00");
+        verify(ring.visible);
+        subject.configuration = Object.assign({}, defaults, {
+            layoutMode: data.tag,
             progressBarStyle: 10,
             showArtThumb: false
         });

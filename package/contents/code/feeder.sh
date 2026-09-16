@@ -15,6 +15,16 @@ FRAMERATE="${2:-60}"
 SENSITIVITY="${3:-100}"
 NOISE_REDUCTION="${4:-0.77}"
 INPUT_METHOD="${5:-auto}"
+INPUT_SOURCE="${6:-auto}"
+LOW_CUTOFF="${7:-50}"
+HIGH_CUTOFF="${8:-10000}"
+# Reject config injection and invalid ranges before launching any capture.
+[[ "$LOW_CUTOFF" =~ ^[0-9]{1,5}$ ]] || LOW_CUTOFF=50
+[[ "$HIGH_CUTOFF" =~ ^[0-9]{1,5}$ ]] || HIGH_CUTOFF=10000
+LOW_CUTOFF=$((10#$LOW_CUTOFF))
+HIGH_CUTOFF=$((10#$HIGH_CUTOFF))
+((LOW_CUTOFF >= 20 && LOW_CUTOFF < HIGH_CUTOFF && HIGH_CUTOFF <= 20000)) || { LOW_CUTOFF=50; HIGH_CUTOFF=10000; }
+CAPTURE_PID=""
 
 RUN="${AUDIO_WAVE_RUNTIME_DIR:-${XDG_RUNTIME_DIR:-/tmp}/audio-wave-widget}"
 mkdir -p "$RUN"
@@ -59,7 +69,8 @@ printf '%s\n' "$$" >"$PIDFILE"
 cleanup() {
   pkill -P $$ >/dev/null 2>&1
   pkill -f "cava -p $CONF" >/dev/null 2>&1
-  rm -f "$PIDFILE"
+  [[ -n "$CAPTURE_PID" ]] && kill "$CAPTURE_PID" 2>/dev/null
+  rm -f "$RUN/input.fifo" "$PIDFILE"
   return 0
 }
 trap cleanup EXIT
@@ -133,6 +144,9 @@ write_conf() {
   # alsa/sndio want a device name, not "auto" — leave cava on its own default.
   case "$method" in
   pipewire | pulse) source_line="source = auto" ;;
+  fifo) source_line="source = $RUN/input.fifo
+sample_rate = 44100
+sample_bits = 16" ;;
   esac
 
   cat <<EOF >"$CONF"
@@ -141,6 +155,8 @@ bars = $BARS
 framerate = $FRAMERATE
 autosens = 1
 sensitivity = $SENSITIVITY
+lower_cutoff_freq = $LOW_CUTOFF
+higher_cutoff_freq = $HIGH_CUTOFF
 
 [input]
 method = $method
@@ -176,7 +192,7 @@ publish_frames() {
     write_frame "$line"
     [ -e "$MARKER" ] && continue
     : >"$MARKER"
-    printf '%s\n' "$method" >"$REMEMBERED"
+    [[ "$method" == fifo ]] || printf '%s\n' "$method" >"$REMEMBERED"
     write_status "ok $method"
     ((${#AWK[@]})) || continue
     # Replacing this loop is the point: awk reads the rest of the stream.
@@ -193,6 +209,13 @@ run_method() {
   write_conf "$method"
   rm -f "$MARKER"
 
+  if [[ "$method" == fifo ]]; then
+    python3 "${BASH_SOURCE[0]%/*}/audio_sources.py" check "$INPUT_SOURCE" 2>>"$LOG" || return 1
+    rm -f "$RUN/input.fifo"
+    mkfifo -m 600 "$RUN/input.fifo" || return 1
+    python3 "${BASH_SOURCE[0]%/*}/audio_sources.py" "$INPUT_SOURCE" >"$RUN/input.fifo" 2>>"$LOG" &
+    CAPTURE_PID=$!
+  fi
   cava -p "$CONF" 2>>"$LOG" | publish_frames "$method" 2>>"$LOG" &
   local pipeline=$!
 
@@ -201,7 +224,10 @@ run_method() {
   # feeder by up to PROBE_TIMEOUT seconds and would block the replacement.
   (
     sleep "$PROBE_TIMEOUT"
-    [ -e "$MARKER" ] && exit 0
+    if [[ -e "$MARKER" ]]; then
+      [[ "$method" == fifo ]] || exit 0
+      while kill -0 "$CAPTURE_PID" 2>/dev/null; do sleep 1; done
+    fi
     pkill -f "cava -p $CONF" >/dev/null 2>&1
     pkill -P "$pipeline" >/dev/null 2>&1
     kill "$pipeline" >/dev/null 2>&1
@@ -213,6 +239,11 @@ run_method() {
   kill "$watchdog" >/dev/null 2>&1
   wait "$watchdog" >/dev/null 2>&1
 
+  if [[ -n "$CAPTURE_PID" ]]; then
+    kill "$CAPTURE_PID" 2>/dev/null || :
+    wait "$CAPTURE_PID" 2>/dev/null || :
+    CAPTURE_PID=""
+  fi
   [ -e "$MARKER" ]
 }
 
@@ -234,6 +265,11 @@ auto | "")
   ;;
 esac
 
+# An explicit selection is never allowed to fall back to unrelated audio.
+if [[ "$INPUT_SOURCE" != auto && -n "$INPUT_SOURCE" ]]; then
+  methods="fifo"
+fi
+
 tried=""
 for m in $methods; do
   write_status "probing $m"
@@ -246,5 +282,9 @@ for m in $methods; do
   tried="${tried:+$tried,}$m"
 done
 
-write_status "error no-backend ${tried:-none}"
+if [[ "$INPUT_SOURCE" != auto ]]; then
+  write_status "error source-unavailable"
+else
+  write_status "error no-backend ${tried:-none}"
+fi
 exit 0

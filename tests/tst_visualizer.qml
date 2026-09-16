@@ -244,7 +244,7 @@ TestCase {
             wait(60);
             const restarts = Support.Commands.calls.filter(value => value.includes("pkill"));
             compare(restarts.length, 1, "A burst of settings must launch one backend restart");
-            verify(restarts[0].includes(" 6 30 110 0.5 pulse"), "The restart must use all final settings");
+            verify(restarts[0].includes(" '6' '30' '110' '0.5' 'pulse' 'auto' '50' '10000'"), "The restart must use all final settings");
         } finally {
             config.numBars = 4;
             config.framerate = 60;

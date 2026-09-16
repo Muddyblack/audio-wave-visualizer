@@ -66,3 +66,36 @@ function colorStops(accent, mode, palette, cover1, cover2, reactive, high, secon
     const drift = reactive && !reducedMotion ? Math.sin(t * 0.15) * 20 + (high - 0.5) * 14 : 0;
     return stops.map(c => drift ? shiftHue(c, drift) : color(c));
 }
+
+// CAVA emits logarithmic frequency bins. Remap bin centres for mel spacing;
+// this is display interpolation, not a second FFT or an amplitude dB scale.
+function focusBands(parts, low, high, scale, bassWeight, trebleWeight, range) {
+    if (!(low >= 20 && high > low && high <= 20000)) {
+        low = 50;
+        high = 10000;
+    }
+    const n = parts.length;
+    const logSpan = Math.log(high / low);
+    const melLow = Math.log(1 + low / 700);
+    const melHigh = Math.log(1 + high / 700);
+    return parts.map((value, i) => {
+        const p = (i + 0.5) / n;
+        const frequency = scale === "mel" ? 700 * (Math.exp(melLow + p * (melHigh - melLow)) - 1) : low * Math.exp(p * logSpan);
+        const x = Math.max(0, Math.min(n - 1, Math.log(frequency / low) / logSpan * n - 0.5));
+        const index = Math.floor(x);
+        const level = scale === "mel" ? parts[index] + (parts[Math.min(n - 1, index + 1)] - parts[index]) * (x - index) : value;
+        const weight = frequency < 250 ? bassWeight : frequency > 4000 ? trebleWeight : 1;
+        return Math.max(0, Math.min(range, level * weight));
+    });
+}
+
+function energyRise(current, previous, elapsedMs) {
+    return elapsedMs > 0 ? Math.max(0, (current * current - previous * previous) * 1000 / elapsedMs) : 0;
+}
+
+function releaseBlend(previous, target, elapsedMs, decayMs) {
+    if (decayMs <= 0)
+        return target;
+    const next = target + (previous - target) * Math.exp(-Math.max(0, elapsedMs) / decayMs);
+    return Math.abs(next - target) < 0.5 ? target : next;
+}

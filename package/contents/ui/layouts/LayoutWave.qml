@@ -12,5 +12,5 @@ WaveArea {
     coverColor2: view.coverColor2
     faded: (view.configuration.fadeVizWhenPaused ?? false) && view.pausedPlayer
     batterySaving: view.batterySaving
-    ambient: (view.configuration.idleAmbient ?? false) && !view.hasPlayer && !(view.visualizer.hasAudio ?? false)
+    ambient: (view.configuration.idleAmbient ?? false) && !(view.visualizer.hasAudio ?? false)
 }

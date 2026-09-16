@@ -104,7 +104,7 @@ Item {
         antialiasing: true
         renderStrategy: Canvas.Cooperative
 
-        // Real cached acoustic peaks, aggregated to the available display width.
+        // Seeded decorative waveform heights, unique per track.
         property var barHeights: []
         property int numBars: 0
         property string waveformKey: ""
@@ -116,17 +116,22 @@ Item {
             const gap = 2;
             const barW = 3;
             const n = Math.floor(w / (barW + gap));
-            const key = root.track + "\u0000" + root.peaks.join(",");
+            const key = root.track + "\u0000" + root.artist;
             if (n === numBars && barHeights.length === n && waveformKey === key)
                 return;
             numBars = n;
             waveformKey = key;
+            let seed = 0;
+            const s = root.track + root.artist;
+            for (let c = 0; c < s.length; c++)
+                seed = (seed * 31 + s.charCodeAt(c)) >>> 0;
             const heights = [];
             for (let i = 0; i < n; i++) {
-                let peak = 0;
-                for (let j = Math.floor(i * root.peaks.length / n); j < Math.ceil((i + 1) * root.peaks.length / n); j++)
-                    peak = Math.max(peak, root.peaks[j] || 0);
-                heights.push(peak);
+                seed = (seed * 1664525 + 1013904223) >>> 0;
+                const r = (seed >>> 16) / 65535;
+                const pos = n > 1 ? i / (n - 1) : 0;
+                const taper = Math.sin(pos * Math.PI);
+                heights.push(0.15 + r * 0.85 * taper);
             }
             barHeights = heights;
             requestPaint();
@@ -147,9 +152,6 @@ Item {
         Connections {
             target: root
             function onTrackChanged() {
-                waveformSeek.buildWaveform();
-            }
-            function onPeaksChanged() {
                 waveformSeek.buildWaveform();
             }
             function onArtistChanged() {
@@ -199,8 +201,7 @@ Item {
             for (let i = 0; i < n; i++) {
                 const x = i * (barW + gap);
                 const played = (x + barW / 2) < playheadX;
-                // Playback changes colour, never the acoustic amplitude profile.
-                const bh = Math.max(2, barHeights[i] * h);
+                const bh = played ? Math.max(2, barHeights[i] * h) : Math.max(2, barHeights[i] * h * 0.45);
                 const y = (h - bh) / 2;
 
                 ctx.fillStyle = played ? playedColor : unplayedColor;

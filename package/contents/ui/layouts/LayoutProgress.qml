@@ -2,7 +2,7 @@ import QtQuick
 import ".."
 
 // Progress bar wired to the view. The cover ring replaces it while a cover is
-// shown; without one, style 10 falls back to style 0.
+// shown, keeping optional time labels; without one, style 10 falls back to style 0.
 ProgressBar {
     id: root
     required property var view
@@ -24,8 +24,8 @@ ProgressBar {
     isPlaying: view.isPlaying
     hasAudio: view.visualizer.hasAudio
     playbackActive: view.visualizer.plasmoidVisible
-    style: ringMode && !artShown ? 0 : (view.configuration.progressBarStyle ?? 0)
-    suppressed: ringMode && artShown
+    style: ringMode ? (artShown ? 9 : 0) : (view.configuration.progressBarStyle ?? 0)
+    suppressed: ringMode && artShown && !showTimes
     showTimes: !hideTimes && (view.configuration.showTimes ?? true)
     timeFormat: view.configuration.timeFormat ?? "total"
     centerTimes: view.configuration.textAlign === "center"

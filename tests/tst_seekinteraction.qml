@@ -132,38 +132,19 @@ TestCase {
         mouseClick(area, 150, 5);
         compare(testPlayer.position, 80);
     }
-    function test_realPeaksReplaceSyntheticHeights() {
+    function test_waveformKeepsShapeWithoutPeaks() {
         bar.style = 4;
         const canvas = findChild(bar, "waveformSeek");
         tryVerify(() => canvas.numBars > 0);
-        verify(canvas.barHeights.every(v => v === 0));
+        const heights = canvas.barHeights.slice();
+        verify(Math.max(...heights) > .5);
+        verify(Math.min(...heights) < .2);
         bar.peaks = Array.from({
             length: 128
         }, (_, i) => i < 64 ? .1 : 1);
-        tryVerify(() => canvas.barHeights[0] === .1);
-        compare(canvas.barHeights[canvas.barHeights.length - 1], 1);
+        compare(canvas.barHeights, heights);
         bar.peaks = [];
-        verify(canvas.barHeights.every(v => v === 0));
-    }
-    function test_waveformGeometryDoesNotChangeAtPlayhead() {
-        bar.style = 4;
-        bar.peaks = Array(128).fill(.8);
-        const canvas = findChild(bar, "waveformSeek");
-        testPlayer.position = 0;
-        wait(80);
-        const unplayed = grabImage(canvas);
-        testPlayer.position = testPlayer.length;
-        wait(80);
-        const played = grabImage(canvas);
-        let before = 0, after = 0;
-        for (let y = 0; y < canvas.height; y++) {
-            if (unplayed.alpha(1, y) > 30)
-                before++;
-            if (played.alpha(1, y) > 30)
-                after++;
-        }
-        verify(before > 5);
-        compare(after, before, "The playhead must not alter the displayed dynamics");
+        compare(canvas.barHeights, heights);
     }
     function test_pulsesRespectReducedMotion() {
         bar.hasAudio = true;

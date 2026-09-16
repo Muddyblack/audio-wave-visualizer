@@ -1,5 +1,6 @@
 import QtQuick
 import QtCore
+import "../code/WaveMath.js" as WaveMath
 
 Item {
     id: vis
@@ -17,6 +18,7 @@ Item {
     StereoCapture {
         id: stereo
         commandSourceComponent: vis.commandSourceComponent
+        inputSource: vis.configuration.inputSource ?? "auto"
         runtimeDirectory: vis.resolvedRunDir
         framerate: vis.configuration.framerate
         active: vis.active && vis.plasmoidVisible && [19, 20].includes(vis.configuration.visualizerType ?? 0)
@@ -34,7 +36,9 @@ Item {
     readonly property real high: analysis.high
     readonly property real bassSmoothed: analysis.bassSmoothed
     // One accepted sample pulse; the first sample after a reset only primes it.
-    readonly property bool attack: analysis.attack
+    readonly property bool beatTrigger: analysis.attack
+    readonly property real energyRise: analysis.energyRise
+    readonly property bool attack: beatTrigger
     readonly property real energyPulse: analysis.attack ? Math.max(0, Math.min(1, (analysis.bass - analysis.bassSmoothed) * 2)) : 0
 
     QtObject {
@@ -43,6 +47,7 @@ Item {
         property real mid: 0
         property real high: 0
         property real bassSmoothed: 0
+        property real energyRise: 0
         property bool attack: false
         property bool initialized: false
         property real lastSampleMs: 0
@@ -57,6 +62,7 @@ Item {
         analysis.high = 0;
         analysis.bassSmoothed = 0;
         analysis.attack = false;
+        analysis.energyRise = 0;
         analysis.initialized = false;
         analysis.lastSampleMs = 0;
         analysis.lastAttackMs = -1;
@@ -80,6 +86,7 @@ Item {
         // Treat a wall-clock correction like a new capture. A backwards jump
         // must not leave beat detection locked out until the old time returns.
         const primed = analysis.initialized && now >= analysis.lastSampleMs;
+        analysis.energyRise = primed ? WaveMath.energyRise(nextBass, analysis.bass, Math.max(1, now - analysis.lastSampleMs)) : 0;
         let smoothed = nextBass;
         let onset = false;
         if (primed) {
@@ -92,7 +99,7 @@ Item {
                 smoothed = analysis.bass;
             const above = nextBass - smoothed > 0.12;
             const wasAbove = analysis.bass - smoothed > 0.12;
-            onset = above && !wasAbove && (analysis.lastAttackMs < 0 || now - analysis.lastAttackMs >= 180);
+            onset = above && !wasAbove && analysis.energyRise > 0 && (analysis.lastAttackMs < 0 || now - analysis.lastAttackMs >= 180);
         } else {
             analysis.lastAttackMs = -1;
         }
@@ -137,7 +144,7 @@ Item {
             }
         }
         function spawnCommand() {
-            const args = [vis.configuration.numBars, vis.configuration.framerate, vis.configuration.sensitivity, vis.configuration.noiseReduction, vis.configuration.inputMethod || "auto"].join(" ");
+            const args = [vis.configuration.numBars, vis.configuration.framerate, vis.configuration.sensitivity, vis.configuration.noiseReduction, vis.configuration.inputMethod || "auto", vis.configuration.inputSource || "auto", vis.configuration.lowCutoff ?? 50, vis.configuration.highCutoff ?? 10000].map(value => vis.shellQuote(String(value))).join(" ");
             return "bash " + vis.shellQuote(vis.feederPath) + " " + args;
         }
         function spawn() {
@@ -254,6 +261,8 @@ Item {
     readonly property bool backendFailed: backendState === "error" && (backendCode !== "cava-exited" || backendErrorStreak >= 3)
 
     readonly property string backendMessage: {
+        if (backendCode === "source-unavailable")
+            return "Selected audio source unavailable";
         if (!backendFailed)
             return "";
         if (backendCode === "no-cava")
@@ -291,6 +300,8 @@ Item {
 
     // Second line under the headline: short enough for a 44px tall waveform.
     readonly property string backendAction: {
+        if (backendCode === "source-unavailable")
+            return "Start the application or choose a source in Audio settings";
         if (!backendFailed)
             return "";
         if (backendCode === "no-cava")
@@ -495,7 +506,10 @@ Item {
             return false;
         // Publish analysis before bars/frameTimeMs notify rendering consumers.
         // Invalid frames return above without changing either kind of state.
+        const elapsed = analysis.initialized && timestampMs >= analysis.lastSampleMs ? Math.min(1000, timestampMs - analysis.lastSampleMs) : pollInterval;
         analyzeFrame(parts, timestampMs);
+        const focused = WaveMath.focusBands(parts, configuration.lowCutoff ?? 50, configuration.highCutoff ?? 10000, configuration.frequencyScale ?? "log", configuration.bassWeight ?? 1, configuration.trebleWeight ?? 1, maxRange);
+        const silent = parts.every(value => value === 0);
         const count = numBars;
         const prev = bars;
         const out = new Array(count);
@@ -504,10 +518,11 @@ Item {
         for (let i = 0; i < count; i++) {
             // Keep animating even if the feeder is briefly still on the old bar
             // count while cava restarts after a config change.
-            const target = parts[Math.min(parts.length - 1, Math.floor(i * parts.length / count))];
+            const target = focused[Math.min(focused.length - 1, Math.floor(i * focused.length / count))];
             isQuiet = isQuiet && target === 0;
             const p = prev[i] || 0;
-            const blended = p + smoothing * (target - p);
+            const decay = configuration.reducedMotion ? 0 : (configuration.silenceDecay ?? 0);
+            const blended = silent && decay > 0 ? WaveMath.releaseBlend(p, target, elapsed, decay) : p + smoothing * (target - p);
             const next = Math.abs(blended - target) < 0.5 ? target : blended;
             out[i] = next;
             changed = changed || next !== p;
@@ -614,6 +629,15 @@ Item {
             configurationRestart.restart();
         }
         function onNoiseReductionChanged() {
+            configurationRestart.restart();
+        }
+        function onInputSourceChanged() {
+            configurationRestart.restart();
+        }
+        function onLowCutoffChanged() {
+            configurationRestart.restart();
+        }
+        function onHighCutoffChanged() {
             configurationRestart.restart();
         }
         function onInputMethodChanged() {

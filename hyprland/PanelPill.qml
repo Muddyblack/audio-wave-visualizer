@@ -122,6 +122,13 @@ Item {
         property int sensitivity: root.configuration.sensitivity
         property real noiseReduction: root.configuration.noiseReduction
         property string inputMethod: root.configuration.inputMethod
+        property string inputSource: root.configuration.inputSource
+        property int lowCutoff: root.configuration.lowCutoff
+        property int highCutoff: root.configuration.highCutoff
+        property string frequencyScale: root.configuration.frequencyScale
+        property real bassWeight: root.configuration.bassWeight
+        property real trebleWeight: root.configuration.trebleWeight
+        property int silenceDecay: root.configuration.silenceDecay
     }
     // Audio is only read for a live EQ, the mini visualizer or the open popup.
     Shared.VisualizerCore {

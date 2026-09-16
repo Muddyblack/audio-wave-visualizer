@@ -103,8 +103,10 @@ var SECTIONS = [
         { k: "wheelSeekSeconds", type: "range", label: "Wheel seek step", min: 0, max: 10, step: 1, fmt: "s", desc: "Seconds per notch; 0 disables wheel seeking." },
         { k: "reactiveProgress", type: "switch", label: "Audio-reactive progress", desc: "Bass swells the track and playhead; reduced motion disables pulses." },
         { k: "showChapters", type: "switch", label: "Chapter marks", desc: "Uses player chapter metadata or local embedded chapters and cue files." },
-        { k: "showTimes", type: "switch", label: "Time labels", desc: "Elapsed and total time under the bar." },
-        { k: "timeFormat", type: "seg", label: "Time format", opts: [["total", "1:31 · 3:58"], ["remaining", "1:31 · -2:27"]], when: function (s) { return s.showTimes || s.progressBarStyle === 9; } }
+        { id: "timeLabels", type: "seg", label: "Time labels",
+          opts: [["off", "Off"], ["total", "1:31 · 3:58"], ["remaining", "1:31 · -2:27"]],
+          get: function (s) { return s.showTimes ? s.timeFormat : "off"; },
+          set: function (v) { return v === "off" ? { showTimes: false } : { showTimes: true, timeFormat: v }; } }
     ]),
     tab("controls", "Buttons", [
         { k: "dockStyle", type: "tiles", full: true, label: "Dock style", desc: "The glass pill is today’s look.", tw: 118,
@@ -298,6 +300,13 @@ var SECTIONS = [
     ]),
     tab("audio", "Capture", [
         { k: "inputMethod", type: "select", label: "Audio input", desc: "Auto-detect tries PipeWire, then PulseAudio, then ALSA.", opts: [["auto", "Auto-detect"], ["pipewire", "PipeWire"], ["pulse", "PulseAudio"], ["alsa", "ALSA (snd_aloop)"]] },
+        { k: "inputSource", type: "select", label: "Capture source", desc: "Live devices and applications. Start playback to list a stream. Explicit sources override the backend; unavailable sources never fall back.", opts: "audioSources" },
+        { k: "lowCutoff", type: "range", label: "Low cutoff", min: 20, max: 2000, step: 10, fmt: "hz" },
+        { k: "highCutoff", type: "range", label: "High cutoff", desc: "Must exceed low cutoff; invalid ranges use 50–10000 Hz.", min: 200, max: 20000, step: 100, fmt: "hz" },
+        { k: "frequencyScale", type: "select", label: "Frequency spacing", opts: [["log", "Logarithmic"], ["mel", "Mel (resampled)"]] },
+        { k: "bassWeight", type: "range", label: "Bass weight", min: 0, max: 3, step: .1, fmt: "fixed1" },
+        { k: "trebleWeight", type: "range", label: "Treble weight", min: 0, max: 3, step: .1, fmt: "fixed1" },
+        { k: "silenceDecay", type: "range", label: "Silence release", desc: "Time constant for fading into silence or the idle ambient wave.", min: 0, max: 1500, step: 50, fmt: "ms" },
         { k: "numBars", type: "range", label: "Detail", desc: "More bars look finer, fewer look bolder.", min: 8, max: 128, step: 2, fmt: "bars" },
         { k: "sensitivity", type: "range", label: "Sensitivity", desc: "Raise it if quiet music barely moves the wave.", min: 10, max: 300, step: 5, fmt: "percent" },
         { k: "noiseReduction", type: "range", label: "Smoothing", desc: "Higher glides gently; lower snaps to every beat.", min: 0, max: 1, step: .05, fmt: "fixed2" },
@@ -328,6 +337,7 @@ function format(kind, v) {
     case "fixed1": return Number(v).toFixed(1);
     case "fixed2": return Number(v).toFixed(2);
     case "bars": return Math.round(v) + " bars";
+    case "ms": return Math.round(v) + " ms";
     case "hz": return Math.round(v) + " Hz";
     case "s": return Number(v) + " s";
     default: return String(v);

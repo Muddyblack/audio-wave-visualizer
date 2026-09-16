@@ -45,6 +45,31 @@ TestCase {
             textColor: "#cdd6f4"
         });
     }
+    function test_discardKeepsSettingsOpen() {
+        applied.clear();
+        closed.clear();
+        reset.clear();
+        page.savedDraft = Object.assign({}, page.draft, {
+            sensitivity: 130,
+            detailFields: ["player", "album"]
+        });
+        page.draft = Object.assign({}, page.savedDraft);
+        const button = findChild(page, "discardSettings");
+        verify(button !== null);
+        verify(button.visible);
+        verify(!button.enabled);
+        page.setValue("sensitivity", 175);
+        page.setValue("detailFields", ["title"]);
+        verify(button.enabled);
+        mouseClick(button);
+        compare(page.draft.sensitivity, 130);
+        compare(page.draft.detailFields, ["player", "album"]);
+        verify(!button.enabled);
+        compare(applied.count, 0);
+        compare(reset.count, 0);
+        compare(closed.count, 0);
+    }
+
     function test_draftChangesRequireApplyAndButtonsWork() {
         page.setValue("monitor", "all");
         page.setValue("sensitivity", 175);

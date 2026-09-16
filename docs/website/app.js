@@ -212,7 +212,7 @@ function widgetHTML(s, status, opt = {}) {
   const dock = () => d.hasPlayer ? dockHTML(s, d.playing) : '';
   const faded = s.fadeVizWhenPaused && d.hasPlayer && !d.playing;
   const wave = `<div style="overflow:${s.vizVerticalOffset ? 'hidden' : 'visible'}" class="wavebox ${faded ? 'faded' : ''} ${[1, 6, 7, 8].includes(s.visualizerType) && s.vizDirection === 'down' ? 'dir-down' : ''}"><canvas data-c="wave" style="translate:0 ${Math.max(-1, Math.min(1, s.vizVerticalOffset || 0)) * 100}%"></canvas>${status === 'backend' ? '<div class="bmsg"><span>cava is not installed</span><code>sudo pacman -S cava</code></div>' : ''}</div>`;
-  const pb = d.hasPlayer && !(ringMode && showArt) ? pbHTML(pbStyle, s, d.playing, d.t.len) : '';
+  const pb = d.hasPlayer && (!(ringMode && showArt) || s.showTimes) ? pbHTML(ringMode && showArt ? 9 : pbStyle, s, d.playing, d.t.len) : '';
   const marq = s.marquee && title.length > 26;
   const titleInner = marq ? `<span class="mi"><span>${esc(title)}</span><span>${esc(title)}</span></span>` : esc(title);
   const srcOn = (s.showSource || s.showPlayerSwitch) && d.hasPlayer;
@@ -969,7 +969,7 @@ let rows = [];
 function buildRow(r) {
   const el = document.createElement('div');
   el.className = 'row' + (r.full ? ' full' : '');
-  const options = r.opts === 'screens' ? [['', 'First available display'], ['all', 'Every monitor']] : (r.opts || []);
+  const options = r.opts === 'audioSources' ? [['auto', 'Default output monitor (desktop app lists live sources)']] : r.opts === 'screens' ? [['', 'First available display'], ['all', 'Every monitor']] : (r.opts || []);
   const optLabels = options.map(o => Array.isArray(o) ? o[1] : (o.label || ''));
   el.dataset.search = `${r.label || ''} ${r.desc || ''} ${r.k || ''} ${optLabels.join(' ')}`.toLowerCase();
   const get = state => Schema.rowValue(r, nativeState(state));

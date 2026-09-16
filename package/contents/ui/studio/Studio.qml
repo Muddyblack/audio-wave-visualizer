@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls.Basic as Controls
+import ".." as Shared
 import "Theme.js" as Theme
 import "Schema.js" as Schema
 
@@ -17,13 +18,43 @@ Rectangle {
     property var screenNames: []
     // function(done(text)) running contents/code/doctor.sh, or null.
     property var diagnosticsRunner: null
+    property Component commandSourceComponent: null
+    property var discoveredSources: [["auto", "Default output monitor"]]
+    readonly property var audioSourceOptions: discoveredSources.some(o => o[0] === (draft.inputSource || "auto")) ? discoveredSources : discoveredSources.concat([[draft.inputSource, "Unavailable: " + draft.inputSource]])
+    Shared.CommandSource {
+        id: sourceDiscovery
+        sourceComponent: studioRoot.commandSourceComponent
+        onNewData: function (source, data) {
+            disconnectSource(source);
+            try {
+                const choices = JSON.parse(data["stdout"] || "[]");
+                if (choices.length)
+                    studioRoot.discoveredSources = choices;
+            } catch (error) { /* Keep the saved selection during discovery failures. */ }
+        }
+    }
+    Timer {
+        interval: 5000
+        running: studioRoot.onScreen && studioRoot.currentTab === "audio" && !!studioRoot.commandSourceComponent
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: {
+            if (!sourceDiscovery.connectedSources.length) {
+                const path = Qt.resolvedUrl("../../code/audio_sources.py").toString().replace(/^file:\/\//, "");
+                sourceDiscovery.connectSource("python3 '" + path.replace(/'/g, "'\\''") + "' list");
+            }
+        }
+    }
     property color previewAccent: "#3daee9"
     property int currentTabIndex: 0
     property string query: ""
     onCurrentTabIndexChanged: body.contentY = 0
     property bool keepColors: false
     property string presetFilter: "all"
+    property bool canDiscard: false
     signal edited(var draft)
+    signal discard
+    signal undo
 
     readonly property string currentTab: Schema.TABS[currentTabIndex].id
     // Nothing renders until the host has supplied a draft.
@@ -113,6 +144,11 @@ Rectangle {
         enabled: !searchInput.activeFocus
         onActivated: searchInput.forceActiveFocus()
     }
+    Shortcut {
+        sequence: StandardKey.Undo
+        enabled: studioRoot.canDiscard
+        onActivated: studioRoot.undo()
+    }
 
     Item {
         anchors.horizontalCenter: parent.horizontalCenter
@@ -155,9 +191,9 @@ Rectangle {
                 x: 18
                 y: studioRoot.compact ? 8 : 16
                 width: parent.width - 36
-                spacing: 10
+                spacing: 8
                 Rectangle {
-                    width: parent.width - surprise.width - 10
+                    width: Math.max(80, parent.width - surprise.width - (discardBtn.visible ? discardBtn.width + header.spacing : 0) - header.spacing)
                     height: 36
                     radius: 10
                     color: Theme.sunk
@@ -219,6 +255,14 @@ Rectangle {
                             font.pixelSize: 10
                         }
                     }
+                }
+                StudioButton {
+                    id: discardBtn
+                    enabled: studioRoot.canDiscard
+                    text: (typeof i18n === "function" ? i18n("Discard") : "Discard")
+                    tooltip: "Discard unapplied changes (Verwerfen)"
+                    areaName: "discardSettings"
+                    onClicked: studioRoot.discard()
                 }
                 StudioButton {
                     id: surprise

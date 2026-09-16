@@ -74,5 +74,29 @@ TestCase {
         compare(page.cfg_lyricsFontSizeDefault, defaults.lyricsFontSize);
         for (const key of Object.keys(defaults).filter(k => k.startsWith("lyrics")))
             verify(page["cfg_" + key] !== undefined, "Plasma setting must persist: " + key);
+        verify(page.hasChanges, "Page must report unapplied changes");
+        page.discard();
+        compare(page.cfg_glassBlur, 0.85);
+        compare(page.cfg_lyricsFontSize, defaults.lyricsFontSize);
+        verify(!page.hasChanges, "Page must report no unapplied changes after discard");
+        page.assign({
+            glassBlur: 0.42,
+            detailFields: ["player", "album"]
+        });
+        page.saveConfig();
+        verify(!page.hasChanges, "Apply establishes the new saved settings");
+        page.assign({
+            glassBlur: 0.17,
+            detailFields: ["title"]
+        });
+        const discardButton = findChild(page, "discardSettings");
+        verify(discardButton !== null);
+        verify(discardButton.enabled);
+        discardButton.clicked(null);
+        compare(page.cfg_glassBlur, 0.42);
+        compare(page.cfg_detailFields, ["player", "album"]);
+        verify(!page.hasChanges);
+        verify(!discardButton.enabled);
+        compare(page.title, "General", "Discard keeps the settings page available");
     }
 }

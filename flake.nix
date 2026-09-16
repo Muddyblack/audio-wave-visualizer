@@ -29,7 +29,7 @@
               for script in feeder.sh doctor.sh stereo_capture.sh local_lyrics.sh track_profile.sh; do
                 chmod +x "$root/contents/code/$script"
                 wrapProgram "$root/contents/code/$script" \
-                  --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.cava (pkgs.python3.withPackages (ps: [ ps.mutagen ps.pykakasi ps.pypinyin ])) pkgs.pipewire pkgs.ffmpeg pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ]}
+                  --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.cava (pkgs.python3.withPackages (ps: [ ps.mutagen ps.pykakasi ps.pypinyin ])) pkgs.pipewire pkgs.pulseaudio pkgs.ffmpeg pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ]}
               done
               runHook postInstall
             '';
@@ -54,7 +54,7 @@
             type = "app";
             program = "${pkgs.writeShellApplication {
               name = "view-hyprland";
-              runtimeInputs = [ pkgs.quickshell pkgs.cava (pkgs.python3.withPackages (ps: [ ps.mutagen ps.pykakasi ps.pypinyin ])) pkgs.pipewire pkgs.ffmpeg pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ];
+              runtimeInputs = [ pkgs.quickshell pkgs.cava (pkgs.python3.withPackages (ps: [ ps.mutagen ps.pykakasi ps.pypinyin ])) pkgs.pipewire pkgs.pulseaudio pkgs.ffmpeg pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ];
               text = ''
                 exec bash "$PWD/hyprland/run.sh" "$@"
               '';

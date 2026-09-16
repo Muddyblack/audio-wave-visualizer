@@ -38,6 +38,13 @@ ShellRoot {
         property int sensitivity: root.defaults.sensitivity
         property real noiseReduction: root.defaults.noiseReduction
         property string inputMethod: root.defaults.inputMethod
+        property string inputSource: root.defaults.inputSource
+        property int lowCutoff: root.defaults.lowCutoff
+        property int highCutoff: root.defaults.highCutoff
+        property string frequencyScale: root.defaults.frequencyScale
+        property real bassWeight: root.defaults.bassWeight
+        property real trebleWeight: root.defaults.trebleWeight
+        property int silenceDecay: root.defaults.silenceDecay
     }
     property bool settingsOpen: false
     property var userSettings: ({})
@@ -127,6 +134,13 @@ ShellRoot {
         sensitivity: audioDefaults.sensitivity,
         noiseReduction: audioDefaults.noiseReduction,
         inputMethod: audioDefaults.inputMethod,
+        inputSource: audioDefaults.inputSource,
+        lowCutoff: audioDefaults.lowCutoff,
+        highCutoff: audioDefaults.highCutoff,
+        frequencyScale: audioDefaults.frequencyScale,
+        bassWeight: audioDefaults.bassWeight,
+        trebleWeight: audioDefaults.trebleWeight,
+        silenceDecay: audioDefaults.silenceDecay,
         widgetWidth: widgetWidth,
         widgetHeight: widgetHeight,
         verticalPosition: verticalPosition,
@@ -216,6 +230,13 @@ ShellRoot {
         property int sensitivity: root.configuration.sensitivity
         property real noiseReduction: root.configuration.noiseReduction
         property string inputMethod: root.configuration.inputMethod
+        property string inputSource: root.configuration.inputSource
+        property int lowCutoff: root.configuration.lowCutoff
+        property int highCutoff: root.configuration.highCutoff
+        property string frequencyScale: root.configuration.frequencyScale
+        property real bassWeight: root.configuration.bassWeight
+        property real trebleWeight: root.configuration.trebleWeight
+        property int silenceDecay: root.configuration.silenceDecay
     }
 
     // The player switcher pins a player; otherwise follow the one playing.
@@ -347,6 +368,10 @@ ShellRoot {
             anchors.fill: parent
             screenNames: Quickshell.screens.map(s => s.name)
             defaults: root.baseline
+            savedDraft: root.configuration
+            commandSourceComponent: Component {
+                CommandProcess {}
+            }
             diagnosticsRunner: root.runDiagnostics
             errorMessage: root.settingsError
             onApply: draft => {

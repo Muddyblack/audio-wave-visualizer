@@ -19,6 +19,10 @@ TestCase {
                 property int sensitivity: 100
                 property real noiseReduction: 0.77
                 property string inputMethod: "auto"
+                property int silenceDecay: 0
+                property string frequencyScale: "log"
+                property real bassWeight: 1
+                property real trebleWeight: 1
                 property int visualizerType: 0
                 property string customVisualizer: ""
                 property string customProgressBar: ""
@@ -236,6 +240,30 @@ TestCase {
         sample(0, 1032);
         compare(subject.bass, 0, "The raw band must immediately release on silence");
         verify(subject.bars[0] > 0, "Rendered bars still fade out");
+    }
+
+    function test_focusDoesNotChangeRawBeatAnalysis() {
+        subject.configuration.bassWeight = 0;
+        sample(0, 1000);
+        sample(1000, 1016);
+        compare(subject.bass, 1);
+        verify(subject.beatTrigger);
+        compare(subject.beatTrigger, subject.attack);
+        verify(subject.energyRise > 0);
+        verify(subject.energyPulse > 0);
+        compare(subject.bars[0], 0, "Display weighting must not suppress beat detection");
+    }
+
+    function test_silenceReleaseUsesElapsedTime() {
+        subject.configuration.silenceDecay = 350;
+        subject.handleData([1000, 1000, 1000, 1000], 1000);
+        subject.bars = [1000, 1000, 1000, 1000];
+        subject.handleData([0, 0, 0, 0], 1100);
+        fuzzyCompare(subject.bars[0], 1000 * Math.exp(-100 / 350), 1e-6);
+        compare(subject.bass, 0, "Display release must not fabricate audio energy");
+        verify(!subject.beatTrigger);
+        subject.handleData([0, 0, 0, 0], 1200);
+        fuzzyCompare(subject.bars[0], 1000 * Math.exp(-200 / 350), 1e-6);
     }
 
     function test_stringAndListTransportsAgree() {

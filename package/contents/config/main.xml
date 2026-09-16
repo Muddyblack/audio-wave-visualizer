@@ -50,6 +50,13 @@
         <entry name="noiseReduction" type="Double">
             <default>0.77</default>
         </entry>
+        <entry name="inputSource" type="String"><default>auto</default></entry>
+        <entry name="lowCutoff" type="Int"><default>50</default></entry>
+        <entry name="highCutoff" type="Int"><default>10000</default></entry>
+        <entry name="frequencyScale" type="String"><default>log</default></entry>
+        <entry name="bassWeight" type="Double"><default>1</default></entry>
+        <entry name="trebleWeight" type="Double"><default>1</default></entry>
+        <entry name="silenceDecay" type="Int"><default>350</default></entry>
         <entry name="inputMethod" type="String">
             <default>auto</default>
         </entry>

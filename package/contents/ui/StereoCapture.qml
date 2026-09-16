@@ -10,6 +10,17 @@ Item {
     property string runtimeDirectory: ""
     property bool active: false
     property int framerate: 30
+    property string inputSource: "auto"
+    onInputSourceChanged: {
+        const settings = lease.item as Settings;
+        if (settings) {
+            settings.setValue("t", 0);
+            settings.sync();
+        }
+        _id = "stereo-" + Date.now() + "-" + Math.floor(Math.random() * 1000000);
+        clear();
+        heartbeat();
+    }
     property var samples: []
     property var previous: []
     property string status: active ? "Waiting for stereo output" : ""
@@ -72,7 +83,7 @@ Item {
         settings.sync();
         if (active && !capture.connectedSources.length) {
             const script = Qt.resolvedUrl("../code/stereo_capture.sh").toString().replace(/^file:\/\//, "");
-            capture.connectSource("bash " + quote(script) + " " + quote(base + ".lease") + " " + quote(base + ".ini") + " " + Math.max(1, Math.min(60, framerate)));
+            capture.connectSource("bash " + quote(script) + " " + quote(base + ".lease") + " " + quote(base + ".ini") + " " + Math.max(1, Math.min(60, framerate)) + " " + quote(inputSource));
         }
     }
     onActiveChanged: {

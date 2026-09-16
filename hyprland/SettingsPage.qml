@@ -9,12 +9,14 @@ Rectangle {
     id: root
     color: Theme.bg
     property var draft: ({})
+    property var savedDraft: ({})
     property var defaults: ({})
     property var screenNames: []
     property string errorMessage: ""
     property alias currentTabIndex: studio.currentTabIndex
     // function(done(text)) running doctor.sh; supplied by the shell.
     property var diagnosticsRunner: null
+    property Component commandSourceComponent: null
     signal apply(var draft)
     signal reset
     signal close
@@ -31,13 +33,16 @@ Rectangle {
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.bottom: footer.top
+        commandSourceComponent: root.commandSourceComponent
         env: "hypr"
         draft: root.draft
         defaults: Object.keys(root.defaults).length ? root.defaults : root.draft
         screenNames: root.screenNames
         diagnosticsRunner: root.diagnosticsRunner
         previewAccent: root.draft.waveColor ?? "#b4befe"
+        canDiscard: Object.keys(root.draft).some(k => JSON.stringify(root.draft[k]) !== JSON.stringify(root.savedDraft[k]))
         onEdited: next => root.draft = next
+        onDiscard: root.draft = Object.assign({}, root.savedDraft)
     }
 
     Rectangle {

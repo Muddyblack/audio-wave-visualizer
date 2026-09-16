@@ -58,6 +58,10 @@ from pathlib import Path
 runtime = Path(os.environ['XDG_RUNTIME_DIR'])
 control = runtime / 'control'
 configuration = Path(sys.argv[2]).read_text()
+if 'method = fifo' in configuration:
+    source = next(line.split(' = ', 1)[1] for line in configuration.splitlines() if line.startswith('source = '))
+    with open(source, 'rb') as pcm:
+        (runtime / 'captured').write_bytes(pcm.read(4))
 i = 0
 while True:
     frame = control.read_text()
@@ -117,6 +121,57 @@ while True:
                     "Feeder did not reach the expected state: " + self.read("status")
                 )
             time.sleep(0.005)
+
+    def restart_with(self, extra):
+        self.stop()
+        self.process = subprocess.Popen(
+            self.command + extra, env=self.env, start_new_session=True
+        )
+
+    def test_frequency_cutoffs_reach_cava(self):
+        self.restart_with(["auto", "80", "8000"])
+        self.wait_for(lambda: "higher_cutoff_freq = 8000" in self.read("cava.conf"))
+        self.assertIn("lower_cutoff_freq = 80", self.read("cava.conf"))
+
+    def test_invalid_cutoffs_use_safe_defaults(self):
+        self.restart_with(["auto", "9000", "100"])
+        self.wait_for(lambda: self.read("status").strip() == "ok pipewire")
+        self.assertIn("lower_cutoff_freq = 50", self.read("cava.conf"))
+        self.assertIn("higher_cutoff_freq = 10000", self.read("cava.conf"))
+
+    def test_explicit_pipewire_source_streams_pcm_through_fifo(self):
+        scripts = {
+            "pw-dump": '#!/bin/sh\nprintf \'%s\' \'[{"id":12,"info":{"props":{"node.name":"music","media.class":"Stream/Output/Audio","object.serial":123}}}]\'\n',
+            "pactl": "#!/bin/sh\nexit 1\n",
+            "pw-cat": "#!/usr/bin/env python3\nimport os, sys, time\nfrom pathlib import Path\np = Path(os.environ['XDG_RUNTIME_DIR'])\n(p / 'capture-args').write_text(' '.join(sys.argv))\nsys.stdout.buffer.write(b'PCM!')\nsys.stdout.buffer.flush()\ntime.sleep(60)\n",
+        }
+        for name, script in scripts.items():
+            binary = self.runtime / "bin" / name
+            binary.write_text(script)
+            binary.chmod(0o755)
+        self.restart_with(["pw:music", "80", "8000"])
+        self.wait_for(lambda: (self.runtime / "captured").exists())
+        self.assertEqual((self.runtime / "captured").read_bytes(), b"PCM!")
+        self.wait_for(lambda: self.read("status").strip() == "ok fifo")
+        args = (self.runtime / "capture-args").read_text()
+        self.assertEqual(
+            self.read("input-method"),
+            "pipewire\n",
+            "Explicit capture must not replace the remembered default backend",
+        )
+        self.assertIn("--target=123", args)
+        self.assertIn('"node.dont-fallback": true', args)
+
+    def test_missing_explicit_source_does_not_fallback(self):
+        for name in ["pw-dump", "pactl"]:
+            binary = self.runtime / "bin" / name
+            binary.write_text("#!/bin/sh\nexit 1\n")
+            binary.chmod(0o755)
+        self.restart_with(["pw:missing"])
+        self.process.wait(timeout=3)
+        self.assertEqual(self.read("status").strip(), "error source-unavailable")
+        self.assertIn("method = fifo", self.read("cava.conf"))
+        self.assertEqual(self.read("bars"), "0;0;0;0;")
 
     def test_reader_matches_awk(self):
         self.assertEqual(self.read("publisher"), self.reader + "\n")

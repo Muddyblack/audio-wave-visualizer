@@ -110,7 +110,7 @@ Item {
                 coverColor2: root.view.coverColor2
                 faded: (root.view.configuration.fadeVizWhenPaused ?? false) && root.view.pausedPlayer
                 batterySaving: root.view.batterySaving
-                ambient: (root.view.configuration.idleAmbient ?? false) && !root.view.hasPlayer && !(root.view.visualizer.hasAudio ?? false)
+                ambient: (root.view.configuration.idleAmbient ?? false) && !(root.view.visualizer.hasAudio ?? false)
             }
 
             ProgressBar {
@@ -132,8 +132,8 @@ Item {
                 isPlaying: root.view.isPlaying
                 hasAudio: root.view.visualizer.hasAudio
                 playbackActive: root.view.visualizer.plasmoidVisible
-                style: root.ringMode && !artBox.visible ? 0 : (root.view.configuration.progressBarStyle ?? 0)
-                suppressed: root.ringMode && artBox.visible
+                style: root.ringMode ? (artBox.visible ? 9 : 0) : (root.view.configuration.progressBarStyle ?? 0)
+                suppressed: root.ringMode && artBox.visible && !showTimes
                 showTimes: root.view.configuration.showTimes ?? true
                 timeFormat: root.view.configuration.timeFormat ?? "total"
                 centerTimes: root.view.configuration.textAlign === "center"

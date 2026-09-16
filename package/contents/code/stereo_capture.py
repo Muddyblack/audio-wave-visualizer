@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Publish bounded signed stereo PCM frames while the QML owner's lease is live.
 
-Only the output monitor is captured. No microphone fallback and no audio files.
+The default is the output monitor; explicit selections never fall back.
 """
 
 import argparse
@@ -43,8 +43,8 @@ def lease_alive(path):
         return False
 
 
-def capture(lease, output, fps):
-    if not shutil.which("pw-cat"):
+def capture(lease, output, fps, source="auto"):
+    if source == "auto" and not shutil.which("pw-cat"):
         raise RuntimeError("Stereo scope requires pw-cat (PipeWire)")
     command = [
         "pw-cat",
@@ -58,6 +58,10 @@ def capture(lease, output, fps):
         "--properties={ stream.capture.sink=true node.passive=true }",
         "-",
     ]
+    if source != "auto":
+        from audio_sources import capture_command
+
+        command = capture_command(source, rate=8000)
     process = subprocess.Popen(
         command, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL
     )
@@ -100,9 +104,10 @@ def main():
     parser.add_argument("lease", type=Path)
     parser.add_argument("output", type=Path)
     parser.add_argument("fps", type=int)
+    parser.add_argument("source", nargs="?", default="auto")
     args = parser.parse_args()
     try:
-        capture(args.lease, args.output, max(1, min(60, args.fps)))
+        capture(args.lease, args.output, max(1, min(60, args.fps)), args.source)
     except (OSError, RuntimeError) as error:
         print(error)
         return 1

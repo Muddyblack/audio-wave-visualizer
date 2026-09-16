@@ -13,6 +13,12 @@ Waveform {
     property bool ambient: false
     // The ambient wave has no audio frames to ride; it updates at the capped
     // frame rate (at most 20 Hz) only while enabled and nothing plays.
+    property real _ambientMix: ambient ? 1 : 0
+    Behavior on _ambientMix {
+        NumberAnimation {
+            duration: root.reducedMotion ? 0 : (root.configuration.silenceDecay ?? 350)
+        }
+    }
     property real _ambientTime: 0
     Timer {
         interval: Math.round(1000 / Math.max(1, Math.min(20, root.configuration.framerate ?? 30)))
@@ -36,10 +42,10 @@ Waveform {
         }
     }
 
-    bars: ambient ? ambientBars : (root.visualizer?.bars ?? [])
+    bars: _ambientMix > 0 ? ambientBars.map((value, i) => value * _ambientMix + ((root.visualizer?.bars ?? [])[i] || 0) * (1 - _ambientMix)) : (root.visualizer?.bars ?? [])
     numBars: ambient ? ambientBars.length : (root.visualizer?.numBars ?? 0)
     maxRange: root.visualizer?.maxRange ?? 1000
-    hasAudio: ambient || (root.visualizer?.hasAudio ?? false)
+    hasAudio: ambient || _ambientMix > 0 || (root.visualizer?.hasAudio ?? false)
     backendFailed: root.visualizer?.backendFailed ?? false
     lineWidth: root.configuration.lineWidth
     fillWave: root.configuration.fillWave

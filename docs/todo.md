@@ -1,23 +1,5 @@
 # Future Roadmap & Feature TODO
 
-## 1. Audio Engine & DSP Innovations
-
-- [ ] **Audio Input & Sink Monitor Switcher** `[High]`
-  - Allow selecting between default sink monitor, specific application audio streams (e.g. Spotify or browser only), or microphone / line-in.
-  - *Technical Scope*: Extend `feeder.sh` and PipeWire/Pulse capture arguments; add input device selector in Audio settings tab.
-- [ ] **Beat & Transient Detection Events** `[High]`
-  - Lightweight rate-of-energy rise ($dE/dt$) detector on bass frequencies to trigger dynamic UI reactions (beat pulses, visual ripples, cover art bounce).
-  - *Technical Scope*: Compute in `WaveMath.js` / `VisualizerCore.qml` and expose `beatTrigger` / `energyPulse` properties.
-- [ ] **Equalizer Frequency Focus & Band Weighting** `[Medium]`
-  - Add low/high cutoff filters and logarithmic vs. mel scale distribution options to emphasize bass punch or treble detail per music genre.
-  - *Technical Scope*: Pass custom `cava.conf` frequency range and logarithmic scaling parameters dynamically.
-- [ ] **Smart Audio State Transitions & Silence Crossfade** `[Nice to have]`
-  - Smoothly interpolate visualizers down to an idle ambient state or gentle undulating wave when audio ceases, preventing abrupt visual snaps.
-  - *Technical Scope*: Damping decay in `WaveMotion.qml` during playback pause/silence transitions.
-
-
----
-
 ## 5. Media Controls & Smart Metadata
 
 - [ ] **"Up Next" Play Queue Preview Drawer** `[Medium]`
@@ -103,8 +85,7 @@
 - [x] **Sparkles & Starfield Shader (GLSL)** `[Medium]`
   - Dynamic twinkling starfield with sound-reactive twinkle rates and frequency-driven nebulae.
   - *Technical Scope*: `viz_sparkles.frag` using audio energy harmonics.
-- [x] **Custom QML Visualizer & Progress Bar Style Loader** `[His unavailable. I’ll share the seek, gesture, and loop logic across the existing linear bar styles.
-igh]`
+- [x] **Custom QML Visualizer & Progress Bar Style Loader** `[High]`
   - User-extensible plugin architecture allowing arbitrary custom `.qml` visualizer and seekbar components loaded dynamically.
   - *Technical Scope*: `CustomVisualizer.qml`, `CustomProgressBar.qml`, `CustomStylePicker.qml`, and schema validation.
 
@@ -135,3 +116,21 @@ igh]`
 - [x] **Smart Window Snapping & Waybar / Caelestia Docking** `[Medium]`
   - Quickshell layer-shell docking to status bars with automatic margin negotiation and width expansion.
   - *Technical Scope*: Enhance `hyprland/AudioVisualizerShell.qml` and `PanelPill.qml`.
+
+
+## 1. Audio Engine & DSP Innovations (Completed)
+
+- [x] **Audio Input & Sink Monitor Switcher** `[High]`
+  - Allow selecting between default sink monitor, specific application audio streams (e.g. Spotify or browser only), or microphone / line-in.
+  - *Implemented*: Live source selector in Audio settings; `audio_sources.py` and `feeder.sh` capture explicit PipeWire/Pulse targets through CAVA FIFO input. Stereo scopes follow the selection, and unavailable sources never intentionally fall back. Pulse application selections follow the first matching active stream.
+- [x] **Beat & Transient Detection Events** `[High]`
+  - Lightweight rate-of-energy rise ($dE/dt$) detector on bass frequencies to trigger dynamic UI reactions (beat pulses, visual ripples, cover art bounce).
+  - *Implemented*: Bass-energy rise in `WaveMath.js` / `VisualizerCore.qml`, with onset threshold and cooldown. Exposes `beatTrigger` (also `attack`), `energyRise`, and `energyPulse` for the existing reactive effects; display weighting does not alter detection.
+- [x] **Equalizer Frequency Focus & Band Weighting** `[Medium]`
+  - Add low/high cutoff filters and logarithmic vs. mel scale distribution options to emphasize bass punch or treble detail per music genre.
+  - *Implemented*: Dynamic low/high cutoffs in `cava.conf`, logarithmic or mel display spacing, and bass/treble weights. Mel spacing resamples CAVA's logarithmic output; it does not add FFT resolution.
+- [x] **Smart Audio State Transitions & Silence Crossfade** `[Nice to have]`
+  - Smoothly interpolate visualizers down to an idle ambient state or gentle undulating wave when audio ceases, preventing abrupt visual snaps.
+  - *Implemented*: Configurable, elapsed-time-based silence decay in `VisualizerCore.qml` and ambient crossfade in `WaveArea.qml`, shared by both renderers. Idle ambient follows capture silence, including paused players, and respects reduced motion.
+
+Validation: 542 QML tests passed (68 skipped), 40 feeder tests passed, plus source-routing, browser/preset, and lint checks. Live audio hardware verification remains pending.

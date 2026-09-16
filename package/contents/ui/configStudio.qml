@@ -43,6 +43,20 @@ Kirigami.Page {
     property int cfg_framerateDefault
     property real cfg_noiseReduction
     property real cfg_noiseReductionDefault
+    property string cfg_inputSource
+    property string cfg_inputSourceDefault
+    property int cfg_lowCutoff
+    property int cfg_lowCutoffDefault
+    property int cfg_highCutoff
+    property int cfg_highCutoffDefault
+    property string cfg_frequencyScale
+    property string cfg_frequencyScaleDefault
+    property real cfg_bassWeight
+    property real cfg_bassWeightDefault
+    property real cfg_trebleWeight
+    property real cfg_trebleWeightDefault
+    property int cfg_silenceDecay
+    property int cfg_silenceDecayDefault
     property string cfg_inputMethod
     property string cfg_inputMethodDefault
     property bool cfg_showMpris
@@ -321,6 +335,13 @@ Kirigami.Page {
             framerate: root.cfg_framerate,
             noiseReduction: root.cfg_noiseReduction,
             inputMethod: root.cfg_inputMethod,
+            inputSource: root.cfg_inputSource,
+            lowCutoff: root.cfg_lowCutoff,
+            highCutoff: root.cfg_highCutoff,
+            frequencyScale: root.cfg_frequencyScale,
+            bassWeight: root.cfg_bassWeight,
+            trebleWeight: root.cfg_trebleWeight,
+            silenceDecay: root.cfg_silenceDecay,
             showMpris: root.cfg_showMpris,
             alwaysVisible: root.cfg_alwaysVisible,
             useSystemAccent: root.cfg_useSystemAccent,
@@ -468,6 +489,13 @@ Kirigami.Page {
             framerate: root.cfg_framerateDefault,
             noiseReduction: root.cfg_noiseReductionDefault,
             inputMethod: root.cfg_inputMethodDefault,
+            inputSource: root.cfg_inputSourceDefault,
+            lowCutoff: root.cfg_lowCutoffDefault,
+            highCutoff: root.cfg_highCutoffDefault,
+            frequencyScale: root.cfg_frequencyScaleDefault,
+            bassWeight: root.cfg_bassWeightDefault,
+            trebleWeight: root.cfg_trebleWeightDefault,
+            silenceDecay: root.cfg_silenceDecayDefault,
             showMpris: root.cfg_showMprisDefault,
             alwaysVisible: root.cfg_alwaysVisibleDefault,
             useSystemAccent: root.cfg_useSystemAccentDefault,
@@ -599,7 +627,72 @@ Kirigami.Page {
             dockPosition: root.cfg_dockPositionDefault
         })
 
+    property var savedDraft: null
+    property var history: []
+    property bool isReverting: false
+
+    readonly property bool hasChanges: {
+        if (!root.savedDraft)
+            return false;
+        for (const key in root.savedDraft) {
+            const cur = root.draft[key];
+            const base = root.savedDraft[key];
+            if (cur !== base) {
+                if (Array.isArray(cur) || Array.isArray(base)) {
+                    if (JSON.stringify(cur) !== JSON.stringify(base))
+                        return true;
+                } else {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    Component.onCompleted: snapshotBaseline()
+
+    function snapshotBaseline() {
+        const snap = {};
+        for (const key in root.draft)
+            snap[key] = root.draft[key];
+        root.savedDraft = snap;
+        root.history = [];
+    }
+
+    // Plasma calls this hook when Apply or OK saves the cfg_ properties.
+    function saveConfig() {
+        snapshotBaseline();
+    }
+
+    function discard() {
+        if (root.savedDraft) {
+            root.isReverting = true;
+            root.assign(root.savedDraft);
+            root.history = [];
+            root.isReverting = false;
+        }
+    }
+
+    function undo() {
+        if (root.history.length > 0) {
+            root.isReverting = true;
+            const prev = root.history.pop();
+            root.assign(prev);
+            root.isReverting = false;
+        } else if (root.savedDraft) {
+            discard();
+        }
+    }
+
     function assign(next) {
+        if (!root.isReverting) {
+            const snap = {};
+            for (const key in root.draft)
+                snap[key] = root.draft[key];
+            root.history.push(snap);
+            if (root.history.length > 30)
+                root.history.shift();
+        }
         for (const key in next) {
             const property = "cfg_" + key;
             if (root[property] === undefined)
@@ -627,14 +720,22 @@ Kirigami.Page {
 
     Studio.Studio {
         anchors.fill: parent
+        commandSourceComponent: Component {
+            Plasma5Support.DataSource {
+                engine: "executable"
+            }
+        }
         env: "kde"
         draft: root.draft
         defaults: root.defaults
+        canDiscard: root.hasChanges
         previewAccent: Kirigami.Theme.highlightColor
         diagnosticsRunner: done => {
             doctor.done = done;
             doctor.connectSource("bash '" + Qt.resolvedUrl("../code/doctor.sh").toString().replace(/^file:\/\//, "") + "'");
         }
         onEdited: next => root.assign(next)
+        onDiscard: root.discard()
+        onUndo: root.undo()
     }
 }
