@@ -66,12 +66,6 @@ parity: ## GPU shader vs Canvas on this desktop (opens a window; saves image pai
 	  rg 'parity |^FAIL|^Totals' "$$dir/$$suite.log"; \
 	done; echo "logs: $$dir; Orbit captures: /tmp/orbit-*.png"; exit $$status
 
-compare-html: ## render styles 6-15 from docs/website/index.html and the widget; writes report.html
-	@out="$${TMPDIR:-/tmp}/audio-visualizer-html"; \
-	run="python3 tools/compare_html_visualizers.py --reference qt --extended --output $$out"; \
-	command -v qmltestrunner >/dev/null 2>&1 || run="nix develop --command $$run"; \
-	$$run; status=$$?; echo "report: $$out/report.html"; exit $$status
-
 shaders: ## rebuild every waveform shader family and its shared GLSL prelude
 	@if command -v qsb >/dev/null 2>&1; then \
 	  python3 package/contents/shaders/build_shaders.py; \

@@ -4,7 +4,7 @@ import "Theme.js" as Theme
 import "Schema.js" as Schema
 import "Diagrams.js" as Diagrams
 
-// Live previews inside settings tiles (docs/redesign-plan.md §9.2).
+// Live previews inside settings tiles.
 Item {
     id: preview
     required property string kind

@@ -569,8 +569,8 @@ footer a:hover{color:var(--text);text-decoration:underline}
 
 
 /* Preset library and grouped Studio navigation. */
-.studio-subtabs{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line)}
-.studio-subtabs .seg{flex-wrap:wrap}
+.studio-subtabs{display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;gap:10px;padding:10px 18px;border-bottom:1px solid var(--line);overflow-x:auto}
+.studio-subtabs .seg{flex-wrap:nowrap;flex-shrink:0}
 .pp .favorite{position:absolute;top:9px;left:9px;z-index:3;width:26px;height:26px;border-radius:7px;border:0;background:#101214dd;color:white;font-size:18px;line-height:1}
 .pp .favorite[aria-pressed=true]{color:var(--brand)}
 .pp .favorite:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
@@ -578,20 +578,15 @@ footer a:hover{color:var(--text);text-decoration:underline}
 .share-help a{color:var(--brand)}
 .daily-auto{margin-top:14px}
 
-.studio-subtabs button{display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.studio-subtabs button{display:inline-flex;align-items:center;gap:6px;white-space:nowrap;min-height:28px}
 .studio-subtabs button svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
 
 /* Keep navigation visible while the settings themselves scroll. */
 .studio > .panel{display:flex;flex-direction:column;max-height:calc(100dvh - 110px);position:sticky;top:80px}
 .studio > .panel > .phead,.studio > .panel > .tabs,.studio-subtabs{flex-shrink:0}
 .studio > .panel > .pbody{overflow-y:auto;min-height:0;overscroll-behavior:contain}
-.studio-subtabs:has([data-sub="viz"]){padding:10px 18px;flex-wrap:nowrap;overflow-x:auto}
-.studio-subtabs:has([data-sub="viz"]) .seg{flex-wrap:nowrap;flex-shrink:0}
-.studio-subtabs button{min-height:28px}
 @media(max-width:700px){.studio > .panel{position:relative;top:auto;max-height:80dvh}}
 
-.studio-subtabs{padding:10px 18px;flex-wrap:nowrap;overflow-x:auto}
-.studio-subtabs .seg{flex-wrap:nowrap;flex-shrink:0}
 .pp-top .keep{margin-left:auto}
 .sec[data-tab="presets"]>h4,.sec[data-tab="saved"]>h4{display:none}
 .sec[data-tab="presets"]>.card,.sec[data-tab="saved"]>.card{background:none;border:0;padding:0}
@@ -599,9 +594,8 @@ footer a:hover{color:var(--text);text-decoration:underline}
 .project-info{width:100%;display:grid;gap:18px;color:var(--muted);font-size:12px;line-height:1.6}
 .project-info p{margin:0}
 .project-author{display:flex;gap:14px;align-items:center}
-.project-author h3{margin:0;color:var(--text);font-size:18px}
 .project-author a{color:var(--brand)}
-.profile-image{position:relative;width:64px;height:64px;flex-shrink:0;border-radius:50%;overflow:hidden;background:var(--sunk);display:grid;place-items:center;color:var(--brand);font-size:28px}
+.profile-image{position:relative;width:40px;height:40px;flex-shrink:0;border-radius:50%;overflow:hidden;background:var(--sunk);display:grid;place-items:center;color:var(--brand);font-size:20px}
 .profile-image img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .project-links,.project-stats{display:flex;gap:12px;flex-wrap:wrap}
 .project-stats>div{display:flex;flex-direction:column}
@@ -615,4 +609,3 @@ footer a:hover{color:var(--text);text-decoration:underline}
 .project-heading{display:flex;align-items:center;gap:14px}
 .project-heading>img{width:64px;height:64px;object-fit:contain}
 .project-heading h3{margin:0;color:var(--text);font-size:18px}
-.project-author .profile-image{width:40px;height:40px;font-size:20px}

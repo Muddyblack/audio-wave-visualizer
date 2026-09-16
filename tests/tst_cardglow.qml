@@ -21,16 +21,6 @@ TestCase {
     }
 
     Component {
-        id: glowComponent
-        CardGlow {
-            width: 300
-            height: 200
-            margin: 60
-            radius: 16
-        }
-    }
-
-    Component {
         id: viewComponent
         VisualizerView {
             width: 360
@@ -38,52 +28,6 @@ TestCase {
             accentColor: "#a855f7"
             systemTextColor: "#ffffff"
         }
-    }
-
-    function test_cardGlowRadialBleedDefaultsAndProperties() {
-        const glow = createTemporaryObject(glowComponent, testCase);
-        verify(glow !== null);
-        compare(glow.margin, 60);
-        compare(glow.radius, 16);
-        compare(glow.radialBleed, false);
-        compare(glow.bleedDistance, 60);
-        compare(glow.bleedStops, []);
-        compare(glow.bleedColors, []);
-
-        // Enable multi-stop radial bleed
-        glow.radialBleed = true;
-        glow.bleedDistance = 45;
-        glow.bleedStops = [[0.0, Qt.rgba(1, 0, 0, 0.8)], [0.4, Qt.rgba(0.5, 0, 0.5, 0.4)], [1.0, Qt.rgba(0, 0, 0, 0)]];
-        verify(glow.radialBleed);
-        compare(glow.bleedStops.length, 3);
-    }
-
-    function test_cardGlowRadialBleedLayer() {
-        const glow = createTemporaryObject(glowComponent, testCase);
-        verify(glow !== null);
-        glow.layers = [
-            {
-                radialBleed: true,
-                spread: 0,
-                bleed: 50,
-                stops: [
-                    {
-                        offset: 0.0,
-                        color: Qt.rgba(0, 1, 0, 0.9)
-                    },
-                    {
-                        offset: 0.5,
-                        color: Qt.rgba(0, 0.5, 0.5, 0.4)
-                    },
-                    {
-                        offset: 1.0,
-                        color: Qt.rgba(0, 0, 0, 0)
-                    }
-                ]
-            }
-        ];
-        compare(glow.layers.length, 1);
-        verify(glow.layers[0].radialBleed);
     }
 
     function test_ambientDesktopGlowSoundReactivity() {

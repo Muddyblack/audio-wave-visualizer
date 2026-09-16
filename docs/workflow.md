@@ -287,58 +287,14 @@ It saves before/after PNGs and defaults to the software backend. Use
 `--backend opengl --platform xcb` (or `wayland`) on a desktop to validate artwork
 masks, blur and GPU effects too. Software snapshots cannot validate those effects.
 
-### Compare new visualizers with the HTML prototype
+### Renderer and browser checks
 
-`tools/compare_html_visualizers.py` reads `drawWave` and its colour helpers directly
-from `docs/website/index.html` (or `docs/website/app.js`), including when that local reference is ignored by Git.
-Use `--html /path/to/index.html` if the reference is elsewhere. It fixes the final
-bar levels, bass/mid/high bands, time, peaks, particles and ripples on both sides;
-synthetic audio smoothing and random particle creation are bypassed. This isolates
-drawing from capture and animation timing.
-
-Run the exact source comparison without a desktop:
-
-```sh
-python3 tools/compare_html_visualizers.py --reference qt \
-  --output /tmp/audio-html-comparison
-```
-
-The default 30 cases cover styles 6–15 at 320 × 64 and 64 × 20, plus palette colours
-with hue movement. All 30 currently produce identical PNGs with bloom disabled.
-The reference uses Qt Canvas with adapters for browser colour and path APIs, so
-this proves agreement with the HTML drawing formulas on the same rasterizer.
-It does not prove identical Chromium pixels or GPU bloom. Styles 0–5 preserve their
-existing appearance and intentionally remain outside this HTML comparison.
-
-Use `--extended` to add cover colours, rainbow colours and downward bars; all 53
-extended source cases currently match exactly. Every run
-saves `fixtures.json`, the reference HTML, PNG pairs, absolute difference images,
-`metrics.json` and a side-by-side `report.html`. Qt source comparisons require zero
-pixel error by default. `--max-rmse` sets a reviewed tolerance in normalized RGB
-units; a nonzero error is never an exact match.
-
-For the actual browser and shader comparison, run on a desktop with Chromium or
-Chrome, Qt 6 and an OpenGL scene graph:
-
-```sh
-python3 tools/compare_html_visualizers.py --reference chromium \
-  --backend opengl --platform xcb --renderer shader --glow \
-  --output /tmp/audio-browser-comparison
-```
-
-Use `--platform wayland` for a Wayland session, `--browser /path/to/chromium` to
-select a browser, and omit `--glow` to isolate geometry and colours. Browser mode
-preserves the original browser PNGs and measures differences without assigning an
-arbitrary passing threshold. Browser execution currently fails in the restricted
-development environment because a socket operation is denied; GPU rendering is
-also unavailable there. The script reports a failed launch or software fallback
-as an incomplete comparison, and saves the browser error log.
-
-`--reduced-motion` audits a deliberate difference: the widget freezes decorative
-phases and hue changes, while the prototype keeps some of them moving. Those cases
-are not expected to match the prototype at a nonzero timestamp. Use this option
-with an explicit tolerance to inspect the differences; it is separate from the
-default exact source check.
+`make parity` compares the current GPU shaders with the Canvas renderers on a
+real desktop. Headless CI checks the browser adapters with
+`node tests/test_website_contracts.cjs` and preset exchange with
+`node tests/test_preset_exchange.cjs` after building the shared assets.
+These browser checks validate logic and drawing inputs, not Chromium pixels.
+Use the snapshot comparison above for before/after desktop rendering checks.
 
 CI also runs the Quickshell audio, settings persistence and launcher lifecycle
 integration tests. Run the same checks locally with:

@@ -49,11 +49,9 @@ const ORBITS = Schema.ORBITS;
 const PALETTES = Schema.PALETTES;
 const SWATCHES = Schema.SWATCHES;
 const BGSWATCHES = Schema.BGSWATCHES;
-const PILLS = ['pill', 'pillicon'];
 const isPill = s => Schema.isPill(s);
 const SIZES = Layouts.SIZES;
 const sizeOf = s => Layouts.size(nativeState(s));
-const notPill = s => !isPill(s);
 const pct = Schema.pct;
 const PRESETS = Schema.PRESETS.map(p => ({ ...p, s: PresetCodec.browser(p.s) }));
 const COLOR_KEYS = Schema.COLOR_KEYS;
@@ -422,8 +420,8 @@ function drawWave(e, t) {
   // Synthetic preview only: desktop scopes receive real signed stereo PCM.
   st.stereoSamples = Array.from({length:32}, (_, i) => [Math.sin(i / 31 * Math.PI * 4) * .75, Math.sin(i / 31 * Math.PI * 4 + Math.sin(t) * 1.4) * .75]);
 
-  // Delegate styles 6-21 to shared WaveDraw module when available
-  if (type >= 6 && typeof WaveDraw !== 'undefined') {
+  // Styles 6-21 share the desktop drawing implementation.
+  if (type >= 6) {
     ctx.save();
     ctx.shadowBlur = 0;
     if (s.vizDirection === 'down' && [6, 7, 8].includes(type)) { ctx.translate(0, h); ctx.scale(1, -1); }
@@ -441,24 +439,19 @@ function drawWave(e, t) {
   }
 
   switch (type) {
-    case 0: case 10: {
-      const layers = type === 10 ? [[1, 0, 1], [.7, 1.3, .55], [.45, 2.6, .3]] : [[1, 0, 1]];
-      for (const [scaleA, phase, alpha] of layers) {
-        const up = [], dn = [];
-        for (let i = 0; i < n; i++) {
-          const x = lw + i / (n - 1) * (w - 2 * lw);
-          const a = amp(i) * scaleA * (type === 10 ? .75 + .25 * Math.sin(t * 2 + i * .3 + phase) : 1);
-          up.push([x, c - a]); dn.push([x, c + a]);
-        }
-        ctx.globalAlpha = alpha;
-        if (s.fillWave && alpha === 1) {
-          ctx.save(); ctx.shadowBlur = 0; ctx.beginPath(); smoothTrace(ctx, up, true); smoothTrace(ctx, [...dn].reverse(), false); ctx.closePath();
-          ctx.globalAlpha = .32; ctx.fill(); ctx.restore();
-        }
-        ctx.beginPath(); smoothTrace(ctx, up, true); ctx.stroke();
-        ctx.beginPath(); smoothTrace(ctx, dn, true); ctx.stroke();
-      }
+    case 0: {
       ctx.globalAlpha = 1;
+      const up = [], dn = [];
+      for (let i = 0; i < n; i++) {
+        const x = lw + i / (n - 1) * (w - 2 * lw), a = amp(i);
+        up.push([x, c - a]); dn.push([x, c + a]);
+      }
+      if (s.fillWave) {
+        ctx.save(); ctx.shadowBlur = 0; ctx.beginPath(); smoothTrace(ctx, up, true); smoothTrace(ctx, [...dn].reverse(), false); ctx.closePath();
+        ctx.globalAlpha = .32; ctx.fill(); ctx.restore();
+      }
+      ctx.beginPath(); smoothTrace(ctx, up, true); ctx.stroke();
+      ctx.beginPath(); smoothTrace(ctx, dn, true); ctx.stroke();
       break;
     }
     case 1: case 2: {
@@ -516,7 +509,6 @@ function drawOrbit(e, t) {
     const tg = Math.min(1, spectrum(i * .5 + half * .5, half * 2, t) * st.energy * s.sensitivity / 100);
     st.v[i] = st.v[i] * sm + tg * (1 - sm);
   }
-  const cx = w / 2, cy = h / 2;
   const R = S0 * Number(e.el.dataset.r || .38) + (small ? 1.5 : 4);
   const reach = Math.max(2, (S0 - R - 2) * 1.3 * s.orbitReach);
   const rot = s.orbitRotate && !s.reducedMotion ? t * .2 : 0;
@@ -531,16 +523,12 @@ function drawOrbit(e, t) {
       st.parts.push({ a: ang(j), r: R + 3, v: (.4 + Math.random()) * (small ? .3 : 1), life: 1, s: .6 + Math.random() });
     st.parts = st.parts.filter(p => { p.r += p.v * step; return (p.life -= .02 * step) > 0 && p.r < S0; });
   }
-  // Delegate to OrbitDraw if available
-  if (typeof OrbitDraw !== 'undefined') {
-    OrbitDraw.draw(ctx, {
-      width: w, height: h, values: st.v.subarray(0, half), R, reach, lineWidth: s.lineWidth, t,
-      rot, stops, particles: st.parts, style: ORBITS[style] ? ORBITS[style].toLowerCase() : 'bars', glow, fill: s.fillWave,
-      reducedMotion: s.reducedMotion
-    });
-    ctx.shadowBlur = 0; ctx.globalAlpha = 1;
-    return;
-  }
+  OrbitDraw.draw(ctx, {
+    width: w, height: h, values: st.v.subarray(0, half), R, reach, lineWidth: s.lineWidth, t,
+    rot, stops, particles: st.parts, style: ORBITS[style] ? ORBITS[style].toLowerCase() : 'bars', glow, fill: s.fillWave,
+    reducedMotion: s.reducedMotion
+  });
+  ctx.shadowBlur = 0; ctx.globalAlpha = 1;
 }
 
 function seedHeights(key, n) {
@@ -964,7 +952,6 @@ function renderPresetPicker(el) {
     $('[data-auto-row]', el).hidden = pickFilter !== 'daily';
     $('[data-auto-note]', el).hidden = pickFilter !== 'daily';
     $('[data-auto-daily]', el).checked = !!S.autoDailyLook;
-    $$('[data-pf]', el).forEach(b => b.setAttribute('aria-pressed', b.dataset.pf === pickFilter));
     $$('[data-pid]', grid).forEach(t => t.setAttribute('aria-pressed', t.dataset.pid === activePreset && !presetDirty));
   };
 }
@@ -1021,7 +1008,7 @@ function renderUserPresets(el) {
 
 /* ─── studio diagrams & sections ───────────────────────────────── */
 function renderDiagSVG(k) {
-  const shapes = (typeof Diagrams !== 'undefined' && Diagrams.shapes[k]) || [];
+  const shapes = Diagrams.shapes[k] || [];
   return shapes.map(s => `<${s.tag} class="${s.cls || ''}" ${Object.entries(s).filter(([attr]) => attr !== 'tag' && attr !== 'cls').map(([attr, val]) => `${attr}="${val}"`).join(' ')}/>`).join('');
 }
 const diag = k => `<svg class="diag" viewBox="0 0 64 36" aria-hidden="true">${renderDiagSVG(k)}</svg>`;
@@ -1214,10 +1201,7 @@ function syncSettings() {
       else activeTab = button.dataset.sub;
       $('#pbody').scrollTop = 0; syncSettings();
     };
-    const keep = $('[data-keep]', sub);
-    if (keep) keep.onchange = e => { keepColors = e.target.checked; };
   }
-  if ($('[data-keep]', sub)) $('[data-keep]', sub).checked = keepColors;
 }
 $('#tabs').addEventListener('click', e => {
   const b = e.target.closest('[data-tab]'); if (!b) return;
@@ -1254,14 +1238,7 @@ $('#copyCfg').onclick = async () => {
 };
 $('#resetAll').onclick = () => { S = structuredClone(DEFAULTS); activePreset = 'classic'; onChange(); renderPresets(); toast('Back to the shipped defaults'); };
 $('#shuffle').onclick = () => {
-  const pick = a => a[Math.floor(Math.random() * a.length)], coin = p => Math.random() < p;
-  S = { ...DEFAULTS, autoDailyLook: S.autoDailyLook, dailyLookApplied: S.dailyLookApplied,
-    layoutMode: pick(['classic', 'classic', 'mirrored', 'inline', 'hero', 'stacked', 'strip', 'pill', 'orbit', 'orbit', 'poster', 'lyrics']), vizDirection: pick(['up', 'up', 'down']), orbitStyle: pick(['bars', 'wave', 'dots', 'ribbon', 'sparks']), visualizerType: Math.floor(Math.random() * VIZ.length), progressBarStyle: Math.floor(Math.random() * PBS.length),
-    showBg: coin(.8), surfaceStyle: pick(['color', 'art', 'glass', 'liquid', 'atmosphere', 'solid']), bgRadius: pick([10, 14, 18, 22, 26]),
-    artShape: pick(['sharp', 'rounded', 'squircle', 'circle', 'vinyl', 'cd']), dockStyle: pick(['glass', 'bare', 'accent']),
-    accentFromArt: coin(.5), vizColorMode: pick(['solid', 'gradient', 'cover', 'palette', 'rainbow']), vizPalette: pick(Object.keys(PALETTES)),
-    fillWave: coin(.5), glowWave: coin(.6), cardShadow: pick(['none', 'soft', 'lifted']), edgeHighlight: coin(.5), artGlow: coin(.4),
-    showSource: coin(.4), showAlbum: coin(.4), hoverDetails: pick(['off', 'tooltip', 'flip']), pillEq: pick(['static', 'live', 'wave']), pillProgress: pick(['off', 'underline', 'ring']) };
+  S = PresetCodec.browser(Schema.surprise(LOOK_DEFAULTS, nativeState(S), ["lyrics"]));
   activePreset = null; popupOpen = true; onChange(); renderPresets();
 };
 

@@ -1,8 +1,7 @@
 import QtQuick
 
-// Synthetic audio for the settings previews (docs/redesign-plan.md §9.4 and
-// P9): at most 15 Hz and only while `running`; a stopped backend keeps one
-// still frame for static thumbnails.
+// Synthetic audio for settings previews: at most 15 Hz while `running`.
+// A stopped backend keeps one still frame for static thumbnails.
 Item {
     id: backend
     property bool running: true

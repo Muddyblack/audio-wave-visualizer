@@ -1,6 +1,6 @@
 .pragma library
 
-// Stateless Qt Canvas translation of docs/index.html::drawWave (styles 6–15).
+// Shared stateless Canvas drawing for desktop and browser styles 6–21.
 // The audio-frame owner supplies levels, peaks, particles, ripples and time.
 // In particular, painting twice cannot advance a particle or decay a peak.
 

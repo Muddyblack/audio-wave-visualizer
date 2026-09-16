@@ -146,8 +146,7 @@ TestCase {
     // The glow rows compare two approximations of the HTML blur (Canvas halos
     // and analytic shader bloom), so they carry the largest budgets. Do not
     // raise a limit merely to make a new difference pass.
-    // compare_html_visualizers.py additionally checks the HTML drawing source
-    // and can save actual Chromium/ShaderEffect image pairs and differences.
+    // Browser drawing and adapter checks live in test_website_contracts.cjs.
     function test_newStyles_data() {
         const measuredLimits = {
             "new-6-glow": 0.06,

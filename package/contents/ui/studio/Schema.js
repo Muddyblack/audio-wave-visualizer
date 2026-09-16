@@ -2,8 +2,7 @@
 .import "StudioCatalog.js" as Catalog
 .import "PresetCodec.js" as PresetCodec
 
-// The studio settings model, ported from docs/index.html (TABS, SECTIONS,
-// PRESETS). Labels and descriptions follow the HTML. Hosts pass `env`
+// Shared settings, presets and navigation for desktop and web. Hosts pass `env`
 // ("kde" or "hypr") to the `when` predicates; `s` is the current draft.
 
 var TABS = Catalog.StudioCatalog.tabs;
@@ -517,11 +516,11 @@ function importPreset(text, known) {
     return PresetCodec.decode(text, known, false);
 }
 
-function surprise(defaults, current) {
+function surprise(defaults, current, extraLayouts) {
     function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
     function coin(p) { return Math.random() < p; }
     return applyPreset(defaults, current, normalize({
-        layoutMode: pick(["classic", "classic", "mirrored", "inline", "hero", "stacked", "strip", "pill", "orbit", "orbit", "poster"]),
+        layoutMode: pick(["classic", "classic", "mirrored", "inline", "hero", "stacked", "strip", "pill", "orbit", "orbit", "poster"].concat(extraLayouts || [])),
         vizDirection: pick(["up", "up", "down"]), orbitStyle: pick(["bars", "wave", "dots", "ribbon", "sparks"]),
         visualizerType: Math.floor(Math.random() * VIZ.length), progressBarStyle: Math.floor(Math.random() * PBS.length),
         showBg: coin(.8), surfaceStyle: pick(["color", "art", "glass", "liquid", "atmosphere", "solid"]), bgRadius: pick([10, 14, 18, 22, 26]),

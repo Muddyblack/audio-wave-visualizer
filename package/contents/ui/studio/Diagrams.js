@@ -1,6 +1,6 @@
 .pragma library
 
-// Layout tile diagrams extracted from docs/index.html (DIAG, 64 × 36 viewBox).
+// Shared layout tile diagrams (64 × 36 viewBox).
 // class f: filled .85 · f2: filled .35 · o: outline .6 · s: accent stroke.
 var shapes = {
  "lyrics": [

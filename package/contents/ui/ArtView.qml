@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Effects
 
 // Cover artwork. Without a `view` it draws the original rounded thumbnail; the
-// layouts pass the view so the artwork options (docs/redesign-plan.md §7.2)
+// layouts pass the view so the artwork options
 // apply. Vinyl/CD spin rides the audio frame clock rather than an animation.
 Item {
     id: root

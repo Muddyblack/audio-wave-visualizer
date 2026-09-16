@@ -2,7 +2,7 @@ import QtQuick
 import "Theme.js" as Theme
 import "Schema.js" as Schema
 
-// Saved looks (docs/redesign-plan.md §8.2): grid, name field with Save,
+// Saved looks: grid, name field with Save,
 // Copy as JSON and Import JSON. Placement keys are never saved.
 Column {
     id: saved

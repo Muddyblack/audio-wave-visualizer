@@ -4,7 +4,7 @@ import ".." as Shared
 import "Theme.js" as Theme
 import "Schema.js" as Schema
 
-// The shared settings studio for Plasma and Hyprland (docs/redesign-plan.md §9),
+// The shared settings studio for Plasma and Hyprland,
 // styled after the HTML studio. Hosts own the draft: every change is emitted
 // through `edited(next)` and the host assigns it back to `draft`.
 Rectangle {

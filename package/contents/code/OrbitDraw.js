@@ -1,7 +1,7 @@
 .pragma library
 .import "WaveDraw.js" as WaveDraw
 
-// Stateless Qt Canvas translation of docs/index.html::drawOrbit. The owner
+// Shared stateless orbit drawing for desktop and browser. The owner
 // supplies mirrored ring values, geometry, rotation, time and spark state.
 
 function draw(ctx, o) {

@@ -237,7 +237,7 @@ Item {
     }
     readonly property bool cardHovered: cardHover.hovered
 
-    // Behaviour (docs/redesign-plan.md §7.5).
+    // Playback and hover behaviour.
     readonly property bool idleMessage: !hasPlayer && (configuration.idleText ?? false)
     readonly property bool pausedPlayer: hasPlayer && !isPlaying
     // Hosts report the power source; battery saver caps frames and drops glow.

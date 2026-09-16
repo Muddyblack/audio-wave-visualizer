@@ -1,6 +1,6 @@
 .pragma library
 
-// Design sizes at 1× (docs/redesign-plan.md §4). `compact` is showMpris=false.
+// Design sizes at 1×. `compact` is showMpris=false.
 const SIZES = {
     classic: [360, 104],
     mirrored: [360, 104],

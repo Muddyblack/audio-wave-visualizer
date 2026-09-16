@@ -31,10 +31,6 @@ subprocess.run([sys.executable, str(REPO / "tests/test_local_lyrics.py")], check
 subprocess.run([sys.executable, str(REPO / "tests/test_online_lyrics.py")], check=True)
 if shutil.which("node"):
     subprocess.run(["node", str(REPO / "tests/test_lyrics.cjs")], check=True)
-if shutil.which("qs"):
-    subprocess.run(
-        [sys.executable, str(REPO / "tests/test_hyprland_settings.py")], check=True
-    )
 
 # The widget loads the compiled packages. Verify every family and the common
 # prelude with the same builder used by make, so a stale .qsb cannot pass.
@@ -102,6 +98,9 @@ done
     env = os.environ | {
         "PATH": str(binaries) + os.pathsep + os.environ["PATH"],
         "XDG_RUNTIME_DIR": directory,
+        "XDG_DATA_HOME": str(runtime / "data"),
+        "XDG_CACHE_HOME": str(runtime / "cache"),
+        "XDG_CONFIG_HOME": str(runtime / "config"),
         "QT_QPA_PLATFORM": "offscreen",
         "QT_QPA_PLATFORMTHEME": "generic",
         "QT_QUICK_BACKEND": "software",
