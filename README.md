@@ -34,6 +34,7 @@
 </p>
 
 <p align="center">
+  <a href="#features">Features</a> ·
   <a href="#gallery">Gallery</a> ·
   <a href="#make-it-yours">Settings Studio</a> ·
   <a href="#requirements">Requirements</a> ·
@@ -46,6 +47,18 @@
 </p>
 
 The widget follows system audio with [cava][cava] and shows album artwork, track information, and playback controls from MPRIS players. Choose a ready-made look or tune one in the built-in settings studio.
+
+## Features
+
+- **Dozens of ready-made presets:** Choose from cards, artwork backgrounds, posters, compact strips, panel icons, and more.
+- **Many audio visualizers:** Waves, bars, particles, rings, and other styles react to system audio captured by [cava][cava].
+- **Live settings studio:** Preview changes as you customize layouts, colors, visualizers, progress bars, artwork, and motion.
+- **Make and share presets:** Save your own looks and exchange them as JSON with the Plasma, Quickshell, and browser studios.
+- **Custom QML styles:** Import your own visualizers and progress bars from trusted local QML files.
+- **Album art and track details:** Show cover art, title, artist, playback time, and an optional artwork backdrop.
+- **Playback controls:** Play, pause, skip tracks, and seek through MPRIS players when supported.
+- **Lyrics and karaoke:** Show a synced line on the card or switch to a lyrics-only view, with local files and optional online lookup.
+- **Plasma and Hyprland:** Use the widget on KDE Plasma 6 or with Quickshell on Hyprland.
 
 ## Gallery
 
@@ -218,14 +231,6 @@ Regression tests (synthetic audio, no desktop or sound server needed): `nix deve
 
 Check Python lint and formatting with `make lint-python`; apply formatting with `make format-python`. Ruff is also available in `nix develop`, or directly through `nix run .#ruff -- check .` and `nix run .#ruff -- format .`. The Ruff workflow runs both checks on pull requests and pushes, using the version pinned by `flake.lock`.
 
-## What you can do
-
-- **Follow the music:** waves, bars, particles, rings, and other visualizers react to system audio.
-- **Choose a layout:** cards, artwork backgrounds, posters, compact strips, and panel icons.
-- **Control playback:** use the player's MPRIS controls for play, pause, skipping, and seeking when supported.
-- **Read lyrics:** show synced lines on the card or use the lyrics-only layout. See [lyrics setup](docs/lyrics.md).
-- **Keep your own looks:** save presets, share JSON, or add [custom QML visualizers and progress bars](docs/custom-visualizers.md).
-
 ## Help and project docs
 
 - [Installation, configuration, and troubleshooting](docs/installation.md)
@@ -236,6 +241,8 @@ Check Python lint and formatting with `make lint-python`; apply formatting with 
 
 ## Credits
 
-Built with [cava][cava] for audio capture and [LRCLIB](https://lrclib.net/) for optional synced lyrics. [lumaribbon](https://github.com/Lucenx9/lumaribbon) inspired visual ideas and studio concepts. Thanks to their creators and contributors.
+- [cava][cava] provides audio capture for the visualizers.
+- [LRCLIB](https://lrclib.net/) provides optional synced lyrics.
+- [lumaribbon](https://github.com/Lucenx9/lumaribbon) inspired visual ideas and studio concepts.
 
-Licensed under GPL-3.0-or-later. See [LICENSE](LICENSE).
+Thanks to the creators and contributors of these projects. This project is licensed under [GPL-3.0-or-later](LICENSE).
