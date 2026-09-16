@@ -36,7 +36,7 @@ Item {
             return null;
         }
     }).filter(Boolean)
-    readonly property bool showLyric: (view.configuration.showLyrics ?? false) && view.lyricLine !== ""
+    readonly property bool showLyric: (view.configuration.showLyrics ?? false) && view.lyricDisplayLine !== ""
 
     implicitWidth: back ? 0 : 250
     implicitHeight: back ? 0 : content.implicitHeight + (drawer ? 32 : 24)
@@ -173,12 +173,22 @@ Item {
             Layout.fillWidth: true
             Layout.topMargin: -1
             visible: root.showLyric
-            text: root.view.lyricLine
+            text: root.view.lyricDisplayLine
             color: root.view.waveColor
             opacity: 0.9
             font.italic: true
             font.pixelSize: 10
             elide: Text.ElideRight
+        }
+        Text {
+            Layout.fillWidth: true
+            visible: root.showLyric && root.view.lyricLine !== "" && root.view.lyricNotice !== ""
+            text: root.view.lyricNotice
+            textFormat: Text.PlainText
+            wrapMode: Text.Wrap
+            color: root.view.textColor
+            opacity: 0.75
+            font.pixelSize: 10
         }
     }
 

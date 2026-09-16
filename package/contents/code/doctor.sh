@@ -29,6 +29,23 @@ echo "session: ${XDG_SESSION_TYPE:-unset} / ${XDG_CURRENT_DESKTOP:-unset}"
 echo "runtime: ${XDG_RUNTIME_DIR:-unset}"
 echo "awk:     $(command -v awk 2>/dev/null || echo 'not found (optional)')"
 
+section "Lyrics dependencies"
+if have python3; then
+  echo "python3: found"
+  for package in mutagen pykakasi pypinyin; do
+    if python3 -c "import $package" >/dev/null 2>&1; then
+      echo "$package: found"
+    else
+      echo "$package: missing (optional)"
+    fi
+  done
+else
+  echo "python3: missing"
+  echo "mutagen: unavailable (Python 3 missing)"
+  echo "pykakasi: unavailable (Python 3 missing)"
+  echo "pypinyin: unavailable (Python 3 missing)"
+fi
+
 section "cava"
 if ! have cava; then
   echo "cava:    NOT INSTALLED  <- this is the problem"

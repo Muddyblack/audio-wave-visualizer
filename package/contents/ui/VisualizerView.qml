@@ -128,6 +128,8 @@ Item {
     readonly property real lyricPosition: lyricsLoader.item?.positionSeconds ?? 0
     readonly property int lyricIndex: samplePlayback && lyricsEnabled ? 2 : lyricsLoader.item?.currentIndex ?? -1
     readonly property string lyricLine: lyricIndex >= 0 && lyricIndex < lyricLines.length ? lyricLines[lyricIndex].text : ""
+    readonly property string lyricNotice: samplePlayback ? "" : lyricsLoader.item?.localWarning ?? ""
+    readonly property string lyricDisplayLine: lyricLine || lyricNotice
     readonly property string lyricStatus: !hasPlayer ? "idle" : (trackUnknown || artist === "") && !metadata["xesam:url"] ? "metadata" : samplePlayback ? "ready" : lyricsLoader.item?.status ?? "loading"
 
     readonly property string detailsMode: layoutMode === "lyrics" || !hasPlayer || trackUnknown ? "off" : (configuration.hoverDetails ?? "off")

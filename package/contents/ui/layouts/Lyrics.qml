@@ -245,6 +245,8 @@ FocusScope {
         width: Math.max(0, parent.width - 40)
         visible: lines.count === 0
         text: {
+            if (root.view.lyricNotice)
+                return root.view.lyricNotice;
             switch (root.view.lyricStatus) {
             case "idle":
                 return qsTr("Play a song to see its lyrics");
@@ -266,5 +268,21 @@ FocusScope {
         renderType: Text.CurveRendering ?? Text.QtRendering
         color: root.view.textColor
         opacity: 0.75
+    }
+
+    Text {
+        objectName: "lyricsDependencyNotice"
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: timingControls.visible ? timingControls.top : parent.bottom
+        anchors.margins: root.padding
+        visible: lines.count > 0 && !!root.view.lyricNotice
+        text: root.view.lyricNotice || ""
+        textFormat: Text.PlainText
+        wrapMode: Text.Wrap
+        horizontalAlignment: Text.AlignHCenter
+        font.family: root.fontFamily
+        font.pixelSize: 12
+        color: root.view.textColor
     }
 }

@@ -26,6 +26,7 @@ TestCase {
         property real lyricPosition: 1.5
         property int lyricIndex: 5
         property string lyricStatus: "ready"
+        property string lyricNotice: ""
         property color textColor: "white"
         property string defaultFontFamily: Qt.application.font.family
     }
@@ -46,6 +47,7 @@ TestCase {
         subject.width = 380;
         subject.height = 320;
         view.lyricIndex = 5;
+        view.lyricNotice = "";
         view.lyricLines = Array.from({
             length: 20
         }, (_, i) => ({
@@ -183,5 +185,13 @@ TestCase {
         const empty = findChild(subject, "lyricsEmptyState");
         verify(empty.visible);
         verify(empty.text.indexOf("No synced lyrics") >= 0);
+        view.lyricNotice = "Install Python 3 to load local lyrics";
+        compare(empty.text, view.lyricNotice);
+    }
+    function test_dependencyNoticeWithLyrics() {
+        view.lyricNotice = "Install Python mutagen for embedded ID3 lyrics";
+        const notice = findChild(subject, "lyricsDependencyNotice");
+        verify(notice.visible);
+        compare(notice.text, view.lyricNotice);
     }
 }

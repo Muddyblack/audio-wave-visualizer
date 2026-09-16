@@ -232,6 +232,24 @@ TestCase {
         compare(lyrics.lines[0].text, "Untimed");
     }
 
+    function test_missingPythonWarningFromHelper() {
+        const lyrics = createTemporaryObject(source, this, {
+            commandSourceComponent: commandComponent,
+            fileUrl: "file:///tmp/song.mp3"
+        });
+        wait(10);
+        lyrics.load();
+        const reader = findChild(lyrics, "lyricsLocalReader");
+        reader.item.newData(lyrics._command, {
+            stdout: JSON.stringify({
+                warning: "Install Python 3 to load local lyrics and automatic pronunciation"
+            })
+        });
+        compare(lyrics.localWarning, "Install Python 3 to load local lyrics and automatic pronunciation");
+        lyrics.fileUrl = "file:///tmp/next.mp3";
+        compare(lyrics.localWarning, "");
+    }
+
     function test_enhancedParsing() {
         const lyrics = createTemporaryObject(source, this);
         const lines = lyrics.parse("[offset:100]\n[00:01]<00:01>Hel<00:01.5>lo<00:02>\n[00:03]Next\n[00:03]Translation");

@@ -30,7 +30,14 @@ Column {
         const backends = field(text, /^backends built in:\s*(.+)$/m);
         const server = field(text, /^pactl server:\s*(.+)$/m);
         const sink = field(text, /^default sink:\s*(.+)$/m);
-        return [["cava found", !missing && path !== "", missing ? "not installed" : path], ["Capture backends", backends !== "", backends || "unknown"], ["Sound server", server !== "", server || "not reachable"], ["Default output", sink !== "", sink || "none"], ["Renderer", true, GraphicsInfo.api === GraphicsInfo.Software ? "canvas (software)" : "shader"]];
+        const checks = [["cava found", !missing && path !== "", missing ? "not installed" : path], ["Capture backends", backends !== "", backends || "unknown"], ["Sound server", server !== "", server || "not reachable"], ["Default output", sink !== "", sink || "none"], ["Renderer", true, GraphicsInfo.api === GraphicsInfo.Software ? "canvas (software)" : "shader"]];
+        const python = field(text, /^python3:\s*(.+)$/m);
+        checks.push(["Python 3 (local lyrics)", python === "found", python || "unknown"]);
+        for (const packageName of ["mutagen", "pykakasi", "pypinyin"]) {
+            const state = field(text, new RegExp("^" + packageName + ":\\s*(.+)$", "m"));
+            checks.push([packageName + " (optional)", state === "found", state || "unknown"]);
+        }
+        return checks;
     }
 
     Item {

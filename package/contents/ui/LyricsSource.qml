@@ -152,6 +152,8 @@ Item {
                 value = JSON.parse(data["stdout"] || "{}");
             } catch (error) {}
             if (mode === "online") {
+                if (value.warning)
+                    root.localWarning = value.warning;
                 root.finishOnline(value.status || 0, value.body || {});
                 return;
             }

@@ -156,8 +156,8 @@ ColumnLayout {
         objectName: "lyricLine"
         Layout.fillWidth: true
         Layout.topMargin: 1
-        visible: (root.cfg.showLyrics ?? false) && root.view.lyricLine !== ""
-        text: root.view.lyricLine
+        visible: (root.cfg.showLyrics ?? false) && root.view.lyricDisplayLine !== ""
+        text: root.view.lyricDisplayLine
         horizontalAlignment: root.cfg.lyricsAlign === "center" ? Text.AlignHCenter : root.cfg.lyricsAlign === "right" ? Text.AlignRight : Text.AlignLeft
         color: root.cfg.lyricsHighlight === "custom" ? root.cfg.lyricsHighlightColor : root.cfg.lyricsHighlight === "accent" ? root.view.waveColor : root.view.textColor
         font.weight: root.cfg.lyricsCurrentWeight ?? Font.Medium
@@ -170,5 +170,17 @@ ColumnLayout {
         textFormat: Text.PlainText
         font.pixelSize: Math.max(10, Math.min(24, root.cfg.lyricsInlineFontSize ?? Math.round(root.ts * root.lyricSize)))
         elide: Text.ElideRight
+    }
+    Text {
+        objectName: "lyricDependencyNotice"
+        Layout.fillWidth: true
+        visible: (root.cfg.showLyrics ?? false) && root.view.lyricLine !== "" && root.view.lyricNotice !== ""
+        text: root.view.lyricNotice
+        textFormat: Text.PlainText
+        wrapMode: Text.Wrap
+        color: root.view.textColor
+        opacity: 0.75
+        font.family: root.cfg.lyricsFontFamily || root.view.defaultFontFamily
+        font.pixelSize: 10
     }
 }
