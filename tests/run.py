@@ -18,7 +18,9 @@ if not runner:
     raise SystemExit("Qt 6 qmltestrunner must be on PATH")
 
 subprocess.run([sys.executable, str(REPO / "tools/sync_studio_assets.py")], check=True)
-subprocess.run([sys.executable, str(REPO / "tools/sync_studio_assets.py"), "--check"], check=True)
+subprocess.run(
+    [sys.executable, str(REPO / "tools/sync_studio_assets.py"), "--check"], check=True
+)
 subprocess.run([sys.executable, str(REPO / "tests/test_feeder.py")], check=True)
 subprocess.run([sys.executable, str(REPO / "tests/test_waybar.py")], check=True)
 
@@ -26,7 +28,14 @@ subprocess.run([sys.executable, str(REPO / "tests/test_waybar.py")], check=True)
 # prelude with the same builder used by make, so a stale .qsb cannot pass.
 qsb = shutil.which("qsb")
 if qsb:
-    subprocess.run([sys.executable, str(REPO / "package/contents/shaders/build_shaders.py"), "--check"], check=True)
+    subprocess.run(
+        [
+            sys.executable,
+            str(REPO / "package/contents/shaders/build_shaders.py"),
+            "--check",
+        ],
+        check=True,
+    )
 else:
     print("SKIP: qsb is not on PATH; compiled shader families not checked")
 

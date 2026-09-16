@@ -32,11 +32,15 @@ REPO = Path(__file__).resolve().parents[1]
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     baseline = parser.add_mutually_exclusive_group(required=True)
-    baseline.add_argument("--baseline-ref", help="Git revision containing the old package")
+    baseline.add_argument(
+        "--baseline-ref", help="Git revision containing the old package"
+    )
     baseline.add_argument("--baseline-view", type=Path, help="Saved VisualizerView.qml")
     parser.add_argument("--backend", choices=("software", "opengl"), default="software")
     parser.add_argument("--platform", default="offscreen")
-    parser.add_argument("--case", help="Run one snapshot tag, for example classic-default")
+    parser.add_argument(
+        "--case", help="Run one snapshot tag, for example classic-default"
+    )
     parser.add_argument("--output", type=Path, help="Directory for before/after PNGs")
     args = parser.parse_args()
     runner = shutil.which("qmltestrunner")
@@ -44,7 +48,11 @@ def main():
         parser.error("Qt 6 qmltestrunner must be on PATH")
     if args.baseline_view and not args.baseline_view.is_file():
         parser.error(f"Baseline view does not exist: {args.baseline_view}")
-    output = args.output.resolve() if args.output else Path(tempfile.mkdtemp(prefix="audio-view-snapshots-"))
+    output = (
+        args.output.resolve()
+        if args.output
+        else Path(tempfile.mkdtemp(prefix="audio-view-snapshots-"))
+    )
     output.mkdir(parents=True, exist_ok=True)
 
     with tempfile.TemporaryDirectory(prefix="audio-view-comparison-") as directory:
@@ -60,7 +68,9 @@ def main():
                 package.extractall(original.parent, filter="data")
         else:
             shutil.copytree(current, original)
-            shutil.copyfile(args.baseline_view, original / "contents/ui/VisualizerView.qml")
+            shutil.copyfile(
+                args.baseline_view, original / "contents/ui/VisualizerView.qml"
+            )
 
         template = (REPO / "tests/snapshots/VisualizerComparison.qml.in").read_text()
         for key, value in {
@@ -76,7 +86,9 @@ def main():
         test = runtime / "tst_visualcomparison.qml"
         test.write_text(template)
         env = os.environ | {
-            "XDG_RUNTIME_DIR": directory if args.platform == "offscreen" else os.environ.get("XDG_RUNTIME_DIR", directory),
+            "XDG_RUNTIME_DIR": directory
+            if args.platform == "offscreen"
+            else os.environ.get("XDG_RUNTIME_DIR", directory),
             "QT_QPA_PLATFORM": args.platform,
             "QT_QPA_PLATFORMTHEME": "generic",
             "QT_QUICK_CONTROLS_STYLE": "Basic",

@@ -85,9 +85,13 @@ AudioVisualizerShell {
             .replace("SAVED_RATE", "5" if phase == 0 else "30")
             .replace(
                 "EXPECTED_FIELDS",
-                '["album", "genre", "format", "player"]' if phase == 0 else '["player", "album"]',
+                '["album", "genre", "format", "player"]'
+                if phase == 0
+                else '["player", "album"]',
             )
-            .replace("SAVED_FIELDS", '["player", "album"]' if phase == 0 else '["format"]')
+            .replace(
+                "SAVED_FIELDS", '["player", "album"]' if phase == 0 else '["format"]'
+            )
             .replace("EXPECTED_ANCHOR", '"center"' if phase == 0 else '"right"')
             .replace("SAVED_ANCHOR", '"right"' if phase == 0 else '"center"')
             .replace("EXPECTED_LAYOUT", '"classic"' if phase == 0 else '"poster"')
@@ -128,4 +132,6 @@ AudioVisualizerShell {
             }, saved
         else:
             assert saved == {}, saved
-    print("PASS: real settings UI, Nix defaults, scalar/StringList overrides, reload and reset")
+    print(
+        "PASS: real settings UI, Nix defaults, scalar/StringList overrides, reload and reset"
+    )
