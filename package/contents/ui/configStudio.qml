@@ -13,6 +13,14 @@ Kirigami.Page {
     implicitWidth: Kirigami.Units.gridUnit * 60
     implicitHeight: Kirigami.Units.gridUnit * 40
 
+    property string cfg_customVisualizer
+    property string cfg_customVisualizerDefault
+    property string cfg_customVisualizers
+    property string cfg_customVisualizersDefault
+    property string cfg_customProgressBar
+    property string cfg_customProgressBarDefault
+    property string cfg_customProgressBars
+    property string cfg_customProgressBarsDefault
     property int cfg_visualizerType
     property int cfg_visualizerTypeDefault
     property int cfg_progressBarStyle
@@ -107,6 +115,8 @@ Kirigami.Page {
     property bool cfg_orbitRotateDefault
     property bool cfg_orbitCoverPulse
     property bool cfg_orbitCoverPulseDefault
+    property real cfg_vizVerticalOffset
+    property real cfg_vizVerticalOffsetDefault
     property string cfg_vizDirection
     property string cfg_vizDirectionDefault
     property string cfg_vizColorMode
@@ -127,6 +137,8 @@ Kirigami.Page {
     property real cfg_glassBlurDefault
     property string cfg_glassTint
     property string cfg_glassTintDefault
+    property bool cfg_compositorGlass
+    property bool cfg_compositorGlassDefault
     property real cfg_glassRefraction
     property real cfg_glassRefractionDefault
     property bool cfg_glassSpecular
@@ -261,6 +273,10 @@ Kirigami.Page {
     property string cfg_userPresetsDefault
 
     readonly property var draft: ({
+            customVisualizer: root.cfg_customVisualizer,
+            customVisualizers: root.cfg_customVisualizers,
+            customProgressBar: root.cfg_customProgressBar,
+            customProgressBars: root.cfg_customProgressBars,
             visualizerType: root.cfg_visualizerType,
             progressBarStyle: root.cfg_progressBarStyle,
             numBars: root.cfg_numBars,
@@ -308,6 +324,7 @@ Kirigami.Page {
             orbitReach: root.cfg_orbitReach,
             orbitRotate: root.cfg_orbitRotate,
             orbitCoverPulse: root.cfg_orbitCoverPulse,
+            vizVerticalOffset: root.cfg_vizVerticalOffset,
             vizDirection: root.cfg_vizDirection,
             vizColorMode: root.cfg_vizColorMode,
             vizPalette: root.cfg_vizPalette,
@@ -318,6 +335,7 @@ Kirigami.Page {
             surfaceStyle: root.cfg_surfaceStyle,
             glassBlur: root.cfg_glassBlur,
             glassTint: root.cfg_glassTint,
+            compositorGlass: root.cfg_compositorGlass,
             glassRefraction: root.cfg_glassRefraction,
             glassSpecular: root.cfg_glassSpecular,
             cardShadow: root.cfg_cardShadow,
@@ -386,6 +404,10 @@ Kirigami.Page {
             userPresets: root.cfg_userPresets
         })
     readonly property var defaults: ({
+            customVisualizer: root.cfg_customVisualizerDefault,
+            customVisualizers: root.cfg_customVisualizersDefault,
+            customProgressBar: root.cfg_customProgressBarDefault,
+            customProgressBars: root.cfg_customProgressBarsDefault,
             visualizerType: root.cfg_visualizerTypeDefault,
             progressBarStyle: root.cfg_progressBarStyleDefault,
             numBars: root.cfg_numBarsDefault,
@@ -433,6 +455,7 @@ Kirigami.Page {
             orbitReach: root.cfg_orbitReachDefault,
             orbitRotate: root.cfg_orbitRotateDefault,
             orbitCoverPulse: root.cfg_orbitCoverPulseDefault,
+            vizVerticalOffset: root.cfg_vizVerticalOffsetDefault,
             vizDirection: root.cfg_vizDirectionDefault,
             vizColorMode: root.cfg_vizColorModeDefault,
             vizPalette: root.cfg_vizPaletteDefault,
@@ -443,6 +466,7 @@ Kirigami.Page {
             surfaceStyle: root.cfg_surfaceStyleDefault,
             glassBlur: root.cfg_glassBlurDefault,
             glassTint: root.cfg_glassTintDefault,
+            compositorGlass: root.cfg_compositorGlassDefault,
             glassRefraction: root.cfg_glassRefractionDefault,
             glassSpecular: root.cfg_glassSpecularDefault,
             cardShadow: root.cfg_cardShadowDefault,

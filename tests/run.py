@@ -23,6 +23,7 @@ subprocess.run(
 )
 subprocess.run([sys.executable, str(REPO / "tests/test_feeder.py")], check=True)
 subprocess.run([sys.executable, str(REPO / "tests/test_waybar.py")], check=True)
+subprocess.run([sys.executable, str(REPO / "tests/test_stereo_capture.py")], check=True)
 
 # The widget loads the compiled packages. Verify every family and the common
 # prelude with the same builder used by make, so a stale .qsb cannot pass.

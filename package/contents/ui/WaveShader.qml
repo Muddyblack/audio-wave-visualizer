@@ -23,6 +23,9 @@ Item {
     property real bass: 0
     property real mid: 0
     property real high: 0
+    property real beatPulse: 0
+    property var stereoSamples: []
+    property var previousStereo: []
     property real energy: 1
     property bool reducedMotion: false
     property string vizDirection: "up"
@@ -38,10 +41,10 @@ Item {
     property var particles: []
     property var ripples: []
     property bool edgeFade: false
-    readonly property real _timeSeconds: !reducedMotion && (visualizerType === 9 || visualizerType === 10 || visualizerType === 11 || visualizerType === 13 || visualizerType === 15) ? visualFrameTime / 1000 : 0
-    readonly property bool _usesBass: visualizerType === 11 || visualizerType === 13 || visualizerType === 15
+    readonly property real _timeSeconds: !reducedMotion && (visualizerType === 9 || visualizerType === 10 || visualizerType === 11 || visualizerType === 13 || visualizerType >= 15) ? visualFrameTime / 1000 : 0
+    readonly property bool _usesBass: visualizerType === 11 || visualizerType === 13 || visualizerType >= 15
     readonly property var _colors: WaveMath.colorStops(waveColor, vizColorMode, vizPalette, coverColor1, coverColor2, hueReactive, hueReactive && !reducedMotion ? high : 0.5, !reducedMotion && (hueReactive || vizColorMode === "rainbow") ? visualFrameTime / 1000 : 0, reducedMotion)
-    readonly property string _shaderFamily: visualizerType <= 5 ? "visualizer" : visualizerType === 11 || visualizerType === 13 ? "viz_radial" : visualizerType === 14 ? "viz_particles" : visualizerType === 15 ? "viz_ribbon" : "viz_linear"
+    readonly property string _shaderFamily: visualizerType === 16 ? "viz_terrain" : visualizerType === 17 ? "viz_tunnel" : visualizerType === 18 ? "viz_fluid" : visualizerType === 19 || visualizerType === 20 ? "viz_scope" : visualizerType <= 5 ? "visualizer" : visualizerType === 11 || visualizerType === 13 ? "viz_radial" : visualizerType === 14 ? "viz_sparkles" : visualizerType === 21 ? "viz_particles" : visualizerType === 15 ? "viz_ribbon" : "viz_linear"
     // Two Gaussians fitted to WaveCanvas' MultiEffect shadow (shadowBlur 1,
     // blurMax 8): line, edge, dot and translucent-fill profiles.
     property real glowSigma: 2.136
@@ -85,7 +88,21 @@ Item {
         effect.barCount = n;
     }
 
+    function uploadStereo() {
+        if (!_drawing || visualizerType < 19 || visualizerType > 20)
+            return;
+        const count = Math.min(32, stereoSamples.length);
+        for (let i = 0; i < count; i++) {
+            const p = stereoSamples[i];
+            const old = previousStereo[i] || p;
+            effect["scope" + i] = Qt.vector4d(p[0], p[1], old[0], old[1]);
+        }
+        effect.scopeCount = count;
+    }
+    onStereoSamplesChanged: uploadStereo()
+    onPreviousStereoChanged: uploadStereo()
     function uploadState() {
+        uploadStereo();
         if (!_drawing || visualizerType < 6)
             return;
         if (visualizerType === 6) {
@@ -94,7 +111,7 @@ Item {
                 effect["peaks" + block] = Qt.vector4d(peaks[i] || 0, peaks[i + 1] || 0, peaks[i + 2] || 0, peaks[i + 3] || 0);
             }
         }
-        const count = reducedMotion || visualizerType !== 14 ? 0 : Math.min(32, particles.length);
+        const count = reducedMotion || (visualizerType !== 14 && visualizerType !== 21) ? 0 : Math.min(32, particles.length);
         for (let i = 0; i < count; i++) {
             const p = particles[i];
             effect["particle" + i] = Qt.vector4d(p.x, p.y, p.r, p.life);
@@ -111,7 +128,7 @@ Item {
             uploadState();
     }
     onParticlesChanged: {
-        if (visualizerType === 14)
+        if (visualizerType === 14 || visualizerType === 21)
             uploadState();
     }
     onRipplesChanged: {
@@ -149,6 +166,10 @@ Item {
         objectName: "waveEffect"
         anchors.fill: parent
         visible: wave._drawing
+        vertexShader: wave.visualizerType === 21 ? Qt.resolvedUrl("../shaders/viz_particles.vert.qsb") : ""
+        mesh: GridMesh {
+            resolution: Qt.size(1, wave.visualizerType === 21 ? 125 : 1)
+        }
         fragmentShader: Qt.resolvedUrl("../shaders/" + wave._shaderFamily + ".frag.qsb")
 
         // Uniforms, matched to the shader by name.
@@ -166,8 +187,8 @@ Item {
         readonly property color waveColor: wave.waveColor
         readonly property real timeSeconds: wave._timeSeconds
         readonly property real bass: wave._usesBass ? wave.bass : 0
-        readonly property real mid: wave.visualizerType === 15 && !wave.reducedMotion ? wave.mid : 0
-        readonly property real high: wave.visualizerType === 15 ? wave.high : 0
+        readonly property real mid: wave.visualizerType >= 15 && !wave.reducedMotion ? wave.mid : 0
+        readonly property real high: wave.visualizerType >= 15 ? wave.high : 0
         readonly property real energy: wave._usesBass ? wave.energy : 1
         readonly property real reducedMotion: wave.reducedMotion ? 1 : 0
         readonly property real directionDown: wave.vizDirection === "down" ? 1 : 0
@@ -178,6 +199,40 @@ Item {
         readonly property real ribbonCurvature: wave.ribbonCurvature
         readonly property real ribbonFullness: wave.ribbonFullness
         readonly property real edgeFade: wave.edgeFade ? 1 : 0
+        readonly property real beatPulse: wave.reducedMotion ? 0 : wave.beatPulse
+        property real scopeCount: 0
+        property vector4d scope0
+        property vector4d scope1
+        property vector4d scope2
+        property vector4d scope3
+        property vector4d scope4
+        property vector4d scope5
+        property vector4d scope6
+        property vector4d scope7
+        property vector4d scope8
+        property vector4d scope9
+        property vector4d scope10
+        property vector4d scope11
+        property vector4d scope12
+        property vector4d scope13
+        property vector4d scope14
+        property vector4d scope15
+        property vector4d scope16
+        property vector4d scope17
+        property vector4d scope18
+        property vector4d scope19
+        property vector4d scope20
+        property vector4d scope21
+        property vector4d scope22
+        property vector4d scope23
+        property vector4d scope24
+        property vector4d scope25
+        property vector4d scope26
+        property vector4d scope27
+        property vector4d scope28
+        property vector4d scope29
+        property vector4d scope30
+        property vector4d scope31
         property real particleCount: 0
         property real rippleCount: 0
         readonly property color color0: wave._colors[Math.min(0, wave._colors.length - 1)]

@@ -11,12 +11,22 @@ Item {
     property int numBars: configuration.numBars
     property real maxRange: 1000.0
     property var bars: Array(numBars).fill(0)
+    readonly property var stereoSamples: stereo.samples
+    readonly property var previousStereo: stereo.previous
+    readonly property string stereoStatus: stereo.status
+    StereoCapture {
+        id: stereo
+        commandSourceComponent: vis.commandSourceComponent
+        runtimeDirectory: vis.resolvedRunDir
+        framerate: vis.configuration.framerate
+        active: vis.active && vis.plasmoidVisible && [19, 20].includes(vis.configuration.visualizerType ?? 0)
+    }
     property real frameTimeMs: 0
     // Settled audible tones still drive decorative motion. Keep the original
     // clock suppression for default styles and for settled silence.
     readonly property bool motionClockRequired: {
         const style = configuration.visualizerType ?? 0;
-        return style === 6 || (!(configuration.reducedMotion ?? false) && ([9, 10, 11, 13, 14, 15].includes(style) || configuration.vizColorMode === "rainbow" || (configuration.hueReactive ?? false)));
+        return style === 6 || (!(configuration.reducedMotion ?? false) && (configuration.customVisualizer || configuration.customProgressBar || [9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21].includes(style) || configuration.vizColorMode === "rainbow" || (configuration.hueReactive ?? false)));
     }
     // Normalized source energy, before display smoothing, mirroring or taper.
     readonly property real bass: analysis.bass

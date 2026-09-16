@@ -26,10 +26,10 @@
               root=$out/share/plasma/plasmoids/${metadata.KPlugin.Id}
               mkdir -p "$root"
               cp -r . "$root/"
-              for script in feeder.sh doctor.sh; do
+              for script in feeder.sh doctor.sh stereo_capture.sh; do
                 chmod +x "$root/contents/code/$script"
                 wrapProgram "$root/contents/code/$script" \
-                  --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.cava pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ]}
+                  --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.cava pkgs.python3 pkgs.pipewire pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ]}
               done
               runHook postInstall
             '';
@@ -50,7 +50,7 @@
             type = "app";
             program = "${pkgs.writeShellApplication {
               name = "view-hyprland";
-              runtimeInputs = [ pkgs.quickshell pkgs.cava pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ];
+              runtimeInputs = [ pkgs.quickshell pkgs.cava pkgs.python3 pkgs.pipewire pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ];
               text = ''
                 exec bash "$PWD/hyprland/run.sh" "$@"
               '';

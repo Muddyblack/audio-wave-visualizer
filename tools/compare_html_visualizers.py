@@ -318,7 +318,9 @@ def browser_capture(args, output):
         ]
         if args.browser_no_sandbox:
             command.insert(1, "--no-sandbox")
-        result = subprocess.run(command, check=False, capture_output=True, text=True, timeout=40)
+        result = subprocess.run(
+            command, check=False, capture_output=True, text=True, timeout=40
+        )
         (output / "chromium.log").write_text(result.stderr)
         if result.returncode:
             raise RuntimeError(
@@ -498,7 +500,8 @@ def main():
             env["QSG_RHI_BACKEND"] = args.backend
         result = subprocess.run(
             [runner, "-input", str(test)],
-            check=False, env=env,
+            check=False,
+            env=env,
             capture_output=True,
             text=True,
             timeout=120,

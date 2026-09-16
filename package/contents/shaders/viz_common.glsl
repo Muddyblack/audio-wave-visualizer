@@ -68,6 +68,42 @@ layout(std140, binding = 0) uniform buf {
     float particleCount;
     float rippleCount;
     float edgeFade;
+    float beatPulse;
+#ifdef VIZ_SCOPE
+    float scopeCount;
+    vec4 scope0;
+    vec4 scope1;
+    vec4 scope2;
+    vec4 scope3;
+    vec4 scope4;
+    vec4 scope5;
+    vec4 scope6;
+    vec4 scope7;
+    vec4 scope8;
+    vec4 scope9;
+    vec4 scope10;
+    vec4 scope11;
+    vec4 scope12;
+    vec4 scope13;
+    vec4 scope14;
+    vec4 scope15;
+    vec4 scope16;
+    vec4 scope17;
+    vec4 scope18;
+    vec4 scope19;
+    vec4 scope20;
+    vec4 scope21;
+    vec4 scope22;
+    vec4 scope23;
+    vec4 scope24;
+    vec4 scope25;
+    vec4 scope26;
+    vec4 scope27;
+    vec4 scope28;
+    vec4 scope29;
+    vec4 scope30;
+    vec4 scope31;
+#endif
     vec4 color0;
     vec4 color1;
     vec4 color2;
@@ -108,7 +144,7 @@ layout(std140, binding = 0) uniform buf {
     vec4 peaks30;
     vec4 peaks31;
 #endif
-#ifdef VIZ_PARTICLES
+#if defined(VIZ_PARTICLES) || defined(VIZ_SPARKLES)
     vec4 particle0;
     vec4 particle1;
     vec4 particle2;
@@ -312,7 +348,7 @@ vec4 peakBlock(int b)
 
 #endif
 
-#ifdef VIZ_PARTICLES
+#if defined(VIZ_PARTICLES) || defined(VIZ_SPARKLES)
 vec4 particleAt(int b)
 {
     if (b < 16) {

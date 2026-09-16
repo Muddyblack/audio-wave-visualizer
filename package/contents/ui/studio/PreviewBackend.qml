@@ -21,6 +21,9 @@ Item {
     property real mid: 0
     property real high: 0
     property bool attack: false
+    property var stereoSamples: []
+    property var previousStereo: []
+    property string stereoStatus: ""
 
     function frame(now) {
         const t = now / 1000;
@@ -33,6 +36,10 @@ Item {
             const low = p < 0.3 ? kick * 0.35 * (1 - p / 0.3) : 0;
             out[i] = maxRange * Math.min(1, shape * wobble + low);
         }
+        previousStereo = stereoSamples;
+        stereoSamples = Array.from({
+            length: 32
+        }, (_, i) => [Math.sin(i / 31 * Math.PI * 4) * .75, Math.sin(i / 31 * Math.PI * 4 + Math.sin(t) * 1.4) * .75]);
         bars = out;
         frameTimeMs = now;
         bass = kick;

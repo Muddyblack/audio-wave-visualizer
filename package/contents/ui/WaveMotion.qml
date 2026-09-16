@@ -18,6 +18,8 @@ QtObject {
     property bool attack: false
     property real energy: 1
     property int randomSeed: 1
+    property var _previousLevels: []
+    property real beatPulse: 0
     property var peaks: []
     property var particles: []
     property var ripples: []
@@ -32,6 +34,8 @@ QtObject {
     }
 
     function reset() {
+        beatPulse = 0;
+        _previousLevels = [];
         if (peaks.length)
             peaks = [];
         if (particles.length)
@@ -51,7 +55,9 @@ QtObject {
         _lastFrame = frameTime;
         const n = WaveMath.count(numBars, width, style);
         const levels = WaveMath.levels(bars, n, maxRange);
-        if (style === 6) {
+        if (style === 17) {
+            beatPulse = reducedMotion ? 0 : attack ? 1 : beatPulse * Math.exp(-step / 9);
+        } else if (style === 6) {
             peaks = levels.map((value, i) => Math.max(value, (peaks[i] || 0) - 0.01 * step));
         } else if (style === 14 && !reducedMotion) {
             const next = [];
@@ -82,6 +88,45 @@ QtObject {
                     });
                 }
             }
+            if (particles.length || next.length)
+                particles = next;
+        } else if (style === 21 && !reducedMotion) {
+            const next = [];
+            const slot = width / n;
+            for (const p of particles) {
+                const life = p.life - 0.025 * step;
+                const turbulence = Math.sin(p.y * .055 + frameTime * .002 + p.x * .023) * .035;
+                const vx = ((p.vx || 0) + turbulence * step) * Math.pow(.992, step);
+                const vy = p.vy + .018 * step;
+                const x = p.x + vx * step, y = p.y + vy * step;
+                if (life > 0 && x >= -8 && x <= width + 8 && y >= -8 && y <= height + 8)
+                    next.push({
+                        x: x,
+                        y: y,
+                        vx: vx,
+                        vy: vy,
+                        r: p.r,
+                        life: life
+                    });
+            }
+            for (let i = 0; i < n && next.length < 32; i++) {
+                const rise = Math.max(0, levels[i] - (_previousLevels[i] || 0));
+                if (levels[i] > .12 && random() < 1 - Math.pow(1 - Math.min(.8, levels[i] * .07 + rise * .8 + (attack ? .2 : 0)), step)) {
+                    const x = (i + 0.5) * slot + (random() - 0.5) * slot;
+                    const y = height * .82 - levels[i] * height * .55;
+                    const vy = -(0.2 + random() * 0.8) * (1 + levels[i]);
+                    const r = 0.6 + random() * 1.4 * (lineWidth / 1.8);
+                    next.push({
+                        x: x,
+                        vx: (random() - .5) * (1 + levels[i] * 2),
+                        y: y + vy * step,
+                        vy: vy,
+                        r: r,
+                        life: Math.max(0, 1 - 0.025 * step)
+                    });
+                }
+            }
+            _previousLevels = levels;
             if (particles.length || next.length)
                 particles = next;
         } else if (style === 15 && !reducedMotion) {

@@ -6,7 +6,7 @@ function count(requested, width, style) {
     const n = Math.max(0, Math.min(128, Math.floor(requested)));
     if (style < 6)
         return n;
-    const dense = style === 7 || style === 12 || style === 14;
+    const dense = style === 7 || style === 12 || style === 14 || style === 21;
     return Math.max(6, Math.min(n, Math.floor(width / (dense ? 4 : 2.5))));
 }
 

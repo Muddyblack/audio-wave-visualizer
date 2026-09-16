@@ -44,6 +44,8 @@ Item {
                 high: preview.studio.backend.high
                 waveColor: preview.studio.accent
                 textColor: Theme.text
+                stereoSamples: preview.studio.backend.stereoSamples ?? []
+                previousStereo: preview.studio.backend.previousStereo ?? []
                 visualizerType: preview.value
                 lineWidth: preview.draft.lineWidth ?? 1.8
                 fillWave: preview.draft.fillWave ?? false

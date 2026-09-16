@@ -36,6 +36,49 @@ TestCase {
         subject.frameTime += 100;
         compare(subject.peaks, []);
     }
+    function test_originalSparklesKeepTheirVerticalDrift() {
+        subject.style = 14;
+        subject.bars = Array(24).fill(0);
+        subject.frameTime = 1000;
+        subject.particles = [
+            {
+                x: 80,
+                y: 40,
+                vy: -1,
+                r: 1,
+                life: .9
+            }
+        ];
+        subject.frameTime += 1000 / 60;
+        compare(subject.particles.length, 1);
+        const p = subject.particles[0];
+        fuzzyCompare(p.x, 80, 1e-6);
+        fuzzyCompare(p.y, 39, 1e-6);
+        fuzzyCompare(p.vy, -1, 1e-6);
+        fuzzyCompare(p.life, .875, 1e-6);
+        verify(p.vx === undefined, "Original Sparkles must not acquire gravity or lateral turbulence");
+    }
+    function test_gravitySparksAreASeparateStyle() {
+        subject.style = 21;
+        subject.bars = Array(24).fill(0);
+        subject.frameTime = 1000;
+        subject.particles = [
+            {
+                x: 80,
+                y: 40,
+                vx: 1,
+                vy: -1,
+                r: 1,
+                life: .9
+            }
+        ];
+        subject.frameTime += 1000 / 60;
+        compare(subject.particles.length, 1);
+        verify(subject.particles[0].x > 80);
+        verify(subject.particles[0].vy > -1);
+        subject.style = 14;
+        compare(subject.particles.length, 0, "Switching variants clears their different physics states");
+    }
     function test_particlesStayBoundedAndDeterministic() {
         subject.style = 14;
         const other = createTemporaryObject(motionComponent, this, {

@@ -1,3 +1,4 @@
+pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Effects
 
@@ -8,6 +9,9 @@ Item {
     property Item sourceItem: null
     property real radius: 16
     property real strength: 0.85
+    property real refraction: 0.5
+    property bool specular: true
+    property point lightPoint: Qt.point(width * 0.22, -height * 0.1)
     readonly property bool safeSource: {
         if (!sourceItem)
             return false;
@@ -34,7 +38,7 @@ Item {
 
     Loader {
         anchors.fill: parent
-        active: root.strength > 0 && root.available && root.visible && root.width > 0 && root.height > 0
+        active: (root.strength > 0 || root.refraction > 0) && root.available && root.visible && root.width > 0 && root.height > 0
         sourceComponent: Item {
             ShaderEffectSource {
                 id: wallpaperTexture
@@ -47,25 +51,35 @@ Item {
                 hideSource: false
                 visible: false
             }
-            Rectangle {
-                id: mask
-                anchors.fill: parent
-                radius: root.radius
-                color: "white"
-                antialiasing: true
-                layer.enabled: true
-                visible: false
-            }
             MultiEffect {
+                id: blurred
+                visible: false
                 objectName: "wallpaperBlurEffect"
                 anchors.fill: parent
                 source: wallpaperTexture
-                blurEnabled: true
+                blurEnabled: root.strength > 0
                 blurMax: 48
                 blur: Math.max(0, Math.min(1, root.strength))
                 autoPaddingEnabled: false
-                maskEnabled: true
-                maskSource: mask
+                maskEnabled: false
+            }
+            ShaderEffectSource {
+                id: blurredTexture
+                sourceItem: blurred
+                hideSource: true
+                live: true
+                visible: false
+            }
+            ShaderEffect {
+                objectName: "glassRefractionEffect"
+                anchors.fill: parent
+                property var source: blurredTexture
+                property size canvasSize: Qt.size(width, height)
+                property real radius: root.radius
+                property real refraction: Math.max(0, Math.min(1, root.refraction))
+                property real specular: root.specular ? 1 : 0
+                property point lightPoint: root.lightPoint
+                fragmentShader: Qt.resolvedUrl("../shaders/glass_refraction.frag.qsb")
             }
         }
     }

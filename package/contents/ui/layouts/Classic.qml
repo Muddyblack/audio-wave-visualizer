@@ -12,7 +12,7 @@ Item {
     implicitHeight: view.configuration.showMpris ? 104 : 84
     // Progress style 10 draws a ring around the cover instead of a bar; the
     // cover shrinks by the ring's 6 px, and without a cover style 0 is used.
-    readonly property bool ringMode: (view.configuration.progressBarStyle ?? 0) === 10
+    readonly property bool ringMode: !view.configuration.customProgressBar && (view.configuration.progressBarStyle ?? 0) === 10
     // The HTML's scaled(72, available height); unchanged at the default 100 %.
     readonly property real artLimit: Math.min(ringMode ? Math.min(72, height - (view.configuration.showBg ? 4 : 0) - (view.hasPlayer ? 30 : 0)) : 72, 72 * (view.configuration.artScale ?? 100) / 100) - (ringMode ? 6 : 0)
 
@@ -112,6 +112,7 @@ Item {
             }
 
             ProgressBar {
+                customProgressBar: root.view.configuration.customProgressBar ?? ""
                 objectName: "progressBar"
                 Layout.fillWidth: true
                 Layout.preferredHeight: implicitHeight

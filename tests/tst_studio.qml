@@ -74,6 +74,46 @@ TestCase {
         verify(Schema.matchesPreset(defaults, Object.assign({}, defaults), Schema.PRESETS[0]), "Classic is the defaults");
     }
 
+    function test_customStylePickers_data() {
+        return [
+            {
+                tag: "visualizer",
+                tab: "viz",
+                key: "customVisualizer",
+                file: "PulseBars.qml",
+                loader: "customVisualizerLoader"
+            },
+            {
+                tag: "progress",
+                tab: "controls",
+                key: "customProgressBar",
+                file: "GradientProgress.qml",
+                loader: "customProgressBarLoader"
+            }
+        ];
+    }
+    function test_customStylePickers(data) {
+        studio.currentTabIndex = tabIndex(data.tab);
+        const picker = findChild(studio, "customStylePicker_" + data.key);
+        verify(picker !== null);
+        verify(!picker.expanded);
+        verify(picker.implicitHeight <= 32, "Unused custom styles should occupy one compact row");
+        const url = Qt.resolvedUrl("../package/contents/examples/" + data.file).toString();
+        picker.importFile(url);
+        compare(studio.draft[data.key], url);
+        verify(picker.expanded);
+        tryVerify(() => {
+            const loader = findChild(picker, data.loader);
+            return loader && loader.status === Loader.Ready;
+        });
+        picker.select("");
+        compare(studio.draft[data.key], "");
+        compare(picker.library.length, 1);
+        picker.select(url);
+        picker.removeSelected();
+        compare(picker.library.length, 0);
+    }
+
     function test_pickerValuesMapToStoredKeys() {
         const layout = Schema.SECTIONS.find(s => s.title === "Arrangement").rows[0];
         studio.update(Schema.rowPatch(layout, "compact"));

@@ -103,7 +103,8 @@ Window {{
         start = time.monotonic()
         result = subprocess.run(
             ["qml", str(config)],
-            check=False, env=env,
+            check=False,
+            env=env,
             capture_output=True,
             text=True,
             timeout=args.seconds + 15,

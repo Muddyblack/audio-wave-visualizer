@@ -44,9 +44,18 @@ settings studio for building your own look.
 
 ## Features
 
-**Visuals** — 16 visualizers from smooth waves and bars to ribbons, particles and
+**Visuals** — 22 visualizers from smooth waves and bars to ribbons, particles and
 Pulse Orb; 6 palettes with reactive hues, glow and bloom; system, custom or
-cover-driven accents.
+cover-driven accents. Cover colour mode builds a Material You-inspired three-colour
+album gradient from dominant, vibrant, muted and accent tones on both Plasma and
+Quickshell. Single-colour and grayscale covers get distinct tonal stops; reactive
+hues follow the existing audio controls without resampling artwork each frame.
+The portable extractor uses RGB quantization and HSL tones, not Google's HCT engine.
+
+New styles include Neon Terrain, Audio Tunnel, Liquid Plasma, CRT Oscilloscope,
+Stereo Lissajous, and Gravity Sparks. The original **Sparkles** design remains
+unchanged at style 14; Gravity Sparks is a separate style (21).
+See [shader effects and stereo capture](docs/shader-effects.md) for host requirements.
 
 **Layouts** — Classic, mirrored, inline, hero, stacked, strip, poster and Orbit
 cards, plus panel pills/icons. Album-cover backgrounds, glass/liquid styling,
@@ -56,6 +65,10 @@ and a separate cover lightbox.
 **Presets & studio** — 28 built-in presets plus a live studio with search,
 visual pickers and your own saved looks. Export a look as JSON from the HTML
 demo and import it into the widget, or go the other way.
+
+**Custom styles** — Import trusted local QML visualizers and progress bars,
+preview them, and switch between saved styles. Includes
+[starter styles and an API guide](docs/custom-visualizers.md).
 
 **Playback** — Play/pause, skip, seeking, supported shuffle/repeat and player
 switching. Optional album/details and scrolling titles. Opt-in synced lyrics,
@@ -105,7 +118,7 @@ QML; it has a separate browser renderer and uses sample playback.
 
 Run the standalone desktop widget alongside Caelestia. Both frontends render
 the same `VisualizerView.qml`, layouts, artwork, transport controls,
-16 visualizer styles and 11 progress styles.
+22 visualizer styles and 11 progress styles.
 Requires `qs` (Quickshell), `cava`,
 and the shell utilities listed above; KDE Plasma is not required.
 

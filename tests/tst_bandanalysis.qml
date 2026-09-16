@@ -20,6 +20,8 @@ TestCase {
                 property real noiseReduction: 0.77
                 property string inputMethod: "auto"
                 property int visualizerType: 0
+                property string customVisualizer: ""
+                property string customProgressBar: ""
                 property bool reducedMotion: false
                 property string vizColorMode: "solid"
                 property bool hueReactive: false
@@ -103,6 +105,28 @@ TestCase {
         subject.bars = [0, 0, 0, 0];
         subject.handleData(subject.bars, 2300);
         compare(subject.frameTimeMs, 2200, "Settled silence never advances decoration");
+    }
+
+    function test_customStyleUsesSharedClockAndRespectsReducedMotion_data() {
+        return ["customVisualizer", "customProgressBar"].map(key => ({
+                    tag: key,
+                    key: key
+                }));
+    }
+    function test_customStyleUsesSharedClockAndRespectsReducedMotion(data) {
+        subject.configuration[data.key] = "file:///tmp/MyStyle.qml";
+        subject.bars = [500, 500, 500, 500];
+        subject.handleData(subject.bars, 1000);
+        compare(subject.frameTimeMs, 1000);
+        subject.handleData(subject.bars, 1100);
+        compare(subject.frameTimeMs, 1100);
+        subject.configuration.reducedMotion = true;
+        subject.handleData(subject.bars, 1200);
+        compare(subject.frameTimeMs, 1100);
+        subject.configuration.reducedMotion = false;
+        subject.bars = [0, 0, 0, 0];
+        subject.handleData(subject.bars, 1300);
+        compare(subject.frameTimeMs, 1100, "Settled silence must not drive a custom animation");
     }
 
     function test_initialStateAndFirstFramePrimesEnvelope() {

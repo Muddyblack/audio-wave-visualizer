@@ -8,9 +8,10 @@ ProgressBar {
     required property var view
     property bool artShown: false
     property bool hideTimes: false
-    readonly property bool ringMode: (view.configuration.progressBarStyle ?? 0) === 10
+    readonly property bool ringMode: !view.configuration.customProgressBar && (view.configuration.progressBarStyle ?? 0) === 10
 
     objectName: "progressBar"
+    customProgressBar: view.configuration.customProgressBar ?? ""
     player: view.player
     isPlaying: view.isPlaying
     hasAudio: view.visualizer.hasAudio

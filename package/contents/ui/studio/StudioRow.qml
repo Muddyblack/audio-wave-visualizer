@@ -15,7 +15,7 @@ Item {
     readonly property var rowData: section.rows[rowIndex]
     readonly property var value: Schema.rowValue(rowData, studio.draft)
     readonly property bool disabledRow: !!rowData.disabled && rowData.disabled(studio.draft)
-    readonly property bool hasHead: !!rowData.label
+    readonly property bool hasHead: !!rowData.label && rowData.type !== "customStyle"
     readonly property real controlWidth: control.item ? control.item.implicitWidth : 0
     readonly property bool stacked: !!rowData.full || width - controlWidth - 18 < 190
 
@@ -88,6 +88,7 @@ Item {
                     note: noteComponent,
                     presets: presetsComponent,
                     userPresets: userPresetsComponent,
+                    customStyle: customStyleComponent,
                     anchor: anchorComponent,
                     diagnostics: diagnosticsComponent
                 })[row.rowData.type] ?? null
@@ -184,6 +185,13 @@ Item {
     Component {
         id: presetsComponent
         PresetPicker {
+            studio: row.studio
+        }
+    }
+    Component {
+        id: customStyleComponent
+        CustomStylePicker {
+            progressBar: row.rowData.id === "customProgressBar"
             studio: row.studio
         }
     }

@@ -801,10 +801,14 @@ TestCase {
         verify(Qt.colorEqual(loader.item.waveColor, "lime"));
         verify(Qt.colorEqual(loader.item.coverColor1, "red"));
         verify(Qt.colorEqual(loader.item.coverColor2, "blue"));
+        subject.configuration = Object.assign({}, subject.configuration, {
+            accentFromArt: false
+        });
+        verify(Qt.colorEqual(loader.item.waveColor, "lime"), "Cover mode uses the album accent independently of accentFromArt");
         subject.coverPalette = null;
         player.artUrl = Qt.resolvedUrl("fixtures/cover-red-blue.ppm").toString();
-        tryVerify(() => subject.coverColor1.r > 0.9 && subject.coverColor1.g < 0.1);
-        tryVerify(() => subject.coverColor2.b > 0.9);
+        tryVerify(() => subject.coverColor1.r > subject.coverColor1.g + 0.4);
+        tryVerify(() => subject.coverColor2.b > subject.coverColor2.r + 0.3);
         subject.player = null;
         verify(Qt.colorEqual(loader.item.waveColor, subject.baseWaveColor), "No stale cover accent after player removal");
     }

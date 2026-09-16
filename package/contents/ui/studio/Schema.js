@@ -8,7 +8,7 @@
 
 var TABS = Catalog.StudioCatalog.tabs;
 
-var VIZ = ["Smooth Wave", "Rounded Bars", "Mirror Bars", "Tech Line", "Floating Dots", "Floating Dots Bold", "Peak Bars", "LED Meter", "Mountain", "Oscilloscope", "Ribbon", "Radial Burst", "Pixel Matrix", "Pulse Orb", "Sparkles", "Silk Ribbon"];
+var VIZ = ["Smooth Wave", "Rounded Bars", "Mirror Bars", "Tech Line", "Floating Dots", "Floating Dots Bold", "Peak Bars", "LED Meter", "Mountain", "Oscilloscope", "Ribbon", "Radial Burst", "Pixel Matrix", "Pulse Orb", "Sparkles", "Silk Ribbon", "Neon Terrain", "Audio Tunnel", "Liquid Plasma", "CRT Oscilloscope", "Stereo Lissajous", "Gravity Sparks"];
 var PBS = ["Glassy Sleek", "Ultra Minimal", "Glowing Pulse", "Bold Pill", "Waveform", "Squiggle", "Segmented", "Dotted", "Capsule", "Time only", "Cover ring"];
 var ORBITS = ["Bars", "Wave", "Dots", "Ribbon", "Sparks"];
 var PALETTES = {
@@ -81,9 +81,11 @@ var SECTIONS = [
         { k: "orbitCoverPulse", type: "switch", label: "Cover breathes with the bass" }
     ], function (s) { return s.layoutMode === "orbit"; }),
     tab("viz", "Style", [
+        { id: "customVisualizers", type: "customStyle", full: true, label: "Custom visualizers", desc: "Import a trusted QML style and use it in the waveform area. Orbit and lyrics-only layouts use their own visuals." },
         { k: "visualizerType", type: "tiles", full: true, label: "Visualizer", desc: "Previews react to your colour, line and bloom settings.", tw: 104,
           when: function (s) { return s.layoutMode !== "orbit"; },
           opts: VIZ.map(function (l, i) { return { v: i, label: l, pv: "viz" }; }) },
+        { k: "vizVerticalOffset", type: "range", label: "Vertical offset", desc: "Move the visualizer up (negative) or down (positive). Zero restores its original position; edges stay inside the visualizer area.", min: -1, max: 1, step: .01, fmt: "pct", when: function (s) { return ["orbit", "lyrics", "pillicon"].indexOf(s.layoutMode) === -1; } },
         { k: "vizDirection", type: "seg", label: "Direction", desc: "Bars rise from the bottom today — or let them hang from the top edge.", opts: [["up", "Rise from bottom"], ["down", "Hang from top"]],
           when: function (s) { return [1, 6, 7, 8].indexOf(s.visualizerType) !== -1 && s.layoutMode !== "orbit"; } },
         { k: "ribbonCurvature", type: "range", label: "Ribbon curvature", desc: "How far the mids bend the ribbon.", min: .5, max: 1.25, step: .05, fmt: "pct", when: function (s) { return s.visualizerType === 15; } },
@@ -92,6 +94,7 @@ var SECTIONS = [
         { k: "fillWave", type: "switch", label: "Gradient fill", desc: "Transparent fill under the wave and bars." }
     ]),
     tab("controls", "Progress bar", [
+        { id: "customProgressBar", type: "customStyle", full: true, label: "Custom progress bars", desc: "Import a trusted QML progress bar with playback timing and seeking." },
         { k: "progressBarStyle", type: "tiles", full: true, label: "Style", desc: "Click anywhere on it in the widget to seek.", tw: 104,
           opts: PBS.map(function (l, i) { return { v: i, label: l, pv: "progress" }; }) },
         { k: "showTimes", type: "switch", label: "Time labels", desc: "Elapsed and total time under the bar." },
@@ -209,6 +212,7 @@ var SECTIONS = [
           opts: [["color", "Tint"], ["art", "Cover"], ["glass", "Glass"], ["liquid", "Liquid"], ["solid", "Solid"], ["atmosphere", "Atmosphere"]].map(function (o) { return { v: o[0], label: o[1], pv: "material" }; }) },
         { id: "cardNote", type: "note", full: true, note: "card", when: function (s) { return s.showBg; } },
         { k: "bgColor", type: "color", label: "Tint colour", swatches: BGSWATCHES, when: function (s) { return s.showBg && surfaceValue(s) === "color"; } },
+        { k: "compositorGlass", type: "switch", label: "Compositor glass", desc: "Requests the Plasma translucent background; Hyprland needs the supplied layer blur rule.", when: function (s) { return s.showBg && ["glass", "liquid"].includes(s.surfaceStyle); } },
         { k: "glassBlur", type: "range", label: "Wallpaper blur", desc: "Choose how frosted the glass looks. 0% turns blur off; text and artwork stay sharp.", min: 0, max: 1, step: .01, fmt: "pct", when: function (s) { return s.showBg && !s.artBg && ["glass", "liquid"].indexOf(s.surfaceStyle) !== -1; } },
         { k: "artBgBlur", type: "range", label: "Cover blur", desc: "0 keeps the art crisp.", min: 0, max: 1, step: .02, fmt: "pct", when: function (s) { return s.showBg && s.artBg; } },
         { k: "artBgDim", type: "range", label: "Cover darkness", desc: "Keeps text readable on bright covers.", min: 0, max: 1, step: .02, fmt: "pct", when: function (s) { return s.showBg && s.artBg; } },
@@ -218,6 +222,7 @@ var SECTIONS = [
     ]),
     tab("card", "Liquid glass", [
         { k: "glassTint", type: "seg", label: "Tint", opts: [["clear", "Clear"], ["frost", "Frost"], ["cover", "Cover colour"]] },
+        { k: "glassRefraction", type: "range", label: "Refraction", desc: "Bends the sampled wallpaper with a subtle colour fringe.", min: 0, max: 1, step: .05, fmt: "pct" },
         { k: "glassSpecular", type: "switch", label: "Light follows pointer", desc: "A soft specular highlight tracks the mouse." }
     ], function (s) { return s.showBg && surfaceValue(s) === "liquid"; }),
     tab("card", "Depth & finish", [
@@ -327,6 +332,8 @@ function rowPatch(row, value, state) {
         return row.set(value, state);
     var patch = {};
     patch[row.k] = value;
+    if (row.k === "visualizerType") patch.customVisualizer = "";
+    if (row.k === "progressBarStyle") patch.customProgressBar = "";
     return patch;
 }
 function optionLabels(row) {
@@ -394,7 +401,7 @@ function applyPreset(defaults, current, settings, keepColors) {
         next[key] = settings[key];
     if (keepColors)
         COLOR_KEYS.forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
-    PLACEMENT_KEYS.forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
+    PLACEMENT_KEYS.concat(["customVisualizers", "customProgressBars"]).forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
     return next;
 }
 
@@ -410,7 +417,7 @@ function same(a, b) {
 function changedKeys(defaults, current) {
     var out = {};
     for (var key in current) {
-        if (key === "userPresets" || PLACEMENT_KEYS.indexOf(key) !== -1 || defaults[key] === undefined)
+        if (key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || PLACEMENT_KEYS.indexOf(key) !== -1 || defaults[key] === undefined)
             continue;
         if (!same(current[key], defaults[key]))
             out[key] = current[key];
@@ -421,7 +428,7 @@ function changedKeys(defaults, current) {
 function matchesPreset(defaults, current, p) {
     var target = applyPreset(defaults, current, p.s, false);
     for (var key in defaults) {
-        if (key === "userPresets" || PLACEMENT_KEYS.indexOf(key) !== -1)
+        if (key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || PLACEMENT_KEYS.indexOf(key) !== -1)
             continue;
         if (current[key] !== undefined && !same(current[key], target[key]))
             return false;

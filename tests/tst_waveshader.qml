@@ -148,10 +148,20 @@ TestCase {
         compare(canvas.bars, waveform.bars);
     }
 
+    function test_sparklesRetainOriginalRenderer() {
+        subject.visualizerType = 14;
+        verify(effect.fragmentShader.toString().endsWith("/viz_sparkles.frag.qsb"));
+        compare(effect.vertexShader.toString(), "");
+        compare(effect.mesh.resolution, Qt.size(1, 1));
+        subject.visualizerType = 21;
+        verify(effect.fragmentShader.toString().endsWith("/viz_particles.frag.qsb"));
+        verify(effect.vertexShader.toString().endsWith("/viz_particles.vert.qsb"));
+        compare(effect.mesh.resolution, Qt.size(1, 125));
+    }
     function test_shaderFamilies_data() {
         const rows = [];
-        for (let style = 0; style < 16; style++) {
-            const family = style < 6 ? "visualizer" : style === 11 || style === 13 ? "viz_radial" : style === 14 ? "viz_particles" : style === 15 ? "viz_ribbon" : "viz_linear";
+        for (let style = 0; style < 22; style++) {
+            const family = style === 16 ? "viz_terrain" : style === 17 ? "viz_tunnel" : style === 18 ? "viz_fluid" : style === 19 || style === 20 ? "viz_scope" : style < 6 ? "visualizer" : style === 11 || style === 13 ? "viz_radial" : style === 14 ? "viz_sparkles" : style === 21 ? "viz_particles" : style === 15 ? "viz_ribbon" : "viz_linear";
             rows.push({
                 tag: "style-" + style,
                 style: style,

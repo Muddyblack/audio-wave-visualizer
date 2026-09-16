@@ -9,10 +9,14 @@ vec4 ribbonPoint(int i, int steps, float W, float H, int n)
     float envelope = pow(max(0.0, sin(p * 3.14159265359)), 0.7);
     float a = interpolatedLevel(x, W, n);
     float bend = reducedMotion > 0.5 ? 0.4 : mid;
-    float y = c + sin(p * 3.14159265359 * 1.6 * ribbonCurvature + timeSeconds * 0.7)
-        * c * 0.32 * bend * ribbonCurvature * energy;
-    float thickness = (1.2 + (bass * 0.55 + a * 0.8) * c * 0.9 * ribbonFullness)
+    // Match WaveDraw: readable at panel height, with compressed quiet audio.
+    float response = sqrt(clamp(bass * 0.55 + a * 0.8, 0.0, 1.0));
+    float thickness = min(H * 0.72, max(3.0, H * (0.18 + 0.5 * response)) * ribbonFullness)
         * envelope * (energy * 0.92 + 0.08);
+    float bendResponse = 0.25 + 0.75 * sqrt(clamp(bend, 0.0, 1.0));
+    float travel = min(c * 0.32 * bendResponse * ribbonCurvature * energy,
+                      max(0.0, c - thickness * 0.5 - 1.0));
+    float y = c + sin(p * 3.14159265359 * 1.6 * ribbonCurvature + timeSeconds * 0.7) * travel;
     return vec4(x, y, thickness, a);
 }
 

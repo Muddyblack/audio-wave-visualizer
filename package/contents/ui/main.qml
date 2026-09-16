@@ -51,7 +51,8 @@ PlasmoidItem {
                 return item.wallpaper;
         return null;
     }
-    Plasmoid.backgroundHints: "NoBackground"
+    // Let Plasma's theme own native blur/contrast when explicitly selected.
+    Plasmoid.backgroundHints: (root.effectiveConfiguration.compositorGlass ?? false) && root.effectiveConfiguration.showBg && ["glass", "liquid"].includes(root.effectiveConfiguration.surfaceStyle) ? "TranslucentBackground" : "NoBackground"
 
     Mpris.Mpris2Model {
         id: mpris2Model
@@ -130,27 +131,6 @@ PlasmoidItem {
             accentColor: Kirigami.Theme.highlightColor
             systemTextColor: Kirigami.Theme.textColor
             defaultFontFamily: Kirigami.Theme.defaultFont.family
-            coverPalette: artColors
-            Image {
-                id: paletteImage
-                source: (view.configuration.accentFromArt || view.configuration.vizColorMode === "cover") ? view.artUrl : ""
-                sourceSize: Qt.size(64, 64)
-                width: 64
-                height: 64
-                visible: false
-                asynchronous: true
-                onStatusChanged: {
-                    if (status === Image.Ready)
-                        artColors.update();
-                }
-            }
-            Kirigami.ImageColors {
-                id: artColors
-                source: paletteImage.status === Image.Ready ? paletteImage : null
-                fallbackDominant: view.baseWaveColor
-                fallbackDominantContrasting: view.baseWaveColor
-                fallbackHighlight: view.baseWaveColor
-            }
             // Hover details (tooltip or drawer) in a borderless popup below the card.
             PlasmaCore.Dialog {
                 id: detailsDialog

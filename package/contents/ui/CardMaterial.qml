@@ -5,7 +5,8 @@ import "../code/GrainDraw.js" as GrainDraw
 // atmosphere, plus the edge line and optional edge highlight. It repaints only
 // when size, settings, cover colours or the liquid pointer light change — never
 // per audio frame. CardSurface separately blurs a supplied wallpaper item;
-// this layer draws only the tint and highlights. Refraction is not simulated.
+// this layer draws the tint and fallback highlights. BackdropBlur refracts
+// the captured wallpaper and uses specularPoint for its Fresnel lighting.
 Canvas {
     id: card
     objectName: "cardMaterial"

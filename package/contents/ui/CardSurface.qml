@@ -57,10 +57,13 @@ Item {
 
     Loader {
         anchors.fill: parent
-        active: (root.configuration.glassBlur ?? 0.85) > 0 && root.configuration.showBg && !root.coverActive && (root.material === "glass" || root.material === "liquid") && !!root.backdropSource && GraphicsInfo.api !== GraphicsInfo.Software
+        active: ((root.configuration.glassBlur ?? 0.85) > 0 || (root.configuration.glassRefraction ?? 0) > 0) && root.configuration.showBg && !root.coverActive && (root.material === "glass" || root.material === "liquid") && !!root.backdropSource && GraphicsInfo.api !== GraphicsInfo.Software
         opacity: root.configuration.artBgTransparency
         sourceComponent: BackdropBlur {
             strength: root.configuration.glassBlur ?? 0.85
+            refraction: root.material === "liquid" ? (root.configuration.glassRefraction ?? 0.5) : 0
+            specular: root.configuration.glassSpecular ?? true
+            lightPoint: materialLayer.item?.specularPoint ?? Qt.point(width * 0.22, -height * 0.1)
             sourceItem: root.backdropSource
             radius: root.cardRadius
         }
@@ -259,6 +262,7 @@ Item {
     }
 
     Loader {
+        id: materialLayer
         anchors.fill: parent
         active: root.configuration.showBg && (root.material !== "" || (root.configuration.edgeHighlight ?? false))
         opacity: root.configuration.artBgTransparency

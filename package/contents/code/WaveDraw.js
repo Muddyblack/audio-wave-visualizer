@@ -149,6 +149,126 @@ function draw(ctx, o) {
     ctx.fillStyle = paint;
 
     switch (type) {
+    case 16: {
+        const travel = (t * .45) % 1;
+        function point(x, z) {
+            const band = Math.max(0, Math.min(n - 1, Math.floor((x + 6) / 12 * (n - 1))));
+            const elevation = (levels[band] * .8 + o.bass * .3) * (.65 + Math.sin(x * 1.3 + z * 1.7 + t * 1.4) * .35);
+            return [w * (.5 + x / z * .52), h * (.27 + (1.15 - elevation) / z)];
+        }
+        for (let row = 11; row >= 0; row--) {
+            const z = 1.35 + row * .65 - travel * .65;
+            ctx.globalAlpha = .9 * (1 - row / 16);
+            ctx.beginPath();
+            for (let x = -6; x < 6; x++) {
+                const a = point(x, z), b = point(x + 1, z), c = point(x, z + .65);
+                ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]);
+                ctx.moveTo(a[0], a[1]); ctx.lineTo(c[0], c[1]);
+            }
+            stroke(ctx, glow, 4, glowColor);
+        }
+        break;
+    }
+    case 17: {
+        for (let ring = 11; ring >= 0; ring--) {
+            const depth = .65 + (ring + t * 1.4) % 12;
+            const radius = Math.min(w, h) * .48 * 2.1 / depth * (1 + (o.beatPulse || 0) * .16);
+            ctx.globalAlpha = 1 - ring / 18;
+            ctx.beginPath();
+            for (let i = 0; i <= 64; i++) {
+                const angle = i / 64 * Math.PI * 2 - Math.PI;
+                const spectrum = levels[Math.min(n - 1, Math.floor(i / 64 * (n - 1)))];
+                const r = radius * (1 + .15 * spectrum * Math.sin(angle * 5 + t) + .12 * o.bass);
+                const x = w / 2 + Math.cos(angle) * r, y = h / 2 + Math.sin(angle) * r;
+                if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+            }
+            ctx.closePath(); stroke(ctx, glow, 4, glowColor);
+        }
+        break;
+    }
+    case 18: {
+        // Marching squares of the same smooth distance union as the GPU.
+        // A bounded 40x24 lattice keeps software work independent of pixel size.
+        const blobs = [];
+        for (let i = 0; i < 7; i++) {
+            const band = i < 2 ? o.bass : i < 5 ? o.mid : o.high;
+            blobs.push([Math.sin(t * .55 * (.7 + i * .09) + i * 2.4) * .64,
+                Math.cos(t * .55 * (.9 + i * .05) + i * 1.7) * .55,
+                .13 + band * .19 + .025 * Math.sin(i + t * 1.1)]);
+        }
+        const columns = 40, rows = 24, field = [];
+        function distance(x, y) {
+            let d = 10;
+            for (const b of blobs) {
+                const next = Math.hypot(x - b[0], y - b[1]) - b[2], k = .17 + o.bass * .12;
+                const mix = Math.max(0, Math.min(1, .5 + .5 * (next - d) / k));
+                d = next * (1 - mix) + d * mix - k * mix * (1 - mix);
+            }
+            return d;
+        }
+        for (let y = 0; y <= rows; y++) {
+            const row = [];
+            for (let x = 0; x <= columns; x++) row.push(distance((x / columns - .5) * 2.4, (y / rows - .5) * 2.4));
+            field.push(row);
+        }
+        const polygons = [], contours = [];
+        for (let y = 0; y < rows; y++) for (let x = 0; x < columns; x++) {
+            const corners = [[x, y], [x + 1, y], [x + 1, y + 1], [x, y + 1]];
+            const polygon = [], edges = [];
+            for (let i = 0; i < 4; i++) {
+                const a = corners[i], b = corners[(i + 1) % 4], da = field[a[1]][a[0]], db = field[b[1]][b[0]];
+                if (da < 0) polygon.push(a);
+                if ((da < 0) !== (db < 0)) {
+                    const ratio = da / (da - db);
+                    const p = [a[0] + (b[0] - a[0]) * ratio, a[1] + (b[1] - a[1]) * ratio];
+                    polygon.push(p); edges.push(p);
+                }
+            }
+            if (polygon.length) polygons.push(polygon);
+            if (edges.length >= 2) contours.push(edges);
+        }
+        // Fill the union in a single path: per-cell fills leave antialiased
+        // seams and multiply Canvas draw calls on software renderers.
+        if (o.fill) {
+            ctx.globalAlpha = .75; ctx.beginPath();
+            for (const polygon of polygons) {
+                polygon.forEach((p, i) => { if (i) ctx.lineTo(p[0] * w / columns, p[1] * h / rows); else ctx.moveTo(p[0] * w / columns, p[1] * h / rows); });
+                ctx.closePath();
+            }
+            ctx.fill();
+        }
+        ctx.globalAlpha = .9; ctx.beginPath();
+        for (const edges of contours) for (let i = 0; i + 1 < edges.length; i += 2) {
+            ctx.moveTo(edges[i][0] * w / columns, edges[i][1] * h / rows);
+            ctx.lineTo(edges[i + 1][0] * w / columns, edges[i + 1][1] * h / rows);
+        }
+        stroke(ctx, glow, 3, glowColor);
+        break;
+    }
+    case 19:
+    case 20: {
+        const phosphor = type === 19 ? Qt.rgba(.25, 1, .46, 1) : Qt.rgba(1, .65, .18, 1);
+        ctx.strokeStyle = phosphor;
+        ctx.globalAlpha = .09;
+        ctx.lineWidth = .7;
+        ctx.beginPath();
+        for (let x = 0; x <= 10; x++) { ctx.moveTo(x * w / 10, 0); ctx.lineTo(x * w / 10, h); }
+        for (let y = 0; y <= 6; y++) { ctx.moveTo(0, y * h / 6); ctx.lineTo(w, y * h / 6); }
+        ctx.stroke(); ctx.lineWidth = lw;
+        const frames = o.reducedMotion ? [o.stereoSamples || []] : [o.previousStereo || [], o.stereoSamples || []];
+        frames.forEach((samples, frame) => {
+            ctx.globalAlpha = frame === frames.length - 1 ? 1 : .24;
+            ctx.beginPath();
+            samples.forEach((s, i) => {
+                const x = type === 19 ? i / Math.max(1, samples.length - 1) * w : (.5 + s[0] * .44) * w;
+                const y = type === 19 ? (.5 - (s[0] + s[1]) * .22) * h : (.5 - s[1] * .44) * h;
+                if (i) ctx.lineTo(x, y); else ctx.moveTo(x, y);
+            });
+            stroke(ctx, glow, 5, phosphor);
+        });
+        break;
+    }
+
     case 6: {
         const slot = w / n, bw = Math.max(1.5, slot * .58);
         ctx.beginPath();
@@ -337,6 +457,17 @@ function draw(ctx, o) {
         }
         break;
     }
+    case 21: {
+        particleHalos(ctx, o.particles, glow, glowColor);
+        for (let i = 0; i < Math.min(32, o.particles.length); i++) {
+            const particle = o.particles[i];
+            ctx.globalAlpha = particle.life;
+            ctx.beginPath();
+            ctx.arc(particle.x, particle.y, particle.r, 0, 7);
+            ctx.fill();
+        }
+        break;
+    }
     case 15: {
         const energy = o.energy, curvature = o.curvature, fullness = o.fullness;
         const bend = o.reducedMotion ? .4 : o.mid, points = [];
@@ -345,10 +476,15 @@ function draw(ctx, o) {
             const p = j / steps, x = p * w, envelope = Math.pow(Math.sin(p * Math.PI), .7);
             const f = p * (n - 1), i = Math.floor(f);
             const a = levels[i] + (levels[Math.min(n - 1, i + 1)] - levels[i]) * (f - i);
-            const y = c + Math.sin(p * Math.PI * 1.6 * curvature + t * .7)
-                      * c * .32 * bend * curvature * energy;
-            const thickness = (1.2 + (o.bass * .55 + a * .8) * c * .9 * fullness)
+            // Preserve a readable body in a 20 px panel slot. Compress the
+            // response so quieter real audio is not dwarfed by demo peaks.
+            const response = Math.sqrt(Math.max(0, Math.min(1, o.bass * .55 + a * .8)));
+            const thickness = Math.min(h * .72, Math.max(3, h * (.18 + .5 * response)) * fullness)
                               * envelope * (energy * .92 + .08);
+            const bendResponse = .25 + .75 * Math.sqrt(Math.max(0, Math.min(1, bend)));
+            const travel = Math.min(c * .32 * bendResponse * curvature * energy,
+                                    Math.max(0, c - thickness / 2 - 1));
+            const y = c + Math.sin(p * Math.PI * 1.6 * curvature + t * .7) * travel;
             points.push([x, y, thickness, a]);
         }
         ctx.save();

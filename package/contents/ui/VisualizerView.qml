@@ -20,7 +20,7 @@ Item {
     property color systemTextColor: "#cdd6f4"
     property string defaultFontFamily: Qt.application.font.family
     property Component fallbackIcon
-    // Plasma supplies ImageColors; other hosts sample a tiny static cover.
+    // Optional host override; otherwise all hosts share the album extractor.
     property var coverPalette: null
     // "card" follows layoutMode; hosts use "pill" or "pillicon" in panels.
     property string presentation: "card"
@@ -121,7 +121,7 @@ Item {
     // Solid cards are light: system text and controls switch to dark ink.
     readonly property bool lightCard: configuration.showBg && configuration.surfaceStyle === "solid" && !(configuration.showMpris && configuration.artBg && artUrl !== "") && (configuration.autoContrast ?? true)
     readonly property color textColor: configuration.useSystemText ? (lightCard ? "#1e241d" : systemTextColor) : configuration.customTextColor
-    readonly property color waveColor: configuration.accentFromArt ? coverAccent : baseWaveColor
+    readonly property color waveColor: (configuration.accentFromArt || configuration.vizColorMode === "cover") ? coverAccent : baseWaveColor
     readonly property color controlColor: configuration.useSystemControls ? (lightCard ? "#1e241d" : "#ffffff") : configuration.customControlColor
     readonly property color pgStartColor: configuration.useSystemControls ? accentColor : controlColor
     readonly property color pgEndColor: configuration.useSystemControls ? "#ffffff" : controlColor
@@ -242,14 +242,11 @@ Item {
             popupRequested();
     }
 
-    // Scrolling adjusts the system's output volume (via pactl) rather than the
-    // MPRIS player's own volume, which most players don't implement at all.
-    property real systemVolume: -1
+    // Scrolling adjusts the player's MPRIS volume.
     property real requestedVolume: -1
-    readonly property real displayedVolume: requestedVolume >= 0 ? requestedVolume : Math.max(0, systemVolume)
-    onSystemVolumeChanged: {
-        // pactl reports whole percent, so match the request within that grain.
-        if (requestedVolume >= 0 && Math.abs(systemVolume - requestedVolume) < 0.006) {
+    readonly property real displayedVolume: requestedVolume >= 0 ? requestedVolume : Math.max(0, root.volume)
+    onVolumeChanged: {
+        if (requestedVolume >= 0 && Math.abs(root.volume - requestedVolume) < 0.006) {
             requestedVolume = -1;
             volumeRequestTimeout.stop();
         }
@@ -260,43 +257,23 @@ Item {
         volumeHide.stop();
         volumeOsd.shown = false;
     }
-    function queryVolume() {
-        sysVolumeSource.connectSource("pactl get-sink-volume @DEFAULT_SINK@");
-    }
-    function commitVolume() {
-        if (requestedVolume < 0)
-            return;
-        sysVolumeSource.connectSource("pactl set-sink-volume @DEFAULT_SINK@ " + Math.round(requestedVolume * 100) + "%; pactl get-sink-volume @DEFAULT_SINK@");
-    }
-    function scrollSystemVolume(angleDelta, pixelDelta) {
+    function scrollPlayerVolume(angleDelta, pixelDelta) {
         if (!volumeWheel.enabled)
             return false;
         // A wheel notch is 120 angle units; touchpads can send pixels only.
         const step = pixelDelta !== 0 ? pixelDelta / 40 * 0.04 : angleDelta / 120 * 0.04;
-        if (!Number.isFinite(step) || step === 0)
+        if (!Number.isFinite(step) || step === 0 || !root.player)
             return false;
-        requestedVolume = Math.max(0, Math.min(1, displayedVolume + step));
+        const current = requestedVolume >= 0 ? requestedVolume : root.volume;
+        if (current < 0)
+            return false;
+        const target = Math.max(0, Math.min(1, current + step));
+        requestedVolume = target;
+        root.player.volume = target;
         volumeRequestTimeout.restart();
-        // Coalesce rapid wheel ticks into one shell call instead of one per notch.
-        volumeCommitTimer.restart();
         volumeOsd.shown = true;
         volumeHide.restart();
         return true;
-    }
-    CommandSource {
-        id: sysVolumeSource
-        sourceComponent: root.visualizer?.commandSourceComponent
-        onNewData: function (source, data) {
-            disconnectSource(source);
-            const match = /(\d+)%/.exec(data["stdout"] || "");
-            if (match)
-                root.systemVolume = Math.max(0, Math.min(1, Number(match[1]) / 100));
-        }
-    }
-    Timer {
-        id: volumeCommitTimer
-        interval: 60
-        onTriggered: root.commitVolume()
     }
     Timer {
         id: volumeRequestTimeout
@@ -307,15 +284,13 @@ Item {
         id: volumeWheel
         objectName: "volumeWheel"
         target: null
-        enabled: root.visible && !root.zoomOpen && !root.flipped && root.layoutMode !== "lyrics" && (root.configuration.scrollVolume ?? false) && root.hasPlayer && !!root.visualizer?.commandSourceComponent
+        enabled: root.visible && !root.zoomOpen && !root.flipped && root.layoutMode !== "lyrics" && (root.configuration.scrollVolume ?? false) && root.hasPlayer && root.volume >= 0
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
         onEnabledChanged: {
             root.resetVolumeGesture();
-            if (enabled)
-                root.queryVolume();
         }
         onWheel: event => {
-            event.accepted = root.scrollSystemVolume(event.angleDelta.y, event.pixelDelta.y);
+            event.accepted = root.scrollPlayerVolume(event.angleDelta.y, event.pixelDelta.y);
         }
     }
     Timer {

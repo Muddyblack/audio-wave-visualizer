@@ -44,14 +44,18 @@ Waveform {
     lineWidth: root.configuration.lineWidth
     fillWave: root.configuration.fillWave
     glowWave: root.configuration.glowWave && !batterySaving
+    customVisualizer: root.configuration.customVisualizer ?? ""
     visualizerType: root.configuration.visualizerType
     visualFrameTime: ambient ? _ambientTime : (root.visualizer?.frameTimeMs ?? 0)
     bass: root.visualizer?.bass ?? 0
     mid: root.visualizer?.mid ?? 0
     high: root.visualizer?.high ?? 0
     attack: root.visualizer?.attack ?? false
+    stereoSamples: root.visualizer?.stereoSamples ?? []
+    previousStereo: root.visualizer?.previousStereo ?? []
     reducedMotion: root.configuration.reducedMotion ?? false
     simpleRender: root.configuration.simpleRender ?? false
+    vizVerticalOffset: root.configuration.vizVerticalOffset ?? 0
     vizDirection: root.configuration.vizDirection ?? "up"
     vizColorMode: root.configuration.vizColorMode ?? "solid"
     vizPalette: root.configuration.vizPalette ?? "aurora"
@@ -59,6 +63,17 @@ Waveform {
     bloom: root.configuration.bloom ?? 1
     ribbonCurvature: root.configuration.ribbonCurvature ?? 1
     ribbonFullness: root.configuration.ribbonFullness ?? 1
+
+    Text {
+        anchors.centerIn: parent
+        visible: [19, 20].includes(root.visualizerType) && !root.stereoSamples.length && !root.backendFailed
+        text: root.visualizer?.stereoStatus || "Stereo PCM unavailable"
+        color: root.textColor
+        font.pixelSize: 10
+        width: parent.width
+        horizontalAlignment: Text.AlignHCenter
+        wrapMode: Text.Wrap
+    }
 
     // Backend down: say what broke and what to type, instead of
     // drawing a flat line that looks exactly like silence.

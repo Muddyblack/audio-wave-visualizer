@@ -67,7 +67,8 @@ def harness(source, windows, fps, seconds, style, glow):
         % (index, view)
         for index in range(1, windows)
     )
-    return """import QtQuick
+    return (
+        """import QtQuick
 import QtQuick.Window
 import "package/contents/ui" as Shared
 
@@ -146,13 +147,15 @@ Window {
     %s
     %s
 }
-""" % (  # noqa: UP031
-        json.dumps(settings),
-        json.dumps([0] * windows),
-        round(1000 / fps),
-        round(seconds * 1000),
-        view,
-        additional,
+"""
+        % (  # noqa: UP031
+            json.dumps(settings),
+            json.dumps([0] * windows),
+            round(1000 / fps),
+            round(seconds * 1000),
+            view,
+            additional,
+        )
     )
 
 
@@ -173,7 +176,8 @@ def measure(qml, source, windows, fps, seconds, style, glow):
         }
         result = subprocess.run(
             [qml, str(script)],
-            check=False, env=env,
+            check=False,
+            env=env,
             text=True,
             capture_output=True,
             timeout=seconds + 15,

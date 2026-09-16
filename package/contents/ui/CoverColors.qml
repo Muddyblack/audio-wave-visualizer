@@ -1,39 +1,51 @@
 import QtQuick
+import "../code/CoverPalette.js" as CoverPalette
 
-// Portable cover palette for hosts without Kirigami.ImageColors. Sample only
-// when the cover changes; the transparent 16px Canvas never follows audio.
+// Shared album palette for every host. Sample only when the cover changes;
+// the transparent 32px Canvas never follows audio.
 Canvas {
     id: sampler
     property string source: ""
     property color fallback: "#b4befe"
+    property color dominant: fallback
+    property color vibrant: fallback
+    property color muted: fallback
+    readonly property var gradientStops: [primary, accent, secondary]
     property color primary: fallback
     property color secondary: fallback
     property color accent: fallback
     property bool ready: false
     property string _loadedSource: ""
-    width: 16
-    height: 16
+    width: 32
+    height: 32
     opacity: 0
     renderStrategy: Canvas.Cooperative
 
-    function refresh() {
+    function resetPalette() {
         ready = false;
+        dominant = fallback;
+        vibrant = fallback;
+        muted = fallback;
         primary = fallback;
         secondary = fallback;
         accent = fallback;
+    }
+    function refresh() {
+        resetPalette();
         if (_loadedSource)
             unloadImage(_loadedSource);
         _loadedSource = source;
-        if (available && source)
+        if (available && source) {
             loadImage(source);
+            // A cached local image may load synchronously without imageLoaded.
+            if (isImageLoaded(source))
+                requestPaint();
+        }
     }
     onSourceChanged: refresh()
     onFallbackChanged: {
-        if (!ready) {
-            primary = fallback;
-            secondary = fallback;
-            accent = fallback;
-        }
+        if (!ready)
+            resetPalette();
     }
     onAvailableChanged: {
         if (available)
@@ -48,31 +60,18 @@ Canvas {
             return;
         const ctx = getContext("2d");
         ctx.reset();
-        ctx.drawImage(source, 0, 0, 16, 16);
-        const pixels = ctx.getImageData(0, 0, 16, 16).data;
-        const buckets = Array.from({
-            length: 12
-        }, () => [0, 0, 0, 0]);
-        for (let i = 0; i < pixels.length; i += 4) {
-            if (pixels[i + 3] < 128)
-                continue;
-            const r = pixels[i] / 255, g = pixels[i + 1] / 255, b = pixels[i + 2] / 255;
-            const max = Math.max(r, g, b), min = Math.min(r, g, b), delta = max - min;
-            const hue = delta === 0 ? 0 : max === r ? ((g - b) / delta + 6) % 6 : max === g ? (b - r) / delta + 2 : (r - g) / delta + 4;
-            const bucket = buckets[Math.min(11, Math.floor(hue * 2))];
-            const weight = 0.05 + delta * Math.max(0.1, max);
-            bucket[0] += r * weight;
-            bucket[1] += g * weight;
-            bucket[2] += b * weight;
-            bucket[3] += weight;
-        }
-        const sorted = buckets.filter(b => b[3] > 0).sort((a, b) => b[3] - a[3]);
-        if (!sorted.length)
+        ctx.drawImage(source, 0, 0, width, height);
+        const palette = CoverPalette.extract(ctx.getImageData(0, 0, width, height).data);
+        if (!palette) {
+            resetPalette();
             return;
-        const first = sorted[0], second = sorted[Math.min(1, sorted.length - 1)];
-        primary = Qt.rgba(first[0] / first[3], first[1] / first[3], first[2] / first[3], 1);
-        secondary = Qt.rgba(second[0] / second[3], second[1] / second[3], second[2] / second[3], 1);
-        accent = primary;
+        }
+        dominant = palette.dominant;
+        vibrant = palette.vibrant;
+        muted = palette.muted;
+        primary = palette.primary;
+        secondary = palette.secondary;
+        accent = palette.accent;
         ready = true;
     }
 }

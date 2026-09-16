@@ -15,6 +15,8 @@ ShellRoot {
     property int widgetHeight: 104
     property real verticalPosition: 0.60
     property string monitor: ""
+    // Optional same-window wallpaper provider; a compositor layer is not a texture.
+    property Component backdropComponent: null
     property color waveColor: "#b4befe"
     property color textColor: "#cdd6f4"
     property int visualizerType: defaults.visualizerType
@@ -164,6 +166,8 @@ ShellRoot {
 
     QtObject {
         id: audioConfig
+        property int visualizerType: root.configuration.visualizerType
+        property bool reducedMotion: root.configuration.reducedMotion
         property int numBars: root.configuration.numBars
         property int framerate: root.configuration.framerate
         property int sensitivity: root.configuration.sensitivity
@@ -220,7 +224,7 @@ ShellRoot {
             exclusionMode: ExclusionMode.Ignore
             color: "transparent"
             WlrLayershell.layer: root.configuration.desktopLayer ? WlrLayer.Bottom : WlrLayer.Top
-            WlrLayershell.namespace: "audio-wave-visualizer"
+            WlrLayershell.namespace: root.configuration.compositorGlass && root.configuration.showBg && ["glass", "liquid"].includes(root.configuration.surfaceStyle) ? "audio-wave-visualizer-glass" : "audio-wave-visualizer"
             WlrLayershell.keyboardFocus: WlrKeyboardFocus.None
 
             MouseArea {
@@ -229,8 +233,15 @@ ShellRoot {
                 acceptedButtons: Qt.RightButton
                 onClicked: root.configure()
             }
+            Loader {
+                id: backdrop
+                anchors.fill: parent
+                sourceComponent: root.backdropComponent
+                visible: false
+            }
             Shared.VisualizerView {
                 id: view
+                backdropSource: backdrop.item
                 anchors.fill: parent
                 configuration: root.configuration
                 visualizer: backend

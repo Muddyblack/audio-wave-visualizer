@@ -4,9 +4,10 @@ const appJs = fs.existsSync('docs/website/app.js') ? fs.readFileSync('docs/websi
 const context = vm.createContext({});
 vm.runInContext(fs.readFileSync('package/contents/ui/studio/PresetCodec.js', 'utf8'), context);
 vm.runInContext(fs.readFileSync('hyprland/Configuration.js', 'utf8'), context);
+vm.runInContext(fs.readFileSync('docs/website/assets/studio/ConfigSchema.js', 'utf8'), context);
 context.xml = fs.readFileSync('package/contents/config/main.xml', 'utf8');
 const jsSource = appJs.includes('const EXISTING =') ? appJs : html;
-vm.runInContext(jsSource.slice(jsSource.indexOf('const EXISTING ='), jsSource.indexOf('const VIZ =')) + '\nvar webDefaults = DEFAULTS; var webKnown = LOOK_DEFAULTS; var qmlKnown = defaults(xml);', context);
+vm.runInContext(jsSource.slice(jsSource.indexOf('const HYPR ='), jsSource.indexOf('const VIZ =')) + '\nvar webDefaults = DEFAULTS; var webKnown = LOOK_DEFAULTS; var qmlKnown = defaults(xml);', context);
 vm.runInContext(`
 var cases = [webDefaults,
  Object.assign({}, webDefaults, {layoutMode:'compact', surfaceStyle:'art', detailFields:'album,genre', titleSize:14}),

@@ -17,17 +17,21 @@ header{position:sticky;top:0;z-index:50;backdrop-filter:blur(14px);background:#0
 .hwrap{max-width:1440px;margin:auto;padding:14px 32px;display:flex;align-items:center;justify-content:space-between;gap:16px}
 .brand{display:flex;align-items:center;gap:12px;font-weight:600;letter-spacing:-.2px}
 .brand-icon{width:36px;height:36px;object-fit:contain;flex-shrink:0}
-nav.jump{display:flex;gap:4px}
-nav.jump a{color:var(--muted);text-decoration:none;font-size:12px;padding:6px 11px;border-radius:7px}
+nav.jump{display:flex;gap:4px;align-items:center}
+nav.jump a{color:var(--muted);text-decoration:none;font-size:12px;padding:6px 11px;border-radius:7px;display:inline-flex;align-items:center;gap:4px}
 nav.jump a:hover{color:var(--text);background:var(--studio-hover)}
 nav.jump a[aria-current=page]{color:var(--text);background:var(--studio-line)}
+.star-count{font-size:11px;font-variant-numeric:tabular-nums;color:var(--muted)}
 
 main{max-width:1440px;margin:auto;padding:0 32px 40px}
 .eyebrow{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--muted)}
 h1{font-size:clamp(34px,4.4vw,58px);font-weight:450;letter-spacing:-2px;line-height:1.08;margin:16px 0 0}
 h1 span{background:linear-gradient(100deg,var(--brand),#9fc3e6 70%);-webkit-background-clip:text;background-clip:text;color:transparent}
-.stats{display:flex;gap:26px;margin-top:26px;flex-wrap:wrap}
-.stats div{font-size:11px;color:var(--muted)}.stats b{display:block;font-size:22px;font-weight:500;color:var(--text);letter-spacing:-.5px}
+.stats{display:flex;gap:22px;margin-top:26px;flex-wrap:wrap;align-items:center}
+.stats .stat-item{font-size:11px;color:var(--muted);text-decoration:none;transition:transform .15s,color .15s}
+.stats .stat-item b{display:block;font-size:22px;font-weight:500;color:var(--text);letter-spacing:-.5px}
+.stats a.stat-item:hover{color:var(--brand);transform:translateY(-1px)}
+.stats a.stat-item:hover b{color:var(--brand)}
 
 /* ─── hero ─── */
 .hero{position:relative;margin:26px 0 46px;border-radius:28px;overflow:hidden;isolation:isolate;border:1px solid var(--line)}
@@ -38,17 +42,22 @@ h1 span{background:linear-gradient(100deg,var(--brand),#9fc3e6 70%);-webkit-back
 .hero-copy{position:relative;z-index:2}
 .hero-copy p{max-width:420px;color:var(--muted);margin:16px 0 0;line-height:1.75;font-size:13.5px}
 .hero-copy p b{color:var(--text);font-weight:500}
-.hero-cta{display:flex;gap:10px;margin-top:28px;flex-wrap:wrap}
+.hero-cta{display:flex;gap:10px;margin-top:28px;flex-wrap:wrap;align-items:center}
 .hero-cta a{display:inline-flex;align-items:center;gap:6px;border-radius:11px;padding:11px 18px;font-size:12.5px;font-weight:550;text-decoration:none;transition:transform .15s,background .15s,border-color .15s;white-space:nowrap}
 .hero-cta a.primary-link{background:var(--brand);color:var(--brand-ink)}
 .hero-cta a.primary-link:hover{transform:translateY(-1px)}
 .hero-cta a.ghost-link{color:var(--text);border:1px solid var(--line2);background:#ffffff0a}
 .hero-cta a.ghost-link:hover{background:var(--studio-hover)}
+.hero-copy .star-note{font-size:11px;margin-top:18px}
+.star-note a{color:inherit;text-underline-offset:3px}
+.star-note a:hover{color:var(--text)}
+.download-stats{margin-top:18px}
 .hero-showcase{position:relative;display:grid;place-items:center}
 .hero-card{position:relative;width:100%;aspect-ratio:16/11;border-radius:20px;overflow:hidden;border:1px solid #ffffff26;box-shadow:0 30px 80px #000a,0 4px 20px #0007;display:grid;place-items:center}
 .hero-card .fit{position:relative;z-index:1}
 .hero-badge{position:absolute;z-index:2;top:14px;left:14px;display:flex;align-items:center;gap:6px;font-size:10px;letter-spacing:.8px;text-transform:uppercase;color:#fff;background:#00000080;backdrop-filter:blur(10px);border:1px solid #ffffff26;border-radius:20px;padding:5px 11px 5px 8px}
 .hero-badge i{width:6px;height:6px;border-radius:50%;background:var(--studio-ok);box-shadow:0 0 0 0 #8fe39a88;animation:pl 2s infinite}
+
 .sh{display:flex;justify-content:space-between;align-items:end;gap:24px;margin:56px 0 20px}
 .sh h2{font-size:26px;font-weight:450;letter-spacing:-.8px;margin:6px 0 0}
 .sh p{font-size:12px;color:var(--muted);max-width:380px;margin:0;line-height:1.7}

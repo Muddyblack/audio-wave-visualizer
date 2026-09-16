@@ -8,6 +8,9 @@ Item {
     property bool isPlaying: false
     property bool hasAudio: false
     property bool playbackActive: true
+    property string customProgressBar: ""
+    readonly property bool customReady: custom.ready
+    readonly property string customError: custom.error
     property int style: 0
     property string track: ""
     property string artist: ""
@@ -25,7 +28,7 @@ Item {
     // Layouts hide the bar while another element (the cover ring) shows progress.
     property bool suppressed: false
     // Heights follow the HTML `.pb` variants, with and without time labels.
-    implicitHeight: style === 9 ? 12 : style === 4 ? (showTimes ? 28 : 19) : style === 5 || style === 7 ? (showTimes ? 18 : 11) : (showTimes ? 18 : 9)
+    implicitHeight: customReady ? Math.max(9, Math.min(28, custom.preferredHeight || 18)) : style === 9 ? 12 : style === 4 ? (showTimes ? 28 : 19) : style === 5 || style === 7 ? (showTimes ? 18 : 11) : (showTimes ? 18 : 9)
     readonly property string elapsedText: positionClock.elapsedText
     readonly property string totalLabel: timeFormat === "remaining" ? positionClock.remainingText : positionClock.totalText
 
@@ -39,7 +42,7 @@ Item {
     visible: !root.suppressed && !!root.player && lengthValue > 0
     opacity: visible ? 1.0 : 0.0
 
-    readonly property int pbStyle: root.style
+    readonly property int pbStyle: root.style === 10 ? 0 : root.style
 
     readonly property real lengthValue: positionClock.lengthValue
     readonly property real progress: positionClock.progress
@@ -50,6 +53,14 @@ Item {
             return -0.35;
         const phase = Math.min(1, (root.visualFrameTime % 1730) / 1450);
         return -0.35 + 1.7 * (0.5 - 0.5 * Math.cos(Math.PI * phase));
+    }
+
+    CustomProgressBar {
+        id: custom
+        anchors.fill: parent
+        sourceUrl: root.customProgressBar
+        progressView: root
+        playbackClock: positionClock
     }
 
     PlaybackClock {
@@ -79,7 +90,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: 1
         height: 18
-        visible: root.pbStyle === 4
+        visible: !root.customReady && (root.pbStyle === 4)
         antialiasing: true
         renderStrategy: Canvas.Cooperative
 
@@ -218,7 +229,7 @@ Item {
         anchors.right: parent.right
         anchors.top: parent.top
         height: 10
-        visible: root.pbStyle === 5 || root.pbStyle === 7
+        visible: !root.customReady && (root.pbStyle === 5 || root.pbStyle === 7)
         antialiasing: true
         renderStrategy: Canvas.Cooperative
 
@@ -319,7 +330,7 @@ Item {
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.topMargin: root.pbStyle === 1 ? 4 : root.pbStyle === 8 ? 3 : 2
-        visible: root.pbStyle !== 4 && root.pbStyle !== 5 && root.pbStyle !== 7 && root.pbStyle !== 9
+        visible: !root.customReady && root.pbStyle !== 4 && root.pbStyle !== 5 && root.pbStyle !== 7 && root.pbStyle !== 9
         height: root.pbStyle === 1 ? 1 : root.pbStyle === 2 || root.pbStyle === 6 ? (pbArea.containsMouse ? (root.pbStyle === 6 ? 5 : 6) : 4) : root.pbStyle === 3 ? (pbArea.containsMouse ? 8 : 6) : root.pbStyle === 8 ? (pbArea.containsMouse ? 6 : 5) : (pbArea.containsMouse ? 5 : 3)
         radius: height / 2
         color: root.pbStyle === 6 ? "transparent" : root.pbStyle === 1 ? Qt.rgba(root.textColor.r, root.textColor.g, root.textColor.b, 0.06) : Qt.rgba(root.textColor.r, root.textColor.g, root.textColor.b, 0.12)
@@ -493,7 +504,7 @@ Item {
         objectName: "elapsedTimeLabel"
         anchors.left: parent.left
         anchors.bottom: parent.bottom
-        visible: root.showTimes && root.pbStyle !== 9
+        visible: !root.customReady && root.showTimes && root.pbStyle !== 9
         text: positionClock.elapsedText
         color: root.textColor
         opacity: 0.50
@@ -506,7 +517,7 @@ Item {
         objectName: "totalTimeLabel"
         anchors.right: parent.right
         anchors.bottom: parent.bottom
-        visible: root.showTimes && root.pbStyle !== 9
+        visible: !root.customReady && root.showTimes && root.pbStyle !== 9
         text: root.totalLabel
         color: root.textColor
         opacity: 0.50
@@ -516,7 +527,7 @@ Item {
     // Style 9 — Time only: "1:31 / 3:58", always shown, centred with centred text.
     Row {
         objectName: "timeOnlyRow"
-        visible: root.pbStyle === 9
+        visible: !root.customReady && (root.pbStyle === 9)
         anchors.top: parent.top
         anchors.left: root.centerTimes ? undefined : parent.left
         anchors.horizontalCenter: root.centerTimes ? parent.horizontalCenter : undefined
@@ -550,6 +561,8 @@ Item {
 
     MouseArea {
         id: pbArea
+        visible: !root.customReady
+        enabled: !root.customReady
         objectName: "pbArea"
         anchors.fill: parent
         hoverEnabled: true

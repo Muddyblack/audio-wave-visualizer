@@ -21,6 +21,9 @@ Canvas {
     property real bass: 0
     property real mid: 0
     property real high: 0
+    property real beatPulse: 0
+    property var stereoSamples: []
+    property var previousStereo: []
     property real energy: 1
     property bool reducedMotion: false
     property string vizDirection: "up"
@@ -135,23 +138,23 @@ Canvas {
     onRibbonFullnessChanged: repaint()
     onReducedMotionChanged: repaint()
     onBassChanged: {
-        if (hasAudio && !backendFailed && (visualizerType === 11 || visualizerType === 13 || visualizerType === 15))
+        if (hasAudio && !backendFailed && (visualizerType === 11 || visualizerType === 13 || visualizerType >= 15))
             repaint();
     }
     onMidChanged: {
-        if (hasAudio && !backendFailed && visualizerType === 15 && !reducedMotion)
+        if (hasAudio && !backendFailed && visualizerType >= 15 && !reducedMotion)
             repaint();
     }
     onHighChanged: {
-        if (hasAudio && !backendFailed && visualizerType === 15)
+        if (hasAudio && !backendFailed && visualizerType >= 15)
             repaint();
     }
     onEnergyChanged: {
-        if (hasAudio && !backendFailed && (visualizerType === 11 || visualizerType === 13 || visualizerType === 15))
+        if (hasAudio && !backendFailed && (visualizerType === 11 || visualizerType === 13 || visualizerType >= 15))
             repaint();
     }
     onVisualFrameTimeChanged: {
-        if (hasAudio && !backendFailed && !reducedMotion && (visualizerType === 9 || visualizerType === 10 || visualizerType === 11 || visualizerType === 13 || visualizerType === 15))
+        if (hasAudio && !backendFailed && !reducedMotion && (visualizerType === 9 || visualizerType === 10 || visualizerType === 11 || visualizerType === 13 || visualizerType >= 15))
             repaint();
     }
     onPeaksChanged: {
@@ -159,15 +162,18 @@ Canvas {
             repaint();
     }
     onParticlesChanged: {
-        if (hasAudio && !backendFailed && visualizerType === 14)
+        if (hasAudio && !backendFailed && (visualizerType === 14 || visualizerType === 21))
             repaint();
     }
     onRipplesChanged: {
-        if (hasAudio && !backendFailed && visualizerType === 15)
+        if (hasAudio && !backendFailed && visualizerType >= 15)
             repaint();
     }
 
     onEdgeFadeChanged: repaint()
+    onBeatPulseChanged: repaint()
+    onStereoSamplesChanged: repaint()
+    onPreviousStereoChanged: repaint()
 
     onPaint: {
         const ctx = getContext("2d");
@@ -229,6 +235,9 @@ Canvas {
                 mid: wave.mid,
                 high: high,
                 energy: energy,
+                beatPulse: reducedMotion ? 0 : beatPulse,
+                stereoSamples: stereoSamples,
+                previousStereo: previousStereo,
                 fill: fillWave,
                 glow: glowWave,
                 bloom: bloom,
