@@ -23,7 +23,7 @@ Rectangle {
         text: control.text
         color: control.primary ? Theme.brandInk : area.containsMouse ? Theme.text : Theme.muted
         font.family: Theme.fontFamily
-        font.pixelSize: control.compact || control.primary ? 11 : 11
+        font.pixelSize: 11
         font.weight: control.primary ? Font.DemiBold : Font.Normal
     }
     MouseArea {
