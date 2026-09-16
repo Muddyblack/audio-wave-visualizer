@@ -100,9 +100,10 @@ GPU-only blur, reflection and shader effects require an OpenGL capture.
 [Browse all 28 presets](docs/gallery.md) across seven sheets. Rebuild the gallery
 and that page with `make gallery`.
 
-To try the HTML demo locally, run `make docs`, then open `docs/website/index.html`.
-The demo shares wallpapers, theme/catalogue data and preset exchange code with
-QML; it has a separate browser renderer and uses sample playback.
+Try the [interactive studio](https://muddyblack.github.io/audio-wave-visualizer/)
+online, or run `make docs` and open `docs/website/index.html` locally. It shares
+wallpapers, theme/catalogue data and preset exchange code with QML; its browser
+renderer uses sample playback.
 
 ## Requirements
 
