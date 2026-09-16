@@ -196,17 +196,18 @@ while True:
         )
         self.assertEqual(bars.stat().st_mtime_ns, initial_mtime)
 
-        # A new frame must bypass the heartbeat delay even just after a tick.
+        # A new frame must reach both transports after a quiet heartbeat.
+        # The changing-frame test separately checks that updates are not
+        # limited to the heartbeat rate.
         stamp = self.frame().get("t")
         self.wait_for(lambda: self.frame().get("t") not in (None, stamp))
         self.control.write_text("900;100;500;250;")
-        self.wait_for(lambda: self.read("bars") == "900;100;500;250;", timeout=0.5)
+        self.wait_for(lambda: self.read("bars") == "900;100;500;250;")
         self.wait_for(
             lambda: (
                 self.frame().get("v", "").strip('"').replace(",", ";")
                 == "900;100;500;250;"
-            ),
-            timeout=0.5,
+            )
         )
 
     def test_shared_startup_preserves_running_frame_and_status(self):
