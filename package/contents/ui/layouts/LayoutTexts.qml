@@ -127,6 +127,7 @@ ColumnLayout {
     TrackText {
         Layout.fillWidth: true
         secondary: true
+        formatBadges: root.view.formatBadges ?? []
         font.family: root.view.defaultFontFamily
         titleSize: root.ts
         sizeFactor: root.artistSize / 0.82

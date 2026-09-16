@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Controls.Basic as Controls
 import "layouts" as Layouts
 import "../code/Layouts.js" as LayoutSizes
+import "../code/AudioFormat.js" as AudioFormat
 
 Item {
     id: root
@@ -59,7 +60,24 @@ Item {
 
     // Track information (Plasma PlayerContainer or Quickshell MprisPlayer).
     readonly property string album: player?.album ?? player?.trackAlbum ?? ""
-    readonly property var metadata: player?.metadata ?? ({})
+    readonly property var playerSelector: ({
+            service: player?.dbusName ?? "",
+            pid: player?.instancePid ?? 0,
+            identity: playerName
+        })
+    readonly property var metadata: player?.metadata ?? metadataBridge.result.metadata ?? ({})
+    readonly property var formatBadges: AudioFormat.badges(metadata)
+    MediaLookup {
+        id: metadataBridge
+        mode: "metadata"
+        active: root.hasPlayer && root.visible && !root.samplePlayback && root.player?.metadata === undefined
+        payload: Object.assign({}, root.playerSelector, {
+            track: root.track,
+            artist: root.artist,
+            album: root.album
+        })
+        commandSourceComponent: root.visualizer.commandSourceComponent ?? null
+    }
     readonly property string genre: {
         const value = metadata["xesam:genre"];
         return Array.isArray(value) ? value.join(", ") : String(value ?? "");

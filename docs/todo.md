@@ -2,13 +2,13 @@
 
 ## 5. Media Controls & Smart Metadata
 
-- [ ] **"Up Next" Play Queue Preview Drawer** `[Medium]`
+- [x] **"Up Next" Play Queue Preview Drawer** `[Medium]`
   - Collapsible flyout drawer listing the upcoming tracks from the active player's queue (where supported by MPRIS/MPD/Spotify).
   - *Technical Scope*: New `PlayQueue.qml` component using MPRIS `TrackList` interface.
-- [ ] **Hi-Res Audio & Format Badges** `[Nice to have]`
+- [x] **Hi-Res Audio & Format Badges** `[Nice to have]`
   - Small badges for `FLAC`, `96kHz/24bit`, `DSD`, `Lossless`, or streaming bitrate parsed from track metadata.
   - *Technical Scope*: Display badges in `TrackDetails.qml` and `TrackText.qml`.
-- [ ] **Artist Bio & Album Information Popup** `[Nice to have]`
+- [x] **Artist Bio & Album Information Popup** `[Nice to have]`
   - Clickable info modal fetching quick release year, genre tags, and artist summary from MusicBrainz / Wikipedia.
   - *Technical Scope*: Network lookup in `ArtworkLightbox.qml` or new info modal.
 

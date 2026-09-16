@@ -4,6 +4,15 @@ import QtQuick.Controls as QQC
 Text {
     id: root
     property bool secondary: false
+    property var formatBadges: []
+    bottomPadding: secondary && formatBadges.length ? badges.implicitHeight + 3 : 0
+    FormatBadges {
+        id: badges
+        anchors.bottom: parent.bottom
+        width: parent.width
+        badges: root.secondary ? root.formatBadges : []
+        textColor: root.color
+    }
     property bool trackUnknown: false
     property string displayTrack: ""
     property string rawTrack: ""

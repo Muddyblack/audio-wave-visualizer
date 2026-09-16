@@ -15,10 +15,11 @@ Item {
         const fields = view.configuration.detailFields ?? "album,genre,format,player";
         return (Array.isArray(fields) ? fields : String(fields).split(",")).map(field => String(field).trim()).filter(Boolean);
     }
-    // Rows without data are left out. Format needs the playing stream's node
-    // (pw-dump) and is not available to the widget yet.
+    // Rows without advertised data are left out.
     readonly property var rows: fieldList().map(key => {
         switch (key) {
+        case "format":
+            return back && (view.formatBadges ?? []).length ? [qsTr("Format"), view.formatBadges.join(" · ")] : null;
         case "album":
             return view.album !== "" ? [qsTr("Album"), view.album + (view.year !== "" ? " (" + view.year + ")" : "")] : null;
         case "track":
@@ -152,6 +153,10 @@ Item {
                     elide: Text.ElideRight
                 }
             }
+        }
+        FormatBadges {
+            Layout.fillWidth: true
+            badges: root.fieldList().indexOf("format") >= 0 ? root.view.formatBadges ?? [] : []
         }
         ColumnLayout {
             objectName: "detailRows"
