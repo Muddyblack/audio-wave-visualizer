@@ -1,4 +1,5 @@
 import QtQuick
+import "../../code/MaterialPreview.js" as MaterialPreview
 import ".."
 import "Theme.js" as Theme
 import "Schema.js" as Schema
@@ -203,89 +204,14 @@ Item {
 
     Component {
         id: materialComponent
-        Item {
-            Rectangle {
-                anchors.fill: parent
-                visible: preview.value === "liquid"
-                gradient: Gradient {
-                    orientation: Gradient.Horizontal
-                    GradientStop {
-                        position: 0
-                        color: "#5b1d6e"
-                    }
-                    GradientStop {
-                        position: 1
-                        color: "#b3628a"
-                    }
-                }
-            }
-            Canvas {
-                anchors.centerIn: parent
-                width: parent.width * 0.74
-                height: 34
-                readonly property var signature: [preview.value, width]
-                onSignatureChanged: requestPaint()
-                onPaint: {
-                    const ctx = getContext("2d");
-                    ctx.reset();
-                    const w = width, h = height;
-                    const diagonal = stops => {
-                        const g = ctx.createLinearGradient(0, 0, w, h);
-                        for (const s of stops)
-                            g.addColorStop(s[0], s[1]);
-                        ctx.fillStyle = g;
-                        ctx.fillRect(0, 0, w, h);
-                    };
-                    ctx.save();
-                    ctx.beginPath();
-                    ctx.roundedRect(0, 0, w, h, 9, 9);
-                    ctx.clip();
-                    switch (preview.value) {
-                    case "color":
-                        ctx.fillStyle = "#e60a0b10";
-                        ctx.fillRect(0, 0, w, h);
-                        break;
-                    case "art":
-                        diagonal([[0, "#7a3cff"], [1, "#ff4fb8"]]);
-                        ctx.fillStyle = "#55000000";
-                        ctx.fillRect(0, 0, w, h);
-                        break;
-                    case "glass":
-                        diagonal([[0, "#30ffffff"], [0.6, "#08ffffff"], [1, "#14ffffff"]]);
-                        ctx.fillStyle = "#30ffffff";
-                        ctx.fillRect(0, 0, w, 1);
-                        break;
-                    case "liquid":
-                        diagonal([[0, "#22ffffff"], [0.5, "#05ffffff"], [1, "#18ffffff"]]);
-                        ctx.fillStyle = "#aaffffff";
-                        ctx.fillRect(0, 0, w, 1);
-                        ctx.fillStyle = "#40ffffff";
-                        ctx.fillRect(0, h - 1, w, 1);
-                        break;
-                    case "solid":
-                        diagonal([[0, "#eeeee4"], [1, "#d9dfcf"]]);
-                        break;
-                    case "atmosphere":
-                        ctx.fillStyle = "#120b2e";
-                        ctx.fillRect(0, 0, w, h);
-                        for (const spot of [[w, 0, "#aaff3d8b"], [0, h, "#aa5b2cff"]]) {
-                            const g = ctx.createRadialGradient(spot[0], spot[1], 0, spot[0], spot[1], w * 0.8);
-                            g.addColorStop(0, spot[2]);
-                            g.addColorStop(1, "transparent");
-                            ctx.fillStyle = g;
-                            ctx.fillRect(0, 0, w, h);
-                        }
-                        break;
-                    }
-                    ctx.restore();
-                    if (preview.value !== "liquid") {
-                        ctx.strokeStyle = "#1fffffff";
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.roundedRect(0.5, 0.5, w - 1, h - 1, 8.5, 8.5);
-                        ctx.stroke();
-                    }
-                }
+        Canvas {
+            anchors.fill: parent
+            readonly property var signature: [preview.value, width, height]
+            onSignatureChanged: requestPaint()
+            onPaint: {
+                const ctx = getContext("2d");
+                ctx.reset();
+                MaterialPreview.draw(ctx, width, height, preview.value);
             }
         }
     }

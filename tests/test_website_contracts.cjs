@@ -115,6 +115,13 @@ vm.runInContext(`
     const built = buildRow(row);
     built.sync(DEFAULTS);
     assert(!/undefined|NaN/.test(built.el.innerHTML), row.k || row.id);
+    if (row.type === 'tiles' && row.opts.some(o => o.pv === 'material')) {
+      for (const option of row.opts) {
+        assert(built.el.innerHTML.includes('data-material="' + option.v + '"'));
+        MaterialPreview.draw(canvas, 110, 50, option.v);
+      }
+      assert(!built.el.innerHTML.includes('>material<'));
+    }
   }
 `, context);
 console.log('PASS: every shared settings row builds and synchronizes');

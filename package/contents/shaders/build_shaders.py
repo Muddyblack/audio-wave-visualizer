@@ -2,11 +2,10 @@
 """Assemble the common GLSL prelude and bake every ShaderEffect family."""
 
 import argparse
-from pathlib import Path
 import shutil
 import subprocess
 import tempfile
-
+from pathlib import Path
 
 SHADER_DIR = Path(__file__).resolve().parent
 FAMILIES = (

@@ -147,8 +147,8 @@ Window {
     %s
     %s
 }
-"""
-        % (  # noqa: UP031
+"""  # noqa: UP031
+        % (
             json.dumps(settings),
             json.dumps([0] * windows),
             round(1000 / fps),

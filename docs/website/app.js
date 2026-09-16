@@ -703,12 +703,12 @@ const projectCounts = {};
 function renderProjectInfo(el) {
   el.innerHTML = `<div class="project-info">
     <div class="project-heading"><img src="assets/studio/icon.png" alt="Plasma Audio Visualizer project icon"><h3>${ProjectInfo.name}</h3></div>
-    <div class="project-author"><span class="profile-image"><span aria-hidden="true">M</span><img alt="Muddyblack’s profile picture" hidden></span><div><a href="${ProjectInfo.profile}" target="_blank" rel="noopener">Created by ${ProjectInfo.author} ↗</a></div></div>
+    <div class="project-author"><span class="profile-image"><span aria-hidden="true">M</span><img alt="Muddyblack’s profile picture" hidden></span><div><a class="ghost-link" href="${ProjectInfo.profile}" target="_blank" rel="noopener">Created by ${ProjectInfo.author} ↗</a></div></div>
     <p>An open-source music visualizer for Plasma and Hyprland. Explore the project, get updates, or help improve it.</p>
     <div class="project-links">${ProjectInfo.links.map(([label, url]) => `<a class="ghost-link" href="${url}" target="_blank" rel="noopener">${label} ↗</a>`).join('')}</div>
     <div class="project-stats">${ProjectInfo.statistics.map(stat => `<div data-project-stat="${stat.id}" hidden><b></b><span>${stat.label}</span></div>`).join('')}</div>
     <p>Enjoying the visualizer? A star on GitHub helps others discover it. Thank you for supporting the project.</p>
-    <a class="ghost-link star-link" href="${ProjectInfo.repository}" target="_blank" rel="noopener">☆ Star on GitHub ↗</a>
+    <a class="primary-link star-link" href="${ProjectInfo.repository}" target="_blank" rel="noopener">☆ Star on GitHub ↗</a>
     <p>Have a design idea? Open an issue — I might add it. A sketch, mockup, or annotated screenshot helps explain what you have in mind.</p>
     <a class="ghost-link" href="${ProjectInfo.repository}/issues/new" target="_blank" rel="noopener">Suggest a design ↗</a></div>`;
   const avatar = $('.profile-image img', el);
@@ -899,6 +899,9 @@ function buildRow(r) {
       const pvKind = typeof o === 'object' ? o.pv : 'diagram';
       let pvHtml = '';
       if (pvKind === 'dock') pvHtml = `<span class="dockpv" data-v="${v}"></span>`;
+      else if (pvKind === 'material') pvHtml = `<canvas data-c="material" data-material="${v}"></canvas>`;
+      else if (pvKind === 'shape') pvHtml = `<span style="--cover:${TRACKS[P.track].cover}">${artHTML({...DEFAULTS, artShape:v}, derive(DEFAULTS, 'demo'), 32, {coverOK:true, small:true})}</span>`;
+      else if (pvKind === 'palette') pvHtml = `<span class="palette-preview" style="background:linear-gradient(90deg,${PALETTES[v].join(',')})"></span>`;
       else if (pvKind === 'diagram') pvHtml = diag(v);
       else if (pvKind === 'viz') pvHtml = `<canvas data-c="wave" data-i="${v}"></canvas>`;
       else if (pvKind === 'progress') pvHtml = v === 10 ? '<div class="artwrap" style="--a:32px"><div class="art" style="--a:32px"></div><i class="rg"></i></div>' : `<div class="pbwrap">${pbHTML(v, { showTimes: true, timeFormat: 'total' }, v === 0 || v === 2, 238, .58)}</div>`;
@@ -910,6 +913,12 @@ function buildRow(r) {
     const btns = $$('.tile', el);
     btns.forEach(b => b.onclick = e => { if (!e.target.closest('[data-act]')) update(set(opts[b.dataset.i].v)); });
     $$('canvas[data-c]', el).forEach(c => {
+      if (c.dataset.c === 'material') {
+        const paint = () => { const cv = prepCanvas({el:c}); if (cv) MaterialPreview.draw(cv.ctx, cv.w, cv.h, c.dataset.material); };
+        const observer = new ResizeObserver(paint); observer.observe(c);
+        requestAnimationFrame(paint);
+        return;
+      }
       const ti = Number(c.closest('.tile').dataset.i);
       const optV = opts[ti].v;
       if (c.dataset.c === 'wave') registry.push({ el: c, kind: 'wave', key: 'tile-viz-' + ti, viz: optV, getS: () => S, getStatus: () => 'demo' });

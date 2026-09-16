@@ -59,7 +59,7 @@ def extract_exports(source_text):
         m = re.match(r"^(?:var|const|let|function)\s+([a-zA-Z0-9_$]+)", line)
         if m:
             exports.add(m.group(1))
-    return sorted(list(exports))
+    return sorted(exports)
 
 
 def wrap_qml_js(source_text, module_name, explicit_exports=None):
