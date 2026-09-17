@@ -48,6 +48,8 @@
 
 The widget follows system audio with [cava][cava] and shows album artwork, track information, and playback controls from MPRIS players. Choose a ready-made look or tune one in the built-in settings studio.
 
+[![vid](docs/readme/video_thumbnail.png)](https://youtu.be/ytHqeP4cBgA)
+
 ## Features
 
 - **Dozens of ready-made presets:** Choose from cards, artwork backgrounds, posters, compact strips, panel icons, and more.

@@ -8,6 +8,8 @@ If one wants, one can rice up their audio visualizer widget as if there isn't al
 
 So what is this? This is an obviously **modern** and especially riceable, customizable audio visualizer widget for KDE Plasma 6 and now even Hyprland via Quickshell support. It renders different visualisations, such as a mirrored waveform reacting in real time to whatever audio is playing system-wide, alongside complete MPRIS track info, album art, transport controls, and a seekable progress bar.
 
+[b]See it in action:[/b] [url=https://youtu.be/ytHqeP4cBgA]Watch the video demo on YouTube[/url]
+
 
 ---
 
