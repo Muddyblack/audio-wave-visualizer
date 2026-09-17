@@ -122,14 +122,6 @@ Real captures of the actual QML widget with sample playback. The gallery has [al
   </p>
 </details>
 
-<details>
-  <summary><b>Settings Studio</b></summary>
-  <br/>
-  <p align="center">
-    <img src="docs/readme/studio_with_preview.png" width="780" alt="Settings studio with preset cards and live widget preview">
-  </p>
-</details>
-
 ## Make it yours
 
 Pick from many visualizers, change the layout and colours, add lyrics, and preview changes as you go. You can save your own presets and share them as JSON between the widget and the [browser studio](https://muddyblack.github.io/audio-wave-visualizer/).
