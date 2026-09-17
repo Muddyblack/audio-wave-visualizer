@@ -4,10 +4,7 @@
 
 <h1 align="center">Plasma Audio Wave Visualizer</h1>
 
-<p align="center">
-  Music on your desktop, drawn as it plays.<br>
-  For KDE Plasma 6 and Hyprland with Quickshell.
-</p>
+
 <p align="center">
   <a href="https://muddyblack.github.io/audio-wave-visualizer/">
     <img src="https://img.shields.io/badge/Interactive_Studio-Try_Online-success?style=for-the-badge" alt="Try Interactive Studio" />
