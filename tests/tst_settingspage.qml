@@ -30,6 +30,7 @@ TestCase {
         signalName: "reset"
     }
     function initTestCase() {
+        failOnWarning(/undefined|TypeError|ReferenceError|Binding loop/);
         const request = new XMLHttpRequest();
         request.open("GET", Qt.resolvedUrl("../package/contents/config/main.xml"), false);
         request.send();
@@ -44,32 +45,92 @@ TestCase {
             textColor: "#cdd6f4"
         });
     }
+    function test_discardKeepsSettingsOpen() {
+        applied.clear();
+        closed.clear();
+        reset.clear();
+        page.savedDraft = Object.assign({}, page.draft, {
+            sensitivity: 130,
+            detailFields: ["player", "album"]
+        });
+        page.draft = Object.assign({}, page.savedDraft);
+        const button = findChild(page, "discardSettings");
+        verify(button !== null);
+        verify(button.visible);
+        verify(!button.enabled);
+        page.setValue("sensitivity", 175);
+        page.setValue("detailFields", ["title"]);
+        verify(button.enabled);
+        mouseClick(button);
+        compare(page.draft.sensitivity, 130);
+        compare(page.draft.detailFields, ["player", "album"]);
+        verify(!button.enabled);
+        compare(applied.count, 0);
+        compare(reset.count, 0);
+        compare(closed.count, 0);
+    }
+
     function test_draftChangesRequireApplyAndButtonsWork() {
         page.setValue("monitor", "all");
         page.setValue("sensitivity", 175);
+        page.setValue("detailFields", ["player", "album"]);
+        page.setValue("layoutMode", "poster");
         compare(applied.count, 0);
         mouseClick(findChild(page, "applySettings"));
         compare(applied.count, 1);
         compare(applied.signalArguments[0][0].monitor, "all");
         compare(applied.signalArguments[0][0].sensitivity, 175);
+        compare(applied.signalArguments[0][0].detailFields, ["player", "album"]);
+        compare(applied.signalArguments[0][0].layoutMode, "poster");
         mouseClick(findChild(page, "resetSettings"));
         compare(reset.count, 1);
         mouseClick(findChild(page, "closeSettings"));
         compare(closed.count, 1);
     }
+    function test_previewAccentIsIncludedWhenApplied() {
+        applied.clear();
+        page.setValue("useSystemAccent", true);
+        page.setValue("accentFromArt", true);
+        page.setValue("vizColorMode", "solid");
+        verify(waitForRendering(page));
+        const swatch = findChild(page, "previewAccent_f5b26b");
+        verify(swatch !== null);
+        mouseClick(swatch);
+        compare(page.draft.customColor, "#f5b26b");
+        compare(page.draft.useSystemAccent, false);
+        compare(page.draft.accentFromArt, false);
+        compare(applied.count, 0, "Choosing an accent edits the draft until Apply");
+        compare(swatch.border.width, 2);
+        const preview = findChild(page, "previewWidget");
+        verify(Qt.colorEqual(preview.waveColor, "#f5b26b"));
+        mouseClick(findChild(page, "applySettings"));
+        compare(applied.count, 1);
+        const saved = applied.signalArguments[0][0];
+        compare(saved.customColor, "#f5b26b");
+        compare(saved.useSystemAccent, false);
+        compare(saved.accentFromArt, false);
+        page.setValue("useSystemAccent", true);
+        compare(swatch.border.width, 0, "The indicator follows the configured source");
+    }
+
     function test_tabsSwitchSections() {
         compare(page.currentTabIndex, 0);
-        const tab1 = findChild(page, "tabButton_1");
+        const tab1 = findChild(page, "presetView_mine");
         verify(tab1 !== null);
         mouseClick(tab1);
         compare(page.currentTabIndex, 1);
 
-        const tab3 = findChild(page, "tabButton_3");
+        const tab3 = findChild(page, "mainTab_appearance");
         verify(tab3 !== null);
         mouseClick(tab3);
-        compare(page.currentTabIndex, 3);
+        compare(page.currentTabIndex, 2);
 
-        const tab0 = findChild(page, "tabButton_0");
+        const buttonsTab = findChild(page, "subTab_buttons");
+        verify(buttonsTab !== null);
+        mouseClick(buttonsTab);
+        compare(page.currentTabIndex, 4);
+
+        const tab0 = findChild(page, "mainTab_presets");
         verify(tab0 !== null);
         mouseClick(tab0);
         compare(page.currentTabIndex, 0);

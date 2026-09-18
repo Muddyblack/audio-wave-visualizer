@@ -13,6 +13,12 @@ Item {
     property real displayedPosition: 0
     property real anchorPosition: 0
     property real anchorMs: Date.now()
+    property real loopStart: -1
+    property real loopEnd: -1
+    property bool loopEnabled: false
+    property real _lastLoopSeek: 0
+    readonly property bool validLoop: loopStart >= 0 && loopEnd <= 1 && loopEnd > loopStart && lengthValue > 0
+    readonly property bool canSeek: !!player && player.canControl !== false && player.canSeek !== false && player.positionSupported !== false && lengthValue > 0
     property real unitScale: 0
     property int updateInterval: 50
     readonly property real unitsPerSecond: unitScale > 0 ? unitScale : lengthValue >= 1000000 ? 1000000 : lengthValue >= 10000 ? 1000 : 1
@@ -23,6 +29,8 @@ Item {
     readonly property int totalSeconds: Math.max(0, Math.floor(lengthValue / unitsPerSecond))
     readonly property string elapsedText: formatTime(elapsedSeconds)
     readonly property string totalText: formatTime(totalSeconds)
+    readonly property int remainingSeconds: Math.max(0, Math.floor((lengthValue - displayedPosition) / unitsPerSecond))
+    readonly property string remainingText: "-" + formatTime(remainingSeconds)
     readonly property bool ticking: active && playing && !!player && lengthValue > 0 && displayedPosition < lengthValue
 
     function clamp(value, min, max) {
@@ -41,6 +49,44 @@ Item {
         displayedPosition = anchorPosition;
     }
 
+    // Both linear bars and cover rings seek in the player's native units.
+    function seekToFraction(fraction) {
+        const p = player;
+        if (!p || p.canControl === false || p.canSeek === false || p.positionSupported === false)
+            return false;
+        const length = p.length || p.mprisLength || 0;
+        if (!Number.isFinite(length) || length <= 0 || !Number.isFinite(fraction))
+            return false;
+        const position = clamp(fraction, 0, 1) * length;
+        if (p.position !== undefined)
+            p.position = position;
+        else if (typeof p.SetPosition === "function")
+            p.SetPosition(position);
+        else if (typeof p.setPosition === "function")
+            p.setPosition(position);
+        else
+            return false;
+        setPosition(position);
+        return true;
+    }
+
+    function seekRelative(seconds) {
+        return Number.isFinite(seconds) && lengthValue > 0 && seekToFraction((displayedPosition + seconds * unitsPerSecond) / lengthValue);
+    }
+    function clearLoop() {
+        loopEnabled = false;
+        loopStart = -1;
+        loopEnd = -1;
+        _lastLoopSeek = 0;
+    }
+    function checkLoop() {
+        if (!active || !playing || !loopEnabled || !validLoop || !canSeek)
+            return;
+        if (displayedPosition >= loopEnd * lengthValue && Date.now() - _lastLoopSeek >= 250) {
+            _lastLoopSeek = Date.now();
+            seekToFraction(loopStart);
+        }
+    }
     function syncFromPlayer(hard) {
         const len = player ? Math.max(0, player.length || player.mprisLength || 0) : 0;
         // Some players briefly clear length while updating metadata.
@@ -62,6 +108,7 @@ Item {
     function tick() {
         if (lengthValue > 0)
             displayedPosition = predictedPosition();
+        checkLoop();
     }
 
     function twoDigits(value) {
@@ -76,6 +123,7 @@ Item {
     }
 
     onPlayerChanged: {
+        clearLoop();
         // A different player must not inherit the previous player's duration.
         // Only transient empty metadata from the same player is retained.
         lengthValue = 0;
@@ -83,7 +131,10 @@ Item {
         syncFromPlayer(true);
     }
     onPlayingChanged: syncFromPlayer(true)
-    onTrackChanged: syncFromPlayer(true)
+    onTrackChanged: {
+        clearLoop();
+        syncFromPlayer(true);
+    }
     onActiveChanged: {
         if (active)
             tick();

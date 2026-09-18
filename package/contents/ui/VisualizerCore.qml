@@ -1,5 +1,6 @@
 import QtQuick
 import QtCore
+import "../code/WaveMath.js" as WaveMath
 
 Item {
     id: vis
@@ -11,7 +12,107 @@ Item {
     property int numBars: configuration.numBars
     property real maxRange: 1000.0
     property var bars: Array(numBars).fill(0)
+    readonly property var stereoSamples: stereo.samples
+    readonly property var previousStereo: stereo.previous
+    readonly property string stereoStatus: stereo.status
+    StereoCapture {
+        id: stereo
+        commandSourceComponent: vis.commandSourceComponent
+        inputSource: vis.configuration.inputSource ?? "auto"
+        runtimeDirectory: vis.resolvedRunDir
+        framerate: vis.configuration.framerate
+        active: vis.active && vis.plasmoidVisible && [19, 20].includes(vis.configuration.visualizerType ?? 0)
+    }
     property real frameTimeMs: 0
+    // Settled audible tones still drive decorative motion. Keep the original
+    // clock suppression for default styles and for settled silence.
+    readonly property bool motionClockRequired: {
+        const style = configuration.visualizerType ?? 0;
+        return style === 6 || (!(configuration.reducedMotion ?? false) && (configuration.customVisualizer || configuration.customProgressBar || [9, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20, 21].includes(style) || configuration.vizColorMode === "rainbow" || (configuration.hueReactive ?? false)));
+    }
+    // Normalized source energy, before display smoothing, mirroring or taper.
+    readonly property real bass: analysis.bass
+    readonly property real mid: analysis.mid
+    readonly property real high: analysis.high
+    readonly property real bassSmoothed: analysis.bassSmoothed
+    // One accepted sample pulse; the first sample after a reset only primes it.
+    readonly property bool beatTrigger: analysis.attack
+    readonly property real energyRise: analysis.energyRise
+    readonly property bool attack: beatTrigger
+    readonly property real energyPulse: analysis.attack ? Math.max(0, Math.min(1, (analysis.bass - analysis.bassSmoothed) * 2)) : 0
+
+    QtObject {
+        id: analysis
+        property real bass: 0
+        property real mid: 0
+        property real high: 0
+        property real bassSmoothed: 0
+        property real energyRise: 0
+        property bool attack: false
+        property bool initialized: false
+        property real lastSampleMs: 0
+        property real lastAttackMs: -1
+        property int generation: 0
+    }
+
+    function resetAnalysis() {
+        analysis.generation++;
+        analysis.bass = 0;
+        analysis.mid = 0;
+        analysis.high = 0;
+        analysis.bassSmoothed = 0;
+        analysis.attack = false;
+        analysis.energyRise = 0;
+        analysis.initialized = false;
+        analysis.lastSampleMs = 0;
+        analysis.lastAttackMs = -1;
+    }
+
+    // Fractional bins keep the 20/40/40 split meaningful with odd or tiny frames.
+    // Each source bar is visited once, apart from the two shared boundary bins.
+    function bandMean(parts, start, end) {
+        let sum = 0;
+        for (let i = Math.floor(start); i < Math.ceil(end); i++)
+            sum += parts[i] * (Math.min(i + 1, end) - Math.max(i, start));
+        return maxRange > 0 ? Math.max(0, Math.min(1, sum / (end - start) / maxRange)) : 0;
+    }
+
+    function analyzeFrame(parts, now) {
+        const bassEnd = parts.length * 0.2;
+        const midEnd = parts.length * 0.6;
+        const nextBass = bandMean(parts, 0, bassEnd);
+        const nextMid = bandMean(parts, bassEnd, midEnd);
+        const nextHigh = bandMean(parts, midEnd, parts.length);
+        // Treat a wall-clock correction like a new capture. A backwards jump
+        // must not leave beat detection locked out until the old time returns.
+        const primed = analysis.initialized && now >= analysis.lastSampleMs;
+        analysis.energyRise = primed ? WaveMath.energyRise(nextBass, analysis.bass, Math.max(1, now - analysis.lastSampleMs)) : 0;
+        let smoothed = nextBass;
+        let onset = false;
+        if (primed) {
+            // Evolve the envelope over the time the previous sample was held.
+            // This works at every configured frame rate and across duplicate
+            // frames, whose INI timestamps are only whole-second heartbeats.
+            const decay = Math.exp(-(now - analysis.lastSampleMs) / 150);
+            smoothed = analysis.bass + (analysis.bassSmoothed - analysis.bass) * decay;
+            if (Math.abs(smoothed - analysis.bass) <= 0.0005)
+                smoothed = analysis.bass;
+            const above = nextBass - smoothed > 0.12;
+            const wasAbove = analysis.bass - smoothed > 0.12;
+            onset = above && !wasAbove && analysis.energyRise > 0 && (analysis.lastAttackMs < 0 || now - analysis.lastAttackMs >= 180);
+        } else {
+            analysis.lastAttackMs = -1;
+        }
+        if (onset)
+            analysis.lastAttackMs = now;
+        analysis.initialized = true;
+        analysis.lastSampleMs = now;
+        analysis.bass = nextBass;
+        analysis.mid = nextMid;
+        analysis.high = nextHigh;
+        analysis.bassSmoothed = smoothed;
+        analysis.attack = onset;
+    }
     // Audio capture is independent of MPRIS: browsers and other apps can emit
     // sound without the selected media player reporting playback.
     property bool active: true
@@ -43,7 +144,7 @@ Item {
             }
         }
         function spawnCommand() {
-            const args = [vis.configuration.numBars, vis.configuration.framerate, vis.configuration.sensitivity, vis.configuration.noiseReduction, vis.configuration.inputMethod || "auto"].join(" ");
+            const args = [vis.configuration.numBars, vis.configuration.framerate, vis.configuration.sensitivity, vis.configuration.noiseReduction, vis.configuration.inputMethod || "auto", vis.configuration.inputSource || "auto", vis.configuration.lowCutoff ?? 50, vis.configuration.highCutoff ?? 10000].map(value => vis.shellQuote(String(value))).join(" ");
             return "bash " + vis.shellQuote(vis.feederPath) + " " + args;
         }
         function spawn() {
@@ -160,6 +261,8 @@ Item {
     readonly property bool backendFailed: backendState === "error" && (backendCode !== "cava-exited" || backendErrorStreak >= 3)
 
     readonly property string backendMessage: {
+        if (backendCode === "source-unavailable")
+            return "Selected audio source unavailable";
         if (!backendFailed)
             return "";
         if (backendCode === "no-cava")
@@ -197,6 +300,8 @@ Item {
 
     // Second line under the headline: short enough for a 44px tall waveform.
     readonly property string backendAction: {
+        if (backendCode === "source-unavailable")
+            return "Start the application or choose a source in Audio settings";
         if (!backendFailed)
             return "";
         if (backendCode === "no-cava")
@@ -306,15 +411,21 @@ Item {
 
     CommandSource {
         id: legacyReader
+        property int analysisGeneration: 0
         sourceComponent: vis.commandSourceComponent
         onNewData: function (source, data) {
             disconnectSource(source);
+            // A slow read from before hiding/restarting capture is obsolete.
+            if (analysisGeneration !== analysis.generation)
+                return;
             if (!vis.handleData((data["stdout"] || "").trim()))
                 vis.updatePollingCadence(true);
         }
         function read() {
-            if (vis.resolvedBarsPath && connectedSources.length === 0)
+            if (vis.resolvedBarsPath && connectedSources.length === 0) {
+                analysisGeneration = analysis.generation;
                 connectSource("cat " + vis.shellQuote(vis.resolvedBarsPath));
+            }
         }
     }
 
@@ -344,7 +455,9 @@ Item {
         }
     }
 
-    readonly property int pollInterval: Math.round(1000 / vis.configuration.framerate)
+    // Battery saver (set by the host while on battery): draw at most 20 Hz.
+    property bool batterySaverActive: false
+    readonly property int pollInterval: Math.round(1000 / (batterySaverActive ? Math.min(20, vis.configuration.framerate) : vis.configuration.framerate))
 
     // Exponential moving average toward each new cava frame. Cava already
     // smooths over time, but reading a fresh frame every poll still snaps
@@ -375,7 +488,7 @@ Item {
     // Accept both the INI string list and the original semicolon transport.
     // Empty or malformed reads keep the previous frame and return false. Bars
     // that have settled are not reassigned, so silence emits no barsChanged.
-    function handleData(frame) {
+    function handleData(frame, timestampMs = Date.now()) {
         if (!frame)
             return false;
         const rawParts = typeof frame === "string" ? frame.replace(/^v=/, "").split(/[;,]/) : frame;
@@ -391,6 +504,12 @@ Item {
         }
         if (!parts.length)
             return false;
+        // Publish analysis before bars/frameTimeMs notify rendering consumers.
+        // Invalid frames return above without changing either kind of state.
+        const elapsed = analysis.initialized && timestampMs >= analysis.lastSampleMs ? Math.min(1000, timestampMs - analysis.lastSampleMs) : pollInterval;
+        analyzeFrame(parts, timestampMs);
+        const focused = WaveMath.focusBands(parts, configuration.lowCutoff ?? 50, configuration.highCutoff ?? 10000, configuration.frequencyScale ?? "log", configuration.bassWeight ?? 1, configuration.trebleWeight ?? 1, maxRange);
+        const silent = parts.every(value => value === 0);
         const count = numBars;
         const prev = bars;
         const out = new Array(count);
@@ -399,19 +518,20 @@ Item {
         for (let i = 0; i < count; i++) {
             // Keep animating even if the feeder is briefly still on the old bar
             // count while cava restarts after a config change.
-            const target = parts[Math.min(parts.length - 1, Math.floor(i * parts.length / count))];
+            const target = focused[Math.min(focused.length - 1, Math.floor(i * focused.length / count))];
             isQuiet = isQuiet && target === 0;
             const p = prev[i] || 0;
-            const blended = p + smoothing * (target - p);
+            const decay = configuration.reducedMotion ? 0 : (configuration.silenceDecay ?? 0);
+            const blended = silent && decay > 0 ? WaveMath.releaseBlend(p, target, elapsed, decay) : p + smoothing * (target - p);
             const next = Math.abs(blended - target) < 0.5 ? target : blended;
             out[i] = next;
             changed = changed || next !== p;
         }
         updatePollingCadence(isQuiet);
-        if (changed) {
+        if (changed)
             bars = out;
-            frameTimeMs = Date.now();
-        }
+        if (changed || (!isQuiet && motionClockRequired))
+            frameTimeMs = timestampMs;
         return true;
     }
 
@@ -426,6 +546,7 @@ Item {
     }
 
     onActiveChanged: {
+        resetAnalysis();
         if (active) {
             idleCounter = 0;
             pollTimer.interval = pollInterval;
@@ -440,6 +561,7 @@ Item {
     }
 
     onPlasmoidVisibleChanged: {
+        resetAnalysis();
         if (plasmoidVisible) {
             idleCounter = 0;
             pollTimer.interval = pollInterval;
@@ -447,6 +569,7 @@ Item {
     }
 
     onBackendFailedChanged: {
+        resetAnalysis();
         if (!backendFailed) {
             idleCounter = 0;
             pollTimer.interval = pollInterval;
@@ -472,6 +595,7 @@ Item {
 
     function restart() {
         configurationRestart.stop();
+        resetAnalysis();
         if (stopWhenInactive && !active) {
             feederLauncher.killFeeder();
             return;
@@ -505,6 +629,15 @@ Item {
             configurationRestart.restart();
         }
         function onNoiseReductionChanged() {
+            configurationRestart.restart();
+        }
+        function onInputSourceChanged() {
+            configurationRestart.restart();
+        }
+        function onLowCutoffChanged() {
+            configurationRestart.restart();
+        }
+        function onHighCutoffChanged() {
             configurationRestart.restart();
         }
         function onInputMethodChanged() {

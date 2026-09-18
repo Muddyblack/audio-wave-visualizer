@@ -1,0 +1,377 @@
+#!/usr/bin/env python3
+"""Publish the QML studio catalogue, schemas, code, and wallpapers into the standalone Pages tree.
+
+Bundles the shared JavaScript referenced by the website and its QML imports in
+dependency order. Desktop-only modules are not published.
+
+Run without arguments after editing canonical assets; --check detects drift in CI.
+"""
+
+import argparse
+import json
+import re
+import xml.etree.ElementTree as ET
+from pathlib import Path
+
+ROOT = Path(__file__).resolve().parents[1]
+SOURCE_STUDIO = ROOT / "package/contents/ui/studio"
+SOURCE_CODE = ROOT / "package/contents/code"
+SOURCE_CONFIG = ROOT / "package/contents/config"
+DEST = ROOT / "docs/website/assets/studio"
+FUNDING_SOURCE = ROOT / ".github/FUNDING.yml"
+FUNDING_MODULE = SOURCE_STUDIO / "ProjectFunding.js"
+LICENSE_MODULE = SOURCE_STUDIO / "ProjectLicense.js"
+
+
+def funding_module():
+    """Turn the GitHub funding choices into links used by both Info panes."""
+    providers = {
+        "github": (
+            "GitHub Sponsors",
+            "https://github.com/sponsors/",
+            "githubsponsors.svg",
+        ),
+        "ko_fi": ("Ko-fi", "https://ko-fi.com/", "kofi.svg"),
+        "buy_me_a_coffee": (
+            "Buy Me a Coffee",
+            "https://buymeacoffee.com/",
+            "buymeacoffee.svg",
+        ),
+    }
+    links = []
+    for line in FUNDING_SOURCE.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        key, separator, value = line.partition(":")
+        if not separator or key not in providers:
+            raise ValueError("Unsupported FUNDING.yml entry: " + line)
+        handle = value.strip().strip("\"'")
+        if not re.fullmatch(r"[A-Za-z0-9_-]+", handle):
+            raise ValueError("Invalid FUNDING.yml handle: " + line)
+        label, prefix, icon = providers[key]
+        links.append({"id": key, "label": label, "url": prefix + handle, "icon": icon})
+    return (
+        "// Generated from .github/FUNDING.yml by tools/sync_studio_assets.py.\n"
+        + "var links = "
+        + json.dumps(links, indent=2)
+        + ";\n"
+    ).encode()
+
+
+def license_module():
+    text = (ROOT / "LICENSE").read_text()
+    if not re.search(r"GNU GENERAL PUBLIC LICENSE\s+Version 3", text, re.I):
+        raise ValueError("Unrecognized LICENSE type")
+    later = bool(
+        re.search(r"either version 3 .*any later\s+version", text[:1000], re.I | re.S)
+    )
+    spdx = "GPL-3.0-or-later" if later else "GPL-3.0-only"
+    return (
+        "// Generated from LICENSE by tools/sync_studio_assets.py.\n"
+        + "var spdx = "
+        + json.dumps(spdx)
+        + ";\n"
+        + "var label = "
+        + json.dumps("GNU GPL v3 or later" if later else "GNU GPL v3")
+        + ";\n"
+    ).encode()
+
+
+def parse_kcfg(xml_path):
+    tree = ET.parse(xml_path)
+    root = tree.getroot()
+    entries = {}
+    for entry in root.iter():
+        if entry.tag.endswith("entry"):
+            name = entry.attrib.get("name")
+            entry_type = entry.attrib.get("type", "String")
+            default_el = next((c for c in entry if c.tag.endswith("default")), None)
+            default_val = (
+                default_el.text.strip()
+                if default_el is not None and default_el.text
+                else ""
+            )
+
+            if entry_type == "Bool":
+                val = default_val.lower() in ("true", "1")
+            elif entry_type == "Int":
+                val = int(default_val) if default_val else 0
+            elif entry_type == "Double":
+                val = float(default_val) if default_val else 0.0
+            elif entry_type == "StringList":
+                val = [s.strip() for s in default_val.split(",") if s.strip()]
+            else:
+                val = default_val
+
+            entries[name] = {"type": entry_type, "default": val}
+    return entries
+
+
+def extract_exports(source_text):
+    """Auto-detect top-level exported functions and variables from JS source."""
+    exports = set()
+    for line in source_text.splitlines():
+        if line.startswith(("//", "/*", " *", ".pragma", ".import", "\t", " ")):
+            continue
+        m = re.match(r"^(?:var|const|let|function)\s+([a-zA-Z0-9_$]+)", line)
+        if m:
+            exports.add(m.group(1))
+    return sorted(exports)
+
+
+def wrap_qml_js(source_text, module_name, explicit_exports=None):
+    """Convert a QML .pragma library JS file into a browser-safe UMD/global module."""
+    lines = []
+    imports_header = ""
+    for line in source_text.splitlines():
+        if line.startswith(".pragma"):
+            continue
+        import_match = re.match(r'\.import\s+"([^"]+)"\s+as\s+(\w+)', line)
+        if import_match:
+            module_file, alias = import_match.groups()
+            base = Path(module_file).stem
+            if base == "StudioCatalog":
+                imports_header += f"  var {alias} = {{ StudioCatalog: (typeof globalThis !== 'undefined' && globalThis.StudioCatalog) || (typeof window !== 'undefined' && window.StudioCatalog) || (typeof StudioCatalog !== 'undefined' ? StudioCatalog : {{}}) }};\n"
+            else:
+                imports_header += f"  var {alias} = (typeof globalThis !== 'undefined' && globalThis.{base}) || (typeof window !== 'undefined' && window.{base}) || undefined;\n"
+            continue
+        lines.append(line)
+    body = "\n".join(lines).strip()
+
+    export_names = (
+        explicit_exports
+        if explicit_exports is not None
+        else extract_exports(source_text)
+    )
+    exports_obj = ", ".join(export_names)
+    wrapped = f"""/* Generated by tools/sync_studio_assets.py from QML codebase */
+var {module_name} = (function() {{
+{imports_header}{body}
+  return {{ {exports_obj} }};
+}})();
+if (typeof window !== "undefined") window.{module_name} = {module_name};
+if (typeof globalThis !== "undefined") globalThis.{module_name} = {module_name};
+"""
+    return wrapped.encode("utf-8")
+
+
+def qt_shim_code():
+    return b"""/* Generated by tools/sync_studio_assets.py; browser environment shim for Qt/QML globals */
+(function(global) {
+  function hexToRgb(hex) {
+    hex = hex.replace(/^#/, "");
+    let a = 1, r = 0, g = 0, b = 0;
+    if (hex.length === 3) {
+      r = parseInt(hex[0] + hex[0], 16);
+      g = parseInt(hex[1] + hex[1], 16);
+      b = parseInt(hex[2] + hex[2], 16);
+    } else if (hex.length === 6) {
+      r = parseInt(hex.substring(0, 2), 16);
+      g = parseInt(hex.substring(2, 4), 16);
+      b = parseInt(hex.substring(4, 6), 16);
+    } else if (hex.length === 8) {
+      a = parseInt(hex.substring(0, 2), 16) / 255;
+      r = parseInt(hex.substring(2, 4), 16);
+      g = parseInt(hex.substring(4, 6), 16);
+      b = parseInt(hex.substring(6, 8), 16);
+    }
+    return { r: r / 255, g: g / 255, b: b / 255, a: a };
+  }
+
+  function makeColor(r, g, b, a) {
+    a = (typeof a === "number") ? a : 1;
+    return {
+      r: r, g: g, b: b, a: a,
+      toString: function() {
+        return `rgba(${Math.round(this.r * 255)}, ${Math.round(this.g * 255)}, ${Math.round(this.b * 255)}, ${this.a})`;
+      }
+    };
+  }
+
+  function parseColor(val) {
+    if (typeof val === "object" && val !== null && "r" in val) return val;
+    if (typeof val === "string") {
+      if (val.startsWith("#")) {
+        const c = hexToRgb(val);
+        return makeColor(c.r, c.g, c.b, c.a);
+      }
+      const matchRgba = /^rgba?\\(\\s*([\\d.]+)\\s*,\\s*([\\d.]+)\\s*,\\s*([\\d.]+)(?:\\s*,\\s*([\\d.]+))?\\s*\\)$/.exec(val);
+      if (matchRgba) {
+        return makeColor(
+          parseFloat(matchRgba[1]) / 255,
+          parseFloat(matchRgba[2]) / 255,
+          parseFloat(matchRgba[3]) / 255,
+          matchRgba[4] !== undefined ? parseFloat(matchRgba[4]) : 1
+        );
+      }
+    }
+    return makeColor(1, 1, 1, 1);
+  }
+
+  global.Qt = global.Qt || {
+    rgba: function(r, g, b, a) {
+      return makeColor(r, g, b, (typeof a === "number") ? a : 1);
+    },
+    hsla: function(h, s, l, a) {
+      a = (typeof a === "number") ? a : 1;
+      let r, g, b;
+      if (s === 0) {
+        r = g = b = l;
+      } else {
+        const hue2rgb = (p, q, t) => {
+          if (t < 0) t += 1;
+          if (t > 1) t -= 1;
+          if (t < 1/6) return p + (q - p) * 6 * t;
+          if (t < 1/2) return q;
+          if (t < 2/3) return p + (q - p) * (2/3 - t) * 6;
+          return p;
+        };
+        const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+        const p = 2 * l - q;
+        r = hue2rgb(p, q, h + 1/3);
+        g = hue2rgb(p, q, h);
+        b = hue2rgb(p, q, h - 1/3);
+      }
+      return makeColor(r, g, b, a);
+    },
+    tint: function(color, tintColor) {
+      return parseColor(color);
+    }
+  };
+})(typeof window !== "undefined" ? window : (typeof globalThis !== "undefined" ? globalThis : this));
+"""
+
+
+def outputs():
+    catalog = (SOURCE_STUDIO / "StudioCatalog.js").read_bytes()
+    data = json.loads(
+        catalog.decode().split("var StudioCatalog = ", 1)[1].rstrip().removesuffix(";")
+    )
+    result = {"icon.png": (ROOT / "package/icon.png").read_bytes()}
+    for icon in (SOURCE_STUDIO / "icons").glob("*.svg"):
+        result["icons/" + icon.name] = icon.read_bytes()
+
+    # Configuration schema from main.xml
+    schema = parse_kcfg(SOURCE_CONFIG / "main.xml")
+    schema_js = (
+        "/* Generated by tools/sync_studio_assets.py from package/contents/config/main.xml */\n"
+        + "var ConfigSchema = "
+        + json.dumps(schema, indent=2)
+        + ";\n"
+    )
+    modules = {
+        path.stem: path
+        for directory in (SOURCE_CODE, SOURCE_STUDIO)
+        for path in directory.glob("*.js")
+    }
+    browser = (ROOT / "docs/website/app.js").read_text()
+    roots = sorted(name for name in modules if re.search(r"\b" + name + r"\.", browser))
+    bundled, visiting = set(), set()
+    metadata = json.loads((ROOT / "package/metadata.json").read_text())["KPlugin"]
+    manifest_js = (
+        "var ProjectManifest = " + json.dumps({"version": metadata["Version"]}) + ";\n"
+    )
+    chunks = [qt_shim_code(), schema_js.encode("utf-8"), manifest_js.encode("utf-8")]
+
+    def include(source):
+        name = source.stem
+        if name in bundled:
+            return
+        if name in visiting:
+            raise ValueError("Circular shared JavaScript import: " + name)
+        visiting.add(name)
+        contents = source.read_text()
+        for dependency in re.findall(r'^\.import\s+"([^\"]+)"', contents, re.MULTILINE):
+            include((source.parent / dependency).resolve())
+        # These portable modules already expose their browser namespace.
+        chunks.append(
+            source.read_bytes()
+            if name in ("StudioCatalog", "PresetCodec")
+            else wrap_qml_js(contents, name)
+        )
+        visiting.remove(name)
+        bundled.add(name)
+
+    for name in roots:
+        include(modules[name])
+    result["Runtime.js"] = b"\n".join(chunks)
+
+    css = [
+        "/* Generated by tools/sync_studio_assets.py; edit the studio catalogue. */",
+        ".bd{background-size:cover;background-position:center;background-repeat:no-repeat}",
+    ]
+    # QML uses ARGB; CSS uses RGBA. Keep one palette in the catalogue.
+    palette = []
+    for name, value in data["theme"].items():
+        if not value.startswith("#"):
+            continue
+        if len(value) == 9:
+            value = "#" + value[3:] + value[1:3]
+        palette.append(f"--studio-{name}:{value}")
+    css.append(":root{" + ";".join(palette) + "}")
+    for wallpaper in data["wallpapers"]:
+        filename = wallpaper["file"]
+        assert Path(filename).name == filename, (
+            "Wallpaper filenames must be local basenames"
+        )
+        result["wallpapers/" + filename] = (
+            SOURCE_STUDIO / "wallpapers" / filename
+        ).read_bytes()
+        css.append(
+            f".bd-{wallpaper['id']}"
+            + "{background-color:"
+            + wallpaper["color"]
+            + ';background-image:url("wallpapers/'
+            + filename
+            + '")}'
+        )
+    result["wallpapers.css"] = ("\n".join(css) + "\n").encode()
+    return result
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--check", action="store_true")
+    args = parser.parse_args()
+    mismatches = []
+    funding = funding_module()
+    license = license_module()
+    if args.check:
+        if not FUNDING_MODULE.exists() or FUNDING_MODULE.read_bytes() != funding:
+            mismatches.append(str(FUNDING_MODULE.relative_to(ROOT)))
+        if not LICENSE_MODULE.exists() or LICENSE_MODULE.read_bytes() != license:
+            mismatches.append(str(LICENSE_MODULE.relative_to(ROOT)))
+    else:
+        FUNDING_MODULE.write_bytes(funding)
+        LICENSE_MODULE.write_bytes(license)
+    published = outputs()
+    for stale in DEST.glob("*.js"):
+        if stale.name not in published:
+            if args.check:
+                mismatches.append(stale.name + " (obsolete)")
+            else:
+                stale.unlink()
+    for name, content in published.items():
+        target = DEST / name
+        if args.check:
+            if not target.exists() or target.read_bytes() != content:
+                mismatches.append(name)
+        else:
+            target.parent.mkdir(parents=True, exist_ok=True)
+            target.write_bytes(content)
+    if mismatches:
+        raise SystemExit(
+            "Studio assets need syncing: "
+            + ", ".join(mismatches)
+            + ". Run python3 tools/sync_studio_assets.py"
+        )
+    print(
+        "PASS: shared studio assets are identical"
+        if args.check
+        else "Updated shared studio assets for Pages"
+    )
+
+
+if __name__ == "__main__":
+    main()

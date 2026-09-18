@@ -11,12 +11,14 @@ jobs:
   qml:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: cachix/install-nix-action@v27
+      - uses: cachix/install-nix-action@v31.11.1
 
       - name: qmllint
         run: nix develop --command bash -c 'find package/contents -name "*.qml" | xargs qmllint --unresolved-type info'
 
       - name: qmlformat check
-        run: nix develop --command bash -c 'find package/contents -name "*.qml" | xargs qmlformat --dry-run 2>&1 | grep -q "would reformat" && echo "Files need formatting, run qmlformat -i" && exit 1 || true'
+        run: |
+          nix develop --command bash -c 'find package/contents -name "*.qml" -print0 | xargs -0 qmlformat -i'
+          git diff --exit-code -- package/contents

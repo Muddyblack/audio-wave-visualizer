@@ -1,0 +1,44 @@
+// Shared project links and optional network statistics for both Studios.
+.import "ProjectFunding.js" as Funding
+.import "ProjectLicense.js" as License
+var name = "Plasma Audio Visualizer";
+var author = "Muddyblack";
+var repository = "https://github.com/Muddyblack/audio-wave-visualizer";
+var profile = "https://github.com/Muddyblack";
+var avatar = "https://github.com/Muddyblack.png?size=128";
+var store = "https://www.opendesktop.org/p/2359422";
+var funding = Funding.links;
+var license = License.label;
+var licenseId = License.spdx;
+var contributorsUrl = "https://api.github.com/repos/Muddyblack/audio-wave-visualizer/contributors?per_page=12";
+var contributorsPage = repository + "/graphs/contributors";
+var statistics = [
+    {id: "stars", label: "GitHub stars", icon: "star.svg", href: repository + "/stargazers", url: "https://img.shields.io/github/stars/Muddyblack/audio-wave-visualizer.json"},
+    {id: "downloads", label: "GitHub downloads", icon: "download.svg", href: repository + "/releases", url: "https://img.shields.io/github/downloads/Muddyblack/audio-wave-visualizer/total.json"},
+    {id: "kde", label: "OpenDesktop downloads", icon: "download.svg", href: store, url: "https://img.shields.io/badge/dynamic/json.json?url=" + encodeURIComponent("https://api.pling.com/ocs/v1/content/data?search=audio+wave+visualizer&format=json") + "&query=" + encodeURIComponent("$.data[0].downloads") + "&label=Downloads"}
+];
+function count(text) {
+    try {
+        var badge = JSON.parse(text);
+        var value = String(badge.value === undefined ? "" : badge.value).trim();
+        return !badge.isError && /^\d[\d,. ]*[kmbt]?\+?$/i.test(value) ? value : "";
+    } catch (error) { return ""; }
+}
+function contributors(text) {
+    try {
+        var response = JSON.parse(text);
+        if (!Array.isArray(response)) return [];
+        return response.filter(function (entry) {
+            return entry && entry.type !== "Bot" && typeof entry.login === "string"
+                && /^[A-Za-z0-9-]{1,39}$/.test(entry.login)
+                && Number.isFinite(entry.contributions) && entry.contributions > 0;
+        }).slice(0, 12).map(function (entry) {
+            return {
+                login: entry.login,
+                commits: entry.contributions,
+                profile: "https://github.com/" + entry.login,
+                avatar: "https://github.com/" + entry.login + ".png?size=96"
+            };
+        });
+    } catch (error) { return []; }
+}
