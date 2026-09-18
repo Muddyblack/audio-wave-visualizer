@@ -5,6 +5,19 @@ import "../hyprland/Configuration.js" as Configuration
 
 TestCase {
     name: "LyricsSettings"
+    // The live preview reads the host's applied capture settings, separately
+    // from the cfg_* draft supplied to the settings page.
+    property QtObject plasmoid: QtObject {
+        property QtObject configuration: QtObject {
+            property int numBars: 4
+            property int framerate: 60
+            property int sensitivity: 100
+            property real noiseReduction: 0.77
+            property string inputMethod: "auto"
+            property string inputSource: "auto"
+            property int visualizerType: 0
+        }
+    }
     property var defaults
     property var pageComponent
     function initTestCase() {
@@ -23,7 +36,7 @@ TestCase {
         }
     }
     function test_plasmaPageStack() {
-        failOnWarning(/Setting initial properties failed|Value is null|Unable to assign|TypeError/);
+        failOnWarning(/Setting initial properties failed|Value is null|Unable to assign|TypeError|ReferenceError/);
         const stack = createTemporaryObject(pageRowComponent, this);
         verify(stack !== null);
         const properties = {

@@ -125,10 +125,12 @@
             shellHook = ''
               # Qt's propagated tools can put the unwrapped D-Bus first.
               export PATH="${sessionBus}/bin:$PATH"
-              export NIXPKGS_QT6_QML_IMPORT_PATH="${pkgs.lib.makeSearchPath pkgs.qt6.qtbase.qtQmlPrefix [ pkgs.qt6.qtdeclarative pkgs.kdePackages.kirigami.unwrapped ]}''${NIXPKGS_QT6_QML_IMPORT_PATH:+:$NIXPKGS_QT6_QML_IMPORT_PATH}"
+              export NIXPKGS_QT6_QML_IMPORT_PATH="${pkgs.lib.makeSearchPath pkgs.qt6.qtbase.qtQmlPrefix [ pkgs.qt6.qtdeclarative pkgs.kdePackages.kirigami.unwrapped pkgs.kdePackages.plasma-workspace ]}''${NIXPKGS_QT6_QML_IMPORT_PATH:+:$NIXPKGS_QT6_QML_IMPORT_PATH}"
               # qmltestrunner/qmllint are unwrapped: Qt reads QML_IMPORT_PATH,
               # not the Nix wrapper variable above. A desktop profile can hide
               # this missing path locally, while a clean CI runner cannot.
+              # The settings live preview imports Plasma's private MPRIS model
+              # from plasma-workspace, including in the headless page tests.
               export QML_IMPORT_PATH="$NIXPKGS_QT6_QML_IMPORT_PATH''${QML_IMPORT_PATH:+:$QML_IMPORT_PATH}"
               export QT_PLUGIN_PATH="${pkgs.qt6.qtsvg}/${pkgs.qt6.qtbase.qtPluginPrefix}''${QT_PLUGIN_PATH:+:$QT_PLUGIN_PATH}"
               pre-commit install -f --install-hooks
