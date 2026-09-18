@@ -1,6 +1,7 @@
 import QtQuick
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.plasma5support as Plasma5Support
+import org.kde.plasma.private.mpris as Mpris
 import "studio" as Studio
 
 // Plasma settings page hosting the shared studio. Plasma sets every cfg_*
@@ -21,6 +22,10 @@ Kirigami.Page {
     property string cfg_customProgressBarDefault
     property string cfg_customProgressBars
     property string cfg_customProgressBarsDefault
+    property string cfg_customButtons
+    property string cfg_customButtonsDefault
+    property string cfg_customButtonStyles
+    property string cfg_customButtonStylesDefault
     property int cfg_visualizerType
     property int cfg_visualizerTypeDefault
     property real cfg_wheelSeekSeconds
@@ -167,6 +172,8 @@ Kirigami.Page {
     property real cfg_glassBlurDefault
     property string cfg_glassTint
     property string cfg_glassTintDefault
+    property string cfg_glassTintColor
+    property string cfg_glassTintColorDefault
     property bool cfg_compositorGlass
     property bool cfg_compositorGlassDefault
     property real cfg_glassRefraction
@@ -438,7 +445,25 @@ Kirigami.Page {
         }
     }
 
+    Mpris.Mpris2Model {
+        id: previewMpris
+    }
+    VisualizerCore {
+        id: previewAudio
+        // Follow the active widget's capture settings; draft appearance stays
+        // local to the preview until Apply.
+        configuration: plasmoid.configuration
+        active: studio.livePreview && studio.onScreen
+        plasmoidVisible: active
+        commandSourceComponent: Component {
+            Plasma5Support.DataSource {
+                engine: "executable"
+            }
+        }
+    }
+
     Studio.Studio {
+        id: studio
         anchors.fill: parent
         commandSourceComponent: Component {
             Plasma5Support.DataSource {
@@ -450,6 +475,9 @@ Kirigami.Page {
         defaults: root.defaults
         canDiscard: root.hasChanges
         previewAccent: Kirigami.Theme.highlightColor
+        liveVisualizer: previewAudio
+        livePlayer: previewMpris.currentPlayer
+        liveIsPlaying: previewMpris.currentPlayer?.playbackStatus === Mpris.PlaybackStatus.Playing
         diagnosticsRunner: done => {
             doctor.done = done;
             doctor.connectSource("bash '" + Qt.resolvedUrl("../code/doctor.sh").toString().replace(/^file:\/\//, "") + "'");

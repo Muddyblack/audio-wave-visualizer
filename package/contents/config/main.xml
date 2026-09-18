@@ -17,6 +17,12 @@
         <entry name="customProgressBars" type="String">
             <default></default>
         </entry>
+        <entry name="customButtons" type="String">
+            <default></default>
+        </entry>
+        <entry name="customButtonStyles" type="String">
+            <default></default>
+        </entry>
         <entry name="visualizerType" type="Int">
             <default>0</default>
         </entry>
@@ -226,6 +232,9 @@
         <entry name="glassTint" type="String">
             <default>clear</default>
         </entry>
+        <entry name="glassTintColor" type="String">
+            <default>#3daee9</default>
+        </entry>
         <entry name="compositorGlass" type="Bool">
             <default>false</default>
         </entry>
@@ -431,7 +440,7 @@
             <default>false</default>
         </entry>
         <entry name="scrollVolume" type="Bool">
-            <default>false</default>
+            <default>true</default>
         </entry>
         <entry name="reducedMotion" type="Bool">
             <default>false</default>

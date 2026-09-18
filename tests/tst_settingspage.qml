@@ -125,6 +125,11 @@ TestCase {
         mouseClick(tab3);
         compare(page.currentTabIndex, 2);
 
+        const buttonsTab = findChild(page, "subTab_buttons");
+        verify(buttonsTab !== null);
+        mouseClick(buttonsTab);
+        compare(page.currentTabIndex, 4);
+
         const tab0 = findChild(page, "mainTab_presets");
         verify(tab0 !== null);
         mouseClick(tab0);

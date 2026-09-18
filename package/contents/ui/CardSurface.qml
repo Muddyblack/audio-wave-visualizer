@@ -325,6 +325,7 @@ Item {
             grain: root.configuration.grain ?? false
             radius: root.cardRadius
             glassTint: root.configuration.glassTint ?? "clear"
+            glassTintColor: root.configuration.glassTintColor ?? "#3daee9"
             specular: root.configuration.glassSpecular ?? true
             edgeHighlight: root.configuration.edgeHighlight ?? false
             cover1: root.coverColor1

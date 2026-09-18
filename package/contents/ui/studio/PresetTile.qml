@@ -64,6 +64,7 @@ Item {
             clip: true
             Backdrop {
                 id: tileWallpaper
+                decodeWidth: 320
                 anchors.fill: parent
                 kind: tile.backdrop
             }

@@ -373,6 +373,9 @@ ShellRoot {
             commandSourceComponent: Component {
                 CommandProcess {}
             }
+            liveVisualizer: backend
+            livePlayer: root.player
+            liveIsPlaying: root.player?.isPlaying ?? false
             diagnosticsRunner: root.runDiagnostics
             errorMessage: root.settingsError
             onApply: draft => {

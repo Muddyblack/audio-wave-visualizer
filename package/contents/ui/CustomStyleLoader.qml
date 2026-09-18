@@ -10,6 +10,7 @@ Item {
     property string loaderName: "customStyleLoader"
     property bool contentVisible: true
     readonly property alias item: loader.item
+    readonly property real preferredWidth: (loader.item as Item)?.implicitWidth ?? 0
     readonly property real preferredHeight: (loader.item as Item)?.implicitHeight ?? 0
     property string sourceUrl: ""
     property string error: ""

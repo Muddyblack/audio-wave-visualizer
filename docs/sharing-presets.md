@@ -5,7 +5,7 @@ saved look, select it first, then choose **Copy as JSON** (on the website,
 **Copy current as JSON**). Send the JSON to another user; they can paste it into
 **Import JSON** in the desktop or web Studio.
 
-The export contains visual settings, not custom QML files, favourites, or the
+The export contains visual settings, not custom QML files (including button styles), favourites, or the
 automatic daily setting. A look using a custom QML style needs that trusted file
 installed separately. Never treat an unfamiliar QML file as a harmless preset.
 
@@ -34,5 +34,11 @@ Manual changes then stay until the next day. Turning it off keeps the current
 look. In the web Studio the option affects only that browser, while the page is
 open or on the next visit; it cannot change your desktop widget.
 
-Favourites are local to your widget configuration or browser. The star marks a
-look without applying it. Import/export can transfer saved looks between them.
+Desktop favourites and saved looks are stored for your user account in
+`~/.config/audio-wave-visualizer-presets.ini`. Every Plasma widget and the
+Hyprland Studio on that account shares them, and removing a widget keeps them.
+Existing per-widget libraries are imported the first time each widget opens
+Studio. Changes to this shared library save immediately, independently of
+**Apply**. The web Studio keeps its own browser-local library. The star marks
+a look without applying it; import/export can transfer saved looks between the
+desktop and web Studios.

@@ -14,10 +14,18 @@ for (const [, file] of html.matchAll(/<script src="([^"]+)"/g)) {
 const source = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
 const manifest = JSON.parse(fs.readFileSync(path.resolve(root, '../../package/metadata.json'), 'utf8'));
 assert.equal(vm.runInContext('ProjectManifest.version', context), manifest.KPlugin.Version);
+assert.equal(vm.runInContext('ProjectInfo.contributors(JSON.stringify([{login:"Helpful-Dev",type:"User",contributions:3},{login:"<script>",type:"User",contributions:2}])).length', context), 1);
+assert.equal(vm.runInContext('ProjectInfo.licenseId', context), 'GPL-3.0-or-later');
 vm.runInContext(source.slice(source.indexOf('const HYPR ='), source.indexOf('let lastT =')), context);
 vm.runInContext(source.slice(source.indexOf('const presetState ='), source.indexOf('function renderPresets()')), context);
 vm.runInContext(`
   assert.deepEqual(Array.from(sizeOf(DEFAULTS)), [360, 104]);
+  assert(Schema.APPEARANCE_TABS.includes('buttons'));
+  const buttonPicker = Schema.SECTIONS.flatMap(s => s.rows).find(r => r.id === 'customButtons');
+  assert.equal(buttonPicker.type, 'customStyle');
+  assert(buttonPicker.docs.includes('custom-playback-buttons'));
+  assert.equal(DEFAULTS.customButtons, '');
+  assert.equal(DEFAULTS.customButtonStyles, '');
   assert.equal(typeof DEFAULTS.detailFields, 'string');
   for (const preset of PRESETS) {
     const state = presetState(preset), size = sizeOf(state);

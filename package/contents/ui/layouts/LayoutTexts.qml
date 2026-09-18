@@ -9,6 +9,7 @@ ColumnLayout {
     id: root
     objectName: "layoutTexts"
     required property var view
+    Layout.minimumWidth: 0
     property real titleFactor: 1
     property real artistSize: 0.82
     property real albumSize: 0.72
@@ -36,6 +37,7 @@ ColumnLayout {
         Layout.alignment: root.layoutAlignment
         Layout.bottomMargin: 3
         Layout.maximumWidth: root.width
+        Layout.minimumWidth: 0
         spacing: 5
         opacity: 0.65
 
@@ -64,6 +66,7 @@ ColumnLayout {
             renderType: Text.CurveRendering ?? Text.QtRendering
             font.family: root.view.defaultFontFamily
             Layout.fillWidth: true
+            Layout.minimumWidth: 0
             text: root.view.sourceName.toUpperCase()
             color: root.view.textColor
             font.pixelSize: root.sourceSize
@@ -99,7 +102,9 @@ ColumnLayout {
 
     Item {
         id: titleViewport
+        objectName: "titleViewport"
         Layout.fillWidth: true
+        Layout.minimumWidth: 0
         implicitHeight: title.implicitHeight
         layer.enabled: root.marquee && GraphicsInfo.api !== GraphicsInfo.Software
         layer.smooth: true
@@ -108,7 +113,7 @@ ColumnLayout {
             property real fadeFraction: Math.min(0.2, 8 / Math.max(1, titleViewport.width))
             fragmentShader: Qt.resolvedUrl("../../shaders/text_fade.frag.qsb")
         }
-        clip: root.marquee
+        clip: true
 
         TrackText {
             id: title
@@ -139,7 +144,9 @@ ColumnLayout {
     }
 
     TrackText {
+        objectName: "artistLine"
         Layout.fillWidth: true
+        Layout.minimumWidth: 0
         secondary: true
         formatBadges: root.view.formatBadges ?? []
         font.family: root.view.defaultFontFamily
@@ -156,6 +163,7 @@ ColumnLayout {
         renderType: Text.CurveRendering ?? Text.QtRendering
         font.family: root.view.defaultFontFamily
         Layout.fillWidth: true
+        Layout.minimumWidth: 0
         Layout.topMargin: 1
         visible: (root.cfg.showAlbum ?? false) && root.view.album !== ""
         text: root.view.album + (root.view.year !== "" ? " · " + root.view.year : "")
@@ -169,6 +177,7 @@ ColumnLayout {
     Text {
         objectName: "lyricLine"
         Layout.fillWidth: true
+        Layout.minimumWidth: 0
         Layout.topMargin: 1
         visible: (root.cfg.showLyrics ?? false) && root.view.lyricDisplayLine !== ""
         text: root.view.lyricDisplayLine

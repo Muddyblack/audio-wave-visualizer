@@ -149,7 +149,7 @@ Item {
                     dockStyle: preview.value === "hover" ? "glass" : preview.value
                 })
                 isPlaying: true
-                controlColor: "#ffffff"
+                controlColor: preview.draft.controlsColorSource === "accent" || preview.draft.controlsColorSource === "visualizer" ? preview.studio.accent : preview.draft.useSystemControls === false ? preview.draft.customControlColor : "#ffffff"
                 accentColor: preview.studio.accent
             }
         }
@@ -236,11 +236,12 @@ Item {
                 property real visualFrameTime: preview.studio.backend.frameTimeMs
             }
             ArtView {
+                objectName: "shapePreviewArtwork"
                 anchors.centerIn: parent
                 width: 36
                 height: 36
                 view: sampleView
-                artUrl: preview.studio.samplePlayer.artUrl
+                artUrl: preview.studio.livePreview && preview.studio.liveVisualizer ? (preview.studio.livePlayer?.trackArtUrl ?? preview.studio.livePlayer?.artUrl ?? "") : preview.studio.samplePlayer.artUrl
             }
         }
     }

@@ -13,6 +13,8 @@ Rectangle {
     id: studioRoot
     property var draft: ({})
     property var defaults: ({})
+    property string libraryPath: ""
+    property alias presetLibrary: library
     // "kde" or "hypr": platform notes and placement rows.
     property string env: "kde"
     property var screenNames: []
@@ -46,6 +48,11 @@ Rectangle {
         }
     }
     property color previewAccent: "#3daee9"
+    property bool livePreview: false
+    property var liveVisualizer: null
+    property var livePlayer: null
+    property bool liveIsPlaying: false
+    property real livePositionUnitsPerSecond: 0
     property int currentTabIndex: 0
     property string query: ""
     onCurrentTabIndexChanged: body.contentY = 0
@@ -53,24 +60,32 @@ Rectangle {
     property string presetFilter: "all"
     property string day: Schema.localDay()
     readonly property var daily: Schema.dailyLook(day)
-    readonly property var favorites: Schema.favoriteIds(draft.favoritePresets)
+    PresetLibrary {
+        id: library
+        filePath: studioRoot.libraryPath
+        active: studioRoot.onScreen
+    }
+    readonly property var favorites: library.favorites
+    onReadyChanged: if (ready)
+        library.migrate(draft.favoritePresets, draft.userPresets)
+    onDraftChanged: if (ready)
+        library.migrate(draft.favoritePresets, draft.userPresets)
     function toggleFavorite(id) {
-        update({
-            favoritePresets: JSON.stringify(favorites.indexOf(id) === -1 ? favorites.concat([id]) : favorites.filter(value => value !== id))
-        });
+        library.refresh();
+        const current = library.favorites;
+        library.setFavorites(current.indexOf(id) === -1 ? current.concat([id]) : current.filter(value => value !== id));
     }
     function saveDaily() {
+        library.refresh();
         const id = daily.id;
         if (!userPresetList().some(p => p.id === id))
-            update({
-                userPresets: JSON.stringify(userPresetList().concat([
-                    {
-                        id: id,
-                        name: daily.name,
-                        settings: daily.s
-                    }
-                ]))
-            });
+            library.setPresets(userPresetList().concat([
+                {
+                    id: id,
+                    name: daily.name,
+                    settings: daily.s
+                }
+            ]));
     }
     Timer {
         interval: 30000
@@ -96,8 +111,18 @@ Rectangle {
     readonly property bool onScreen: visible && !!Window.window && Window.window.visible
     readonly property color accent: draft.useSystemAccent === false ? draft.customColor : previewAccent
     readonly property var monitorOptions: [["", "First available display"], ["all", "Every monitor"]].concat(screenNames.map(name => [name, name]))
-    readonly property bool wide: width >= 1000
-    readonly property bool compact: !wide && height < 640
+    // Keep the layout from bouncing between modes while the dialog is dragged
+    // near a breakpoint. Width and height can move in opposite directions as
+    // the host negotiates the page's size.
+    property bool wide: false
+    property bool compact: false
+    function updateLayoutMode() {
+        wide = wide ? width >= 960 : width >= 1040;
+        compact = !wide && (compact ? height < 660 : height < 620);
+    }
+    onWidthChanged: updateLayoutMode()
+    onHeightChanged: updateLayoutMode()
+    Component.onCompleted: updateLayoutMode()
     readonly property int inset: compact ? 10 : 20
     readonly property bool anyResults: Schema.SECTIONS.some(section => section.rows.some(row => Schema.rowVisible(row, section, draft, env, query.trim().toLowerCase())) && (query.trim() !== "" || section.tab === currentTab))
     property alias backend: tileBackend
@@ -109,22 +134,20 @@ Rectangle {
     }
     function applyLook(settings) {
         const next = Schema.applyPreset(defaults, draft, settings, keepColors);
-        next.userPresets = draft.userPresets ?? "";
         edited(next);
     }
     function userPresetList() {
-        return Schema.parseUserPresets(draft.userPresets ?? "");
+        return library.presets;
     }
     function addUserPreset(entry) {
+        library.refresh();
         const list = userPresetList();
         list.push({
             id: "u" + Date.now(),
             name: entry.name,
             settings: entry.settings
         });
-        update({
-            userPresets: JSON.stringify(list)
-        });
+        library.setPresets(list);
     }
     function saveUserPreset(name) {
         addUserPreset({
@@ -133,6 +156,7 @@ Rectangle {
         });
     }
     function renameUserPreset(index, name) {
+        library.refresh();
         const list = userPresetList();
         const trimmed = String(name).trim();
         if (!trimmed || !Number.isInteger(index) || index < 0 || index >= list.length)
@@ -140,19 +164,16 @@ Rectangle {
         list[index] = Object.assign({}, list[index], {
             name: trimmed
         });
-        update({
-            userPresets: JSON.stringify(list)
-        });
+        library.setPresets(list);
         return true;
     }
     function removeUserPreset(index) {
+        library.refresh();
         const list = userPresetList();
         const removed = list.splice(index, 1)[0];
         if (removed && favorites.indexOf(removed.id) !== -1)
             toggleFavorite(removed.id);
-        update({
-            userPresets: JSON.stringify(list)
-        });
+        library.setPresets(list);
     }
 
     color: Theme.bg
@@ -193,12 +214,13 @@ Rectangle {
 
         PreviewPane {
             id: pane
+            objectName: "studioPreviewPane"
             compact: studioRoot.compact
             studio: studioRoot
             visible: studioRoot.ready
             x: studioRoot.wide ? panel.width + 20 : 0
             width: studioRoot.wide ? parent.width - panel.width - 20 : parent.width
-            height: studioRoot.wide ? Math.min(parent.height, 420) : studioRoot.compact ? (optionsExpanded ? 250 : 112) : Math.min(260, parent.height * 0.38)
+            height: studioRoot.wide ? Math.min(parent.height, 420) : Math.min(parent.height, Math.min(260, Math.max(112, 112 + (parent.height - 420) * 0.5)) + (studioRoot.compact && optionsExpanded ? 138 : 0))
         }
 
         Rectangle {
@@ -398,6 +420,17 @@ Rectangle {
                         }
                     }
                 }
+                TabScrollArrow {
+                    anchors.left: parent.left
+                    scroller: mainTabScroller
+                    forward: false
+                    areaName: "mainTabsBack"
+                }
+                TabScrollArrow {
+                    anchors.right: parent.right
+                    scroller: mainTabScroller
+                    areaName: "mainTabsForward"
+                }
             }
             Rectangle {
                 y: tabs.y + tabs.height
@@ -420,6 +453,7 @@ Rectangle {
                     visible: studioRoot.currentGroup === "presets"
                 }
                 Flickable {
+                    id: appearanceScroller
                     objectName: "appearanceScroller"
                     anchors.fill: parent
                     visible: studioRoot.currentGroup === "appearance"
@@ -447,6 +481,23 @@ Rectangle {
                             }
                         }
                     }
+                }
+                TabScrollArrow {
+                    anchors.left: parent.left
+                    scroller: appearanceScroller
+                    forward: false
+                    areaName: "appearanceTabsBack"
+                    visible: appearanceScroller.visible && appearanceScroller.contentX > 1
+                    y: 10
+                    height: 28
+                }
+                TabScrollArrow {
+                    anchors.right: parent.right
+                    scroller: appearanceScroller
+                    areaName: "appearanceTabsForward"
+                    visible: appearanceScroller.visible && appearanceScroller.contentX < limit - 1
+                    y: 10
+                    height: 28
                 }
                 Rectangle {
                     anchors.bottom: parent.bottom

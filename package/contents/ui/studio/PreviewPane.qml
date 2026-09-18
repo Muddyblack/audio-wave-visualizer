@@ -22,6 +22,7 @@ Rectangle {
     readonly property var draft: studio.draft
     readonly property var cardSize: LayoutSizes.size(draft)
     readonly property bool pill: Schema.isPill(draft)
+    readonly property bool liveMode: studio.livePreview && !!studio.liveVisualizer
     readonly property real fitScale: Math.max(0.25, Math.min(1, (width - 40) / (cardSize[0] + (pill ? 160 : 0)), Math.max(0, height - previewTop - previewBottom) / cardSize[1]))
     readonly property real zoomScale: zoom === "fit" ? fitScale : Number(zoom)
 
@@ -40,7 +41,7 @@ Rectangle {
 
     PreviewBackend {
         id: stageBackend
-        running: pane.visible && pane.studio.onScreen
+        running: pane.visible && pane.studio.onScreen && !pane.liveMode
         hasAudio: pane.stateName !== "paused" && pane.stateName !== "idle"
         backendFailed: pane.stateName === "backend"
         backendCode: backendFailed ? "no-cava" : ""
@@ -76,7 +77,7 @@ Rectangle {
         Loader {
             active: !!pane.draft && pane.draft.showMpris !== undefined
             sourceComponent: VisualizerView {
-                samplePlayback: true
+                samplePlayback: !pane.liveMode
                 backdropSource: stageWallpaper
                 objectName: "previewWidget"
                 width: pane.cardSize[0]
@@ -87,12 +88,15 @@ Rectangle {
                 setLyricsOffset: value => pane.studio.update({
                         lyricsOffset: value
                     })
-                visualizer: stageBackend
-                player: pane.stateName === "idle" ? null : stagePlayer
-                isPlaying: pane.stateName !== "paused"
+                visualizer: pane.liveMode ? pane.studio.liveVisualizer : stageBackend
+                player: pane.liveMode ? pane.studio.livePlayer : pane.stateName === "idle" ? null : stagePlayer
+                artist: pane.liveMode ? (pane.studio.livePlayer?.trackArtist ?? pane.studio.livePlayer?.artist ?? "") : stagePlayer.artist
+                track: pane.liveMode ? (pane.studio.livePlayer?.trackTitle ?? pane.studio.livePlayer?.track ?? "") : stagePlayer.track
+                playerArtUrl: pane.liveMode ? (pane.studio.livePlayer?.trackArtUrl ?? pane.studio.livePlayer?.artUrl ?? "") : stagePlayer.artUrl
+                isPlaying: pane.liveMode ? pane.studio.liveIsPlaying : pane.stateName !== "paused"
                 accentColor: pane.studio.previewAccent
                 systemTextColor: "#eff0f1"
-                positionUnitsPerSecond: 1
+                positionUnitsPerSecond: pane.liveMode ? pane.studio.livePositionUnitsPerSecond : 1
             }
         }
     }
@@ -154,13 +158,26 @@ Rectangle {
         text: pane.optionsExpanded ? "Hide preview options" : "Preview options"
         onClicked: pane.optionsExpanded = !pane.optionsExpanded
     }
+    StudioButton {
+        id: livePreviewToggle
+        visible: !!pane.studio.liveVisualizer
+        x: pane.compact ? 4 : pane.width - width - 12
+        y: pane.compact ? 4 : 12
+        z: 10
+        height: 28
+        compact: true
+        primary: pane.liveMode
+        text: pane.liveMode ? "Live audio · On" : "Use live audio"
+        areaName: "livePreviewButton"
+        onClicked: pane.studio.livePreview = !pane.studio.livePreview
+    }
 
     Flow {
         id: topOptions
         visible: pane.showOptions
         x: 12
         y: pane.compact ? 40 : 12
-        width: parent.width - 24
+        width: parent.width - 24 - (livePreviewToggle.visible && !pane.compact ? livePreviewToggle.width + 8 : 0)
         spacing: 8
         Chip {
             ChipLabel {
@@ -182,6 +199,7 @@ Rectangle {
                     Backdrop {
                         anchors.fill: parent
                         kind: backdropButton.modelData[0]
+                        decodeWidth: 96
                     }
                     Rectangle {
                         anchors.fill: parent
@@ -202,7 +220,7 @@ Rectangle {
             }
         }
         Controls.ComboBox {
-            visible: pane.compact
+            visible: pane.compact && !pane.liveMode
             width: 180
             height: 30
             model: Schema.STATES.map(state => state[1])
@@ -210,7 +228,7 @@ Rectangle {
             onActivated: pane.stateName = Schema.STATES[currentIndex][0]
         }
         Chip {
-            visible: !pane.compact
+            visible: !pane.compact && !pane.liveMode
             ChipLabel {
                 text: "STATE"
             }

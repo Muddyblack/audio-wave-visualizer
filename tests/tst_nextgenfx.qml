@@ -1,6 +1,7 @@
 import QtQuick
 import QtTest
 import "../package/contents/ui"
+import "../package/contents/code/PreviewAudio.js" as PreviewAudio
 
 TestCase {
     id: testCase
@@ -41,6 +42,14 @@ TestCase {
                     count++;
             }
         return count;
+    }
+    function test_stereoPreviewKeepsLoopAcrossPhaseCycle() {
+        for (const t of [0, Math.PI / 2, Math.PI, 3 * Math.PI / 2, 2 * Math.PI]) {
+            const samples = PreviewAudio.stereo(t);
+            compare(samples.length, 32);
+            verify(Math.abs(samples[0][1]) > .35, "The preview channels must stay out of phase at t=" + t);
+        }
+        verify(Math.abs(PreviewAudio.stereo(0)[0][1] - PreviewAudio.stereo(2)[0][1]) > .05, "The loop should still animate");
     }
     function test_visibleAndReducedMotion_data() {
         const rows = [];

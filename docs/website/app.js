@@ -86,13 +86,16 @@ function derive(s, status) {
   const appearance = ColourStyle.appearance(canonical, P.sysAccent, '#eff0f1', t.pal.accent, hasPlayer && status !== 'nocover');
   const {light, text} = appearance, accent = ColourStyle.hex(appearance.wave);
   const dock = s.useSystemDockBg ? (light ? '#2a33241a' : '#00000047') : `color-mix(in srgb,${s.customDockBgColor} 55%,transparent)`;
+  const dockSoft = s.useSystemDockBg ? '#ffffff1f' : s.customDockBgColor;
+  const dockOutline = s.useSystemDockBg ? '#00000014' : s.customDockBgColor;
+  const dockTinted = s.useSystemDockBg ? `color-mix(in srgb,${accent} 28%,transparent)` : s.customDockBgColor;
   const linked = ColourStyle.linked(canonical, accent, appearance.control, P.sysAccent, t.pal.p1, t.pal.p2, bands(colorTime).high, colorTime);
   const control = ColourStyle.hex(linked.control), controlAccent = ColourStyle.hex(linked.controlAccent);
   const progress = ColourStyle.hex(linked.progressWave), pg1 = ColourStyle.hex(linked.start), pg2 = ColourStyle.hex(linked.end);
   const pgStops = linked.progressStops.map(ColourStyle.hex);
-  return { t, hasPlayer, playing, surf, light, accent, text, control, controlAccent, progress, dock, pg1, pg2, pgStops };
+  return { t, hasPlayer, playing, surf, light, accent, text, control, controlAccent, progress, dock, dockSoft, dockOutline, dockTinted, pg1, pg2, pgStops };
 }
-const colorVars = d => `--accent:${d.accent};--text:${d.text};--control:${d.control};--control-accent:${d.controlAccent};--progress:${d.progress};--dock:${d.dock};--pg1:${d.pg1};--pg2:${d.pg2};${d.pgStops.length ? `--pg-fill:linear-gradient(90deg,${(d.pgStops.length === 1 ? [d.pgStops[0], d.pgStops[0]] : d.pgStops).join(',')});--ring-fill:conic-gradient(${d.pgStops.map((c,i) => `${c} calc(var(--p) * ${i / Math.max(1,d.pgStops.length-1)*360}deg)`).join(',')},#ffffff26 0);` : ''}`;
+const colorVars = d => `--accent:${d.accent};--text:${d.text};--control:${d.control};--control-accent:${d.controlAccent};--progress:${d.progress};--dock:${d.dock};--dock-soft:${d.dockSoft};--dock-outline:${d.dockOutline};--dock-tinted:${d.dockTinted};--pg1:${d.pg1};--pg2:${d.pg2};${d.pgStops.length ? `--pg-fill:linear-gradient(90deg,${(d.pgStops.length === 1 ? [d.pgStops[0], d.pgStops[0]] : d.pgStops).join(',')});--ring-fill:conic-gradient(${d.pgStops.map((c,i) => `${c} calc(var(--p) * ${i / Math.max(1,d.pgStops.length-1)*360}deg)`).join(',')},#ffffff26 0);` : ''}`;
 
 function artHTML(s, d, size, o) {
   const shape = s.artShape, cls = ['art', shape, 'b-' + s.artBorder];
@@ -131,8 +134,9 @@ function detailRows(s, d) {
 }
 function surfHTML(s, cls, fill) {
   const liquid = cls === 'liquid';
-  const extra = liquid ? ` t-${s.glassTint}${s.glassRefraction > .02 ? ' refract' : ''}` : '';
-  return `<div class="surf s-${cls}${extra}" style="opacity:${s.artBgTransparency};--bgc:${fill};--blur:${(s.artBgBlur * 24).toFixed(1)}px;--dim:${s.artBgDim}">${cls === 'art' ? '<i class="cover"></i><i class="scrim"></i>' : ''}${liquid ? '<i class="spec"></i>' : ''}<i class="edge ${s.edgeHighlight ? 'hl' : ''}"></i>${s.grain ? '<i class="grain"></i>' : ''}</div>`;
+  const glass = cls === 'glass' || liquid;
+  const extra = glass ? ` t-${s.glassTint}${liquid && s.glassRefraction > .02 ? ' refract' : ''}` : '';
+  return `<div class="surf s-${cls}${extra}" style="opacity:${s.artBgTransparency};--bgc:${fill};--blur:${(s.artBgBlur * 24).toFixed(1)}px;--dim:${s.artBgDim};--glass-blur:${(s.glassBlur * 24).toFixed(1)}px;--glass-color:${s.glassTintColor || '#3daee9'}">${cls === 'art' ? '<i class="cover"></i><i class="scrim"></i>' : ''}${liquid ? '<i class="spec"></i>' : ''}<i class="edge ${s.edgeHighlight ? 'hl' : ''}"></i>${s.grain ? '<i class="grain"></i>' : ''}</div>`;
 }
 
 function widgetHTML(s, status, opt = {}) {
@@ -700,17 +704,20 @@ function toggleFavorite(id) {
   syncSettings();
 }
 const projectCounts = {};
+let projectContributors = [];
 function renderProjectInfo(el) {
   el.innerHTML = `<div class="project-info">
-    <div class="project-heading"><img src="assets/studio/icon.png" alt="Plasma Audio Visualizer project icon"><h3>${ProjectInfo.name}</h3></div>
-    <div class="project-author"><span class="profile-image"><span aria-hidden="true">M</span><img alt="Muddyblack’s profile picture" hidden></span><div><a class="ghost-link" href="${ProjectInfo.profile}" target="_blank" rel="noopener">Created by ${ProjectInfo.author} ↗</a></div></div>
+    <div class="project-heading"><img src="assets/studio/icon.png" alt="Plasma Audio Visualizer project icon"><div><h3>${ProjectInfo.name}</h3><div class="project-author"><span class="profile-image"><span aria-hidden="true">M</span><img alt="Muddyblack’s profile picture" hidden></span><a class="ghost-link" href="${ProjectInfo.profile}" target="_blank" rel="noopener">By ${ProjectInfo.author} ↗</a></div></div></div>
     <p>An open-source music visualizer for Plasma and Hyprland. Explore the project, get updates, or help improve it.</p>
-    <div class="project-links">${ProjectInfo.links.map(([label, url]) => `<a class="ghost-link" href="${url}" target="_blank" rel="noopener">${label} ↗</a>`).join('')}</div>
-    <div class="project-stats">${ProjectInfo.statistics.map(stat => `<div data-project-stat="${stat.id}" hidden><b></b><span>${stat.label}</span></div>`).join('')}</div>
-    <p>Enjoying the visualizer? A star on GitHub helps others discover it. Thank you for supporting the project.</p>
-    <a class="primary-link star-link" href="${ProjectInfo.repository}" target="_blank" rel="noopener">☆ Star on GitHub ↗</a>
-    <p>Have a design idea? Open an issue — I might add it. A sketch, mockup, or annotated screenshot helps explain what you have in mind.</p>
-    <a class="ghost-link" href="${ProjectInfo.repository}/issues/new" target="_blank" rel="noopener">Suggest a design ↗</a></div>`;
+    <div class="project-stats">${ProjectInfo.statistics.map(stat => `<a href="${stat.href}" target="_blank" rel="noopener" data-project-stat="${stat.id}" aria-label="${stat.label}"><span class="project-stat-top"><img src="assets/studio/icons/${stat.icon}" alt="" aria-hidden="true"><b>—</b></span><span>${stat.label} ↗</span></a>`).join('')}</div>
+    <div class="project-license"><strong>License · ${ProjectInfo.license}</strong><small>${ProjectInfo.licenseId} · From the bundled LICENSE file</small></div>
+    <section class="project-contributors" aria-label="Contributors" hidden></section>
+    <section class="project-funding" aria-labelledby="project-funding-title">
+      <h4 id="project-funding-title">Support the project</h4>
+      <div class="project-funding-links">${ProjectInfo.funding.map(link => `<a href="${link.url}" target="_blank" rel="noopener" aria-label="Support on ${link.label}"><img src="assets/studio/icons/${link.icon}" alt="" aria-hidden="true"><span>${link.label}</span></a>`).join('')}</div>
+    </section>
+    <div class="project-actions"><a class="ghost-link" href="${ProjectInfo.repository}" target="_blank" rel="noopener">View source on GitHub ↗</a>
+    <a class="ghost-link" href="${ProjectInfo.repository}/issues" target="_blank" rel="noopener">Report an issue ↗</a></div></div>`;
   const avatar = $('.profile-image img', el);
   avatar.onload = () => { avatar.hidden = false; };
   avatar.onerror = () => { avatar.hidden = true; };
@@ -719,8 +726,14 @@ function renderProjectInfo(el) {
     if (!avatar.hasAttribute('src')) avatar.src = ProjectInfo.avatar;
     for (const stat of ProjectInfo.statistics) {
       const item = $(`[data-project-stat="${stat.id}"]`, el), value = projectCounts[stat.id];
-      item.hidden = !value;
-      $('b', item).textContent = value || '';
+      $('b', item).textContent = value || '—';
+    }
+    const section = $('.project-contributors', el);
+    section.hidden = projectContributors.length === 0;
+    const signature = projectContributors.map(c => `${c.login}:${c.commits}`).join('|');
+    if (signature && section.dataset.signature !== signature) {
+      section.dataset.signature = signature;
+      section.innerHTML = `<div class="project-contributors-head"><h4>Contributors</h4><a href="${ProjectInfo.contributorsPage}" target="_blank" rel="noopener">See all on GitHub ↗</a></div><div class="project-contributor-list">${projectContributors.map(c => `<a class="project-contributor" href="${c.profile}" target="_blank" rel="noopener"><span class="contributor-avatar"><img src="${c.avatar}" alt="" loading="lazy"></span><span class="contributor-copy"><strong>${esc(c.login)}</strong><small>${c.commits} ${c.commits === 1 ? 'commit' : 'commits'}</small></span></a>`).join('')}</div>`;
     }
   };
 }
@@ -940,7 +953,7 @@ function buildRow(r) {
     const box = $('.nt', el);
     sync = () => { const html = r.html ? r.html() : platformNote(r.note); if (box.innerHTML !== html) box.innerHTML = html; };
   } else if (r.type === 'customStyle') {
-    el.innerHTML = `<details><summary>${r.label}</summary><div class="note">${r.desc || ''} (QML desktop feature).</div></details>`;
+    el.innerHTML = `<details><summary>${r.label}</summary><div class="note">${r.desc || ''} Import local QML in the desktop widget. The browser demo shows built-in styles. ${r.docs ? `<a href="${r.docs}">QML interface and example</a>` : ''}</div></details>`;
   } else if (r.type === 'anchor') {
     sync = renderAnchor(el);
   } else if (r.type === 'diagnostics') {
@@ -1065,6 +1078,15 @@ async function loadProjectCounts() {
   }));
 }
 loadProjectCounts();
+async function loadProjectContributors() {
+  try {
+    const response = await fetch(ProjectInfo.contributorsUrl, {signal: AbortSignal.timeout(8000)});
+    if (!response.ok) return;
+    projectContributors = ProjectInfo.contributors(await response.text());
+    if (projectContributors.length) syncSettings();
+  } catch (_) { /* The section appears only when GitHub responds. */ }
+}
+loadProjectContributors();
 
 /* ─── glue ─────────────────────────────────────────────────────── */
 let toastTimer;

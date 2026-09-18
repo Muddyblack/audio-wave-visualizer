@@ -18,6 +18,64 @@ SOURCE_STUDIO = ROOT / "package/contents/ui/studio"
 SOURCE_CODE = ROOT / "package/contents/code"
 SOURCE_CONFIG = ROOT / "package/contents/config"
 DEST = ROOT / "docs/website/assets/studio"
+FUNDING_SOURCE = ROOT / ".github/FUNDING.yml"
+FUNDING_MODULE = SOURCE_STUDIO / "ProjectFunding.js"
+LICENSE_MODULE = SOURCE_STUDIO / "ProjectLicense.js"
+
+
+def funding_module():
+    """Turn the GitHub funding choices into links used by both Info panes."""
+    providers = {
+        "github": (
+            "GitHub Sponsors",
+            "https://github.com/sponsors/",
+            "githubsponsors.svg",
+        ),
+        "ko_fi": ("Ko-fi", "https://ko-fi.com/", "kofi.svg"),
+        "buy_me_a_coffee": (
+            "Buy Me a Coffee",
+            "https://buymeacoffee.com/",
+            "buymeacoffee.svg",
+        ),
+    }
+    links = []
+    for line in FUNDING_SOURCE.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#"):
+            continue
+        key, separator, value = line.partition(":")
+        if not separator or key not in providers:
+            raise ValueError("Unsupported FUNDING.yml entry: " + line)
+        handle = value.strip().strip("\"'")
+        if not re.fullmatch(r"[A-Za-z0-9_-]+", handle):
+            raise ValueError("Invalid FUNDING.yml handle: " + line)
+        label, prefix, icon = providers[key]
+        links.append({"id": key, "label": label, "url": prefix + handle, "icon": icon})
+    return (
+        "// Generated from .github/FUNDING.yml by tools/sync_studio_assets.py.\n"
+        + "var links = "
+        + json.dumps(links, indent=2)
+        + ";\n"
+    ).encode()
+
+
+def license_module():
+    text = (ROOT / "LICENSE").read_text()
+    if not re.search(r"GNU GENERAL PUBLIC LICENSE\s+Version 3", text, re.I):
+        raise ValueError("Unrecognized LICENSE type")
+    later = bool(
+        re.search(r"either version 3 .*any later\s+version", text[:1000], re.I | re.S)
+    )
+    spdx = "GPL-3.0-or-later" if later else "GPL-3.0-only"
+    return (
+        "// Generated from LICENSE by tools/sync_studio_assets.py.\n"
+        + "var spdx = "
+        + json.dumps(spdx)
+        + ";\n"
+        + "var label = "
+        + json.dumps("GNU GPL v3 or later" if later else "GNU GPL v3")
+        + ";\n"
+    ).encode()
 
 
 def parse_kcfg(xml_path):
@@ -191,6 +249,8 @@ def outputs():
         catalog.decode().split("var StudioCatalog = ", 1)[1].rstrip().removesuffix(";")
     )
     result = {"icon.png": (ROOT / "package/icon.png").read_bytes()}
+    for icon in (SOURCE_STUDIO / "icons").glob("*.svg"):
+        result["icons/" + icon.name] = icon.read_bytes()
 
     # Configuration schema from main.xml
     schema = parse_kcfg(SOURCE_CONFIG / "main.xml")
@@ -275,6 +335,16 @@ def main():
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     mismatches = []
+    funding = funding_module()
+    license = license_module()
+    if args.check:
+        if not FUNDING_MODULE.exists() or FUNDING_MODULE.read_bytes() != funding:
+            mismatches.append(str(FUNDING_MODULE.relative_to(ROOT)))
+        if not LICENSE_MODULE.exists() or LICENSE_MODULE.read_bytes() != license:
+            mismatches.append(str(LICENSE_MODULE.relative_to(ROOT)))
+    else:
+        FUNDING_MODULE.write_bytes(funding)
+        LICENSE_MODULE.write_bytes(license)
     published = outputs()
     for stale in DEST.glob("*.js"):
         if stale.name not in published:

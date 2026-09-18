@@ -16,21 +16,26 @@ import time
 
 
 def samples(block, count=32):
-    """Keep channels paired and signed; choose one contiguous triggered window."""
+    """Keep channels paired and signed across a triggered 32 ms window."""
     frames = list(struct.iter_unpack("<hh", block[: len(block) // 4 * 4]))
     if len(frames) < count:
         return []
+    span = min(256, len(frames))
     # Start on a rising left-channel zero crossing, retaining stereo phase.
     start = next(
         (
             i
-            for i in range(1, len(frames) - count + 1)
+            for i in range(1, len(frames) - span + 1)
             if frames[i - 1][0] <= 0 < frames[i][0]
         ),
         0,
     )
     return [
-        (left / 32768, right / 32768) for left, right in frames[start : start + count]
+        (
+            frames[start + round(i * (span - 1) / (count - 1))][0] / 32768,
+            frames[start + round(i * (span - 1) / (count - 1))][1] / 32768,
+        )
+        for i in range(count)
     ]
 
 
@@ -75,13 +80,13 @@ def capture(lease, output, fps, source="auto"):
             if not data:
                 break
             pending.extend(data)
-            if len(pending) < 512 or time.monotonic() - last < 1 / fps:
+            if len(pending) < 2048 or time.monotonic() - last < 1 / fps:
                 # Bound retained memory even if the producer outpaces polling.
                 if len(pending) > 4096:
                     del pending[: len(pending) // 4 * 4 - 2048]
                 continue
             complete = len(pending) // 4 * 4
-            frame = samples(pending[complete - 512 : complete])
+            frame = samples(pending[complete - 2048 : complete])
             del pending[:complete]
             value = ";".join(f"{left:.6f}:{right:.6f}" for left, right in frame)
             temporary = output.with_suffix(".tmp")

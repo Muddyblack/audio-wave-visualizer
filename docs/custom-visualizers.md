@@ -1,4 +1,4 @@
-# Custom QML visualizers and progress bars
+# Custom QML visualizers, progress bars, and playback buttons
 
 Open **Settings → Visualizer → Custom visualizers → Manage…**, choose **Import QML…**, and
 select a trusted local `.qml` file. The live preview uses sample audio. Apply the
@@ -19,7 +19,7 @@ Full card layout plugins and ZIP installation are not part of this interface.
 
 ## Custom progress bars
 
-Open **Settings → Controls → Custom progress bars → Manage…** and import a QML file, or
+Open **Settings → Appearance → Progress → Custom progress bars → Manage…** and import a QML file, or
 choose **Try example** for the included gradient bar. This picker works just like
 the visualizer picker, with its own saved list. Selecting a built-in progress bar
 switches back to that style.
@@ -27,6 +27,38 @@ switches back to that style.
 Custom progress bars replace the bar and its time labels inside the card. They
 also take precedence over the built-in cover ring. They do not replace the pill's
 separate thin progress indicator or add a bar to layouts that have none.
+
+## Custom playback buttons
+
+Open **Settings → Appearance → Buttons → Custom button styles → Manage…** and import a
+trusted local `.qml` file. **Try example** loads
+[MinimalButtons.qml](../package/contents/examples/MinimalButtons.qml). The picker keeps
+a separate library of button styles and previews the selected file. Choosing a
+built-in style tile or **Built-in buttons** switches back. A custom style replaces
+the playback dock in every card layout on Plasma and Hyprland. Panel pills use
+their separate compact controls.
+
+The root must inherit `Item`, declare `readonly property int apiVersion: 1`, and
+`required property var buttons`. It fills the dock's 26-pixel height. Set an
+`implicitWidth` between 60 and 220 pixels; the host uses it for layout sizing.
+The style draws and handles its own pointer targets. Use the supplied methods
+for playback; they check player capabilities and work on both hosts.
+
+| Property / method | Meaning |
+| --- | --- |
+| `apiVersion` | Interface version, currently `1` |
+| `isPlaying`, `active` | Playback state and whether the controls are visible |
+| `canTogglePlaying`, `canGoPrevious`, `canGoNext` | Available player actions |
+| `canShuffle`, `canRepeat`, `shuffleOn`, `repeatOn`, `repeatTrack` | Extra control capabilities and states |
+| `showSkipButtons`, `showShuffleRepeat` | User visibility preferences |
+| `iconColor`, `accentColor`, `reducedMotion` | Current colors and motion preference |
+| `previous()`, `togglePlaying()`, `next()` | Playback actions; return whether the action was available |
+| `toggleShuffle()`, `cycleRepeat()` | Optional player actions; return whether the action was available |
+
+Custom QML runs only in the desktop hosts. The browser Studio lists the picker
+from the shared settings schema and links here, but does not execute local QML.
+The schema, catalogue, defaults, and browser assets are published from the QML
+source by `python3 tools/sync_studio_assets.py`.
 
 ## Trust and errors
 
@@ -36,10 +68,10 @@ and APIs available to the host; poorly written code can freeze or crash it.
 Selecting a file immediately executes it for preview.
 
 Missing files, QML load failures, and unsupported API versions fall back to the
-selected built-in waveform. The custom style preview displays an error; the host
+selected built-in style. The custom style preview displays an error; the host
 log contains QML diagnostics. Runtime script errors and performance problems
 cannot be reliably caught by the loader. Select a built-in style to disable an
-extension. If the host cannot start, clear `customVisualizer` and `customProgressBar` in its configuration.
+extension. If the host cannot start, clear `customVisualizer`, `customProgressBar`, and `customButtons` in its configuration.
 
 Local saved looks can remember a custom style. Portable JSON look import/export
 excludes custom file selections and libraries, so exchanging an ordinary

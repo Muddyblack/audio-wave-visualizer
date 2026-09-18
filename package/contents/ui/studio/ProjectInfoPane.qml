@@ -7,10 +7,11 @@ Column {
     id: info
     required property var studio
     property var counts: ({})
+    property var contributorList: []
     property var requests: []
     property bool requested: false
     readonly property bool onlineEnabled: studio.onScreen
-    spacing: 18
+    spacing: 16
 
     function loadCounts() {
         if (!onlineEnabled || requested)
@@ -32,6 +33,14 @@ Column {
             };
             request.send();
         });
+        const contributorsRequest = new XMLHttpRequest();
+        requests.push(contributorsRequest);
+        contributorsRequest.open("GET", Project.contributorsUrl);
+        contributorsRequest.onreadystatechange = function () {
+            if (contributorsRequest.readyState === XMLHttpRequest.DONE && contributorsRequest.status === 200)
+                info.contributorList = Project.contributors(contributorsRequest.responseText);
+        };
+        contributorsRequest.send();
         timeout.restart();
     }
     function cancelRequests() {
@@ -63,48 +72,51 @@ Column {
             fillMode: Image.PreserveAspectFit
             Accessible.name: "Plasma Audio Visualizer project icon"
         }
-        Text {
+        Column {
             width: parent.width - 78
             anchors.verticalCenter: parent.verticalCenter
-            text: Project.name
-            wrapMode: Text.WordWrap
-            color: Theme.text
-            font.family: Theme.fontFamily
-            font.pixelSize: 18
-            font.weight: Font.DemiBold
-        }
-    }
-    Row {
-        width: parent.width
-        spacing: 14
-        Rectangle {
-            width: 40
-            height: 40
-            radius: 20
-            color: Theme.sunk
+            spacing: 7
             Text {
-                objectName: "authorAvatarFallback"
-                anchors.centerIn: parent
-                text: "M"
-                color: Theme.brand
-                font.pixelSize: 20
-                visible: !avatar.ready
+                width: parent.width
+                text: Project.name
+                wrapMode: Text.WordWrap
+                color: Theme.text
+                font.family: Theme.fontFamily
+                font.pixelSize: 18
+                font.weight: Font.DemiBold
             }
-            Shared.SoftwareCover {
-                id: avatar
-                objectName: "authorAvatar"
-                anchors.fill: parent
-                source: info.onlineEnabled ? Project.avatar : ""
-                imageSize: Qt.size(128, 128)
-                radius: 20
-                Accessible.name: Project.author + " GitHub avatar"
+            Row {
+                spacing: 7
+                Rectangle {
+                    width: 24
+                    height: 24
+                    radius: 12
+                    color: Theme.sunk
+                    Text {
+                        objectName: "authorAvatarFallback"
+                        anchors.centerIn: parent
+                        text: "M"
+                        color: Theme.brand
+                        font.pixelSize: 12
+                        visible: !avatar.ready
+                    }
+                    Shared.SoftwareCover {
+                        id: avatar
+                        objectName: "authorAvatar"
+                        anchors.fill: parent
+                        source: info.onlineEnabled ? Project.avatar : ""
+                        imageSize: Qt.size(128, 128)
+                        radius: 12
+                        Accessible.name: Project.author + " GitHub avatar"
+                    }
+                }
+                StudioButton {
+                    anchors.verticalCenter: parent.verticalCenter
+                    text: "By " + Project.author + " ↗"
+                    compact: true
+                    onClicked: Qt.openUrlExternally(Project.profile)
+                }
             }
-        }
-        StudioButton {
-            anchors.verticalCenter: parent.verticalCenter
-            text: "Created by " + Project.author + " ↗"
-            compact: true
-            onClicked: Qt.openUrlExternally(Project.profile)
         }
     }
     Text {
@@ -119,64 +131,246 @@ Column {
         width: parent.width
         spacing: 8
         Repeater {
-            model: Project.links
-            StudioButton {
+            model: Project.statistics
+            Rectangle {
                 required property var modelData
-                text: modelData[0] + " ↗"
+                objectName: "stat_" + modelData.id
+                width: info.width >= 570 ? (info.width - 16) / 3 : info.width >= 360 ? (info.width - 8) / 2 : info.width
+                height: 82
+                radius: 10
+                color: statArea.containsMouse ? Theme.hover : Theme.sunk
+                border.width: 1
+                border.color: statArea.containsMouse ? Theme.brand : Theme.line2
+                Image {
+                    objectName: "statIcon_" + parent.modelData.id
+                    x: 12
+                    y: 12
+                    width: 22
+                    height: 22
+                    source: Qt.resolvedUrl("icons/" + parent.modelData.icon)
+                    sourceSize: Qt.size(44, 44)
+                }
+                Text {
+                    x: 43
+                    y: 8
+                    text: info.counts[parent.modelData.id] || "—"
+                    color: Theme.text
+                    font.family: Theme.fontFamily
+                    font.pixelSize: 21
+                    font.weight: Font.DemiBold
+                }
+                Text {
+                    x: 12
+                    y: 48
+                    width: parent.width - 30
+                    text: parent.modelData.label + " ↗"
+                    color: Theme.muted
+                    font.family: Theme.fontFamily
+                    font.pixelSize: 11
+                    elide: Text.ElideRight
+                }
+                MouseArea {
+                    id: statArea
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    Accessible.name: parent.modelData.label + ", open " + parent.modelData.href
+                    onClicked: Qt.openUrlExternally(parent.modelData.href)
+                }
+            }
+        }
+    }
+    Rectangle {
+        objectName: "projectLicense"
+        width: parent.width
+        height: 64
+        radius: 10
+        color: Theme.sunk
+        border.color: Theme.line2
+        border.width: 1
+        Column {
+            x: 13
+            anchors.verticalCenter: parent.verticalCenter
+            spacing: 3
+            Text {
+                text: "License · " + Project.license
+                color: Theme.text
+                font.family: Theme.fontFamily
+                font.pixelSize: 12
+                font.weight: Font.DemiBold
+            }
+            Text {
+                text: Project.licenseId + " · From the bundled LICENSE file"
+                color: Theme.muted
+                font.family: Theme.fontFamily
+                font.pixelSize: 10
+            }
+        }
+    }
+    Column {
+        objectName: "contributorsSection"
+        width: parent.width
+        visible: info.contributorList.length > 0
+        spacing: 8
+        Row {
+            width: parent.width
+            spacing: 10
+            Text {
+                text: "Contributors"
+                color: Theme.text
+                font.family: Theme.fontFamily
+                font.pixelSize: 14
+                font.weight: Font.DemiBold
+            }
+            StudioButton {
+                anchors.verticalCenter: parent.verticalCenter
+                text: "See all on GitHub ↗"
                 compact: true
-                onClicked: Qt.openUrlExternally(modelData[1])
+                onClicked: Qt.openUrlExternally(Project.contributorsPage)
+            }
+        }
+        Flow {
+            width: parent.width
+            spacing: 8
+            Repeater {
+                model: info.contributorList
+                Rectangle {
+                    id: contributorCard
+                    required property var modelData
+                    objectName: "contributor_" + modelData.login
+                    width: info.width >= 570 ? (info.width - 16) / 3 : info.width >= 360 ? (info.width - 8) / 2 : info.width
+                    height: 58
+                    radius: 10
+                    color: contributorArea.containsMouse ? Theme.hover : Theme.sunk
+                    border.color: contributorArea.containsMouse ? Theme.brand : Theme.line2
+                    border.width: 1
+                    Rectangle {
+                        x: 10
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 34
+                        height: 34
+                        radius: 17
+                        color: Theme.panelTop
+                        Text {
+                            anchors.centerIn: parent
+                            text: contributorCard.modelData.login[0].toUpperCase()
+                            color: Theme.brand
+                            font.pixelSize: 13
+                            visible: !contributorAvatar.ready
+                        }
+                        Shared.SoftwareCover {
+                            id: contributorAvatar
+                            anchors.fill: parent
+                            source: info.onlineEnabled ? contributorCard.modelData.avatar : ""
+                            imageSize: Qt.size(96, 96)
+                            radius: 17
+                            Accessible.name: contributorCard.modelData.login + " avatar"
+                        }
+                    }
+                    Column {
+                        x: 52
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: parent.width - 62
+                        spacing: 2
+                        Text {
+                            width: parent.width
+                            text: contributorCard.modelData.login
+                            elide: Text.ElideRight
+                            color: Theme.text
+                            font.family: Theme.fontFamily
+                            font.pixelSize: 12
+                            font.weight: Font.DemiBold
+                        }
+                        Text {
+                            text: contributorCard.modelData.commits + (contributorCard.modelData.commits === 1 ? " commit" : " commits")
+                            color: Theme.muted
+                            font.family: Theme.fontFamily
+                            font.pixelSize: 10
+                        }
+                    }
+                    MouseArea {
+                        id: contributorArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        Accessible.name: "Open " + contributorCard.modelData.login + " on GitHub"
+                        onClicked: Qt.openUrlExternally(contributorCard.modelData.profile)
+                    }
+                }
+            }
+        }
+    }
+    Column {
+        width: parent.width
+        spacing: 8
+        Text {
+            text: "Support the project"
+            color: Theme.text
+            font.family: Theme.fontFamily
+            font.pixelSize: 14
+            font.weight: Font.DemiBold
+        }
+        Flow {
+            width: parent.width
+            spacing: 8
+            Repeater {
+                model: Project.funding
+                Rectangle {
+                    required property var modelData
+                    objectName: "funding_" + modelData.id
+                    width: info.width >= 570 ? (info.width - 16) / 3 : info.width >= 360 ? (info.width - 8) / 2 : info.width
+                    height: 64
+                    radius: 10
+                    color: linkArea.containsMouse ? Theme.hover : Theme.sunk
+                    border.width: 1
+                    border.color: linkArea.containsMouse ? Theme.brand : Theme.line2
+                    Image {
+                        objectName: "fundingIcon_" + parent.modelData.id
+                        x: 13
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: 26
+                        height: 26
+                        source: Qt.resolvedUrl("icons/" + parent.modelData.icon)
+                        fillMode: Image.PreserveAspectFit
+                        sourceSize: Qt.size(52, 52)
+                    }
+                    Text {
+                        x: 49
+                        anchors.verticalCenter: parent.verticalCenter
+                        width: parent.width - 67
+                        text: parent.modelData.label
+                        wrapMode: Text.WordWrap
+                        maximumLineCount: 2
+                        elide: Text.ElideRight
+                        color: Theme.text
+                        font.family: Theme.fontFamily
+                        font.pixelSize: 12
+                        font.weight: Font.DemiBold
+                    }
+                    MouseArea {
+                        id: linkArea
+                        anchors.fill: parent
+                        hoverEnabled: true
+                        cursorShape: Qt.PointingHandCursor
+                        Accessible.name: "Support on " + parent.modelData.label
+                        onClicked: Qt.openUrlExternally(parent.modelData.url)
+                    }
+                }
             }
         }
     }
     Flow {
         width: parent.width
-        spacing: 16
-        visible: Object.keys(info.counts).length > 0
-        Repeater {
-            model: Project.statistics
-            Column {
-                required property var modelData
-                visible: !!info.counts[modelData.id]
-                spacing: 4
-                Text {
-                    text: info.counts[parent.modelData.id] || ""
-                    color: Theme.text
-                    font.pixelSize: 22
-                    font.weight: Font.DemiBold
-                }
-                Text {
-                    text: parent.modelData.label
-                    color: Theme.muted
-                    font.pixelSize: 11
-                }
-            }
+        spacing: 8
+        StudioButton {
+            text: "View source on GitHub ↗"
+            compact: true
+            onClicked: Qt.openUrlExternally(Project.repository)
         }
-    }
-    Text {
-        width: parent.width
-        text: "Enjoying the visualizer? A star on GitHub helps others discover it. Thank you for supporting the project."
-        wrapMode: Text.WordWrap
-        color: Theme.muted
-        font.family: Theme.fontFamily
-        font.pixelSize: 12
-    }
-    StudioButton {
-        text: "Star on GitHub ↗"
-        icon: "M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"
-        primary: true
-        onClicked: Qt.openUrlExternally(Project.repository)
-    }
-    Text {
-        width: parent.width
-        text: "Have a design idea? Open an issue — I might add it. A sketch, mockup, or annotated screenshot helps explain what you have in mind."
-        wrapMode: Text.WordWrap
-        color: Theme.muted
-        font.family: Theme.fontFamily
-        font.pixelSize: 12
-    }
-    StudioButton {
-        text: "Suggest a design ↗"
-        compact: true
-        onClicked: Qt.openUrlExternally(Project.repository + "/issues/new")
+        StudioButton {
+            text: "Report an issue ↗"
+            compact: true
+            onClicked: Qt.openUrlExternally(Project.repository + "/issues")
+        }
     }
 }

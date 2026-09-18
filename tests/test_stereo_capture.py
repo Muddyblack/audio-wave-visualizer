@@ -34,6 +34,23 @@ class StereoTests(unittest.TestCase):
             self.assertLessEqual(abs(left), 1)
         self.assertEqual(stereo.samples(b"\x00" * 4), [])
 
+    def test_low_notes_span_a_full_cycle(self):
+        # At 8 kHz, 32 adjacent samples cover only 4 ms of an 80 Hz note.
+        block = b"".join(
+            struct.pack(
+                "<hh",
+                round(math.sin(i * 2 * math.pi * 80 / 8000) * 30000),
+                round(math.cos(i * 2 * math.pi * 80 / 8000) * 30000),
+            )
+            for i in range(512)
+        )
+        frame = stereo.samples(block)
+        self.assertEqual(len(frame), 32)
+        self.assertGreater(max(left for left, _ in frame), 0.8)
+        self.assertLess(min(left for left, _ in frame), -0.8)
+        self.assertGreater(max(right for _, right in frame), 0.8)
+        self.assertLess(min(right for _, right in frame), -0.8)
+
     def test_lease_stops_capture_and_removes_frame(self):
         with tempfile.TemporaryDirectory() as directory:
             base = Path(directory)

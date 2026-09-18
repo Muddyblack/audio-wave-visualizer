@@ -27,6 +27,7 @@ Item {
     property color systemTextColor: "#cdd6f4"
     property string defaultFontFamily: Qt.application.font.family
     property Component fallbackIcon
+    property Component systemVolumeCommandSourceComponent: visualizer?.commandSourceComponent ?? null
     // Optional host override; otherwise all hosts share the album extractor.
     property var coverPalette: null
     // "card" follows layoutMode; hosts use "pill" or "pillicon" in panels.
@@ -39,7 +40,7 @@ Item {
     readonly property color coverAccent: coverPalette ? coverPalette.highlight : (coverSampler.item?.accent ?? baseWaveColor)
     Loader {
         id: coverSampler
-        active: !root.coverPalette && root.shouldShow && root.artUrl !== "" && (root.configuration.accentFromArt || root.configuration.vizColorMode === "cover" || (root.configuration.showBg && (root.configuration.surfaceStyle === "atmosphere" || (root.configuration.surfaceStyle === "liquid" && root.configuration.glassTint === "cover"))))
+        active: !root.coverPalette && root.shouldShow && root.artUrl !== "" && (root.configuration.accentFromArt || root.configuration.vizColorMode === "cover" || (root.configuration.showBg && (root.configuration.surfaceStyle === "atmosphere" || (["glass", "liquid"].includes(root.configuration.surfaceStyle) && root.configuration.glassTint === "cover"))))
         sourceComponent: CoverColors {
             source: root.artUrl
             fallback: root.baseWaveColor
@@ -287,55 +288,78 @@ Item {
             popupRequested();
     }
 
-    // Scrolling adjusts the player's MPRIS volume.
-    property real requestedVolume: -1
-    readonly property real displayedVolume: requestedVolume >= 0 ? requestedVolume : Math.max(0, root.volume)
-    onVolumeChanged: {
-        if (requestedVolume >= 0 && Math.abs(root.volume - requestedVolume) < 0.006) {
-            requestedVolume = -1;
-            volumeRequestTimeout.stop();
-        }
-    }
+    // Queue wheel steps so asynchronous commands adjust the default sink in order.
+    property real systemVolume: 0
+    property real pendingVolumeStep: 0
+    property string volumeCommand: ""
+    property int volumeRequestId: 0
+    readonly property real displayedVolume: systemVolume
     function resetVolumeGesture() {
-        requestedVolume = -1;
-        volumeRequestTimeout.stop();
+        pendingVolumeStep = 0;
         volumeHide.stop();
         volumeOsd.shown = false;
     }
-    function scrollPlayerVolume(angleDelta, pixelDelta) {
+    function sendVolumeStep() {
+        if (volumeCommand || pendingVolumeStep === 0 || !volumeWorker.item)
+            return;
+        const step = Math.max(-1, Math.min(1, pendingVolumeStep));
+        pendingVolumeStep -= step;
+        const script = decodeURIComponent(Qt.resolvedUrl("../code/system_volume.py").toString().replace(/^file:\/\//, ""));
+        volumeCommand = "python3 '" + script.replace(/'/g, "'\\''") + "' " + step.toFixed(4) + " # " + (++volumeRequestId);
+        volumeWorker.connectSource(volumeCommand);
+        volumeCommandTimeout.restart();
+    }
+    function scrollSystemVolume(angleDelta, pixelDelta) {
         if (!volumeWheel.enabled)
             return false;
         // A wheel notch is 120 angle units; touchpads can send pixels only.
         const step = pixelDelta !== 0 ? pixelDelta / 40 * 0.04 : angleDelta / 120 * 0.04;
-        if (!Number.isFinite(step) || step === 0 || !root.player)
+        if (!Number.isFinite(step) || step === 0 || !volumeWorker.item)
             return false;
-        const current = requestedVolume >= 0 ? requestedVolume : root.volume;
-        if (current < 0)
-            return false;
-        const target = Math.max(0, Math.min(1, current + step));
-        requestedVolume = target;
-        root.player.volume = target;
-        volumeRequestTimeout.restart();
+        pendingVolumeStep += step;
+        sendVolumeStep();
         volumeOsd.shown = true;
         volumeHide.restart();
         return true;
     }
+    CommandSource {
+        id: volumeWorker
+        objectName: "volumeWorker"
+        sourceComponent: root.systemVolumeCommandSourceComponent
+        onNewData: function (source, data) {
+            if (source !== root.volumeCommand)
+                return;
+            volumeCommandTimeout.stop();
+            volumeWorker.disconnectSource(source);
+            root.volumeCommand = "";
+            const output = String(data["stdout"] ?? "").trim();
+            const value = Number(output);
+            if (output !== "" && Number.isFinite(value) && value >= 0 && value <= 1)
+                root.systemVolume = value;
+            root.sendVolumeStep();
+        }
+    }
     Timer {
-        id: volumeRequestTimeout
-        interval: 750
-        onTriggered: root.requestedVolume = -1
+        id: volumeCommandTimeout
+        interval: 3000
+        onTriggered: {
+            volumeWorker.cancelSource(root.volumeCommand);
+            root.volumeCommand = "";
+            root.pendingVolumeStep = 0;
+            volumeOsd.shown = false;
+        }
     }
     WheelHandler {
         id: volumeWheel
         objectName: "volumeWheel"
         target: null
-        enabled: root.visible && !root.zoomOpen && !root.flipped && root.layoutMode !== "lyrics" && (root.configuration.scrollVolume ?? false) && root.hasPlayer && root.volume >= 0
+        enabled: root.visible && !root.zoomOpen && !root.flipped && root.layoutMode !== "lyrics" && (root.configuration.scrollVolume ?? false)
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
         onEnabledChanged: {
             root.resetVolumeGesture();
         }
         onWheel: event => {
-            event.accepted = root.scrollPlayerVolume(event.angleDelta.y, event.pixelDelta.y);
+            event.accepted = root.scrollSystemVolume(event.angleDelta.y, event.pixelDelta.y);
         }
     }
     Timer {

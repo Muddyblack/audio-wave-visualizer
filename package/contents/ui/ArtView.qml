@@ -264,9 +264,10 @@ Item {
         }
 
         Loader {
+            objectName: "artFallbackIcon"
             anchors.centerIn: parent
             sourceComponent: root.fallbackIcon
-            visible: !root.showFallbackArt
+            visible: !root.coverReady && !root.showFallbackArt
             width: root.desktopEntry !== "" ? parent.width * 0.72 : parent.width * 0.45
             height: width
             opacity: root.desktopEntry !== "" ? 0.70 : 0.35
@@ -300,8 +301,8 @@ Item {
             }
         }
 
-        // Cover shape. Discs show the cover as a round label (vinyl, 38 %) or a
-        // faint print (CD, 88 %), each masked by a circle of its own size.
+        // Cover shape. Discs show the cover as a round label (vinyl, 38 %) or
+        // a translucent print (CD, 88 %), each masked by a circle.
         Rectangle {
             id: artMask
             anchors.fill: parent
@@ -345,7 +346,7 @@ Item {
             visible: root.disc && root.coverReady
             width: parent.width * (root.shape === "cd" ? 0.88 : 0.38)
             height: width
-            opacity: root.shape === "cd" ? 0.35 : 1
+            opacity: root.shape === "cd" ? 0.7 : 1
 
             Item {
                 id: labelImgCrop

@@ -13,6 +13,9 @@ function spectrum(i, n, t) {
     return Math.min(1, shape * wobble + low);
 }
 function stereo(t) {
+    // Keep the demo channels out of phase so the Lissajous preview remains a
+    // loop throughout its animation instead of collapsing into a line.
+    const phase = .95 + .35 * Math.sin(t * .8);
     return Array.from({length: 32}, (_, i) => [Math.sin(i / 31 * Math.PI * 4) * .75,
-        Math.sin(i / 31 * Math.PI * 4 + Math.sin(t) * 1.4) * .75]);
+        Math.sin(i / 31 * Math.PI * 4 + phase) * .75]);
 }

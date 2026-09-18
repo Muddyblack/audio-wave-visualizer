@@ -46,7 +46,9 @@ Item {
                 height: root.height
                 sourceItem: root.sourceItem
                 sourceRect: root.sampleRect
-                textureSize: Qt.size(Math.max(1, Math.ceil(root.width)), Math.max(1, Math.ceil(root.height)))
+                // Round up to the next 8-pixel boundary so the GPU texture is
+                // not reallocated on every resize pixel, which causes flicker.
+                textureSize: Qt.size(Math.max(1, Math.ceil(root.width / 8) * 8), Math.max(1, Math.ceil(root.height / 8) * 8))
                 live: true
                 hideSource: false
                 visible: false

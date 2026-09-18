@@ -71,42 +71,52 @@ Item {
             Layout.alignment: Qt.AlignVCenter
         }
 
-        RowLayout {
+        Item {
             Layout.fillWidth: true
+            Layout.minimumWidth: 0
             Layout.alignment: Qt.AlignVCenter
-            spacing: 5
-            Text {
-                renderType: Text.CurveRendering ?? Text.QtRendering
-                objectName: "pillPrimary"
-                Layout.fillWidth: !root.withArtist
-                Layout.maximumWidth: implicitWidth
-                Layout.minimumWidth: Math.min(implicitWidth, 40)
-                text: root.content === "artist-title" && root.withArtist ? root.view.artist : root.titleText
-                color: root.view.textColor
-                font.pixelSize: 12
-                font.weight: Font.DemiBold
-                font.italic: root.view.trackUnknown
-                elide: Text.ElideRight
-            }
-            Text {
-                renderType: Text.CurveRendering ?? Text.QtRendering
-                visible: root.withArtist
-                text: root.content === "artist-title" ? "—" : "·"
-                color: root.view.textColor
-                opacity: 0.35
-                font.pixelSize: 12
-            }
-            Text {
-                renderType: Text.CurveRendering ?? Text.QtRendering
-                objectName: "pillSecondary"
-                visible: root.withArtist
-                Layout.fillWidth: true
-                Layout.maximumWidth: implicitWidth
-                text: root.content === "artist-title" ? root.titleText : root.view.artist
-                color: root.view.textColor
-                opacity: 0.6
-                font.pixelSize: 12
-                elide: Text.ElideRight
+            implicitWidth: textRow.implicitWidth
+            implicitHeight: textRow.implicitHeight
+            clip: true
+
+            RowLayout {
+                id: textRow
+                anchors.fill: parent
+                spacing: 5
+                Text {
+                    renderType: Text.CurveRendering ?? Text.QtRendering
+                    objectName: "pillPrimary"
+                    Layout.fillWidth: true
+                    Layout.maximumWidth: implicitWidth
+                    Layout.minimumWidth: 0
+                    text: root.content === "artist-title" && root.withArtist ? root.view.artist : root.titleText
+                    color: root.view.textColor
+                    font.pixelSize: 12
+                    font.weight: Font.DemiBold
+                    font.italic: root.view.trackUnknown
+                    elide: Text.ElideRight
+                }
+                Text {
+                    renderType: Text.CurveRendering ?? Text.QtRendering
+                    visible: root.withArtist
+                    text: root.content === "artist-title" ? "—" : "·"
+                    color: root.view.textColor
+                    opacity: 0.35
+                    font.pixelSize: 12
+                }
+                Text {
+                    renderType: Text.CurveRendering ?? Text.QtRendering
+                    objectName: "pillSecondary"
+                    visible: root.withArtist
+                    Layout.fillWidth: true
+                    Layout.maximumWidth: implicitWidth
+                    Layout.minimumWidth: 0
+                    text: root.content === "artist-title" ? root.titleText : root.view.artist
+                    color: root.view.textColor
+                    opacity: 0.6
+                    font.pixelSize: 12
+                    elide: Text.ElideRight
+                }
             }
         }
 

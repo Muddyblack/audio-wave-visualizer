@@ -56,8 +56,13 @@ var StudioCatalog = {
         },
         {
             "id": "controls",
-            "label": "Controls",
-            "icon": "M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM10 8l6 4-6 4z"
+            "label": "Progress",
+            "icon": "M3 12h18M3 12h10M13 9v6M3 18h18"
+        },
+        {
+            "id": "buttons",
+            "label": "Buttons",
+            "icon": "M4 12h4m8 0h4M10 8l5 4-5 4zM2 5h20v14H2z"
         },
         {
             "id": "layout",

@@ -17,6 +17,9 @@ Rectangle {
     // function(done(text)) running doctor.sh; supplied by the shell.
     property var diagnosticsRunner: null
     property Component commandSourceComponent: null
+    property var liveVisualizer: null
+    property var livePlayer: null
+    property bool liveIsPlaying: false
     signal apply(var draft)
     signal reset
     signal close
@@ -34,6 +37,10 @@ Rectangle {
         anchors.top: parent.top
         anchors.bottom: footer.top
         commandSourceComponent: root.commandSourceComponent
+        liveVisualizer: root.liveVisualizer
+        livePlayer: root.livePlayer
+        liveIsPlaying: root.liveIsPlaying
+        livePositionUnitsPerSecond: 1
         env: "hypr"
         draft: root.draft
         defaults: Object.keys(root.defaults).length ? root.defaults : root.draft

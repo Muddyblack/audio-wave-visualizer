@@ -2,9 +2,7 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.1
 import QtQuick.Effects
 
-// Playback controls. Styles follow the HTML `.dock`: glass (the original
-// pill), bare, accent (round accent play button) and hover (glass, shown while
-// the card is hovered). Shuffle/repeat use the MPRIS player properties.
+// Playback controls. Shuffle/repeat use the MPRIS player properties.
 Item {
     id: root
 
@@ -37,9 +35,14 @@ Item {
     }
 
     readonly property string dockStyle: configuration.dockStyle ?? "glass"
-    readonly property bool framed: dockStyle === "glass" || dockStyle === "hover"
+    readonly property bool framed: ["glass", "hover", "soft", "outline", "tinted"].indexOf(dockStyle) !== -1
     readonly property bool showSkip: configuration.showSkipButtons ?? true
     readonly property bool showExtras: configuration.showShuffleRepeat ?? false
+    readonly property bool canTogglePlaying: !!player && player.canTogglePlaying !== false && (typeof player.togglePlaying === "function" || typeof player.playPause === "function" || typeof player.PlayPause === "function" || typeof player.play === "function" || typeof player.Play === "function")
+    readonly property bool canGoPrevious: !!player && player.canGoPrevious !== false && (typeof player.previous === "function" || typeof player.Previous === "function")
+    readonly property bool canGoNext: !!player && player.canGoNext !== false && (typeof player.next === "function" || typeof player.Next === "function")
+    readonly property bool customReady: custom.ready
+    readonly property string customError: custom.error
     // Plasma reports ShuffleStatus (Off = 1, On = 2) and LoopStatus (None = 1,
     // Playlist = 2, Track = 3); Quickshell a bool and MprisLoopState (None = 0).
     readonly property bool shuffleOn: !!player && (typeof player.shuffle === "boolean" ? player.shuffle : player.shuffle === 2)
@@ -49,13 +52,13 @@ Item {
     readonly property bool loopOn: !!player && (player.loopStatus !== undefined ? player.loopStatus >= 2 : (player.loopState ?? 0) > 0)
     // The parent card's hover state can miss a transition when a child takes
     // the pointer. Keep the dock itself as a second way to reveal controls.
-    readonly property bool hiddenUntilHover: dockStyle === "hover" && !cardHovered && !dockHover.hovered
+    readonly property bool hiddenUntilHover: !customReady && dockStyle === "hover" && !cardHovered && !dockHover.hovered
 
     HoverHandler {
         id: dockHover
     }
 
-    implicitWidth: framed ? Math.max(88, controlRow.implicitWidth + 12) : controlRow.implicitWidth
+    implicitWidth: customReady ? Math.max(60, Math.min(220, custom.preferredWidth || 88)) : framed ? Math.max(88, controlRow.implicitWidth + 12) : controlRow.implicitWidth
     implicitHeight: 26
     opacity: hiddenUntilHover ? 0 : 1
     Behavior on opacity {
@@ -75,35 +78,77 @@ Item {
     function toggleShuffle() {
         const p = player;
         if (!canShuffle)
-            return;
+            return false;
         if (typeof p.shuffle === "boolean")
             p.shuffle = !p.shuffle;
         else
             p.shuffle = p.shuffle === 2 ? 1 : 2;
+        return true;
     }
     // None → Playlist → Track → None.
     function cycleLoop() {
         const p = player;
         if (!canLoop)
-            return;
+            return false;
         if (p.loopStatus !== undefined)
             p.loopStatus = p.loopStatus === 2 ? 3 : p.loopStatus === 3 ? 1 : 2;
         else if (p.loopState !== undefined)
             p.loopState = p.loopState === 0 ? 2 : p.loopState === 2 ? 1 : 0;
+        return true;
+    }
+
+    function previous() {
+        if (!canGoPrevious)
+            return false;
+        if (player.previous)
+            player.previous();
+        else
+            player.Previous();
+        return true;
+    }
+    function next() {
+        if (!canGoNext)
+            return false;
+        if (player.next)
+            player.next();
+        else
+            player.Next();
+        return true;
+    }
+    function togglePlaying() {
+        if (!canTogglePlaying)
+            return false;
+        if (player.togglePlaying)
+            player.togglePlaying();
+        else if (player.playPause)
+            player.playPause();
+        else if (player.PlayPause)
+            player.PlayPause();
+        else if (isPlaying)
+            (player.pause || player.Pause || function () {})();
+        else
+            (player.play || player.Play || function () {})();
+        return true;
+    }
+
+    CustomButtons {
+        id: custom
+        anchors.fill: parent
+        sourceUrl: root.configuration.customButtons ?? ""
+        dock: root
     }
 
     Rectangle {
+        objectName: "dockBackground"
         anchors.fill: parent
-        visible: root.framed
+        visible: root.framed && !root.customReady
         radius: height / 2
-        // Darker, cleaner glass: a deeper translucent base reads as
-        // a single calm surface against busy album art, instead of
-        // the milky look a light tint gives over a bright cover.
-        color: root.configuration.useSystemDockBg ? Qt.rgba(0, 0, 0, 0.28) : root.configuration.customDockBgColor
-        border.color: Qt.rgba(1, 1, 1, 0.16)
+        // Each pill shares the same hit targets; only its surface changes.
+        color: !root.configuration.useSystemDockBg ? root.configuration.customDockBgColor : root.dockStyle === "outline" ? Qt.rgba(0, 0, 0, 0.08) : root.dockStyle === "soft" ? Qt.rgba(1, 1, 1, 0.12) : root.dockStyle === "tinted" ? Qt.rgba(root.accentColor.r, root.accentColor.g, root.accentColor.b, 0.28) : Qt.rgba(0, 0, 0, 0.28)
+        border.color: root.dockStyle === "outline" ? Qt.rgba(root.controlColor.r, root.controlColor.g, root.controlColor.b, 0.55) : root.dockStyle === "tinted" ? Qt.rgba(root.accentColor.r, root.accentColor.g, root.accentColor.b, 0.52) : root.dockStyle === "soft" ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.16)
         border.width: 1
 
-        layer.enabled: visible
+        layer.enabled: visible && (root.dockStyle === "glass" || root.dockStyle === "hover")
         layer.effect: MultiEffect {
             shadowEnabled: true
             shadowColor: Qt.rgba(0, 0, 0, 0.35)
@@ -114,6 +159,7 @@ Item {
 
         // Soft top highlight — the glassy sheen catching light.
         Rectangle {
+            visible: root.dockStyle === "glass" || root.dockStyle === "hover"
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top
@@ -129,6 +175,7 @@ Item {
     RowLayout {
         id: controlRow
         anchors.centerIn: parent
+        visible: !root.customReady
         spacing: root.dockStyle === "accent" ? 5 : 2
 
         DockToggle {
@@ -148,7 +195,7 @@ Item {
         // Previous Button
         Item {
             id: prevBtn
-            readonly property bool available: !!root.player && root.player.canGoPrevious !== false && (typeof root.player.previous === "function" || typeof root.player.Previous === "function")
+            readonly property bool available: root.canGoPrevious
             visible: root.showSkip
             opacity: available ? 1 : 0.25
             Layout.preferredWidth: 22
@@ -193,22 +240,14 @@ Item {
                 enabled: prevBtn.available
                 hoverEnabled: true
                 cursorShape: prevBtn.available ? Qt.PointingHandCursor : Qt.ArrowCursor
-                onClicked: {
-                    const p = root.player;
-                    if (!p || p.canGoPrevious === false)
-                        return;
-                    if (p.previous)
-                        p.previous();
-                    else if (p.Previous)
-                        p.Previous();
-                }
+                onClicked: root.previous()
             }
         }
 
         // Play/Pause Button
         Item {
             id: playBtn
-            readonly property bool accent: root.dockStyle === "accent"
+            readonly property bool accent: root.dockStyle === "accent" || root.dockStyle === "tinted"
             Layout.preferredWidth: accent ? 24 : 26
             Layout.preferredHeight: accent ? 24 : 22
             scale: playArea.pressed ? 0.94 : (playArea.containsMouse ? 1.06 : 1.0)
@@ -278,28 +317,14 @@ Item {
                 anchors.margins: -2
                 hoverEnabled: true
                 cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    const p = root.player;
-                    if (!p || p.canTogglePlaying === false)
-                        return;
-                    if (p.togglePlaying)
-                        p.togglePlaying();
-                    else if (p.playPause)
-                        p.playPause();
-                    else if (p.PlayPause)
-                        p.PlayPause();
-                    else if (root.isPlaying)
-                        (p.pause || p.Pause || function () {})();
-                    else
-                        (p.play || p.Play || function () {})();
-                }
+                onClicked: root.togglePlaying()
             }
         }
 
         // Next Button
         Item {
             id: nextBtn
-            readonly property bool available: !!root.player && root.player.canGoNext !== false && (typeof root.player.next === "function" || typeof root.player.Next === "function")
+            readonly property bool available: root.canGoNext
             visible: root.showSkip
             opacity: available ? 1 : 0.25
             Layout.preferredWidth: 22
@@ -344,15 +369,7 @@ Item {
                 enabled: nextBtn.available
                 hoverEnabled: true
                 cursorShape: nextBtn.available ? Qt.PointingHandCursor : Qt.ArrowCursor
-                onClicked: {
-                    const p = root.player;
-                    if (!p || p.canGoNext === false)
-                        return;
-                    if (p.next)
-                        p.next();
-                    else if (p.Next)
-                        p.Next();
-                }
+                onClicked: root.next()
             }
         }
 

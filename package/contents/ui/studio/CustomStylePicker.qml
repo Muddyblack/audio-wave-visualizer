@@ -10,8 +10,11 @@ Column {
     objectName: "customStylePicker_" + selectionKey
     required property var studio
     property bool progressBar: false
-    readonly property string selectionKey: progressBar ? "customProgressBar" : "customVisualizer"
-    readonly property string libraryKey: progressBar ? "customProgressBars" : "customVisualizers"
+    property bool buttons: false
+    readonly property string selectionKey: buttons ? "customButtons" : progressBar ? "customProgressBar" : "customVisualizer"
+    readonly property string libraryKey: buttons ? "customButtonStyles" : progressBar ? "customProgressBars" : "customVisualizers"
+    readonly property string kindLabel: buttons ? "Custom button styles" : progressBar ? "Custom progress bars" : "Custom visualizers"
+    readonly property string builtInLabel: buttons ? "Built-in buttons" : progressBar ? "Built-in progress bar" : "Built-in visualizer"
     readonly property var library: CustomStyles.readLibrary(studio.draft[libraryKey] ?? "")
     readonly property string selected: studio.draft[selectionKey] ?? ""
     property string message: ""
@@ -60,7 +63,7 @@ Column {
             anchors.right: expandButton.left
             anchors.rightMargin: 10
             anchors.verticalCenter: parent.verticalCenter
-            text: (root.progressBar ? "Custom progress bars" : "Custom visualizers") + (root.selected ? " · " + CustomStyles.nameForUrl(root.selected) : "")
+            text: root.kindLabel + (root.selected ? " · " + CustomStyles.nameForUrl(root.selected) : "")
             color: Theme.text
             font.family: Theme.fontFamily
             font.pixelSize: 12
@@ -90,7 +93,7 @@ Column {
         StudioSelect {
             objectName: root.selectionKey + "Select"
             width: parent.width
-            options: [["", root.progressBar ? "Built-in progress bar" : "Built-in visualizer"]].concat(root.library.map(entry => [entry.url, entry.name])).concat(root.selected && !root.library.some(entry => entry.url === root.selected) ? [[root.selected, CustomStyles.nameForUrl(root.selected)]] : [])
+            options: [["", root.builtInLabel]].concat(root.library.map(entry => [entry.url, entry.name])).concat(root.selected && !root.library.some(entry => entry.url === root.selected) ? [[root.selected, CustomStyles.nameForUrl(root.selected)]] : [])
             value: root.selected
             onChosen: value => root.select(value)
         }
@@ -99,16 +102,16 @@ Column {
             spacing: 8
             StudioButton {
                 text: "Import QML…"
-                areaName: root.progressBar ? "importCustomProgressBar" : "importCustomVisualizer"
+                areaName: root.buttons ? "importCustomButtons" : root.progressBar ? "importCustomProgressBar" : "importCustomVisualizer"
                 onClicked: fileDialog.open()
             }
             StudioButton {
                 text: "Try example"
-                onClicked: root.importFile(Qt.resolvedUrl(root.progressBar ? "../../examples/GradientProgress.qml" : "../../examples/PulseBars.qml"))
+                onClicked: root.importFile(Qt.resolvedUrl(root.buttons ? "../../examples/MinimalButtons.qml" : root.progressBar ? "../../examples/GradientProgress.qml" : "../../examples/PulseBars.qml"))
             }
             StudioButton {
                 text: "Remove"
-                areaName: root.progressBar ? "removeCustomProgressBar" : "removeCustomVisualizer"
+                areaName: root.buttons ? "removeCustomButtons" : root.progressBar ? "removeCustomProgressBar" : "removeCustomVisualizer"
                 enabled: root.selected !== ""
                 onClicked: root.removeSelected()
             }
@@ -124,9 +127,9 @@ Column {
         Loader {
             id: preview
             width: parent.width
-            height: root.selected !== "" ? (root.progressBar ? 32 : 72) : 0
+            height: root.selected !== "" ? (root.buttons ? 36 : root.progressBar ? 32 : 72) : 0
             active: root.expanded && root.selected !== "" && root.studio.onScreen
-            sourceComponent: root.progressBar ? progressPreview : waveformPreview
+            sourceComponent: root.buttons ? buttonsPreview : root.progressBar ? progressPreview : waveformPreview
         }
         Component {
             id: waveformPreview
@@ -153,11 +156,25 @@ Column {
                 reducedMotion: root.studio.draft.reducedMotion ?? false
             }
         }
+        Component {
+            id: buttonsPreview
+            TransportDock {
+                anchors.centerIn: parent
+                configuration: Object.assign({}, root.studio.draft, {
+                    customButtons: root.selected
+                })
+                player: root.studio.samplePlayer
+                isPlaying: true
+                controlColor: Theme.text
+                accentColor: root.studio.accent
+                cardHovered: true
+            }
+        }
 
         Text {
             width: parent.width
             visible: text !== ""
-            text: root.message || (root.progressBar ? (preview.item as ProgressBar)?.customError : (preview.item as WaveArea)?.customError) || ""
+            text: root.message || (root.buttons ? (preview.item as TransportDock)?.customError : root.progressBar ? (preview.item as ProgressBar)?.customError : (preview.item as WaveArea)?.customError) || ""
             color: Theme.muted
             font.pixelSize: 11
             wrapMode: Text.WordWrap
@@ -165,7 +182,7 @@ Column {
     }
     FileDialog {
         id: fileDialog
-        title: root.progressBar ? "Import trusted QML progress bar" : "Import trusted QML visualizer"
+        title: root.buttons ? "Import trusted QML buttons" : root.progressBar ? "Import trusted QML progress bar" : "Import trusted QML visualizer"
         fileMode: FileDialog.OpenFile
         nameFilters: ["QML styles (*.qml)"]
         onAccepted: root.importFile(selectedFile)

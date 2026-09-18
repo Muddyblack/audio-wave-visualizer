@@ -1,5 +1,6 @@
 import QtQuick
 import QtTest
+import QtCore
 import "../package/contents/ui/studio" as Studio
 import "../package/contents/ui/studio/Schema.js" as Schema
 import "../hyprland/Configuration.js" as Configuration
@@ -12,12 +13,18 @@ TestCase {
     width: 1200
     height: 820
     property var defaults
+    readonly property string libraryPath: StandardPaths.writableLocation(StandardPaths.TempLocation) + "/audio-wave-studio-test-" + Date.now() + ".ini"
 
     Studio.Studio {
         id: studio
         anchors.fill: parent
+        libraryPath: testCase.libraryPath
         env: "hypr"
         onEdited: next => draft = next
+    }
+    Studio.SamplePlayer {
+        id: liveArtPlayer
+        artUrl: Qt.resolvedUrl("fixtures/cover-red-blue.ppm").toString()
     }
 
     function tabIndex(id) {
@@ -46,9 +53,13 @@ TestCase {
         studio.presetFilter = "all";
         studio.defaults = defaults;
         studio.draft = Object.assign({}, defaults);
+        studio.presetLibrary.clear();
         studio.query = "";
         studio.currentTabIndex = 0;
         studio.keepColors = false;
+        studio.livePreview = false;
+        studio.liveVisualizer = null;
+        studio.livePlayer = null;
     }
 
     function test_navigationStaysAboveScrolledSettings() {
@@ -74,6 +85,19 @@ TestCase {
         studio.removeUserPreset(0);
         verify(studio.favorites.indexOf(studio.daily.id) === -1);
         verify(studio.favorites.indexOf("glass") !== -1);
+    }
+    function test_legacyWidgetLibraryMovesToSharedStorage() {
+        const old = Object.assign({}, defaults, {
+            favoritePresets: '["glass"]',
+            userPresets: '[{"id":"old-look","name":"Old look","settings":{"titleSize":14}}]'
+        });
+        studio.draft = old;
+        compare(studio.favorites, ["glass"]);
+        compare(studio.userPresetList()[0].name, "Old look");
+        studio.presetLibrary.setPresets([]);
+        studio.draft = Object.assign({}, defaults);
+        studio.draft = old;
+        compare(studio.userPresetList().length, 0, "Stale widget data must not restore a deleted look");
     }
 
     function test_presetsKeepPlacementAndOptionallyColours() {
@@ -114,6 +138,13 @@ TestCase {
                 key: "customProgressBar",
                 file: "GradientProgress.qml",
                 loader: "customProgressBarLoader"
+            },
+            {
+                tag: "buttons",
+                tab: "buttons",
+                key: "customButtons",
+                file: "MinimalButtons.qml",
+                loader: "customButtonsLoader"
             }
         ];
     }
@@ -181,7 +212,7 @@ TestCase {
             lyricsOffset: -1.5
         });
         studio.saveUserPreset("Reading");
-        const settings = Schema.parseUserPresets(studio.draft.userPresets)[0].settings;
+        const settings = studio.userPresetList()[0].settings;
         compare(settings.lyricsFontSize, 32);
         compare(settings.lyricsFollow, false);
         compare(settings.lyricsOffset, -1.5);
@@ -210,7 +241,7 @@ TestCase {
             verticalPosition: 0.2
         });
         studio.saveUserPreset("Big text");
-        const list = Schema.parseUserPresets(studio.draft.userPresets);
+        const list = studio.userPresetList();
         compare(list.length, 1);
         compare(list[0].name, "Big text");
         compare(list[0].settings.titleSize, 14);
@@ -220,9 +251,9 @@ TestCase {
         compare(imported.settings.showMpris, false);
         verify(imported.settings.monitor === undefined && imported.settings.bogus === undefined);
         studio.addUserPreset(imported);
-        compare(Schema.parseUserPresets(studio.draft.userPresets).length, 2);
+        compare(studio.userPresetList().length, 2);
         studio.removeUserPreset(0);
-        compare(Schema.parseUserPresets(studio.draft.userPresets)[0].name, "Shared");
+        compare(studio.userPresetList()[0].name, "Shared");
     }
 
     function test_glassBlurIsAdjustableAndSaved() {
@@ -245,6 +276,33 @@ TestCase {
         compare(studio.draft.glassBlur, 0);
         studio.applyLook(studio.userPresetList()[0].settings);
         compare(studio.draft.glassBlur, 0.27);
+    }
+
+    function test_glassColourOptionsAreAvailable() {
+        studio.selectTab("card");
+        studio.update({
+            showBg: true,
+            artBg: false,
+            surfaceStyle: "glass",
+            glassTint: "custom"
+        });
+        verify(waitForRendering(studio));
+        verify(findChild(studio, "row_glassTint").visible);
+        verify(findChild(studio, "row_glassTintColor").visible);
+        studio.update({
+            glassTintColor: "#123456"
+        });
+        studio.saveUserPreset("Blue glass");
+        compare(studio.userPresetList()[0].settings.glassTintColor, "#123456");
+        studio.update({
+            surfaceStyle: "liquid"
+        });
+        verify(findChild(studio, "row_glassTintColor").visible);
+        studio.update({
+            surfaceStyle: "solid"
+        });
+        const customRow = findChild(studio, "row_glassTintColor");
+        verify(customRow === null || !customRow.visible);
     }
 
     function test_renameSavedPreset() {
@@ -286,7 +344,7 @@ TestCase {
     }
 
     function test_shuffleRepeatSettingAndPreview() {
-        studio.currentTabIndex = tabIndex("controls");
+        studio.currentTabIndex = tabIndex("buttons");
         verify(waitForRendering(studio));
         const row = findChild(studio, "row_showShuffleRepeat");
         const body = findChild(studio, "studioBody");
@@ -322,6 +380,15 @@ TestCase {
         verify(waitForRendering(studio));
         const tabs = findChild(studio, "studioTabs");
         compare(tabs.height, 36, "Main navigation always stays on one line");
+        if (data.width === 440) {
+            const mainScroller = findChild(studio, "mainTabScroller");
+            const nextMain = findChild(studio, "mainTabsForward");
+            verify(nextMain.visible, "Overflowed main tabs show a forward control");
+            mouseClick(nextMain);
+            verify(mainScroller.contentX > 0);
+            verify(findChild(studio, "mainTabsBack").visible);
+            mainScroller.contentX = 0;
+        }
         for (const entry of Schema.MAIN_TABS) {
             const tab = findChild(studio, "mainTab_" + entry.id);
             verify(tab !== null);
@@ -331,7 +398,25 @@ TestCase {
             mouseClick(tab);
             compare(studio.currentGroup, entry.id);
         }
+        if (data.width === 440) {
+            studio.selectTab("presets");
+            const presetScroller = findChild(studio, "presetTabScroller");
+            const nextPreset = findChild(studio, "presetTabsForward");
+            verify(nextPreset.visible, "Overflowed preset tabs show a forward control");
+            mouseClick(nextPreset);
+            verify(presetScroller.contentX > 0);
+            verify(findChild(studio, "presetTabsBack").visible);
+        }
         studio.selectTab("viz");
+        if (data.width === 440) {
+            const appearanceScroller = findChild(studio, "appearanceScroller");
+            const nextAppearance = findChild(studio, "appearanceTabsForward");
+            verify(nextAppearance.visible, "Overflowed appearance tabs show a forward control");
+            mouseClick(nextAppearance);
+            verify(appearanceScroller.contentX > 0);
+            verify(findChild(studio, "appearanceTabsBack").visible);
+            appearanceScroller.contentX = 0;
+        }
         for (const id of Schema.APPEARANCE_TABS) {
             const tab = findChild(studio, "subTab_" + id);
             verify(tab !== null);
@@ -364,6 +449,27 @@ TestCase {
         studio.currentTabIndex = tabIndex("audio");
         verify(waitForRendering(studio));
         verify(studio.anyResults);
+    }
+
+    function test_resizeDoesNotBounceAcrossBreakpoints() {
+        const preview = findChild(studio, "studioPreviewPane");
+        testCase.width = 900;
+        testCase.height = 700;
+        verify(!studio.wide && !studio.compact);
+        testCase.width = 1045;
+        verify(studio.wide);
+        testCase.width = 1000;
+        verify(studio.wide, "Small width changes keep the side by side layout");
+        testCase.width = 950;
+        verify(!studio.wide);
+        testCase.height = 615;
+        verify(studio.compact);
+        const compactHeight = preview.height;
+        testCase.height = 640;
+        verify(studio.compact, "Small height changes keep compact controls");
+        verify(Math.abs(preview.height - compactHeight) < 16, "The preview height changes smoothly while resizing");
+        testCase.height = 665;
+        verify(!studio.compact);
     }
 
     function test_savedLooksHaveTheirOwnSubpage_data() {
@@ -493,7 +599,8 @@ TestCase {
         const fresh = Qt.createComponent("../package/contents/ui/studio/Studio.qml");
         const view = createTemporaryObject(fresh, testCase, {
             width: 1200,
-            height: 820
+            height: 820,
+            libraryPath: testCase.libraryPath
         });
         verify(view !== null);
         compare(findChild(view, "previewWidget"), null);
@@ -516,5 +623,38 @@ TestCase {
         });
         compare(preview.configuration.layoutMode, "poster");
         compare(preview.implicitHeight, 112);
+    }
+    function test_previewCanSwitchBetweenSampleAndLiveSource() {
+        const preview = findChild(studio, "previewWidget");
+        const sampleBackend = preview.visualizer;
+        verify(preview.samplePlayback);
+        studio.liveVisualizer = studio.backend;
+        studio.livePlayer = studio.samplePlayer;
+        studio.liveIsPlaying = true;
+        const liveButton = findChild(studio, "livePreviewButton");
+        verify(liveButton.visible);
+        mouseClick(liveButton);
+        verify(studio.livePreview, "Live audio button should select the live source");
+        compare(preview.visualizer, studio.backend);
+        compare(preview.player, studio.samplePlayer);
+        verify(!preview.samplePlayback);
+        verify(!sampleBackend.running, "Synthetic preview stops while live audio is selected");
+        studio.livePreview = false;
+        compare(preview.visualizer, sampleBackend);
+        verify(preview.samplePlayback);
+    }
+    function test_shapeTilesFollowLiveArtwork() {
+        studio.selectTab("art");
+        const art = findChild(studio, "shapePreviewArtwork");
+        verify(art !== null);
+        const sampleUrl = studio.samplePlayer.artUrl;
+        compare(art.artUrl, sampleUrl);
+        const liveUrl = liveArtPlayer.artUrl;
+        studio.liveVisualizer = studio.backend;
+        studio.livePlayer = liveArtPlayer;
+        studio.livePreview = true;
+        compare(art.artUrl, liveUrl);
+        studio.livePreview = false;
+        compare(art.artUrl, sampleUrl);
     }
 }

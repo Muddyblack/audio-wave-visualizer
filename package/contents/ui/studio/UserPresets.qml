@@ -7,7 +7,7 @@ import "Schema.js" as Schema
 Column {
     id: saved
     required property var studio
-    readonly property var list: Schema.parseUserPresets(studio.draft.userPresets ?? "")
+    readonly property var list: studio.userPresetList()
     readonly property int columns: Math.max(1, Math.floor((width + 8) / 158))
     readonly property real tileWidth: (width - (columns - 1) * 8) / columns
     property bool favoritesOnly: false
@@ -170,7 +170,7 @@ Column {
     Text {
         visible: !saved.favoritesOnly
         width: parent.width
-        text: "To share a saved look, select it, then Copy as JSON. Others can paste it into Import JSON. Custom QML files are not included. Want it bundled for everyone? Submit the JSON and a screenshot in a pull request."
+        text: "Saved looks and favorites are shared by all widgets on this device and saved immediately. To share a look with someone else, select it, then Copy as JSON. Custom QML files are not included."
         wrapMode: Text.WordWrap
         color: Theme.muted
         font.family: Theme.fontFamily

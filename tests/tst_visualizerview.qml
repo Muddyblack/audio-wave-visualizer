@@ -14,6 +14,7 @@ TestCase {
     property var defaults
     property var subject
     property var player
+    property var volumeCommands: []
 
     function initTestCase() {
         const request = new XMLHttpRequest();
@@ -39,6 +40,20 @@ TestCase {
         property string backendMessage: ""
         property string backendAction: ""
         property string backendHint: ""
+    }
+    Component {
+        id: volumeCommandComponent
+        Item {
+            property var connectedSources: []
+            signal newData(string source, var data)
+            function connectSource(source) {
+                testCase.volumeCommands.push(source);
+                connectedSources = connectedSources.concat([source]);
+            }
+            function disconnectSource(source) {
+                connectedSources = connectedSources.filter(value => value !== source);
+            }
+        }
     }
     Component {
         id: playerComponent
@@ -94,6 +109,7 @@ TestCase {
         LyricsSource {}
     }
     function init() {
+        volumeCommands = [];
         backend.bass = 0;
         testCase.width = 400;
         testCase.height = 140;
@@ -462,6 +478,18 @@ TestCase {
         verify(art.showFallbackArt, "Without a cover the initials placeholder is used");
         compare(art.initials("Track name here"), "TN");
     }
+    function test_cdArtworkHidesPlayerIcon() {
+        subject.configuration = Object.assign({}, defaults, {
+            artShape: "cd"
+        });
+        const art = findChild(subject, "classicArt");
+        const fallback = findChild(art, "artFallbackIcon");
+        verify(fallback.visible);
+        player.artUrl = Qt.resolvedUrl("fixtures/cover-red-blue.ppm").toString();
+        tryVerify(() => art.coverReady);
+        verify(!fallback.visible, "The player icon must not show through the CD cover print");
+        player.artUrl = "";
+    }
     function test_vinylSpinsOnAudioFramesOnly() {
         subject.configuration = Object.assign({}, defaults, {
             artShape: "vinyl"
@@ -720,70 +748,53 @@ TestCase {
         subject.onBattery = true;
         verify(!wave.glowWave, "No glow on battery");
     }
-    function test_scrollChangesPlayerVolume() {
+    function test_scrollChangesSystemVolume() {
+        subject.systemVolumeCommandSourceComponent = volumeCommandComponent;
         subject.configuration = Object.assign({}, defaults, {
             scrollVolume: true
         });
         mouseWheel(subject, 100, 50, 0, 120);
-        fuzzyCompare(player.volume, 0.54, 1e-6);
+        compare(volumeCommands.length, 1);
+        verify(volumeCommands[0].includes("system_volume.py"));
+        verify(volumeCommands[0].includes(" 0.0400 "));
+        compare(player.volume, 0.5, "Wheel scrolling must leave MPRIS volume alone");
+        const worker = findChild(subject, "volumeWorker");
+        worker.item.newData(volumeCommands[0], {
+            stdout: "0.54"
+        });
+        fuzzyCompare(subject.displayedVolume, 0.54, 0.000001);
         verify(findChild(subject, "volumeOsd").shown);
     }
-    function test_volumeHighResolutionAndBounds() {
+    function test_volumeHighResolutionAndQueue() {
+        subject.systemVolumeCommandSourceComponent = volumeCommandComponent;
         subject.configuration = Object.assign({}, defaults, {
             scrollVolume: true
         });
-        verify(!subject.scrollPlayerVolume(0, 0));
-        verify(subject.scrollPlayerVolume(0, 10));
-        fuzzyCompare(player.volume, 0.51, 0.000001);
+        verify(!subject.scrollSystemVolume(0, 0));
+        verify(subject.scrollSystemVolume(0, 10));
+        compare(volumeCommands.length, 1);
+        verify(volumeCommands[0].includes(" 0.0100 "));
         mouseWheel(subject, 100, 50, 120, 0);
-        fuzzyCompare(player.volume, 0.51, 0.000001, "Horizontal scroll must not change volume");
+        compare(volumeCommands.length, 1, "Horizontal scroll must not change volume");
         mouseWheel(subject, 100, 50, 0, -120);
-        fuzzyCompare(player.volume, 0.47, 0.000001);
-        subject.scrollPlayerVolume(12000, 0);
-        compare(player.volume, 1);
-        subject.scrollPlayerVolume(-12000, 0);
-        compare(player.volume, 0);
+        compare(volumeCommands.length, 1, "Steps wait for the active command");
+        const worker = findChild(subject, "volumeWorker");
+        worker.item.newData(volumeCommands[0], {
+            stdout: "0.51"
+        });
+        compare(volumeCommands.length, 2);
+        verify(volumeCommands[1].includes(" -0.0400 "));
+        worker.item.newData(volumeCommands[1], {
+            stdout: "0.47"
+        });
+        fuzzyCompare(subject.displayedVolume, 0.47, 0.000001);
         const osd = findChild(subject, "volumeOsd");
-        verify(osd.x >= 0 && osd.x + osd.width <= subject.width, "Feedback stays inside the widget");
+        verify(osd.x >= 0 && osd.x + osd.width <= subject.width);
         subject.configuration = Object.assign({}, defaults, {
             scrollVolume: false
         });
-        verify(!subject.scrollPlayerVolume(120, 0));
-        compare(player.volume, 0);
+        verify(!subject.scrollSystemVolume(120, 0));
         verify(!osd.shown);
-    }
-    function test_volumeAccumulatesBeforePlayerAcknowledges() {
-        const requests = [];
-        const delayed = {
-            track: "Track",
-            artist: "Artist",
-            length: 180,
-            position: 60
-        };
-        Object.defineProperty(delayed, "volume", {
-            get: function () {
-                return 0.5;
-            },
-            set: function (value) {
-                requests.push(value);
-            }
-        });
-        subject.player = delayed;
-        subject.configuration = Object.assign({}, defaults, {
-            scrollVolume: true
-        });
-        mouseWheel(subject, 100, 50, 0, 120);
-        mouseWheel(subject, 100, 50, 0, 120);
-        mouseWheel(subject, 100, 50, 0, -120);
-        compare(requests.length, 3);
-        fuzzyCompare(requests[0], 0.54, 0.000001);
-        fuzzyCompare(requests[1], 0.58, 0.000001);
-        fuzzyCompare(requests[2], 0.54, 0.000001);
-        fuzzyCompare(subject.displayedVolume, 0.54, 0.000001);
-        subject.player = player;
-        compare(subject.requestedVolume, -1, "A new player must not inherit pending volume");
-        mouseWheel(subject, 100, 50, 0, 120);
-        fuzzyCompare(player.volume, 0.54, 0.000001);
     }
 
     function test_panelPill() {
@@ -813,6 +824,46 @@ TestCase {
         mouseClick(findChild(subject, "pillClickArea"), 8, 15);
         compare(player.playCalls, 2, "pillClick toggle plays/pauses");
         compare(popups, 1);
+    }
+    function test_panelPillLongMetadataStaysInside() {
+        subject.presentation = "pill";
+        subject.configuration = Object.assign({}, defaults, {
+            pillMaxWidth: 300,
+            pillContent: "title-artist"
+        });
+        player.track = "HEROES X LEVELS | Tik tok versión | Remix - DjLD and a longer title";
+        player.artist = "";
+        subject.width = 300;
+        waitForRendering(subject);
+
+        const primary = findChild(subject, "pillPrimary");
+        verify(primary.truncated, "Long track titles should be elided");
+        verify(primary.mapToItem(subject, primary.width, 0).x <= subject.width - 10, "Track title must stay inside the pill's right padding");
+
+        player.artist = "An artist with a very long name";
+        waitForRendering(subject);
+        const secondary = findChild(subject, "pillSecondary");
+        verify(primary.mapToItem(subject, primary.width, 0).x <= subject.width - 10, "Primary text must stay inside the pill with an artist");
+        verify(secondary.mapToItem(subject, secondary.width, 0).x <= subject.width - 10, "Secondary text must stay inside the pill");
+    }
+    function test_classicLongMetadataStaysInside() {
+        subject.presentation = "card";
+        subject.width = 220;
+        subject.configuration = Object.assign({}, defaults, {
+            layoutMode: "classic",
+            marquee: false
+        });
+        player.track = "A very long live track title with several featured artists and a remix name";
+        player.artist = "A long artist name with a featured guest";
+        waitForRendering(subject);
+        const texts = findChild(subject, "layoutTexts");
+        const title = findChild(subject, "titleViewport");
+        const artist = findChild(subject, "artistLine");
+        verify(texts !== null && title !== null && artist !== null);
+        verify(texts.mapToItem(subject, texts.width, 0).x <= subject.width, "The text column stays within the card");
+        verify(title.width <= texts.width && title.clip, "The title stays clipped to its text column");
+        verify(artist.width <= texts.width, "The artist is elided within the text column");
+        subject.width = 360;
     }
     function test_panelIcon() {
         subject.presentation = "pillicon";
@@ -859,6 +910,23 @@ TestCase {
         waitForRendering(subject);
         compare(Qt.colorEqual(subject.textColor, "#1e241d"), data.material === "solid", "Solid cards use dark ink");
         compare(Qt.colorEqual(subject.controlColor, "#1e241d"), data.material === "solid");
+    }
+    function test_glassTintVariants() {
+        for (const material of ["glass", "liquid"]) {
+            for (const tint of ["clear", "frost", "smoke", "cover", "custom"]) {
+                subject.configuration = Object.assign({}, defaults, {
+                    showBg: true,
+                    surfaceStyle: material,
+                    glassTint: tint,
+                    glassTintColor: "#123456"
+                });
+                const layer = findChild(subject, "cardMaterial");
+                verify(layer !== null);
+                compare(layer.glassTint, tint);
+                compare(layer.glassTintColor.toString(), "#123456");
+                verify(waitForRendering(layer));
+            }
+        }
     }
     function test_posterClockReplacesTimeLabels() {
         subject.configuration = Object.assign({}, defaults, {

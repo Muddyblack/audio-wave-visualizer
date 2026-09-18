@@ -129,6 +129,29 @@ TestCase {
         tryCompare(subject, "opacity", 0);
     }
 
+    function test_dockVariantsAndBackground() {
+        const background = findChild(subject, "dockBackground");
+        verify(background !== null);
+        for (const style of ["glass", "soft", "outline", "tinted", "bare", "accent", "hover"]) {
+            subject.configuration = {
+                dockStyle: style,
+                useSystemDockBg: false,
+                customDockBgColor: "#123456"
+            };
+            compare(background.visible, ["bare", "accent"].indexOf(style) === -1);
+            if (background.visible)
+                compare(background.color.toString(), "#123456");
+        }
+        subject.accentColor = "#ff0000";
+        subject.configuration = {
+            dockStyle: "tinted",
+            useSystemDockBg: true
+        };
+        verify(Math.abs(background.color.a - 0.28) < 0.01);
+        compare(background.color.r, 1);
+        compare(background.color.g, 0);
+    }
+
     function clickControl(name) {
         const control = findChild(subject, name);
         verify(control !== null);

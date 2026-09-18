@@ -200,6 +200,7 @@ Item {
         id: customStyleComponent
         CustomStylePicker {
             progressBar: row.rowData.id === "customProgressBar"
+            buttons: row.rowData.id === "customButtons"
             studio: row.studio
         }
     }

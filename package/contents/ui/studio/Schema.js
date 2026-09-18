@@ -6,7 +6,7 @@
 // ("kde" or "hypr") to the `when` predicates; `s` is the current draft.
 
 var TABS = Catalog.StudioCatalog.tabs;
-var APPEARANCE_TABS = ["viz", "controls", "layout", "art", "card", "colors"];
+var APPEARANCE_TABS = ["viz", "controls", "buttons", "layout", "art", "card", "colors"];
 function tabGroup(id) {
     return id === "saved" ? "presets" : APPEARANCE_TABS.indexOf(id) !== -1 ? "appearance" : id;
 }
@@ -19,6 +19,7 @@ var PRESET_VIEWS = [
     ["daily", "Today’s look", "M5 5h14v16H5zM8 3v4M16 3v4M5 10h14M9 14h2M13 17h2"]
 ];
 var SHARE_URL = "https://github.com/Muddyblack/audio-wave-visualizer/blob/HEAD/docs/sharing-presets.md";
+var CUSTOM_QML_DOCS = "https://github.com/Muddyblack/audio-wave-visualizer/blob/HEAD/docs/custom-visualizers.md";
 function localDay(date) {
     var d = date || new Date();
     return d.getFullYear() + "-" + ("0" + (d.getMonth() + 1)).slice(-2) + "-" + ("0" + d.getDate()).slice(-2);
@@ -62,7 +63,7 @@ var BACKDROPS = Catalog.StudioCatalog.wallpapers.map(function (wallpaper) { retu
 var STATES = [["normal", "Playing"], ["paused", "Paused"], ["long", "Long title"], ["nometa", "No metadata"], ["idle", "Nothing playing"], ["backend", "cava missing"]];
 
 // Colour keys "Keep my colours" preserves; placement is never part of a look.
-var COLOR_KEYS = ["controlsColorSource", "progressColorSource", "customProgressColor", "useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "hueReactive", "bgColor", "lyricsHighlightColor", "lyricsTextStyleColor"];
+var COLOR_KEYS = ["controlsColorSource", "progressColorSource", "customProgressColor", "useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "hueReactive", "bgColor", "glassTintColor", "lyricsHighlightColor", "lyricsTextStyleColor"];
 var PLACEMENT_KEYS = ["monitor", "verticalPosition", "desktopLayer", "pauseWhenCovered", "hAnchor", "widgetWidth", "widgetHeight"];
 
 function isPill(s) {
@@ -122,7 +123,7 @@ var SECTIONS = [
         { k: "orbitCoverPulse", type: "switch", label: "Cover breathes with the bass" }
     ], function (s) { return s.layoutMode === "orbit"; }),
     tab("viz", "Style", [
-        { id: "customVisualizers", type: "customStyle", full: true, label: "Custom visualizers", desc: "Import a trusted QML style and use it in the waveform area. Orbit and lyrics-only layouts use their own visuals." },
+        { id: "customVisualizers", type: "customStyle", full: true, label: "Custom visualizers", desc: "Import a trusted QML style and use it in the waveform area. Orbit and lyrics-only layouts use their own visuals.", docs: CUSTOM_QML_DOCS },
         { k: "visualizerType", type: "tiles", full: true, label: "Visualizer", desc: "Previews react to your colour, line and bloom settings.", tw: 104,
           when: function (s) { return s.layoutMode !== "orbit"; },
           opts: VIZ.map(function (l, i) { return { v: i, label: l, pv: "viz" }; }) },
@@ -136,7 +137,7 @@ var SECTIONS = [
           when: function (s) { return s.layoutMode === "orbit" ? s.orbitStyle === "wave" : [0, 6, 10, 18].indexOf(s.visualizerType) !== -1; } }
     ]),
     tab("controls", "Progress bar", [
-        { id: "customProgressBar", type: "customStyle", full: true, label: "Custom progress bars", desc: "Import a trusted QML progress bar with playback timing and seeking." },
+        { id: "customProgressBar", type: "customStyle", full: true, label: "Custom progress bars", desc: "Import a trusted QML progress bar with playback timing and seeking.", docs: CUSTOM_QML_DOCS + "#custom-progress-bars" },
         { k: "progressBarStyle", type: "tiles", full: true, label: "Style", desc: "Click anywhere on it in the widget to seek.", tw: 104,
           opts: PBS.map(function (l, i) { return { v: i, label: l, pv: "progress" }; }) },
         { k: "seekHover", type: "switch", label: "Seek preview", desc: "Target time, jump delta and a ghost playhead." },
@@ -149,11 +150,18 @@ var SECTIONS = [
           get: function (s) { return s.showTimes ? s.timeFormat : "off"; },
           set: function (v) { return v === "off" ? { showTimes: false } : { showTimes: true, timeFormat: v }; } }
     ]),
-    tab("controls", "Buttons", [
-        { k: "dockStyle", type: "tiles", full: true, label: "Dock style", desc: "The glass pill is today’s look.", tw: 118,
-          opts: [{ v: "glass", label: "Glass pill", pv: "dock" }, { v: "bare", label: "Bare icons", pv: "dock" }, { v: "accent", label: "Accent play", pv: "dock" }, { v: "hover", label: "On hover", pv: "dock" }] },
+    tab("buttons", "Playback buttons", [
+        { id: "customButtons", type: "customStyle", full: true, label: "Custom button styles", desc: "Import a trusted QML style for the playback controls.", docs: CUSTOM_QML_DOCS + "#custom-playback-buttons" },
+        { k: "dockStyle", type: "tiles", full: true, label: "Style", desc: "Choose the shape around your playback controls.", tw: 118,
+          opts: [{ v: "glass", label: "Glass pill", pv: "dock" }, { v: "soft", label: "Soft pill", pv: "dock" }, { v: "outline", label: "Outline pill", pv: "dock" }, { v: "tinted", label: "Tinted pill", pv: "dock" }, { v: "bare", label: "Bare icons", pv: "dock" }, { v: "accent", label: "Accent play", pv: "dock" }, { v: "hover", label: "On hover", pv: "dock" }] },
         { k: "showSkipButtons", type: "switch", label: "Previous & next" },
         { k: "showShuffleRepeat", type: "switch", label: "Shuffle & repeat", desc: "For players that support them." }
+    ]),
+    tab("buttons", "Button colours", [
+        { id: "ctlSrc", type: "seg", label: "Icon colour", desc: "Colour mode follows the visualizer. System adapts to light cards.", opts: [["system", "System"], ["accent", "Accent"], ["visualizer", "Colour mode"], ["custom", "Custom"]], get: function (s) { return s.controlsColorSource && s.controlsColorSource !== "legacy" ? s.controlsColorSource : s.useSystemControls ? "system" : "custom"; }, set: function (v) { return { controlsColorSource: v === "system" || v === "custom" ? "legacy" : v, useSystemControls: v !== "custom" }; } },
+        { k: "customControlColor", type: "color", label: "Custom icon colour", swatches: SWATCHES, when: function (s) { return (!s.controlsColorSource || s.controlsColorSource === "legacy") && !s.useSystemControls; } },
+        { id: "dockSrc", type: "seg", label: "Background colour", desc: "Applies to pill styles. Tinted uses your accent when set to Automatic.", opts: [[true, "Automatic"], [false, "Custom"]], get: function (s) { return s.useSystemDockBg; }, set: function (v) { return { useSystemDockBg: v }; } },
+        { k: "customDockBgColor", type: "color", label: "Custom background", swatches: BGSWATCHES.concat(SWATCHES), when: function (s) { return !s.useSystemDockBg; } }
     ]),
     tab("layout", "Arrangement", [
         { k: "layoutMode", type: "tiles", full: true, label: "Layout", desc: "Lyrics only shows a scrollable verse with the current line highlighted. Uses online lyrics from LRCLIB.", tw: 104,
@@ -271,8 +279,11 @@ var SECTIONS = [
         { k: "artBgTransparency", type: "range", label: "Card opacity", desc: "Only the card fades; text and wave stay solid.", min: 0, max: 1, step: .02, fmt: "pct", when: function (s) { return s.showBg; } },
         { k: "bgRadius", type: "range", label: "Corner radius", min: 0, max: 30, step: 1, fmt: "px", when: function (s) { return s.showBg && notPill(s); } }
     ]),
+    tab("card", "Glass colour", [
+        { k: "glassTint", type: "seg", label: "Glass tint", opts: [["clear", "Clear"], ["frost", "Frost"], ["smoke", "Smoke"], ["cover", "Cover colour"], ["custom", "Custom"]] },
+        { k: "glassTintColor", type: "color", label: "Custom glass colour", swatches: BGSWATCHES.concat(SWATCHES), when: function (s) { return s.glassTint === "custom"; } }
+    ], function (s) { return s.showBg && !s.artBg && ["glass", "liquid"].includes(s.surfaceStyle); }),
     tab("card", "Liquid glass", [
-        { k: "glassTint", type: "seg", label: "Tint", opts: [["clear", "Clear"], ["frost", "Frost"], ["cover", "Cover colour"]] },
         { k: "glassRefraction", type: "range", label: "Refraction", desc: "Bends the sampled wallpaper with a subtle colour fringe.", min: 0, max: 1, step: .05, fmt: "pct" },
         { k: "glassSpecular", type: "switch", label: "Light follows pointer", desc: "A soft specular highlight tracks the mouse." }
     ], function (s) { return s.showBg && surfaceValue(s) === "liquid"; }),
@@ -303,14 +314,10 @@ var SECTIONS = [
         { k: "progressColorSource", type: "seg", label: "Progress bar & cover ring", desc: "Colour mode shares the visualizer’s palette, gradient or rainbow. Automatic keeps the original controls-based colours.", opts: [["legacy", "Automatic"], ["accent", "Accent"], ["visualizer", "Colour mode"], ["custom", "Custom"]] },
         { k: "customProgressColor", type: "color", label: "Custom progress colour", swatches: SWATCHES, when: function (s) { return s.progressColorSource === "custom"; } }
     ]),
-    tab("colors", "Text & controls", [
+    tab("colors", "Text", [
         { id: "textSrc", type: "seg", label: "Text colour", opts: [[true, "System"], [false, "Custom"]], get: function (s) { return s.useSystemText; }, set: function (v) { return { useSystemText: v }; } },
         { k: "customTextColor", type: "color", label: "Custom text colour", swatches: SWATCHES, when: function (s) { return !s.useSystemText; } },
-        { k: "autoContrast", type: "switch", label: "Adapt to light cards", desc: "Dark text and icons on the Solid material.", when: function (s) { return s.useSystemText || s.useSystemControls; } },
-        { id: "ctlSrc", type: "seg", label: "Controls colour", desc: "Colour mode follows the visualizer, including rainbow animation. System keeps contrast-aware icons.", opts: [["system", "System"], ["accent", "Accent"], ["visualizer", "Colour mode"], ["custom", "Custom"]], get: function (s) { return s.controlsColorSource && s.controlsColorSource !== "legacy" ? s.controlsColorSource : s.useSystemControls ? "system" : "custom"; }, set: function (v) { return { controlsColorSource: v === "system" || v === "custom" ? "legacy" : v, useSystemControls: v !== "custom" }; } },
-        { k: "customControlColor", type: "color", label: "Custom controls colour", swatches: SWATCHES, when: function (s) { return (!s.controlsColorSource || s.controlsColorSource === "legacy") && !s.useSystemControls; } },
-        { id: "dockSrc", type: "seg", label: "Dock background", opts: [[true, "Glass"], [false, "Custom"]], get: function (s) { return s.useSystemDockBg; }, set: function (v) { return { useSystemDockBg: v }; } },
-        { k: "customDockBgColor", type: "color", label: "Custom dock colour", swatches: SWATCHES, when: function (s) { return !s.useSystemDockBg; } }
+        { k: "autoContrast", type: "switch", label: "Adapt to light cards", desc: "Dark text and icons on the Solid material.", when: function (s) { return s.useSystemText || s.useSystemControls; } }
     ]),
     tab("behavior", "When nothing plays", [
         { k: "alwaysVisible", type: "switch", label: "Keep visible", desc: "Off hides the widget until a player appears. Try the “Nothing playing” state." },
@@ -400,6 +407,7 @@ function rowPatch(row, value, state) {
     patch[row.k] = value;
     if (row.k === "visualizerType") patch.customVisualizer = "";
     if (row.k === "progressBarStyle") patch.customProgressBar = "";
+    if (row.k === "dockStyle") patch.customButtons = "";
     return patch;
 }
 function optionLabels(row) {
@@ -467,7 +475,7 @@ function applyPreset(defaults, current, settings, keepColors) {
         next[key] = settings[key];
     if (keepColors)
         COLOR_KEYS.forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
-    PLACEMENT_KEYS.concat(["customVisualizers", "customProgressBars", "userPresets", "favoritePresets", "autoDailyLook", "dailyLookApplied"]).forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
+    PLACEMENT_KEYS.concat(["customVisualizers", "customProgressBars", "customButtonStyles", "userPresets", "favoritePresets", "autoDailyLook", "dailyLookApplied"]).forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
     return next;
 }
 
@@ -483,7 +491,7 @@ function same(a, b) {
 function changedKeys(defaults, current) {
     var out = {};
     for (var key in current) {
-        if (key === "autoDailyLook" || key === "dailyLookApplied" || key === "favoritePresets" || key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || PLACEMENT_KEYS.indexOf(key) !== -1 || defaults[key] === undefined)
+        if (key === "autoDailyLook" || key === "dailyLookApplied" || key === "favoritePresets" || key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || key === "customButtonStyles" || PLACEMENT_KEYS.indexOf(key) !== -1 || defaults[key] === undefined)
             continue;
         if (!same(current[key], defaults[key]))
             out[key] = current[key];
@@ -494,7 +502,7 @@ function changedKeys(defaults, current) {
 function matchesPreset(defaults, current, p) {
     var target = applyPreset(defaults, current, p.s, false);
     for (var key in defaults) {
-        if (key === "autoDailyLook" || key === "dailyLookApplied" || key === "favoritePresets" || key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || PLACEMENT_KEYS.indexOf(key) !== -1)
+        if (key === "autoDailyLook" || key === "dailyLookApplied" || key === "favoritePresets" || key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || key === "customButtonStyles" || PLACEMENT_KEYS.indexOf(key) !== -1)
             continue;
         if (current[key] !== undefined && !same(current[key], target[key]))
             return false;
@@ -538,7 +546,7 @@ function exportPreset(name, settings, known) {
 // Only appearance changes automatically; audio, placement and libraries stay intact.
 function dailyUpdate(defaults, current, day) {
     if (!current.autoDailyLook || current.dailyLookApplied === day) return null;
-    var keys = ["customVisualizer", "customProgressBar", "showMpris", "artBg"];
+    var keys = ["customVisualizer", "customProgressBar", "customButtons", "showMpris", "artBg"];
     SECTIONS.filter(function (section) { return APPEARANCE_TABS.indexOf(section.tab) !== -1; }).forEach(function (section) {
         section.rows.forEach(function (row) { if (row.k) keys.push(row.k); });
     });
