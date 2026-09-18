@@ -1,0 +1,34 @@
+name: Visualizer idea
+description: Suggest a new audio visualizer or improve an existing style.
+title: "[Visualizer]: "
+body:
+  - type: textarea
+    id: idea
+    attributes:
+      label: What should the visualizer look like?
+      description: Describe the shape, colors, and motion. If this improves an existing style, name it.
+      placeholder: A ring of soft bars around the album cover, with longer bass pulses and small treble sparks.
+    validations:
+      required: true
+  - type: textarea
+    id: audio
+    attributes:
+      label: How should it react to audio?
+      description: Describe what follows bass, mids, treble, overall volume, or stereo channels, and what happens during silence or paused playback. A plain-language description is enough.
+    validations:
+      required: true
+  - type: textarea
+    id: placement
+    attributes:
+      label: Layout and platform
+      description: Where should it fit (card, cover art, compact strip, panel, Orbit, etc.)? Mention Plasma, Hyprland/Quickshell, or the browser studio if the idea is specific to one.
+  - type: textarea
+    id: references
+    attributes:
+      label: Visual references
+      description: Add sketches, screenshots, GIFs, or links to a video with timestamps showing the motion you mean.
+  - type: textarea
+    id: controls
+    attributes:
+      label: Settings or prototype
+      description: Suggest useful controls such as sensitivity, density, speed, or colors. If you already have a custom QML visualizer or preset JSON, link or attach it here.

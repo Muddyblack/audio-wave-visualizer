@@ -1,0 +1,49 @@
+name: Bug report
+description: Report something broken in the widget or settings studio.
+title: "[Bug]: "
+body:
+  - type: dropdown
+    id: platform
+    attributes:
+      label: Where does it happen?
+      options:
+        - KDE Plasma widget
+        - Hyprland / Quickshell widget
+        - Browser studio
+        - Multiple platforms (describe below)
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Version and environment
+      description: Include the widget version or commit and installation method (KDE Store, manual, Nix, etc.). For desktop issues, add your distro and Plasma or Quickshell version; for the browser studio, add your browser and version.
+      placeholder: "Widget version: …\nInstalled via: …\nDistro / desktop or browser: …"
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce
+      description: Include the preset, visualizer, or progress style and any settings needed to reproduce the issue.
+      placeholder: "1. Select …\n2. Play …\n3. Change …\n4. The issue appears …"
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+      description: Screenshots or a short recording are helpful for visual and animation issues.
+    validations:
+      required: true
+  - type: textarea
+    id: context
+    attributes:
+      label: Extra context, logs, or preset JSON
+      description: If relevant, include your media player, PipeWire/PulseAudio and cava versions, display scaling, and whether you use Wayland or X11. Attach an exported preset or relevant logs if available. Remove private information before sharing.
