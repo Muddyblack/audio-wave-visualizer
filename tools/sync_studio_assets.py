@@ -21,6 +21,7 @@ DEST = ROOT / "docs/website/assets/studio"
 FUNDING_SOURCE = ROOT / ".github/FUNDING.yml"
 FUNDING_MODULE = SOURCE_STUDIO / "ProjectFunding.js"
 LICENSE_MODULE = SOURCE_STUDIO / "ProjectLicense.js"
+VERSION_MODULE = SOURCE_STUDIO / "ProjectVersion.js"
 
 
 def funding_module():
@@ -337,12 +338,25 @@ def main():
     mismatches = []
     funding = funding_module()
     license = license_module()
+    version = (
+        "// Generated from package/metadata.json by tools/sync_studio_assets.py.\n"
+        + "var current = "
+        + json.dumps(
+            json.loads((ROOT / "package/metadata.json").read_text())["KPlugin"][
+                "Version"
+            ]
+        )
+        + ";\n"
+    ).encode()
     if args.check:
         if not FUNDING_MODULE.exists() or FUNDING_MODULE.read_bytes() != funding:
             mismatches.append(str(FUNDING_MODULE.relative_to(ROOT)))
         if not LICENSE_MODULE.exists() or LICENSE_MODULE.read_bytes() != license:
             mismatches.append(str(LICENSE_MODULE.relative_to(ROOT)))
+        if not VERSION_MODULE.exists() or VERSION_MODULE.read_bytes() != version:
+            mismatches.append(str(VERSION_MODULE.relative_to(ROOT)))
     else:
+        VERSION_MODULE.write_bytes(version)
         FUNDING_MODULE.write_bytes(funding)
         LICENSE_MODULE.write_bytes(license)
     published = outputs()

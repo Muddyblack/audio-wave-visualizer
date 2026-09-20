@@ -705,10 +705,19 @@ function toggleFavorite(id) {
 }
 const projectCounts = {};
 let projectContributors = [];
+let projectLatestVersion = '';
+let projectReleaseState = 'Not checked';
 function renderProjectInfo(el) {
   el.innerHTML = `<div class="project-info">
     <div class="project-heading"><img src="assets/studio/icon.png" alt="Plasma Audio Visualizer project icon"><div><h3>${ProjectInfo.name}</h3><div class="project-author"><span class="profile-image"><span aria-hidden="true">M</span><img alt="Muddyblack’s profile picture" hidden></span><a class="ghost-link" href="${ProjectInfo.profile}" target="_blank" rel="noopener">By ${ProjectInfo.author} ↗</a></div></div></div>
     <p>An open-source music visualizer for Plasma and Hyprland. Explore the project, get updates, or help improve it.</p>
+    <section class="project-license" aria-label="Version information">
+      <strong>Studio version · ${esc(ProjectInfo.currentVersion)}</strong>
+      <small>This is the browser studio version, not your installed widget.</small>
+      <span data-project-latest></span><span data-project-version-status role="status"></span>
+      <div class="project-actions"><a class="ghost-link" data-project-release href="${ProjectInfo.releasesPage}" target="_blank" rel="noopener">View latest release ↗</a>
+      <button class="ghost-link" type="button" data-project-check>Check again</button></div>
+    </section>
     <div class="project-stats">${ProjectInfo.statistics.map(stat => `<a href="${stat.href}" target="_blank" rel="noopener" data-project-stat="${stat.id}" aria-label="${stat.label}"><span class="project-stat-top"><img src="assets/studio/icons/${stat.icon}" alt="" aria-hidden="true"><b>—</b></span><span>${stat.label} ↗</span></a>`).join('')}</div>
     <div class="project-license"><strong>License · ${ProjectInfo.license}</strong><small>${ProjectInfo.licenseId} · From the bundled LICENSE file</small></div>
     <section class="project-contributors" aria-label="Contributors" hidden></section>
@@ -718,11 +727,17 @@ function renderProjectInfo(el) {
     </section>
     <div class="project-actions"><a class="ghost-link" href="${ProjectInfo.repository}" target="_blank" rel="noopener">View source on GitHub ↗</a>
     <a class="ghost-link" href="${ProjectInfo.repository}/issues" target="_blank" rel="noopener">Report an issue ↗</a></div></div>`;
+  $('[data-project-check]', el).onclick = loadProjectRelease;
   const avatar = $('.profile-image img', el);
   avatar.onload = () => { avatar.hidden = false; };
   avatar.onerror = () => { avatar.hidden = true; };
   return () => {
     if (activeTab !== 'about' && !query) return;
+    $('[data-project-latest]', el).textContent = 'Latest stable release · ' + (projectLatestVersion || '—');
+    const status = projectLatestVersion ? ProjectInfo.releaseStatus(ProjectInfo.currentVersion, projectLatestVersion) : projectReleaseState;
+    $('[data-project-version-status]', el).textContent = status;
+    $('[data-project-release]', el).textContent = status === 'Update available' ? 'Get update ↗' : 'View latest release ↗';
+    $('[data-project-check]', el).disabled = projectReleaseState === 'Checking…';
     if (!avatar.hasAttribute('src')) avatar.src = ProjectInfo.avatar;
     for (const stat of ProjectInfo.statistics) {
       const item = $(`[data-project-stat="${stat.id}"]`, el), value = projectCounts[stat.id];
@@ -1087,6 +1102,19 @@ async function loadProjectContributors() {
   } catch (_) { /* The section appears only when GitHub responds. */ }
 }
 loadProjectContributors();
+async function loadProjectRelease() {
+  if (projectReleaseState === 'Checking…') return;
+  projectReleaseState = 'Checking…';
+  projectLatestVersion = '';
+  syncSettings();
+  try {
+    const response = await fetch(ProjectInfo.latestReleaseUrl, {signal: AbortSignal.timeout(8000)});
+    projectLatestVersion = response.ok ? ProjectInfo.releaseVersion(await response.text()) : '';
+  } catch (_) { /* Keep the installed version visible when GitHub is unavailable. */ }
+  projectReleaseState = projectLatestVersion ? 'Checked' : 'Could not check for updates';
+  syncSettings();
+}
+loadProjectRelease();
 
 /* ─── glue ─────────────────────────────────────────────────────── */
 let toastTimer;

@@ -10,6 +10,28 @@ Column {
     property var contributorList: []
     property var requests: []
     property bool requested: false
+    readonly property string currentVersion: Project.currentVersion
+    property string latestVersion: ""
+    property string releaseCheckState: "Not checked"
+    readonly property string versionStatus: latestVersion ? Project.releaseStatus(currentVersion, latestVersion) : releaseCheckState
+
+    function checkRelease() {
+        if (!onlineEnabled || releaseCheckState === "Checking…")
+            return;
+        latestVersion = "";
+        releaseCheckState = "Checking…";
+        const request = new XMLHttpRequest();
+        requests.push(request);
+        request.open("GET", Project.latestReleaseUrl);
+        request.onreadystatechange = function () {
+            if (request.readyState !== XMLHttpRequest.DONE)
+                return;
+            info.latestVersion = request.status === 200 ? Project.releaseVersion(request.responseText) : "";
+            info.releaseCheckState = info.latestVersion ? "Checked" : "Could not check for updates";
+        };
+        request.send();
+        timeout.restart();
+    }
     readonly property bool onlineEnabled: studio.onScreen
     spacing: 16
 
@@ -17,6 +39,7 @@ Column {
         if (!onlineEnabled || requested)
             return;
         requested = true;
+        checkRelease();
         Project.statistics.forEach(function (stat) {
             const request = new XMLHttpRequest();
             info.requests.push(request);
@@ -49,6 +72,8 @@ Column {
             request.abort();
         });
         requests = [];
+        if (releaseCheckState === "Checking…")
+            releaseCheckState = "Could not check for updates";
     }
     onOnlineEnabledChanged: if (onlineEnabled)
         loadCounts()
@@ -126,6 +151,59 @@ Column {
         color: Theme.muted
         font.family: Theme.fontFamily
         font.pixelSize: 12
+    }
+    Rectangle {
+        objectName: "projectVersion"
+        width: parent.width
+        height: versionContent.implicitHeight + 26
+        radius: 10
+        color: Theme.sunk
+        border.color: Theme.line2
+        Column {
+            id: versionContent
+            x: 13
+            y: 13
+            width: parent.width - 26
+            spacing: 8
+            Text {
+                text: "Installed version · " + info.currentVersion
+                color: Theme.text
+                font.family: Theme.fontFamily
+                font.pixelSize: 12
+                font.weight: Font.DemiBold
+            }
+            Text {
+                objectName: "latestVersionLabel"
+                text: "Latest stable release · " + (info.latestVersion || "—")
+                color: Theme.muted
+                font.family: Theme.fontFamily
+                font.pixelSize: 12
+            }
+            Text {
+                objectName: "versionStatusLabel"
+                width: parent.width
+                text: info.versionStatus
+                wrapMode: Text.WordWrap
+                color: text === "Update available" ? Theme.brand : Theme.muted
+                font.family: Theme.fontFamily
+                font.pixelSize: 12
+            }
+            Flow {
+                width: parent.width
+                spacing: 8
+                StudioButton {
+                    text: info.versionStatus === "Update available" ? "Get update ↗" : "View latest release ↗"
+                    compact: true
+                    onClicked: Qt.openUrlExternally(Project.releasesPage)
+                }
+                StudioButton {
+                    text: "Check again"
+                    compact: true
+                    enabled: info.onlineEnabled && info.releaseCheckState !== "Checking…"
+                    onClicked: info.checkRelease()
+                }
+            }
+        }
     }
     Flow {
         width: parent.width

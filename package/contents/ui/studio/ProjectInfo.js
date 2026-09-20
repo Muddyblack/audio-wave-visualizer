@@ -1,6 +1,7 @@
 // Shared project links and optional network statistics for both Studios.
 .import "ProjectFunding.js" as Funding
 .import "ProjectLicense.js" as License
+.import "ProjectVersion.js" as Version
 var name = "Plasma Audio Visualizer";
 var author = "Muddyblack";
 var repository = "https://github.com/Muddyblack/audio-wave-visualizer";
@@ -41,4 +42,34 @@ function contributors(text) {
             };
         });
     } catch (error) { return []; }
+}
+
+var currentVersion = Version.current;
+var latestReleaseUrl = "https://api.github.com/repos/Muddyblack/audio-wave-visualizer/releases/latest";
+var releasesPage = repository + "/releases/latest";
+
+function parseVersion(value) {
+    if (typeof value !== "string") return null;
+    var match = /^v?(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)(?:-([0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*))?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/.exec(value);
+    return match ? {numbers: [Number(match[1]), Number(match[2]), Number(match[3])], prerelease: match[4] || ""} : null;
+}
+
+// Compare against a stable release; a prerelease of the same version is older.
+function releaseStatus(current, latest) {
+    var local = parseVersion(current), remote = parseVersion(latest);
+    if (!local || !remote || remote.prerelease) return "Version comparison unavailable";
+    for (var i = 0; i < 3; i++) {
+        if (local.numbers[i] < remote.numbers[i]) return "Update available";
+        if (local.numbers[i] > remote.numbers[i]) return "Newer than latest release";
+    }
+    return local.prerelease ? "Update available" : "Up to date";
+}
+
+function releaseVersion(text) {
+    try {
+        var release = JSON.parse(text);
+        if (!release || release.draft || release.prerelease) return "";
+        var parsed = parseVersion(release.tag_name);
+        return parsed && !parsed.prerelease ? release.tag_name.replace(/^v/, "") : "";
+    } catch (error) { return ""; }
 }

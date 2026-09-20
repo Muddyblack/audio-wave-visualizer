@@ -100,6 +100,75 @@ TestCase {
         verify(card !== null);
         compare(card.modelData.commits, 3);
     }
+    function test_versionComparison_data() {
+        return [
+            {
+                tag: "new release",
+                current: "3.0.0",
+                latest: "3.1.0",
+                expected: "Update available"
+            },
+            {
+                tag: "numeric components",
+                current: "3.9.0",
+                latest: "3.10.0",
+                expected: "Update available"
+            },
+            {
+                tag: "same version",
+                current: "v3.0.0",
+                latest: "3.0.0",
+                expected: "Up to date"
+            },
+            {
+                tag: "development ahead",
+                current: "4.0.0",
+                latest: "3.0.0",
+                expected: "Newer than latest release"
+            },
+            {
+                tag: "prerelease",
+                current: "3.0.0-rc.1",
+                latest: "3.0.0",
+                expected: "Update available"
+            },
+            {
+                tag: "build metadata",
+                current: "3.0.0+local",
+                latest: "3.0.0",
+                expected: "Up to date"
+            },
+            {
+                tag: "unknown",
+                current: "main",
+                latest: "3.0.0",
+                expected: "Version comparison unavailable"
+            }
+        ];
+    }
+    function test_versionComparison(data) {
+        compare(Project.releaseStatus(data.current, data.latest), data.expected);
+    }
+    function test_releaseResponseValidation() {
+        compare(Project.releaseVersion('{"tag_name":"v3.1.0","draft":false,"prerelease":false}'), "3.1.0");
+        for (const response of ["null", "{}", "not json", '{"message":"rate limited"}', '{"tag_name":"v4.0.0","draft":true}', '{"tag_name":"v4.0.0","prerelease":true}', '{"tag_name":"v4.0.0-beta"}'])
+            compare(Project.releaseVersion(response), "");
+    }
+    function test_versionCardStates() {
+        const pane = createTemporaryObject(infoComponent, this);
+        verify(Project.parseVersion(pane.currentVersion) !== null);
+        const status = findChild(pane, "versionStatusLabel");
+        compare(status.text, "Not checked");
+        pane.releaseCheckState = "Checking…";
+        compare(status.text, "Checking…");
+        pane.cancelRequests();
+        compare(status.text, "Could not check for updates");
+        pane.latestVersion = "999.0.0";
+        compare(status.text, "Update available");
+        compare(findChild(pane, "latestVersionLabel").text, "Latest stable release · 999.0.0");
+        pane.latestVersion = pane.currentVersion;
+        compare(status.text, "Up to date");
+    }
     function test_licenseComesFromBundledFile() {
         const pane = createTemporaryObject(infoComponent, this);
         compare(Project.licenseId, "GPL-3.0-or-later");

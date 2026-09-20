@@ -18,6 +18,7 @@ while [[ $# -gt 0 ]]; do
 done
 
 METADATA_PATH="package/metadata.json"
+VERSION_MODULE_PATH="package/contents/ui/studio/ProjectVersion.js"
 METADATA_FILE="$HERE/$METADATA_PATH"
 
 if [ ! -f "$METADATA_FILE" ]; then
@@ -51,8 +52,9 @@ offer_metadata_rollback() {
     fi
 
     sed -i "s/\"Version\": \"${NEW_VERSION}\"/\"Version\": \"${CURRENT_VERSION}\"/" "$METADATA_FILE"
+    sed -i "s/var current = \"${NEW_VERSION}\";/var current = \"${CURRENT_VERSION}\";/" "$VERSION_MODULE_PATH"
     if [[ "$METADATA_STAGED_BY_RELEASE" == true ]]; then
-        git add -u -- "$METADATA_PATH"
+        git add -u -- "$METADATA_PATH" "$VERSION_MODULE_PATH"
     fi
     METADATA_BUMP_PENDING=false
     echo "Restored metadata.json → ${CURRENT_VERSION}"
@@ -213,6 +215,7 @@ fi
 
 # Write new version to metadata.json
 sed -i "s/\"Version\": \"${CURRENT_VERSION}\"/\"Version\": \"${NEW_VERSION}\"/" "$METADATA_FILE"
+sed -i "s/var current = \"${CURRENT_VERSION}\";/var current = \"${NEW_VERSION}\";/" "$VERSION_MODULE_PATH"
 echo "Updated metadata.json → ${NEW_VERSION}"
 if [[ "$NEW_VERSION" != "$CURRENT_VERSION" ]]; then
     METADATA_BUMP_PENDING=true

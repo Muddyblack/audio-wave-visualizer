@@ -14,6 +14,9 @@ for (const [, file] of html.matchAll(/<script src="([^"]+)"/g)) {
 const source = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
 const manifest = JSON.parse(fs.readFileSync(path.resolve(root, '../../package/metadata.json'), 'utf8'));
 assert.equal(vm.runInContext('ProjectManifest.version', context), manifest.KPlugin.Version);
+assert.equal(vm.runInContext('ProjectInfo.currentVersion', context), manifest.KPlugin.Version);
+assert.equal(vm.runInContext('ProjectInfo.releaseStatus("3.9.0", "3.10.0")', context), 'Update available');
+assert.equal(vm.runInContext(`ProjectInfo.releaseVersion('{"message":"rate limited"}')`, context), '');
 assert.equal(vm.runInContext('ProjectInfo.contributors(JSON.stringify([{login:"Helpful-Dev",type:"User",contributions:3},{login:"<script>",type:"User",contributions:2}])).length', context), 1);
 assert.equal(vm.runInContext('ProjectInfo.licenseId', context), 'GPL-3.0-or-later');
 vm.runInContext(source.slice(source.indexOf('const HYPR ='), source.indexOf('let lastT =')), context);
