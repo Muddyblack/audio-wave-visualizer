@@ -1,4 +1,4 @@
-.PHONY: help view view-h view-hyprland settings-hyprland install doctor pack tag shaders docs gallery lint-python format-python
+.PHONY: help view view-h view-hyprland settings-hyprland install doctor pack tag shaders docs gallery lint-python format-python run-windows
 .DEFAULT_GOAL := help
 
 lint-python: ## check Python lint and formatting with Ruff
@@ -30,6 +30,9 @@ view-hyprland: ## run standalone Quickshell desktop widget (Ctrl+C to stop)
 	else \
 	  nix run .#view-hyprland; \
 	fi
+
+run-windows: ## run the Windows overlay scaffold (see docs/windows.md — not a working visualizer yet)
+	@python3 -m pip install -q -r windows/requirements.txt && python3 windows/app.py
 
 settings-hyprland: ## open settings in the running Quickshell widget
 	@if command -v qs >/dev/null 2>&1; then \

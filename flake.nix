@@ -138,6 +138,19 @@
               echo "  make help        — list targets (view, install, pack, tag)"
             '';
           };
+
+          # The Windows overlay (windows/) runs on Linux too, which is how it
+          # is developed: `nix develop .#windows`, then `python windows/app.py`.
+          # soundcard captures the PulseAudio monitor here and WASAPI loopback
+          # on Windows, so the same capture path is exercised. Separate because
+          # only people working on that port want PySide6. See docs/windows.md.
+          windows = pkgs.mkShell {
+            name = "plasma-audio-visualizer-windows";
+            packages = [
+              (pkgs.python3.withPackages (ps: [ ps.pyside6 ps.numpy ps.soundcard ]))
+              pkgs.ruff
+            ];
+          };
         });
     };
 }

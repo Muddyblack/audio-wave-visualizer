@@ -28,6 +28,7 @@
   <a href="https://github.com/Muddyblack/audio-wave-visualizer/releases">
     <img src="https://img.shields.io/github/downloads/Muddyblack/audio-wave-visualizer/total?style=for-the-badge&logo=github&logoColor=white&label=GitHub%20Downloads&color=blue" alt="GitHub Downloads" />
   </a>
+  <img src="https://img.shields.io/badge/Started-May_2026-9c27b0?style=for-the-badge" alt="Project started May 2026" />
 </p>
 
 <p align="center">
@@ -209,6 +210,15 @@ make view-hyprland
 ```
 
 The widget appears on your desktop. **Right-click it for Settings** and press **Ctrl+C** in the terminal to stop it. The launcher also works alongside Caelestia. See the [installation guide](docs/installation.md#hyprland--quickshell) for login startup, monitor placement, NixOS, and settings access when the widget is hidden.
+
+### Windows (working, not yet tested on real Windows)
+
+A PySide6-based overlay app that renders the same visualizer, with WASAPI
+loopback capture in place of cava — see [docs/windows.md](docs/windows.md) for
+how it is hosted, how to run it (`make run-windows`) and exactly what has and
+has not been verified. There is no settings UI on Windows yet, and the
+always-on-bottom window behaviour has only been reasoned about, not run on a
+Windows machine. Microsoft Store distribution is still planned, not built.
 
 ## How it works
 

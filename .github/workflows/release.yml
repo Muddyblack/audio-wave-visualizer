@@ -5,7 +5,13 @@ on:
     tags:
       - "v*"
 
+# Read-only unless a job asks for more; only the jobs that publish do.
+permissions:
+  contents: read
+
 jobs:
+  # The .plasmoid release goes out on its own, so a broken Windows build
+  # cannot hold it back; the Windows files are attached to it once they pass.
   release:
     runs-on: ubuntu-latest
     permissions:
@@ -55,4 +61,38 @@ jobs:
             ```
             plasmapkg2 -i ${{ steps.info.outputs.artifact }}
             ```
+
+            **Windows (not yet tested on a real Windows machine — see [docs/windows.md](https://github.com/Muddyblack/audio-wave-visualizer/blob/main/docs/windows.md)):** run `Audio-Visualizer-Setup-${{ steps.info.outputs.version }}.exe` (no admin rights needed; it updates an existing install in place), or unzip `audio-visualizer-windows-${{ steps.info.outputs.version }}.zip` anywhere and run `Audio Visualizer.exe`.
+
+            Stable Windows builds also include Scoop and WinGet manifests. See the [package manager instructions](https://github.com/Muddyblack/audio-wave-visualizer/blob/main/docs/windows.md#2-package-managers-scoop-winget).
+
+            The Windows asset is attached a few minutes after the release appears, once its build has passed.
           files: ${{ steps.info.outputs.artifact }}
+
+  # The workflow every push runs — the overlay's own selftest, the build,
+  # the built .exe's selftest, the installer — with the release's version in
+  # the file names.
+  windows:
+    uses: ./.github/workflows/windows.yml
+    with:
+      version: ${{ github.ref_name }}
+
+  windows-assets:
+    needs: [release, windows]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/download-artifact@v7
+        with:
+          name: audio-visualizer-windows
+
+      - name: Attach the Windows build to the release
+        uses: softprops/action-gh-release@v3
+        with:
+          files: |
+            audio-visualizer-windows-*.zip
+            Audio-Visualizer-Setup-*.exe
+            dist/package-manifests/audio-visualizer.json
+            dist/package-manifests/audio-visualizer-winget-*.zip

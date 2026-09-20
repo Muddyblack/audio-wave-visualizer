@@ -1,0 +1,6 @@
+# Runtime for the Windows overlay (windows/app.py).
+PySide6-Essentials>=6.8
+# WASAPI loopback capture on Windows, PulseAudio monitors on Linux, so the
+# same windows/audio_capture.py path is developed and tested on both.
+SoundCard>=0.4.4
+numpy>=1.26
