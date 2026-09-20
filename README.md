@@ -37,7 +37,8 @@
   <a href="#make-it-yours">Settings Studio</a> ·
   <a href="#requirements">Requirements</a> ·
   <a href="#install">Install</a> ·
-  <a href="#how-it-works">How it works</a>
+  <a href="#how-it-works">How it works</a> ·
+  <a href="#support">Support</a>
 </p>
 
 <p align="center">
@@ -239,6 +240,22 @@ Check Python lint and formatting with `make lint-python`; apply formatting with 
 - [Lyrics and karaoke](docs/lyrics.md)
 - [Custom visualizers](docs/custom-visualizers.md)
 - [Architecture and development workflow](docs/workflow.md)
+
+## Support
+
+If you enjoyed it feel free to show appreciation with a github star or some coin :)
+
+<p align="center">
+  <a href="https://github.com/sponsors/muddyblack">
+    <img src="https://img.shields.io/badge/Sponsors-24292e?style=for-the-badge&logo=github-sponsors&logoColor=ea4aaa" alt="GitHub Sponsors" />
+  </a>
+  <a href="https://ko-fi.com/muddyblack">
+    <img src="https://img.shields.io/badge/Ko--fi-468ee5?style=for-the-badge&logo=ko-fi&logoColor=white" alt="Ko-fi" />
+  </a>
+  <a href="https://buymeacoffee.com/muddyblack">
+    <img src="https://img.shields.io/badge/Buy_Me_a_Coffee-FF813F?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white" alt="Buy Me a Coffee" />
+  </a>
+</p>
 
 ## Credits
 
