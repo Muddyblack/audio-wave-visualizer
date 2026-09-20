@@ -102,6 +102,12 @@ timestamp and a quoted `v="b0;b1;...;bN"` line, `protocol=2`. There is no
 the existing QML reader works as-is; frames are written to a `.tmp` and
 `os.replace`d, so a poll can never land on a half-written file.
 
+`_publish_frame` also copies `feeder.sh`'s `write_frame` rule: an unchanged
+frame is rewritten only once a second, which still satisfies the reader's
+two-second freshness check. Without it silence costs a write and a rename per
+frame — 60/s of identical zeros. Measured on Linux: 60 writes/s while playing,
+~1/s in silence.
+
 ### Staying behind every window ("always on bottom")
 
 `windows/app.py::_pin_to_bottom` does the simple version: Qt's

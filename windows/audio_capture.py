@@ -73,6 +73,8 @@ class _Feed(threading.Thread):
         self.low = int(config.get("lowCutoff", 50))
         self.high = int(config.get("highCutoff", 10000))
         self._stop = threading.Event()
+        self._last_frame = ""
+        self._last_second = -1
 
     def stop(self) -> None:
         self._stop.set()
@@ -100,12 +102,21 @@ class _Feed(threading.Thread):
             while not self._stop.is_set():
                 chunk = recorder.record(block)
                 mono = chunk.mean(axis=1) if chunk.ndim > 1 else chunk
-                ring = np.roll(ring, -len(mono))
-                ring[-len(mono) :] = mono
+                # A low framerate makes the block longer than the window; only
+                # the newest FFT_SIZE samples can be held anyway.
+                mono = mono[-FFT_SIZE:]
+                shift = len(mono)
+                ring[:-shift] = ring[shift:]
+                ring[-shift:] = mono
 
                 spectrum = np.abs(np.fft.rfft(ring * window))
+                # initial= because clipping can leave a band with no bins of
+                # its own, and max() of an empty slice raises.
                 raw = np.array(
-                    [spectrum[a:b].max() for a, b in zip(edges[:-1], edges[1:])],
+                    [
+                        spectrum[a:b].max(initial=0.0)
+                        for a, b in zip(edges[:-1], edges[1:])
+                    ],
                     dtype=np.float32,
                 )
                 # Compensate the 1/f tilt of music so highs stay visible.
@@ -123,9 +134,18 @@ class _Feed(threading.Thread):
 
     def _publish_frame(self, values: np.ndarray) -> None:
         frame = ";".join(str(int(v)) for v in values)
+        now = time.time()
+        # feeder.sh's write_frame rule: an unchanged frame is rewritten only
+        # once a second, which is enough to keep the reader's two-second
+        # freshness check passing. Without it silence still costs a write and a
+        # rename per frame — 60/s of identical zeros.
+        if frame == self._last_frame and int(now) == self._last_second:
+            return
+        self._last_frame = frame
+        self._last_second = int(now)
         _publish(
             self.run_dir / "frame.ini",
-            't=%.3f\nv="%s"\nprotocol=2\n' % (time.time(), frame),
+            't=%.3f\nv="%s"\nprotocol=2\n' % (now, frame),
         )
 
 
