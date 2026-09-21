@@ -1,31 +1,42 @@
 [h1]Plasma Audio Visualizer[/h1]
 
-A modern, customizable audio visualizer widget for KDE Plasma 6. It renders a mirrored waveform reacting in real-time to whatever audio is playing system-wide, alongside complete MPRIS track info, album art, transport controls, and a seekable progress bar.
+Oh boy this is a big one.
+V3 is finally out and so many new features have been added to this new version.
+
+We now have a website a like settings menu with instant previews of how the widget will look and so many configurations.
+If one wants, one can rice up their audio visualizer widget as if there isn't already enough to rice in Linux, eh? 😂
+
+So what is this? This is an obviously **modern** and especially riceable, customizable audio visualizer widget for KDE Plasma 6 and now even Hyprland via Quickshell support. It renders different visualisations, such as a mirrored waveform reacting in real time to whatever audio is playing system-wide, alongside complete MPRIS track info, album art, transport controls, and a seekable progress bar.
+
+[b]See it in action:[/b] [url=https://youtu.be/ytHqeP4cBgA]Watch the video demo on YouTube[/url]
+
 
 ---
 
 [b]Features[/b]
 [list]
-[*] [b]6 Visualizer Styles:[/b] Smooth Wave, Rounded Bars, Mirror Bars, Tech Line, Floating Dots, and Floating Dots Bold.
-[*] [b]5 Progress Bar Styles:[/b] Glassy Sleek (default), Ultra Minimal (thin 1px), Glowing Pulse (neon accent), Bold Pill, and Waveform.
-[*] [b]Album Art as Background:[/b] Use the current cover as a blurred card backdrop, with independent Blur and Darkness sliders to tune the look from a bold crisp cover to a subtle frosted tint. The redundant thumbnail hides automatically.
-[*] [b]Smart Background Card:[/b] Optional frosted card with customizable color, transparency (via color picker alpha), and corner radius.
-[*] [b]Smooth Motion:[/b] Frame interpolation keeps the waveform gliding instead of snapping between updates.
-[*] [b]High Contrast/Transparent Panel Friendly:[/b] Visualizer styles adapt to work on transparent panels or over custom backgrounds.
-[*] [b]System Accent Integration:[/b] Automatically matches your Plasma system accent color and text colors (or set your own custom colors).
-[*] [b]Robust MPRIS Integration:[/b] Displays album art, track details, playback timer, and transport controls (Play/Pause, Previous, Next).
-[*] [b]Fast & Lightweight:[/b] Powered by cava in the background with lock management to prevent system lag.
+[*] [b]Dozens of Ready-Made Presets:[/b] Choose from cards, artwork backgrounds, posters, compact strips, panel icons, and more.
+[*] [b]Many Audio Visualizers:[/b] Waves, bars, particles, rings, and other styles react to system audio captured by cava.
+[*] [b]Live Settings Studio:[/b] Preview changes as you customize layouts, colors, visualizers, progress bars, artwork, and motion.
+[*] [b]Make and Share Presets:[/b] Save your own looks and exchange them as JSON with the Plasma, Quickshell, and browser studios.
+[*] [b]Custom QML Styles:[/b] Import your own visualizers and progress bars from trusted local QML files.
+[*] [b]Album Art and Track Details:[/b] Show cover art, title, artist, playback time, and an optional artwork backdrop.
+[*] [b]Playback Controls:[/b] Play, pause, skip tracks, and seek through MPRIS players when supported.
+[*] [b]Lyrics and Karaoke:[/b] Show a synced line on the card or switch to a lyrics-only view, with local files and optional online lookup.
+[*] [b]Plasma and Hyprland:[/b] Use the widget on KDE Plasma 6 or with Quickshell on Hyprland.
 [/list]
 
 ---
 
 [b]Requirements[/b]
-To run this widget, you will need:
+To run the widget, you will need:
 [list]
-[*] [b]cava[/b] (console audio visualizer) — to generate the raw waveform bars. Install it before adding the widget.
-[*] A running [b]PipeWire[/b] or [b]PulseAudio[/b] server — the widget auto-detects which one your cava build can capture from.
-[*] [b]flock[/b] (from util-linux) and [b]pkill[/b] (from procps) — standard utilities pre-installed on virtually all Linux distributions.
+[*] [b]KDE Plasma 6[/b] with [b]kpackagetool6[/b], or [b]Quickshell[/b] for the Hyprland version.
+[*] [b]cava[/b] and a running [b]PipeWire[/b] or [b]PulseAudio[/b] server for audio-reactive visuals.
+[*] [b]flock[/b] (from util-linux) and [b]pkill[/b] (from procps).
 [/list]
+
+For local lyrics, install [b]Python 3[/b]. Embedded ID3 lyrics also need the Python [b]mutagen[/b] package; automatic pronunciation subtitles use optional [b]pykakasi[/b] or [b]pypinyin[/b].
 
 If the bars stay flat, the widget now says why right where the waveform would be. For a full report, run:
 [code]
@@ -37,8 +48,8 @@ bash ~/.local/share/plasma/plasmoids/org.muddyblack.plasmaAudioVisualizer/conten
 [b]Quick Install (Terminal)[/b]
 
 [code]
-git clone https://github.com/muddyblack/plasma-audio-visualizer.git
-cd plasma-audio-visualizer
+git clone https://github.com/Muddyblack/audio-wave-visualizer.git
+cd audio-wave-visualizer
 kpackagetool6 -t Plasma/Applet -i package
 [/code]
 
@@ -50,13 +61,14 @@ kpackagetool6 -t Plasma/Applet -u package
 ---
 
 [b]Configuration[/b]
-Right-click the widget and select "Configure Plasma Audio Visualizer" to customize:
+Right-click the widget to open its settings studio and customize:
 [list]
-[*] Visualizer type & styling
-[*] Progress bar design
-[*] Number of frequency bars ( 8 to 128 )
-[*] Target framerate & smoothing factor
-[*] Wave, Text, Controls, and Dock background colors (with alpha support)
-[*] Background card visibility, radius, and color
-[*] Album art as a blurred background, with Blur and Darkness sliders
+[*] Presets: choose a ready-made look, save your own, or share one as JSON
+[*] Layouts, visualizer styles, and custom QML visualizers
+[*] Progress bar styles, playback buttons, and seeking options
+[*] Lyrics display, timing, typography, and pronunciation subtitles
+[*] System accent, artwork-based palettes, and custom colors for the visualizer, text, controls, and progress bar
+[*] Card materials, shadows, corner radius, and album artwork backgrounds
+[*] Audio input and source, frequency bars, frame rate, sensitivity, and smoothing
+[*] Motion, power-saving behavior, and Hyprland placement options
 [/list]

@@ -1,0 +1,45 @@
+name: Progress bar / animation idea
+description: Suggest a progress style, seek effect, or playback animation.
+title: "[Progress / Animation]: "
+body:
+  - type: dropdown
+    id: kind
+    attributes:
+      label: What would you like to add or improve?
+      options:
+        - Progress bar or ring style
+        - Seek / hover interaction
+        - Playback or track-change animation
+        - Other motion effect
+    validations:
+      required: true
+  - type: textarea
+    id: idea
+    attributes:
+      label: Describe the look and motion
+      description: Name the existing style if relevant, and describe what the new effect should look like.
+      placeholder: A thin progress line with a glowing bead that leaves a short fading trail as the track advances.
+    validations:
+      required: true
+  - type: textarea
+    id: behavior
+    attributes:
+      label: When and how should it animate?
+      description: Does it follow track progress, react to audio, or run on hover, seeking, play/pause, or track changes? Describe what happens when playback pauses or stops.
+    validations:
+      required: true
+  - type: textarea
+    id: placement
+    attributes:
+      label: Layout and platform
+      description: Should it appear below track details, around artwork, in a panel, or somewhere else? Mention Plasma, Hyprland/Quickshell, or the browser studio if relevant.
+  - type: textarea
+    id: references
+    attributes:
+      label: References or prototype
+      description: Add sketches, screenshots, GIFs, or video links with timestamps. You can also share a custom QML progress bar or exported preset JSON.
+  - type: textarea
+    id: controls
+    attributes:
+      label: Optional controls
+      description: Suggest settings such as speed, trail length, thickness, colors, or an option to reduce or disable motion.

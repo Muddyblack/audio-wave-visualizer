@@ -1,101 +1,139 @@
 <p align="center">
-  <img src="./package/icon.png" width="180" alt="Plasma Audio Wave Visualizer Logo">
+  <img src="package/icon.png" width="112" alt="Plasma Audio Wave Visualizer icon">
 </p>
 
 <h1 align="center">Plasma Audio Wave Visualizer</h1>
 
+
 <p align="center">
+  <a href="https://muddyblack.github.io/audio-wave-visualizer/">
+    <img src="https://img.shields.io/badge/Interactive_Studio-Try_Online-success?style=for-the-badge" alt="Try Interactive Studio" />
+  </a>
   <a href="https://www.opendesktop.org/p/2359422/">
     <img src="https://img.shields.io/badge/KDE_Store-Download-1d99f3?style=for-the-badge&logo=kde&logoColor=white" alt="KDE Store Download" />
   </a>
-  <img src="https://img.shields.io/badge/KDE_Plasma-6.0%2B-1d99f3?style=for-the-badge&logo=kde&logoColor=white" alt="KDE Plasma 6.0+" />
-  <img src="https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge" alt="License: MIT" />
-  <a href="https://www.opendesktop.org/p/2359422/">
-    <img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.pling.com%2Focs%2Fv1%2Fcontent%2Fdata%3Fsearch%3Daudio%2Bwave%2Bvisualizer%26format%3Djson&query=%24.data%5B0%5D.downloads&label=Downloads&style=for-the-badge&color=1d99f3&logo=kde&logoColor=white" alt="KDE Store Downloads" />
-  </a>
-  <a href="https://github.com/Muddyblack/kde-audio-visualizer/releases">
-    <img src="https://img.shields.io/github/downloads/Muddyblack/kde-audio-visualizer/total?style=for-the-badge&logo=github&logoColor=white&label=GitHub%20Downloads&color=blue" alt="GitHub Downloads" />
+  <a href="docs/gallery.md">
+    <img src="https://img.shields.io/badge/Preset_Gallery-See_All_28-7928ca?style=for-the-badge" alt="See Every Preset" />
   </a>
 </p>
 
 <p align="center">
-  <img src="./readme/demo.svg?v=1.1.3" alt="Widget demo" width="680"/>
+  <img src="https://img.shields.io/badge/KDE_Plasma-6.0%2B-1d99f3?style=for-the-badge&logo=kde&logoColor=white" alt="KDE Plasma 6.0+" />
+  <a href="LICENSE">
+    <img src="https://img.shields.io/badge/License-GPL--3.0--or--later-blue?style=for-the-badge" alt="License: GPL-3.0-or-later" />
+  </a>
+  <a href="https://www.opendesktop.org/p/2359422/">
+    <img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.pling.com%2Focs%2Fv1%2Fcontent%2Fdata%3Fsearch%3Daudio%2Bwave%2Bvisualizer%26format%3Djson&query=%24.data%5B0%5D.downloads&label=Downloads&style=for-the-badge&color=1d99f3&logo=kde&logoColor=white" alt="KDE Store Downloads" />
+  </a>
+  <a href="https://github.com/Muddyblack/audio-wave-visualizer/releases">
+    <img src="https://img.shields.io/github/downloads/Muddyblack/audio-wave-visualizer/total?style=for-the-badge&logo=github&logoColor=white&label=GitHub%20Downloads&color=blue" alt="GitHub Downloads" />
+  </a>
+  <img src="https://img.shields.io/badge/Started-May_2026-9c27b0?style=for-the-badge" alt="Project started May 2026" />
 </p>
 
 <p align="center">
   <a href="#features">Features</a> ·
   <a href="#gallery">Gallery</a> ·
+  <a href="#make-it-yours">Settings Studio</a> ·
   <a href="#requirements">Requirements</a> ·
   <a href="#install">Install</a> ·
-  <a href="#configuration">Configuration</a> ·
-  <a href="#how-it-works">How it works</a>
+  <a href="#how-it-works">How it works</a> ·
+  <a href="#support">Support</a>
 </p>
-
----
-
-A glassy audio visualizer plasmoid for KDE Plasma 6. Renders a mirrored waveform that reacts to whatever is playing system-wide (via [cava]), alongside MPRIS track metadata, album art, transport controls, and a seekable progress bar.
 
 <p align="center">
-  <img src="./readme/preview.png" alt="Preview" width="680"/>
+  <img src="docs/readme/demo.svg" width="760" alt="Animated preview of the audio visualizer">
 </p>
+
+The widget follows system audio with [cava][cava] and shows album artwork, track information, and playback controls from MPRIS players. Choose a ready-made look or tune one in the built-in settings studio.
+
+[![vid](docs/readme/video_thumbnail.png)](https://youtu.be/ytHqeP4cBgA)
 
 ## Features
 
-- **6 visualizer styles** — Smooth Wave, Rounded Bars, Mirror Bars, Tech Line, Floating Dots, Floating Dots Bold
-- **5 progress bar styles** — Glassy Sleek, Ultra Minimal, Glowing Pulse, Bold Pill, Waveform
-- System-wide reactive waveform (PipeWire via cava — not tied to any single player)
-- Smooth frame interpolation so the waveform glides instead of snapping
-- MPRIS2 track info: title, artist, album art
-- Transport controls (prev / play-pause / next) with customizable color
-- Seekable progress bar with elapsed/total time
-- Honors the active Plasma accent color (or set a custom color)
-- Optional waveform fill + neon glow effect
-- **Album art as background** — use the current cover as a blurred backdrop with independent Blur and Darkness sliders; the redundant thumbnail hides automatically
-- Optional background card with configurable color, opacity (via alpha), and corner radius
-- Custom text and controls colors
-- Customizable dock background color (supports alpha via color picker)
-- No panel background — sits cleanly on any panel
+- **Dozens of ready-made presets:** Choose from cards, artwork backgrounds, posters, compact strips, panel icons, and more.
+- **Many audio visualizers:** Waves, bars, particles, rings, and other styles react to system audio captured by [cava][cava].
+- **Live settings studio:** Preview changes as you customize layouts, colors, visualizers, progress bars, artwork, and motion.
+- **Make and share presets:** Save your own looks and exchange them as JSON with the Plasma, Quickshell, and browser studios.
+- **Custom QML styles:** Import your own visualizers and progress bars from trusted local QML files.
+- **Album art and track details:** Show cover art, title, artist, playback time, and an optional artwork backdrop.
+- **Playback controls:** Play, pause, skip tracks, and seek through MPRIS players when supported.
+- **Lyrics and karaoke:** Show a synced line on the card or switch to a lyrics-only view, with local files and optional online lookup.
+- **Plasma and Hyprland:** Use the widget on KDE Plasma 6 or with Quickshell on Hyprland.
 
 ## Gallery
 
+Real captures of the actual QML widget with sample playback. The gallery has [all 28 presets](docs/gallery.md).
+
 <details open>
-  <summary><b>Smooth Wave / Lines</b></summary>
+  <summary><b>Cards</b></summary>
   <br/>
-  <img src="./readme/lines.png" alt="Line-style visualizer" width="680"/>
+  <p align="center">
+    <img src="docs/readme/sheet-cards.png" width="848" alt="Classic, Glass Classic, Cover Art, and Neon Night presets">
+  </p>
 </details>
 
 <details>
-  <summary><b>Bars</b></summary>
+  <summary><b>Surfaces & Players</b></summary>
   <br/>
-  <img src="./readme/bars.png" alt="Bar-style visualizer" width="680"/>
+  <p align="center">
+    <img src="docs/readme/sheet-surfaces.png" width="848" alt="Solid, CD, Vinyl, and Arcade player presets">
+  </p>
 </details>
 
 <details>
-  <summary><b>Dotted</b></summary>
+  <summary><b>Stacked Glass</b></summary>
   <br/>
-  <img src="./readme/dotted.png" alt="Floating-dots visualizer" width="680"/>
+  <p align="center">
+    <img src="docs/readme/sheet-stacked.png" width="848" alt="Liquid Glass, Quiet Glass, Album Atmosphere, and Lyrics Card presets">
+  </p>
 </details>
 
 <details>
-  <summary><b>Album art as background</b></summary>
+  <summary><b>Posters & Heroes</b></summary>
   <br/>
-  Turn the current track's cover into a blurred backdrop. The album-art thumbnail
-  hides automatically (it'd be redundant), and the <b>Blur</b> and <b>Darkness</b>
-  sliders dial the look from a crisp bold cover to a subtle frosted tint — all
-  while keeping the waveform and text readable.
-  <br/><br/>
-  <img src="./readme/art_as_background.png" alt="Album art as background" width="680"/>
+  <p align="center">
+    <img src="docs/readme/sheet-posters.png" width="848" alt="Poster, Hanging bars, Stalactites, and Hero Wave presets">
+  </p>
 </details>
 
 <details>
-  <summary><b>Settings</b></summary>
+  <summary><b>Orbits & Lyrics</b></summary>
   <br/>
-  <img src="./readme/settings.png" alt="Configuration dialog" width="680"/>
+  <p align="center">
+    <img src="docs/readme/sheet-orbits.png" width="848" alt="Orbit, Halo, Sunburst, and Lyrics only presets">
+  </p>
 </details>
+
+<details>
+  <summary><b>Slim & Minimal</b></summary>
+  <br/>
+  <p align="center">
+    <img src="docs/readme/sheet-minimal.png" width="848" alt="Slim Strip, Mirrored Minimal, Compact, and Silk Ribbon presets">
+  </p>
+</details>
+
+<details>
+  <summary><b>Panel Layouts</b></summary>
+  <br/>
+  <p align="center">
+    <img src="docs/readme/sheet-panels.png" width="848" alt="Panel Pill, Ribbon Pill, Bar Icon, and Orbit Icon presets">
+  </p>
+</details>
+
+## Make it yours
+
+Pick from many visualizers, change the layout and colours, add lyrics, and preview changes as you go. You can save your own presets and share them as JSON between the widget and the [browser studio](https://muddyblack.github.io/audio-wave-visualizer/).
+
+<p align="center">
+  <img src="docs/readme/studio_with_preview.png" width="780" alt="Settings studio with preset cards and live widget preview">
+</p>
+
+The studio is built into both the Plasma and Quickshell settings. The browser version lets you explore the same looks before installing. See [how preset sharing works](docs/sharing-presets.md).
 
 ## Requirements
 
-- KDE Plasma **6.0+**
+- KDE Plasma **6.0+** (or Quickshell for Hyprland)
 - [`cava`][cava] — the audio bar generator
 - A running PipeWire or PulseAudio server (the widget auto-detects which one cava can capture from)
 - `flock` (from `util-linux`) and `pkill` (from `procps`) — standard on virtually every Linux distro
@@ -104,126 +142,7 @@ A glassy audio visualizer plasmoid for KDE Plasma 6. Renders a mirrored waveform
 
 ## Install
 
-### Hyprland / Caelestia (Quickshell)
-
-Run the standalone desktop widget alongside Caelestia. Both frontends render
-the same `VisualizerView.qml`: the original Plasma layout, glass transport dock,
-album-art background effects, six waveform styles, and five seekbar styles.
-Requires `qs` (Quickshell), `cava`,
-and the shell utilities listed above; KDE Plasma is not required.
-
-From this repository, in your Hyprland session:
-
-```bash
-make view-hyprland
-# equivalent:
-bash hyprland/run.sh
-```
-
-On NixOS, if `qs` is not on PATH, the Make target uses `nix run .#view-hyprland`
-to supply Quickshell, cava, and the helper utilities automatically.
-
-Play audio and show your desktop: the transparent visualizer appears centered
-60% down the first monitor, below application windows. Stop with **Ctrl+C**.
-Caelestia can keep running. The launcher opens the root `shell.qml`, prevents
-duplicate instances, and stops its audio helpers when you exit.
-The launcher selects Qt's generic platform theme and Basic controls for this
-process only. This prevents an inherited KDE/Breeze theme from loading Kirigami
-through tooltips; the shared custom-drawn widget layout is unaffected.
-
-**Right-click the visualizer to open Settings.** Choose a monitor or **All displays**,
-adjust position, size, audio, colors and appearance, then click **Apply**.
-All displays share one audio capture and processing backend; each draws its own view.
-The Hyprland default is **15 Hz** to reduce GPU/compositor work across displays.
-In Settings → Audio, lower **Framerate** to **5 Hz** for less power use, or raise
-it for smoother motion. Explicit saved/declarative frame rates override this
-default. The layout, colors and drawing code are shared with Plasma.
-**Pause When Covered** is enabled by default: each fully covered view stops
-rendering, and covering all views also stops audio capture. Uncovering a view
-resumes it; window drags are checked once per second. Coverage uses window
-bounds, so disable this option if you want the widget visible through translucent
-windows. It applies only when the widget is below application windows.
-Preferences are saved to `~/.config/audio-wave-visualizer/hyprland.json`
-(or under `$XDG_CONFIG_HOME`). No Nix setup is needed.
-
-If the widget is hidden, open Settings from a terminal with:
-
-```bash
-make settings-hyprland
-```
-
-You can also edit `shell.qml` to set defaults for width, vertical position, monitor name, color,
-wave style, background, or media controls; Quickshell reloads automatically.
-Set `desktopLayer: false` to show it above application windows while testing.
-For audio tuning, add e.g. `audio.sensitivity: 150` or `audio.inputMethod: "pulse"`
-inside `AudioVisualizerShell { ... }`. Appearance defaults come directly from
-Plasma's `package/contents/config/main.xml`. Override any of them with `settings`,
-using the same property names, for example:
-
-```qml
-settings: ({
-    alwaysVisible: true,
-    showBg: true,
-    artBg: true,
-    progressBarStyle: 4
-})
-```
-
-The default size is Plasma's 360 × 104; change `widgetWidth` / `widgetHeight`
-as needed. Matching size, settings, colors, font and icon theme gives the same
-appearance. Plasma supplies its theme through Kirigami; Quickshell uses the
-configured colors and the session's font/icon theme, without requiring Kirigami.
-The Plasma configuration dialog remains specific to Plasma.
-
-For declarative defaults, set `AUDIO_WAVE_DEFAULTS` to a JSON file with the same
-keys as the settings above, plus `monitor` (`"all"`, `""`, or an output name),
-`widgetWidth`, `widgetHeight`, `verticalPosition`, `desktopLayer`, `pauseWhenCovered`, `waveColor`,
-and `textColor`. For example, in Home Manager:
-
-```nix
-home.sessionVariables.AUDIO_WAVE_DEFAULTS = toString (pkgs.writeText "audio-wave-defaults.json"
-  (builtins.toJSON {
-    monitor = "all";
-    sensitivity = 150;
-    progressBarStyle = 4;
-  }));
-```
-
-The running widget must inherit that environment variable. GUI changes override
-these defaults in the separate writable preferences file; they never rewrite
-your Nix files. **Reset to defaults** removes local overrides and restores the
-current declarative defaults (or `shell.qml`/Plasma defaults when none are supplied).
-
-To start at login, add this to your Hyprland configuration (use your actual path):
-
-```ini
-exec-once = bash /absolute/path/to/plasma-audio-visualizer/hyprland/run.sh
-```
-
-The Quickshell backend keeps its status and `cava.log` under
-`$XDG_RUNTIME_DIR/audio-wave-quickshell/`, separately from Plasma's backend.
-Its process adapter uses [Quickshell Process](https://quickshell.org/docs/v0.2.0/types/Quickshell.Io/Process/)
-and its controls use [Quickshell MPRIS](https://quickshell.org/docs/v0.2.0/types/Quickshell.Services.Mpris/MprisPlayer/).
-Headless adapter regression test: `python3 tests/test_quickshell.py` with `qs` on PATH.
-Settings UI/persistence test: `python3 tests/test_hyprland_settings.py`.
-Ctrl+C/duplicate-launch test: `python3 tests/test_lifecycle_power.py`.
-
-The shared waveform uses one GPU glow effect instead of blurring each bar on
-the CPU. Progress decorations follow audio updates instead of running a separate
-continuous animation. Software rendering omits the unsupported GPU glow.
-For a repeatable CPU comparison against a saved older package, run
-`python3 tests/benchmark_rendering.py --baseline /path/to/older/package`.
-`python3 tests/benchmark_frames.py` measures the current view's frame submissions.
-These offscreen benchmarks measure CPU drawing and frame submissions, not GPU
-cost or system power; compare actual watts in your desktop session.
-`python3 tests/measure_power.py` reads live package power, GPU clocks and capture
-status without root. Compare the same music and visible displays, with other
-work kept steady. Hardware domains overlap, so their watt readings must not be
-added together. Turning off waveform glow alone does not necessarily reduce
-compositor power; update rate and the number of visible displays matter too.
-For a renderer investigation, stop the preview and start it with
-`QSG_INFO=1 make view-hyprland`. Qt records its actual graphics backend and
-render-loop startup details in that instance's Quickshell log.
+Full setup options and configuration details are in the [installation guide](docs/installation.md).
 
 ### KDE Plasma
 
@@ -231,8 +150,8 @@ render-loop startup details in that instance's Quickshell log.
   <summary><b>Manual (any distro)</b></summary>
 
 ```bash
-git clone https://github.com/muddyblack/plasma-audio-visualizer.git
-cd plasma-audio-visualizer
+git clone https://github.com/Muddyblack/audio-wave-visualizer.git
+cd audio-wave-visualizer
 kpackagetool6 -t Plasma/Applet -i package
 # or, to update an existing install:
 kpackagetool6 -t Plasma/Applet -u package
@@ -254,7 +173,7 @@ kpackagetool6 -t Plasma/Applet -r org.muddyblack.plasmaAudioVisualizer
 ```nix
 # flake.nix
 {
-  inputs.audio-wave.url = "github:muddyblack/plasma-audio-visualizer";
+  inputs.audio-wave.url = "github:Muddyblack/audio-wave-visualizer";
 
   outputs = { self, nixpkgs, audio-wave, ... }: {
     nixosConfigurations.mybox = nixpkgs.lib.nixosSystem {
@@ -277,66 +196,30 @@ kpackagetool6 -t Plasma/Applet -r org.muddyblack.plasmaAudioVisualizer
   <summary><b>Package as <code>.plasmoid</code> (for the KDE Store)</b></summary>
 
 ```bash
-./pack.sh
+make pack
 # produces plasma-audio-visualizer-<version>.plasmoid
 ```
 
 </details>
 
-## Configuration
+### Hyprland / Quickshell
 
-All settings are available via the widget's right-click → Configure menu:
-
-| Setting | Description |
-|---|---|
-| **Visualizer Style** | Smooth Wave / Rounded Bars / Mirror Bars / Tech Line / Floating Dots / Floating Dots Bold |
-| **Progress Bar Style** | Glassy Sleek / Ultra Minimal / Glowing Pulse / Bold Pill / Waveform |
-| **Number of Bars** | How many frequency bars cava outputs (8–128) |
-| **Framerate** | Target refresh rate in Hz |
-| **Sensitivity** | Cava amplitude multiplier |
-| **Smoothing** | Noise reduction factor (0–1) |
-| **Audio Input** | Auto-detect, or pin cava to PipeWire / PulseAudio / ALSA |
-| **Wave Color** | System accent or custom color |
-| **Wave Glow** | Neon glow shadow on the waveform |
-| **Fill Wave** | Transparent gradient fill under the waveform |
-| **Line Width** | Stroke width for line-based visualizers |
-| **Text / Controls / Dock Colors** | Each independently customizable |
-| **Background Card** | Optional frosted card with custom color+alpha and corner radius |
-| **Art Background** | Use the album cover as a blurred card background |
-| **Art Blur / Art Darkness** | Independent sliders to tune how blurred and how dark the art background is |
-| **Show MPRIS info** | Toggle album art, track title, artist, and controls |
-
-## Troubleshooting
-
-**The bars never move (track info and controls work fine).**
-
-The waveform comes from `cava`, which is a separate process from the MPRIS metadata — so
-playback info can be perfect while audio capture is dead. The widget tells you which it is:
-if the backend is down it prints the reason where the wave would be, with the command to fix
-it underneath (`sudo apt install cava`, `sudo pacman -S cava`, … depending on your distro).
-Hover the message for the full explanation.
-
-Run the built-in diagnostic and paste its output into an issue:
+From this checkout, run:
 
 ```bash
-bash ~/.local/share/plasma/plasmoids/org.muddyblack.plasmaAudioVisualizer/contents/code/doctor.sh
+make view-hyprland
 ```
 
-It reports your cava version, which input backends your cava was *built* with (distros
-differ — a cava without PipeWire support cannot capture on a PipeWire system), whether
-PipeWire/PulseAudio are running, and a live 2-second capture test per backend.
+The widget appears on your desktop. **Right-click it for Settings** and press **Ctrl+C** in the terminal to stop it. The launcher also works alongside Caelestia. See the [installation guide](docs/installation.md#hyprland--quickshell) for login startup, monitor placement, NixOS, and settings access when the widget is hidden.
 
-Common causes:
+### Windows (working, not yet tested on real Windows)
 
-| Symptom | Fix |
-|---|---|
-| `cava is not installed` | The widget prints the install command for your package manager underneath. It retries every 30s, so no Plasma restart is needed unless your package manager only updates `PATH` for new sessions |
-| `No usable audio input` | Check the doctor output — usually no sound server is reachable, or cava was built without the backend you need |
-| Bars only move for one app | Nothing to fix: cava captures the default sink's monitor, so it follows system output |
-| Everything works but bars are flat and quiet | Raise **Sensitivity** or lower **Smoothing** in the widget settings |
-
-The feeder keeps a log of cava's own messages at `$XDG_RUNTIME_DIR/audio-wave-widget/cava.log`
-and its current state in `.../status`.
+A PySide6-based overlay app that renders the same visualizer, with WASAPI
+loopback capture in place of cava — see [docs/windows.md](docs/windows.md) for
+how it is hosted, how to run it (`make run-windows`) and exactly what has and
+has not been verified. There is no settings UI on Windows yet, and the
+always-on-bottom window behaviour has only been reasoned about, not run on a
+Windows machine. Microsoft Store distribution is still planned, not built.
 
 ## How it works
 
@@ -344,6 +227,40 @@ For a detailed explanation of the architecture and data flow, see the [Architect
 
 In short: a small shell helper (`feeder.sh`) runs `cava` in the background and writes each changed frame to `$XDG_RUNTIME_DIR/audio-wave-widget/`. The QML side reads it in-process at the configured frame rate, drops to 2 FPS after a few seconds of silence, and stops polling while the widget is hidden.
 
-The waveform is drawn by a single fragment shader (`package/contents/shaders/visualizer.frag`), so a frame costs no CPU rasterisation; software-rendered sessions fall back to the Canvas renderer. After editing the shader, run `make shaders`.
+Waveforms and Orbit rings use bounded fragment-shader families on supported scene graphs, with Canvas fallbacks for software sessions. Particle state advances on the audio clock. Software covers use a static crop/mask fallback. After editing a shader, run `make shaders`.
 
 Regression tests (synthetic audio, no desktop or sound server needed): `nix develop --command python3 tests/run.py`.
+
+Check Python lint and formatting with `make lint-python`; apply formatting with `make format-python`. Ruff is also available in `nix develop`, or directly through `nix run .#ruff -- check .` and `nix run .#ruff -- format .`. The Ruff workflow runs both checks on pull requests and pushes, using the version pinned by `flake.lock`.
+
+## Help and project docs
+
+- [Installation, configuration, and troubleshooting](docs/installation.md)
+- [Full preset gallery](docs/gallery.md)
+- [Lyrics and karaoke](docs/lyrics.md)
+- [Custom visualizers](docs/custom-visualizers.md)
+- [Architecture and development workflow](docs/workflow.md)
+
+## Support
+
+If you enjoyed it feel free to show appreciation with a github star or some coin :)
+
+<p align="center">
+  <a href="https://github.com/sponsors/muddyblack">
+    <img src="https://img.shields.io/badge/Sponsors-24292e?style=for-the-badge&logo=github-sponsors&logoColor=ea4aaa" alt="GitHub Sponsors" />
+  </a>
+  <a href="https://ko-fi.com/muddyblack">
+    <img src="https://img.shields.io/badge/Ko--fi-468ee5?style=for-the-badge&logo=ko-fi&logoColor=white" alt="Ko-fi" />
+  </a>
+  <a href="https://buymeacoffee.com/muddyblack">
+    <img src="https://img.shields.io/badge/Buy_Me_a_Coffee-FF813F?style=for-the-badge&logo=buy-me-a-coffee&logoColor=white" alt="Buy Me a Coffee" />
+  </a>
+</p>
+
+## Credits
+
+- [cava][cava] provides audio capture for the visualizers.
+- [LRCLIB](https://lrclib.net/) provides optional synced lyrics.
+- [lumaribbon](https://github.com/Lucenx9/lumaribbon) inspired visual ideas and studio concepts.
+
+Thanks to the creators and contributors of these projects. This project is licensed under [GPL-3.0-or-later](LICENSE).
