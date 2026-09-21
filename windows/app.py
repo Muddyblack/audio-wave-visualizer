@@ -33,6 +33,7 @@ if "--selftest" in sys.argv and not os.environ.get("QT_QPA_PLATFORM"):
 try:
     from PySide6.QtCore import Qt, QTimer, QUrl
     from PySide6.QtGui import QColor, QIcon
+    from PySide6.QtQml import QJSValue
     from PySide6.QtQuick import QQuickView
     from PySide6.QtWidgets import QApplication, QMenu, QSystemTrayIcon
 except ImportError:  # pragma: no cover - dev-time hint only
@@ -123,7 +124,12 @@ def main(argv: list[str]) -> int:
 
     # The QML side already merged main.xml's defaults with the user's
     # settings; read the result back rather than parsing either again here.
-    audio_capture.start(view.rootObject().property("configuration"))
+    # `configuration` is a QML `var` holding a plain JS object, which comes
+    # back as a QJSValue, not a dict — toVariant() is what makes it one.
+    configuration = view.rootObject().property("configuration")
+    if isinstance(configuration, QJSValue):
+        configuration = configuration.toVariant()
+    audio_capture.start(configuration or {})
 
     view.setFlags(
         Qt.WindowType.FramelessWindowHint
