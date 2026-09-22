@@ -6,6 +6,11 @@ settings to use it with real audio. **Try example** loads the included Pulse Bar
 style. Choose **Built-in visualizer** or click a built-in style tile to switch back.
 **Remove** forgets a style without deleting its files.
 
+[AsciiSpectrum.qml](../package/contents/examples/AsciiSpectrum.qml) is a second bundled
+example: a monospace, slash-drawn spectrum in the spirit of terminal/ASCII system-monitor
+skins (square glyph columns, no fills, no rounded corners). It is not wired to **Try
+example**, so import it manually with **Import QML…**.
+
 Importing remembers the file's location; it does not copy or upload files. Keep
 the QML file and any sibling assets in a permanent directory. To share a style,
 send that directory (optionally zipped); the recipient extracts it and imports
