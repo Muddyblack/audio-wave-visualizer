@@ -38,8 +38,8 @@ Item {
             status = "error";
             return;
         }
-        const script = decodeURIComponent(Qt.resolvedUrl("../code/media_metadata.py").toString().replace(/^file:\/\//, ""));
-        command = "python3 " + quote(script) + " " + quote(mode) + " " + quote(JSON.stringify(payload)) + " # " + (++generation);
+        const script = decodeURIComponent(Qt.resolvedUrl("../code/media_metadata.sh").toString().replace(/^file:\/\//, ""));
+        command = quote(script) + " " + quote(mode) + " " + quote(JSON.stringify(payload)) + " # " + (++generation);
         worker.connectSource(command);
         timeout.restart();
     }

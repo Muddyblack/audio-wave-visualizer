@@ -217,6 +217,9 @@ Item {
     // A dedicated host takes ownership of any feeder left by an earlier run.
     // Shared Plasma instances keep joining the existing feeder instead.
     onResolvedRunDirChanged: {
+        lastIniFrame = 0;
+        lastIniSequence = 0;
+        lastIniSequenceAt = 0;
         if (stopWhenInactive && resolvedRunDir)
             restart();
     }
@@ -430,6 +433,28 @@ Item {
     }
 
     property real lastIniFrame: 0
+    property real lastIniSequence: 0
+    property real lastIniSequenceAt: 0
+
+    function acceptIniFrame(frame, sequence, now) {
+        lastIniFrame = now;
+        // The timestamp is a heartbeat; it can look fresh while QSettings
+        // keeps returning a cached waveform. A current feeder also publishes
+        // a sequence, so check that the frame actually advances. Fall back to
+        // the legacy file only after a missed heartbeat, avoiding a process
+        // per frame on a healthy reader or an older feeder without sequences.
+        if (sequence > 0) {
+            if (sequence !== lastIniSequence) {
+                lastIniSequence = sequence;
+                lastIniSequenceAt = now;
+            } else if (now - lastIniSequenceAt >= 1500) {
+                legacyReader.read();
+                return;
+            }
+        }
+        if (!handleData(frame))
+            updatePollingCadence(true);
+    }
 
     function readBars() {
         const s = barsSource.item as Settings;
@@ -441,9 +466,7 @@ Item {
         const now = Date.now();
         const stamp = Number(s.value("t", 0)) * 1000;
         if (stamp > 0 && Math.abs(now - stamp) < 2000) {
-            lastIniFrame = now;
-            if (!handleData(s.value("v", "")))
-                updatePollingCadence(true);
+            acceptIniFrame(s.value("v", ""), Number(s.value("seq", 0)), now);
         } else if (now - lastIniFrame >= 2000) {
             // Join an already-running old feeder without killing it. This
             // fallback goes away as soon as a current feeder owns the lock.
@@ -555,6 +578,8 @@ Item {
         } else if (stopWhenInactive) {
             configurationRestart.stop();
             lastIniFrame = 0;
+            lastIniSequence = 0;
+            lastIniSequenceAt = 0;
             backendState = "";
             feederLauncher.killFeeder();
         }
@@ -593,6 +618,19 @@ Item {
         }
     }
 
+    // A feeder can disappear without writing cava-exited (for example after
+    // a sound server restart). The regular heartbeat is deliberately slow,
+    // so restart sooner once the native frame stream has actually gone stale.
+    Timer {
+        interval: 2000
+        running: vis.plasmoidVisible && vis.active && vis.resolvedRunDir !== "" && vis.backendState === "ok"
+        repeat: true
+        onTriggered: {
+            if (vis.lastIniFrame > 0 && Date.now() - vis.lastIniFrame >= 2500)
+                feederLauncher.spawn();
+        }
+    }
+
     function restart() {
         configurationRestart.stop();
         resetAnalysis();
@@ -604,6 +642,8 @@ Item {
         vis.idleCounter = 0;
         vis.backendErrorStreak = 0;
         vis.bars = Array(vis.numBars).fill(0);
+        lastIniSequence = 0;
+        lastIniSequenceAt = 0;
         pollTimer.interval = vis.pollInterval;
         feederLauncher.restartFeeder();
         restartCooldown.restart();

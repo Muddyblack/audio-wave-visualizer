@@ -5,6 +5,7 @@ Choose the host you use: [KDE Plasma](#kde-plasma) or [Hyprland / Quickshell](#h
 ## Requirements
 
 - `cava` and a running PipeWire or PulseAudio server for audio-reactive visuals.
+- Python 3 and `busctl` on Plasma's session `PATH` for browser site names, queue details, and other MPRIS metadata. The Nix flake package supplies these for its metadata helper; manual NixOS installs need `pkgs.python3` and `pkgs.systemd` in `environment.systemPackages`.
 - `flock` from util-linux and `pkill` from procps.
 - KDE Plasma 6 with `kpackagetool6`, or Quickshell (`qs`) for the Hyprland host.
 

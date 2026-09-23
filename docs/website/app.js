@@ -8,6 +8,7 @@ $$('[data-project-version]').forEach(el => { el.textContent = 'v' + ProjectManif
   const pages = $$('main div[data-page]');
   const navLinks = $$('nav.jump a[data-page]');
   function showPage(id) {
+    if (id !== 'studio') stopLiveAudio();
     pages.forEach(p => { p.hidden = p.dataset.page !== id; });
     navLinks.forEach(a => {
       if (a.dataset.page === id) a.setAttribute('aria-current', 'page');
@@ -284,8 +285,141 @@ function panelHTML(inner, env, popupHTML, width) {
 const popupState = s => ({ ...s, layoutMode: 'classic', showBg: true, surfaceStyle: s.showBg ? s.surfaceStyle : 'glass', bgRadius: Math.max(14, s.bgRadius), cardShadow: 'lifted', hoverDetails: 'off' });
 
 /* ─── audio analysis & wave rendering ──────────────────────────── */
-const bands = PreviewAudio.bands;
-const spectrum = PreviewAudio.spectrum;
+const liveAudio = { stream: null, context: null, analyser: null, left: null, right: null,
+  frequencies: null, leftSamples: null, rightSamples: null, levels: new Map(), stereo: [],
+  bands: { bass: 0, mid: 0, high: 0, attack: false }, previousBass: 0, pending: false, generation: 0 };
+const bands = t => liveAudio.stream ? liveAudio.bands : PreviewAudio.bands(t);
+const spectrum = (i, n, t) => liveAudio.stream ? (liveLevels(n)[i] || 0) : PreviewAudio.spectrum(i, n, t);
+const stereo = t => liveAudio.stream ? liveAudio.stereo : PreviewAudio.stereo(t);
+
+function liveLevels(count) {
+  if (liveAudio.levels.has(count)) return liveAudio.levels.get(count);
+  const data = liveAudio.frequencies;
+  if (!data || !liveAudio.context) return [];
+  const hzPerBin = liveAudio.context.sampleRate / liveAudio.analyser.fftSize;
+  const low = 45, high = Math.min(12000, liveAudio.context.sampleRate / 2);
+  const levels = Array.from({ length: count }, (_, i) => {
+    const startHz = low * (high / low) ** (i / count);
+    const endHz = low * (high / low) ** ((i + 1) / count);
+    const start = Math.max(0, Math.min(data.length - 1, Math.floor(startHz / hzPerBin)));
+    const end = Math.max(start + 1, Math.min(data.length, Math.ceil(endHz / hzPerBin)));
+    let sum = 0, peak = 0;
+    for (let bin = start; bin < end; bin++) { sum += data[bin]; peak = Math.max(peak, data[bin]); }
+    return Math.min(1, (sum / (end - start) * .65 + peak * .35) / 180);
+  });
+  liveAudio.levels.set(count, levels);
+  return levels;
+}
+
+function sampleLiveAudio() {
+  if (!liveAudio.stream || liveAudio.context?.state !== 'running') return;
+  liveAudio.analyser.getByteFrequencyData(liveAudio.frequencies);
+  liveAudio.levels.clear();
+  const values = liveLevels(24);
+  const mean = (from, to) => values.slice(from, to).reduce((sum, value) => sum + value, 0) / (to - from);
+  const bass = mean(0, 5);
+  liveAudio.bands = { bass, mid: mean(5, 15), high: mean(15, 24),
+    attack: bass > .18 && bass > liveAudio.previousBass * 1.28 };
+  liveAudio.previousBass = bass;
+  liveAudio.left.getFloatTimeDomainData(liveAudio.leftSamples);
+  liveAudio.right.getFloatTimeDomainData(liveAudio.rightSamples);
+  liveAudio.stereo = Array.from({ length: 32 }, (_, i) => {
+    const index = Math.floor(i * (liveAudio.leftSamples.length - 1) / 31);
+    return [liveAudio.leftSamples[index], liveAudio.rightSamples[index]];
+  });
+}
+
+function liveStatus(message) {
+  const status = $('#liveAudioStatus');
+  status.textContent = message || 'For YouTube or Spotify sound, select a system monitor or virtual audio input if your browser lists one. The default input is usually your microphone.';
+  const button = $('#liveAudioButton');
+  button.textContent = liveAudio.pending ? 'Connecting…' : liveAudio.stream ? 'Stop input' : 'Listen';
+  button.disabled = liveAudio.pending;
+  button.setAttribute('aria-pressed', String(!!liveAudio.stream));
+  $('#statusLabel').textContent = liveAudio.stream ? 'Sample state' : 'State';
+  fitStage();
+}
+
+function stopLiveAudio(message = '') {
+  liveAudio.generation++;
+  liveAudio.pending = false;
+  if (liveAudio.stream) liveAudio.stream.getTracks().forEach(track => track.stop());
+  if (liveAudio.context) liveAudio.context.close().catch(() => {});
+  Object.assign(liveAudio, { stream: null, context: null, analyser: null, left: null, right: null,
+    frequencies: null, leftSamples: null, rightSamples: null, levels: new Map(), stereo: [],
+    bands: { bass: 0, mid: 0, high: 0, attack: false }, previousBass: 0 });
+  liveStatus(message);
+}
+
+// Voice processing flattens music and can silence monitor sources, so capture the raw signal.
+const RAW_AUDIO = { echoCancellation: false, noiseSuppression: false, autoGainControl: false, channelCount: 2 };
+
+function audioInputConstraints(deviceId) {
+  return { audio: deviceId ? { ...RAW_AUDIO, deviceId: { exact: deviceId } } : { ...RAW_AUDIO } };
+}
+
+async function startLiveAudio() {
+  if (!navigator.mediaDevices?.getUserMedia || !window.isSecureContext) {
+    liveStatus('Live audio inputs need browser microphone access on an HTTPS page.');
+    return;
+  }
+  const generation = ++liveAudio.generation;
+  liveAudio.pending = true;
+  liveStatus('Allow audio input access. Choose a system monitor above if your browser lists one.');
+  let stream, context;
+  try {
+    context = new (window.AudioContext || window.webkitAudioContext)();
+    const resume = context.resume();
+    const deviceId = $('#audioInputSelect').value;
+    stream = await navigator.mediaDevices.getUserMedia(audioInputConstraints(deviceId));
+    await resume;
+    if (generation !== liveAudio.generation) { stream.getTracks().forEach(track => track.stop()); await context.close(); return; }
+    if (!stream.getAudioTracks().length) {
+      stream.getTracks().forEach(track => track.stop());
+      await context.close();
+      liveAudio.pending = false;
+      liveStatus('The selected input supplied no audio. Choose another input above.');
+      return;
+    }
+    const source = context.createMediaStreamSource(stream);
+    const analyser = context.createAnalyser();
+    analyser.fftSize = 2048;
+    analyser.smoothingTimeConstant = .65;
+    source.connect(analyser);
+    const splitter = context.createChannelSplitter(2);
+    const left = context.createAnalyser(), right = context.createAnalyser();
+    left.fftSize = right.fftSize = 2048;
+    source.connect(splitter);
+    splitter.connect(left, 0);
+    splitter.connect(right, 1);
+    Object.assign(liveAudio, { stream, context, analyser, left, right,
+      frequencies: new Uint8Array(analyser.frequencyBinCount),
+      leftSamples: new Float32Array(left.fftSize), rightSamples: new Float32Array(right.fftSize), pending: false });
+    stream.getTracks().forEach(track => { track.addEventListener('ended', () => {
+      if (liveAudio.stream === stream) stopLiveAudio('Audio input ended. The preview is using sample audio again.');
+    }, { once: true }); });
+    refreshAudioInputs();
+    liveStatus('Using the selected audio input locally. Change Input above at any time. Track details and playback buttons remain sample data.');
+  } catch (error) {
+    if (stream) stream.getTracks().forEach(track => track.stop());
+    if (context) context.close().catch(() => {});
+    if (generation !== liveAudio.generation) return;
+    liveAudio.pending = false;
+    liveStatus(error?.name === 'NotAllowedError' ? 'Audio sharing was cancelled or denied.' : 'Could not open this audio input. Choose another input above.');
+  }
+}
+
+async function refreshAudioInputs() {
+  if (!navigator.mediaDevices?.enumerateDevices) return;
+  try {
+    const devices = (await navigator.mediaDevices.enumerateDevices()).filter(device => device.kind === 'audioinput');
+    const select = $('#audioInputSelect'), selected = select.value;
+    select.replaceChildren(new Option('Default input', ''));
+    devices.forEach((device, index) => select.add(new Option(device.label || `Audio input ${index + 1}`, device.deviceId)));
+    if (devices.some(device => device.deviceId === selected)) select.value = selected;
+  } catch (_) { /* Keep the default input when device listing is unavailable. */ }
+}
+
 function colorStops(s, d, t) {
   return WaveMath.colorStops(d.accent, s.vizColorMode, s.vizPalette,
     d.t.pal.p1, d.t.pal.p2, s.hueReactive, bands(t).high, t, s.reducedMotion);
@@ -326,7 +460,7 @@ function drawWave(e, t) {
   let st = memo.get(e.key);
   if (!st) memo.set(e.key, st = {bars: [], energy: 0, cache: {}, peaks: [], particles: [], ripples: [], randomSeed: 1});
   const idle = status === 'idle', tt = idle ? t * .35 : t;
-  const target = d.playing && status !== 'backend' ? 1 : idle && s.idleAmbient ? .22 : 0;
+  const target = ((liveAudio.stream && !['idle', 'paused', 'backend'].includes(status)) || d.playing && status !== 'backend') ? 1 : idle && s.idleAmbient ? .22 : 0;
   st.energy += (target - st.energy) * .08;
   const type = (e.viz ?? s.visualizerType) === 21 && s.reducedMotion ? 4 : (e.viz ?? s.visualizerType);
   const n = WaveMath.count(s.numBars, w, type), sm = .3 + .62 * s.noiseReduction;
@@ -340,7 +474,7 @@ function drawWave(e, t) {
   WaveMotion.advance(st);
   st.attackHeld = B.attack;
   const previousStereo = st.stereoSamples || [];
-  st.stereoSamples = PreviewAudio.stereo(t);
+  st.stereoSamples = stereo(t);
   const options = {width: w, height: h, type, lineWidth: s.lineWidth,
     levels: WaveMath.levels(st.bars, n, 1, st.cache), stops, colored: s.vizColorMode !== 'solid' || s.hueReactive,
     peaks: st.peaks, particles: st.particles, ripples: st.ripples, beatPulse: st.beatPulse,
@@ -363,7 +497,7 @@ function drawOrbit(e, t) {
   const {ctx, w, h} = cv;
   let st = memo.get(e.key);
   if (!st) memo.set(e.key, st = {bars: [], energy: 0, particles: [], _seed: 1, _lastFrame: -1});
-  const target = d.playing && status !== 'backend' ? 1 : status === 'idle' && s.idleAmbient ? .22 : 0;
+  const target = ((liveAudio.stream && !['idle', 'paused', 'backend'].includes(status)) || d.playing && status !== 'backend') ? 1 : status === 'idle' && s.idleAmbient ? .22 : 0;
   st.energy += (target - st.energy) * .08;
   const style = e.orbit === undefined ? s.orbitStyle : ORBITS[e.orbit].toLowerCase();
   const n = s.numBars, sm = .3 + .62 * s.noiseReduction;
@@ -399,6 +533,7 @@ let lastT = performance.now();
 function frame(now) {
   const dt = Math.min(.1, (now - lastT) / 1000); lastT = now;
   const t = now / 1000;
+  sampleLiveAudio();
   colorTime = t;
   if (P.playing && stageStatus !== 'idle' && stageStatus !== 'paused') {
     P.pos += dt;
@@ -506,6 +641,11 @@ window.addEventListener('resize', () => { fitStage(); fitPresets(); fitHero(); }
 new ResizeObserver(() => fitStage()).observe($('#stage'));
 
 /* ─── stage event bindings ─────────────────────────────────────── */
+$('#liveAudioButton').onclick = () => liveAudio.stream ? stopLiveAudio() : startLiveAudio();
+$('#audioInputSelect').onchange = () => { if (liveAudio.stream) { stopLiveAudio(); startLiveAudio(); } };
+refreshAudioInputs();
+navigator.mediaDevices?.addEventListener?.('devicechange', refreshAudioInputs);
+window.addEventListener('pagehide', () => stopLiveAudio());
 $('#statusSel').onchange = e => { stageStatus = e.target.value; P.playing = !['paused', 'idle'].includes(stageStatus); renderPlayers(); };
 $$('#zoomPicker button').forEach(b => b.onclick = () => {
   zoom = b.dataset.z; $$('#zoomPicker button').forEach(x => x.setAttribute('aria-pressed', x === b)); fitStage();
@@ -972,7 +1112,7 @@ function buildRow(r) {
   } else if (r.type === 'anchor') {
     sync = renderAnchor(el);
   } else if (r.type === 'diagnostics') {
-    el.innerHTML = '<div class="note">Browser demo: sample audio and playback. Run diagnostics in the desktop widget to check real audio capture.</div>';
+    el.innerHTML = '<div class="note">Browser demo: choose a system monitor or virtual audio input above for live visuals if your browser lists one; the default input is usually a microphone. Track details and playback controls stay as samples. Run diagnostics in the desktop widget to check its own audio capture.</div>';
   } else if (r.type === 'custom') {
     el.innerHTML = head + '<div class="cust"></div>';
     sync = r.render($('.cust', el));

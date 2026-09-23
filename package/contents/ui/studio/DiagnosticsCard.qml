@@ -32,7 +32,9 @@ Column {
         const sink = field(text, /^default sink:\s*(.+)$/m);
         const checks = [["cava found", !missing && path !== "", missing ? "not installed" : path], ["Capture backends", backends !== "", backends || "unknown"], ["Sound server", server !== "", server || "not reachable"], ["Default output", sink !== "", sink || "none"], ["Renderer", true, GraphicsInfo.api === GraphicsInfo.Software ? "canvas (software)" : "shader"]];
         const python = field(text, /^python3:\s*(.+)$/m);
-        checks.push(["Python 3 (local lyrics)", python === "found", python || "unknown"]);
+        checks.push(["Python 3 (metadata and lyrics)", python === "found", python || "unknown"]);
+        const busctl = field(text, /^busctl:\s*(.+)$/m);
+        checks.push(["busctl (MPRIS metadata)", busctl === "found", busctl || "unknown"]);
         for (const packageName of ["mutagen", "pykakasi", "pypinyin"]) {
             const state = field(text, new RegExp("^" + packageName + ":\\s*(.+)$", "m"));
             checks.push([packageName + " (optional)", state === "found", state || "unknown"]);

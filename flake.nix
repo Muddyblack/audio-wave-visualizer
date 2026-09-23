@@ -26,7 +26,7 @@
               root=$out/share/plasma/plasmoids/${metadata.KPlugin.Id}
               mkdir -p "$root"
               cp -r . "$root/"
-              for script in feeder.sh doctor.sh stereo_capture.sh local_lyrics.sh track_profile.sh; do
+              for script in feeder.sh doctor.sh stereo_capture.sh local_lyrics.sh track_profile.sh media_metadata.sh; do
                 chmod +x "$root/contents/code/$script"
                 wrapProgram "$root/contents/code/$script" \
                   --prefix PATH : ${pkgs.lib.makeBinPath [ pkgs.cava (pkgs.python3.withPackages (ps: [ ps.mutagen ps.pykakasi ps.pypinyin ])) pkgs.systemd pkgs.pipewire pkgs.pulseaudio pkgs.ffmpeg pkgs.gawk pkgs.util-linux pkgs.procps pkgs.coreutils pkgs.gnused ]}

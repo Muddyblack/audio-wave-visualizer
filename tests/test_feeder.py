@@ -179,6 +179,7 @@ while True:
     def test_duplicate_frames_keep_fresh_ini_without_rewriting_bars(self):
         bars = self.run / "bars"
         initial_mtime = bars.stat().st_mtime_ns
+        initial_sequence = int(self.frame()["seq"])
         self.assertEqual(self.read("bars"), "0;0;0;0;")
         self.assertEqual(self.read("status.ini"), 'v="ok pipewire"\n')
         frames = set()
@@ -191,6 +192,11 @@ while True:
                 frames.add(frame["t"])
             time.sleep(0.01)
         self.assertGreaterEqual(len(frames), 2, "Idle heartbeat stopped refreshing")
+        self.assertGreater(
+            int(self.frame()["seq"]),
+            initial_sequence,
+            "Idle heartbeat stopped advancing the frame sequence",
+        )
         self.assertLessEqual(
             len(frames), 4, "Duplicate frames still rewrite INI at audio FPS"
         )
@@ -200,6 +206,7 @@ while True:
         # The changing-frame test separately checks that updates are not
         # limited to the heartbeat rate.
         stamp = self.frame().get("t")
+        sequence = int(self.frame()["seq"])
         self.wait_for(lambda: self.frame().get("t") not in (None, stamp))
         self.control.write_text("900;100;500;250;")
         self.wait_for(lambda: self.read("bars") == "900;100;500;250;")
@@ -209,6 +216,7 @@ while True:
                 == "900;100;500;250;"
             )
         )
+        self.assertGreater(int(self.frame()["seq"]), sequence)
 
     def test_shared_startup_preserves_running_frame_and_status(self):
         status_mtime = (self.run / "status.ini").stat().st_mtime_ns

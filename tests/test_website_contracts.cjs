@@ -12,6 +12,7 @@ for (const [, file] of html.matchAll(/<script src="([^"]+)"/g)) {
   if (file !== 'app.js') vm.runInContext(fs.readFileSync(path.join(root, file), 'utf8'), context, {filename:file});
 }
 const source = fs.readFileSync(path.join(root, 'app.js'), 'utf8');
+assert(!source.includes('getDisplayMedia'), 'The live preview must never open a screen or video picker');
 const manifest = JSON.parse(fs.readFileSync(path.resolve(root, '../../package/metadata.json'), 'utf8'));
 assert.equal(vm.runInContext('ProjectManifest.version', context), manifest.KPlugin.Version);
 assert.equal(vm.runInContext('ProjectInfo.currentVersion', context), manifest.KPlugin.Version);
@@ -58,6 +59,33 @@ vm.runInContext(`
     const stops = colorStops({...DEFAULTS, vizColorMode:mode}, d, 2);
     assert(stops.every(c => [c.r,c.g,c.b,c.a].every(Number.isFinite)));
   }
+`, context);
+vm.runInContext(`
+  assert.deepEqual(Object.keys(audioInputConstraints('')), ['audio']);
+  assert.equal(audioInputConstraints('').audio.echoCancellation, false);
+  assert.equal(audioInputConstraints('').audio.deviceId, undefined);
+  assert.equal(audioInputConstraints('monitor').audio.deviceId.exact, 'monitor');
+  assert.equal(audioInputConstraints('monitor').audio.autoGainControl, false);
+  const sample = bands(2);
+  liveAudio.stream = {getTracks: () => []};
+  liveAudio.context = {sampleRate: 48000, state: 'running'};
+  liveAudio.analyser = {fftSize: 2048, getByteFrequencyData: data => data.fill(120)};
+  liveAudio.left = {getFloatTimeDomainData: data => data.fill(.3)};
+  liveAudio.right = {getFloatTimeDomainData: data => data.fill(-.2)};
+  liveAudio.frequencies = new Uint8Array(1024);
+  liveAudio.leftSamples = new Float32Array(2048);
+  liveAudio.rightSamples = new Float32Array(2048);
+  sampleLiveAudio();
+  const levels = liveLevels(32);
+  assert.equal(levels.length, 32);
+  assert(levels.every(value => value > 0 && value <= 1));
+  assert(liveAudio.bands.bass > 0);
+  assert.equal(liveAudio.stereo.length, 32);
+  liveAudio.bands = {bass: .7, mid: .4, high: .2, attack: true};
+  assert.equal(bands(2).bass, .7);
+  assert.equal(spectrum(0, 32, 2), levels[0]);
+  liveAudio.stream = null;
+  assert.equal(bands(2).bass, sample.bass);
 `, context);
 // Browser Canvas API test double rejects invalid geometry and color conversions.
 let strokes = 0;

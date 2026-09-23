@@ -21,6 +21,40 @@ Rectangle {
     // function(done(text)) running contents/code/doctor.sh, or null.
     property var diagnosticsRunner: null
     property Component commandSourceComponent: null
+    property string dependencyReport: ""
+    readonly property string dependencyWarning: {
+        if (env !== "kde")
+            return "";
+        const missing = [];
+        if (/^python3: missing$/m.test(dependencyReport))
+            missing.push("Python 3");
+        if (/^busctl: missing$/m.test(dependencyReport))
+            missing.push("busctl");
+        if (!missing.length)
+            return "";
+        const install = /^distro: (nixos|nix)$/m.test(dependencyReport) ? "On NixOS, add pkgs.python3 and pkgs.systemd to environment.systemPackages, rebuild, then sign out and in." : "Install the missing tools with your distribution's package manager, then restart Plasma.";
+        return "Browser site names and media details need " + missing.join(" and ") + ". " + install;
+    }
+    Shared.CommandSource {
+        id: dependencyCheck
+        sourceComponent: studioRoot.commandSourceComponent
+        onNewData: function (source, data) {
+            disconnectSource(source);
+            studioRoot.dependencyReport = data["stdout"] || "";
+        }
+    }
+    Timer {
+        interval: 15000
+        running: studioRoot.env === "kde" && studioRoot.onScreen && !!studioRoot.commandSourceComponent
+        repeat: true
+        triggeredOnStart: true
+        onTriggered: {
+            if (dependencyCheck.connectedSources.length)
+                return;
+            const path = decodeURIComponent(Qt.resolvedUrl("../../code/media_metadata.sh").toString().replace(/^file:\/\//, ""));
+            dependencyCheck.connectSource("'" + path.replace(/'/g, "'\\''") + "' --check");
+        }
+    }
     property var discoveredSources: [["auto", "Default output monitor"]]
     readonly property var audioSourceOptions: discoveredSources.some(o => o[0] === (draft.inputSource || "auto")) ? discoveredSources : discoveredSources.concat([[draft.inputSource, "Unavailable: " + draft.inputSource]])
     Shared.CommandSource {
@@ -526,6 +560,27 @@ Rectangle {
                     y: 6
                     width: body.width - 36
                     spacing: 18
+                    Rectangle {
+                        objectName: "dependencyBanner"
+                        width: sections.width
+                        height: visible ? dependencyText.implicitHeight + 24 : 0
+                        visible: studioRoot.dependencyWarning !== ""
+                        radius: 8
+                        color: "#332b2110"
+                        border.color: Theme.warn
+                        border.width: 1
+                        Text {
+                            id: dependencyText
+                            x: 12
+                            y: 12
+                            width: parent.width - 24
+                            text: studioRoot.dependencyWarning
+                            color: Theme.text
+                            font.family: Theme.fontFamily
+                            font.pixelSize: 12
+                            wrapMode: Text.WordWrap
+                        }
+                    }
                     Item {
                         width: 1
                         height: 0

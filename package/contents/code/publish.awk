@@ -9,6 +9,7 @@ BEGIN {
     frame_path = ENVIRON["AUDIO_WAVE_RUN"] "/frame.ini"
     previous = ENVIRON["AUDIO_WAVE_PREVIOUS"]
     previous_second = ENVIRON["AUDIO_WAVE_FRAME_SECOND"] + 0
+    sequence = ENVIRON["AUDIO_WAVE_FRAME_SEQUENCE"] + 0
 }
 
 length($0) {
@@ -23,7 +24,8 @@ length($0) {
 
     # Keep fresh even when the waveform is constant. A quoted semicolon
     # payload stays a QString in QSettings; original readers accept it too.
-    printf "t=%d\nv=\"%s\"\nprotocol=2\n", now, $0 > frame_path
+    sequence++
+    printf "t=%d\nv=\"%s\"\nprotocol=2\nseq=%d\n", now, $0, sequence > frame_path
     close(frame_path)
     previous_second = now
 }

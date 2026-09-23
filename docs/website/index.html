@@ -83,9 +83,10 @@
       <div class="bd bd-dusk" id="stageBd"></div>
       <div class="bar top">
         <div class="chip" id="bdPicker"><span class="lbl">Wallpaper</span></div>
-        <div class="chip"><span class="lbl">State</span><select id="statusSel" aria-label="Widget state">
+        <div class="chip"><span class="lbl" id="statusLabel">State</span><select id="statusSel" aria-label="Widget state">
           <option value="normal">Playing</option><option value="paused">Paused</option><option value="long">Long title</option><option value="nometa">No metadata</option><option value="idle">Nothing playing</option><option value="backend">cava missing</option>
         </select></div>
+        <div class="chip"><span class="lbl">Input</span><select id="audioInputSelect" aria-label="Audio source"><option value="">Default input</option></select><button id="liveAudioButton" type="button" aria-pressed="false" title="Visualize microphone or system monitor audio">Listen</button></div>
       </div>
       <div class="hint" id="hint" hidden></div>
       <div class="scaler" id="scaler"><div class="scaled" id="mainWidget"></div></div>
@@ -96,6 +97,7 @@
         <div class="chip" id="zoomPicker"><button data-z="1">1×</button><button data-z="2">2×</button><button data-z="fit" aria-pressed="true">Fit</button></div>
       </div>
     </div>
+    <p class="live-audio-status" id="liveAudioStatus" role="status" aria-live="polite">For YouTube or Spotify sound, select a system monitor or virtual audio input if your browser lists one. The default input is usually your microphone.</p>
     <div class="caption">
       <div class="ct"><h3 id="cfgTitle">Changed settings</h3><div class="btnrow"><button class="ghost" id="resetAll">Reset to defaults</button><button class="primary" id="copyCfg">Copy config</button></div></div>
       <div class="cfg" id="cfg"></div>

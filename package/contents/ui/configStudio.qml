@@ -480,7 +480,7 @@ Kirigami.Page {
         liveIsPlaying: previewMpris.currentPlayer?.playbackStatus === Mpris.PlaybackStatus.Playing
         diagnosticsRunner: done => {
             doctor.done = done;
-            doctor.connectSource("bash '" + Qt.resolvedUrl("../code/doctor.sh").toString().replace(/^file:\/\//, "") + "'");
+            doctor.connectSource("'" + Qt.resolvedUrl("../code/doctor.sh").toString().replace(/^file:\/\//, "") + "'");
         }
         onEdited: next => root.assign(next)
         onDiscard: root.discard()

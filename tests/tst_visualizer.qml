@@ -164,6 +164,20 @@ TestCase {
         verify(Support.Commands.calls.some(value => value.startsWith("cat ")));
     }
 
+    function test_stalledIniReaderFallsBackToLiveBars() {
+        subject.resolvedRunDir = runtimeDir + "/stale-sequence";
+        Support.Commands.legacyFrame = "900;900;900;900;";
+        const now = Date.now();
+        subject.acceptIniFrame("100;100;100;100;", 7, now - 1600);
+        verify(subject.bars[0] < 100);
+        compare(Support.Commands.calls.filter(value => value.startsWith("cat ")).length, 0);
+        subject.acceptIniFrame("100;100;100;100;", 7, now);
+        verify(subject.bars[0] > 100, "A stalled INI value must not pin the drawing while bars advances");
+        compare(Support.Commands.calls.filter(value => value.startsWith("cat ")).length, 1);
+        subject.acceptIniFrame("500;500;500;500;", 8, now + 17);
+        compare(Support.Commands.calls.filter(value => value.startsWith("cat ")).length, 1, "A new INI sequence must resume in-process frame reads");
+    }
+
     function test_backendFailureStopsFramePollsAndRecoveryResumes() {
         subject.resolvedRunDir = runtimeDir + "/missing-feeder";
         Support.Commands.legacyFrame = "";

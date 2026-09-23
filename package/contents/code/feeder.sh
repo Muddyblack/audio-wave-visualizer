@@ -87,6 +87,7 @@ trap cleanup EXIT
 # `cat` per frame. Force the dot.
 last_frame=""
 last_frame_second=-1
+frame_sequence=0
 write_frame() {
   if [[ "$1" != "$last_frame" ]]; then
     printf '%s' "$1" >"$RUN/bars"
@@ -95,9 +96,10 @@ write_frame() {
     return
   fi
   last_frame_second="$EPOCHSECONDS"
+  ((frame_sequence += 1))
   # Quote the semicolon string for QSettings: unlike comma-separated values,
   # this stays a string instead of constructing a QVariantList on every poll.
-  printf 't=%s\nv="%s"\nprotocol=2\n' "${EPOCHREALTIME/,/.}" "$last_frame" >"$RUN/frame.ini"
+  printf 't=%s\nv="%s"\nprotocol=2\nseq=%d\n' "${EPOCHREALTIME/,/.}" "$last_frame" "$frame_sequence" >"$RUN/frame.ini"
 }
 
 printf -v zeros '%*s' "$BARS" ''
@@ -197,7 +199,7 @@ publish_frames() {
     ((${#AWK[@]})) || continue
     # Replacing this loop is the point: awk reads the rest of the stream.
     # shellcheck disable=SC2093
-    AUDIO_WAVE_RUN="$RUN" AUDIO_WAVE_PREVIOUS="$line" AUDIO_WAVE_FRAME_SECOND="$last_frame_second" \
+    AUDIO_WAVE_RUN="$RUN" AUDIO_WAVE_PREVIOUS="$line" AUDIO_WAVE_FRAME_SECOND="$last_frame_second" AUDIO_WAVE_FRAME_SEQUENCE="$frame_sequence" \
       exec "${AWK[@]}" -f "$PUBLISHER"
   done
 }

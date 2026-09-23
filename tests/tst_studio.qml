@@ -60,6 +60,23 @@ TestCase {
         studio.livePreview = false;
         studio.liveVisualizer = null;
         studio.livePlayer = null;
+        studio.dependencyReport = "";
+        studio.env = "hypr";
+    }
+
+    function test_missingMetadataToolsShowInstallHelp() {
+        studio.env = "kde";
+        const banner = findChild(studio, "dependencyBanner");
+        verify(!banner.visible);
+        studio.dependencyReport = "python3: missing\nbusctl: found\ndistro: nixos\n";
+        verify(banner.visible);
+        verify(studio.dependencyWarning.includes("pkgs.python3"));
+        verify(studio.dependencyWarning.includes("pkgs.systemd"));
+        studio.dependencyReport = "python3: found\nbusctl: missing\ndistro: fedora\n";
+        verify(studio.dependencyWarning.includes("busctl"));
+        verify(studio.dependencyWarning.includes("package manager"));
+        studio.dependencyReport = "python3: found\nbusctl: found\ndistro: nixos\n";
+        verify(!banner.visible);
     }
 
     function test_navigationStaysAboveScrolledSettings() {

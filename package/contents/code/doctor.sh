@@ -29,7 +29,7 @@ echo "session: ${XDG_SESSION_TYPE:-unset} / ${XDG_CURRENT_DESKTOP:-unset}"
 echo "runtime: ${XDG_RUNTIME_DIR:-unset}"
 echo "awk:     $(command -v awk 2>/dev/null || echo 'not found (optional)')"
 
-section "Lyrics dependencies"
+section "Metadata and lyrics dependencies"
 if have python3; then
   echo "python3: found"
   for package in mutagen pykakasi pypinyin; do
@@ -44,6 +44,11 @@ else
   echo "mutagen: unavailable (Python 3 missing)"
   echo "pykakasi: unavailable (Python 3 missing)"
   echo "pypinyin: unavailable (Python 3 missing)"
+fi
+if have busctl; then
+  echo "busctl: found"
+else
+  echo "busctl: missing"
 fi
 
 section "cava"

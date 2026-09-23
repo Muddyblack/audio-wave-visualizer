@@ -191,6 +191,8 @@ select.sel{background:var(--sunk);border:1px solid var(--line2);border-radius:8p
 .stage .bar{position:absolute;z-index:6;left:12px;right:12px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;pointer-events:none}
 .stage .bar>*{pointer-events:auto}
 .stage .bar.top{top:12px}.stage .bar.bottom{bottom:12px}
+.stage #audioInputSelect{max-width:150px}
+.live-audio-status{margin:0;padding:0 4px;color:var(--muted);font-size:11px;line-height:1.5}
 .chip{display:flex;align-items:center;gap:6px;background:#0b0c0dcc;backdrop-filter:blur(12px);border:1px solid #ffffff1f;border-radius:10px;padding:4px;font-size:11px;color:#c9cfc6}
 .chip button{background:none;border:0;border-radius:7px;padding:4px 8px;font-size:11px;color:#aab1a7}
 .chip button[aria-pressed=true]{background:var(--studio-rangeTrack);color:#fff}
@@ -598,7 +600,10 @@ footer a:hover{color:var(--text);text-decoration:underline}
 .sec[data-tab="presets"]>h4,.sec[data-tab="saved"]>h4{display:none}
 .sec[data-tab="presets"]>.card,.sec[data-tab="saved"]>.card{background:none;border:0;padding:0}
 
-.project-info{width:100%;display:grid;gap:16px;color:var(--muted);font-size:12px;line-height:1.6}
+/* The settings panel carries the preview widget's --text/--brand palette.
+   Keep project information on the Studio palette so pale album art cannot
+   turn headings, counts and links dark against these cards. */
+.project-info{--text:var(--studio-text,#eeefeb);--muted:var(--studio-muted,#9da3a5);--brand:var(--studio-brand,#55ffcc);--brand-ink:var(--studio-brandInk,#01121f);width:100%;display:grid;gap:16px;color:var(--muted);font-size:12px;line-height:1.6}
 .project-info p{margin:0}
 .project-author{display:flex;gap:7px;align-items:center}
 .project-author a{color:var(--brand)}
