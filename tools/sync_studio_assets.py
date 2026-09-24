@@ -64,17 +64,15 @@ def license_module():
     text = (ROOT / "LICENSE").read_text()
     if not re.search(r"GNU GENERAL PUBLIC LICENSE\s+Version 3", text, re.I):
         raise ValueError("Unrecognized LICENSE type")
-    later = bool(
-        re.search(r"either version 3 .*any later\s+version", text[:1000], re.I | re.S)
-    )
-    spdx = "GPL-3.0-or-later" if later else "GPL-3.0-only"
+    # LICENSE stays the verbatim GPL text (so GitHub detects it); the
+    # "or later" grant is declared here and in metadata.json.
     return (
         "// Generated from LICENSE by tools/sync_studio_assets.py.\n"
         + "var spdx = "
-        + json.dumps(spdx)
+        + json.dumps("GPL-3.0-or-later")
         + ";\n"
         + "var label = "
-        + json.dumps("GNU GPL v3 or later" if later else "GNU GPL v3")
+        + json.dumps("GNU GPL v3")
         + ";\n"
     ).encode()
 

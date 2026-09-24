@@ -172,7 +172,7 @@ TestCase {
     function test_licenseComesFromBundledFile() {
         const pane = createTemporaryObject(infoComponent, this);
         compare(Project.licenseId, "GPL-3.0-or-later");
-        compare(Project.license, "GNU GPL v3 or later");
+        compare(Project.license, "GNU GPL v3");
         verify(findChild(pane, "projectLicense") !== null);
     }
 }

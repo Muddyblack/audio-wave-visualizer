@@ -20,7 +20,7 @@
 <p align="center">
   <img src="https://img.shields.io/badge/KDE_Plasma-6.0%2B-1d99f3?style=for-the-badge&logo=kde&logoColor=white" alt="KDE Plasma 6.0+" />
   <a href="LICENSE">
-    <img src="https://img.shields.io/badge/License-GPL--3.0--or--later-blue?style=for-the-badge" alt="License: GPL-3.0-or-later" />
+    <img src="https://img.shields.io/badge/License-GPL--3.0-blue?style=for-the-badge" alt="License: GPL-3.0" />
   </a>
   <a href="https://www.opendesktop.org/p/2359422/">
     <img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fapi.pling.com%2Focs%2Fv1%2Fcontent%2Fdata%3Fsearch%3Daudio%2Bwave%2Bvisualizer%26format%3Djson&query=%24.data%5B0%5D.downloads&label=Downloads&style=for-the-badge&color=1d99f3&logo=kde&logoColor=white" alt="KDE Store Downloads" />
@@ -263,4 +263,4 @@ If you enjoyed it feel free to show appreciation with a github star or some coin
 - [LRCLIB](https://lrclib.net/) provides optional synced lyrics.
 - [lumaribbon](https://github.com/Lucenx9/lumaribbon) inspired visual ideas and studio concepts.
 
-Thanks to the creators and contributors of these projects. This project is licensed under [GPL-3.0-or-later](LICENSE).
+Thanks to the creators and contributors of these projects. This project is licensed under [GPL-3.0](LICENSE).
