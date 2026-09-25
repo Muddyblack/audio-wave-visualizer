@@ -27,12 +27,19 @@ Column {
         canRefresh = state.canRefresh;
     }
 
+    function cancelRequests() {
+        if (client)
+            client.pause();
+        if (releaseCheckState === "Checking…")
+            releaseCheckState = "Could not check for updates";
+    }
+
     onOnlineEnabledChanged: {
         if (client) {
             if (visible && onlineEnabled)
                 client.tick();
             else
-                client.pause();
+                cancelRequests();
         }
     }
     onVisibleChanged: {
@@ -40,7 +47,7 @@ Column {
             if (visible && onlineEnabled)
                 client.tick();
             else
-                client.pause();
+                cancelRequests();
         }
     }
     Component.onCompleted: {
