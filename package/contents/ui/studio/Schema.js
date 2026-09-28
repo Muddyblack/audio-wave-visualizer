@@ -79,7 +79,7 @@ function fields(value) {
     return (Array.isArray(value) ? value : String(value || "").split(",")).map(function (v) { return String(v).trim(); }).filter(Boolean);
 }
 function layoutValue(s) {
-    return s.showMpris === false && !isPill(s) ? "compact" : s.layoutMode;
+    return s.showMpris === false && !isPill(s) && s.layoutMode !== "visualizer" ? "compact" : s.layoutMode;
 }
 function surfaceValue(s) {
     return s.artBg ? "art" : s.surfaceStyle;
@@ -164,10 +164,10 @@ var SECTIONS = [
         { k: "customDockBgColor", type: "color", label: "Custom background", swatches: BGSWATCHES.concat(SWATCHES), when: function (s) { return !s.useSystemDockBg; } }
     ]),
     tab("layout", "Arrangement", [
-        { k: "layoutMode", type: "tiles", full: true, label: "Layout", desc: "Lyrics only shows a scrollable verse with the current line highlighted. Uses online lyrics from LRCLIB.", tw: 104,
+        { k: "layoutMode", type: "tiles", full: true, label: "Layout", desc: "Visualizer only fills a transparent widget with the selected effect. Lyrics only shows a scrollable verse with the current line highlighted. Uses online lyrics from LRCLIB.", tw: 104,
           get: layoutValue,
           set: function (v) { return v === "compact" ? { showMpris: false, layoutMode: "classic" } : { layoutMode: v, showMpris: true }; },
-          opts: [["classic", "Classic"], ["mirrored", "Mirrored"], ["inline", "Inline"], ["hero", "Hero wave"], ["stacked", "Stacked"], ["orbit", "Orbit"], ["lyrics", "Lyrics only"], ["poster", "Poster"], ["strip", "Slim strip"], ["pill", "Panel pill"], ["pillicon", "Panel icon"], ["compact", "No art"]]
+          opts: [["visualizer", "Visualizer only"], ["classic", "Classic"], ["mirrored", "Mirrored"], ["inline", "Inline"], ["hero", "Hero wave"], ["stacked", "Stacked"], ["orbit", "Orbit"], ["lyrics", "Lyrics only"], ["poster", "Poster"], ["strip", "Slim strip"], ["pill", "Panel pill"], ["pillicon", "Panel icon"], ["compact", "No art"]]
               .map(function (o) { return { v: o[0], label: o[1], pv: "diagram" }; }) }
     ]),
     tab("layout", "Panel pill", [
@@ -459,6 +459,7 @@ var PRESETS = [
     preset("hero", ["desktop"], "Hero Wave", "The visualizer takes the stage; track info tucks underneath.", "breeze", { layoutMode: "hero", showBg: true, surfaceStyle: "glass", bgRadius: 18, fillWave: true, lineWidth: 2.2, dockStyle: "bare", cardShadow: "soft", artShape: "squircle", showTimes: false, vizColorMode: "gradient" }),
     preset("strip", ["desktop"], "Slim Strip", "A wide, low bar for the bottom of the screen.", "dusk", { layoutMode: "strip", showBg: true, surfaceStyle: "glass", bgRadius: 23, visualizerType: 3, dockStyle: "bare", lineWidth: 1.4, artShape: "circle" }),
     preset("mirror", ["desktop"], "Mirrored Minimal", "Art on the right, dotted progress, no card, controls on hover.", "olive", { layoutMode: "mirrored", visualizerType: 12, progressBarStyle: 7, dockStyle: "hover", textAlign: "right" }),
+    preset("visualizer", ["desktop"], "Visualizer only", "Transparent Neon Terrain for an audio-reactive desktop. Choose any effect in Visualizer.", "neon", { layoutMode: "visualizer", visualizerType: 16, showBg: false, alwaysVisible: true, useSystemAccent: false, customColor: "#c084fc", vizColorMode: "palette", vizPalette: "iris" }),
     preset("compact", ["current", "desktop"], "Compact", "No art column — visualizer, progress and title only.", "breeze", { layoutMode: "compact", visualizerType: 4 })
 ];
 

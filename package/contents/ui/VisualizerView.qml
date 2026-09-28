@@ -112,7 +112,12 @@ Item {
     // Hosts that know every running player set these for the player switcher.
     property int playerCount: hasPlayer ? 1 : 0
     property var switchPlayer: null
-    readonly property bool lyricsEnabled: (configuration.showLyrics ?? false) || layoutMode === "lyrics"
+    readonly property bool visualizerOnly: layoutMode === "visualizer"
+    onVisualizerOnlyChanged: {
+        if (visualizerOnly)
+            zoomOpen = false;
+    }
+    readonly property bool lyricsEnabled: !visualizerOnly && ((configuration.showLyrics ?? false) || layoutMode === "lyrics")
     readonly property var lyricLines: samplePlayback && lyricsEnabled ? [
         {
             time: 0,
@@ -146,7 +151,7 @@ Item {
     readonly property string lyricDisplayLine: lyricLine || lyricNotice
     readonly property string lyricStatus: !hasPlayer ? "idle" : (trackUnknown || artist === "") && !metadata["xesam:url"] ? "metadata" : samplePlayback ? "ready" : lyricsLoader.item?.status ?? "loading"
 
-    readonly property string detailsMode: layoutMode === "lyrics" || !hasPlayer || trackUnknown ? "off" : (configuration.hoverDetails ?? "off")
+    readonly property string detailsMode: visualizerOnly || layoutMode === "lyrics" || !hasPlayer || trackUnknown ? "off" : (configuration.hoverDetails ?? "off")
     readonly property bool panelForm: layoutMode === "pill" || layoutMode === "pillicon"
     readonly property bool flipEnabled: detailsMode === "flip" && layoutMode !== "strip" && !panelForm
     property bool detailsOpen: false
@@ -258,7 +263,7 @@ Item {
     // Hosts report the power source; battery saver caps frames and drops glow.
     property bool onBattery: false
     readonly property bool batterySaving: onBattery && (configuration.batterySaver ?? false)
-    readonly property bool lifted: layoutMode !== "lyrics" && (configuration.hoverLift ?? false) && cardHovered
+    readonly property bool lifted: !visualizerOnly && layoutMode !== "lyrics" && (configuration.hoverLift ?? false) && cardHovered
 
     function togglePlayback() {
         const p = player;
@@ -353,7 +358,7 @@ Item {
         id: volumeWheel
         objectName: "volumeWheel"
         target: null
-        enabled: root.visible && !root.zoomOpen && !root.flipped && root.layoutMode !== "lyrics" && (root.configuration.scrollVolume ?? false)
+        enabled: !root.visualizerOnly && root.visible && !root.zoomOpen && !root.flipped && root.layoutMode !== "lyrics" && (root.configuration.scrollVolume ?? false)
         acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
         onEnabledChanged: {
             root.resetVolumeGesture();
@@ -406,7 +411,7 @@ Item {
     readonly property var trackChapters: chapterModel.chapters
     Loader {
         id: profileLoader
-        active: !root.samplePlayback && root.visible && root.shouldShow && root.mediaUrl !== "" && ((root.configuration.progressBarStyle ?? 0) === 4 || (root.configuration.showChapters ?? true))
+        active: !root.visualizerOnly && !root.samplePlayback && root.visible && root.shouldShow && root.mediaUrl !== "" && ((root.configuration.progressBarStyle ?? 0) === 4 || (root.configuration.showChapters ?? true))
         sourceComponent: TrackProfile {
             wantPeaks: (root.configuration.progressBarStyle ?? 0) === 4
             commandSourceComponent: root.visualizer.commandSourceComponent ?? null
@@ -503,6 +508,8 @@ Item {
         }
 
         CardSurface {
+            objectName: "cardSurface"
+            visible: !root.visualizerOnly
             backdropSource: root.backdropSource
             anchors.fill: parent
             configuration: root.layoutMode === "lyrics" ? Object.assign({}, root.configuration, {
@@ -545,6 +552,7 @@ Item {
                 }
             }
             sourceComponent: ({
+                    visualizer: visualizerLayout,
                     mirrored: mirroredLayout,
                     inline: inlineLayout,
                     hero: heroLayout,
@@ -631,6 +639,15 @@ Item {
 
     readonly property string layoutMode: presentation !== "card" ? presentation : LayoutSizes.mode(configuration)
 
+    Component {
+        id: visualizerLayout
+        Layouts.LayoutWave {
+            objectName: "visualizerOnlyWave"
+            view: root
+            implicitWidth: 360
+            implicitHeight: 200
+        }
+    }
     Component {
         id: classicLayout
         Layouts.Classic {

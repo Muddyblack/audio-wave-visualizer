@@ -397,7 +397,7 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:20px 32px;max-wi
 .w .center{display:flex;justify-content:center}
 .w .mid{display:flex;gap:10px;align-items:center}
 .w .mid .texts{flex:1}
-.L-hero .wavebox{max-height:none;flex:1}
+.L-hero .wavebox,.L-visualizer .wavebox{max-height:none;flex:1}
 .L-inline .pbrow{display:flex;align-items:center;gap:8px}
 .L-inline .pbrow .pb{flex:1}
 .L-inline .wavebox{max-height:34px}

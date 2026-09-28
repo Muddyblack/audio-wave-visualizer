@@ -53,6 +53,7 @@ The widget follows system audio with [cava][cava] and shows album artwork, track
 
 - **Dozens of ready-made presets:** Choose from cards, artwork backgrounds, posters, compact strips, panel icons, and more.
 - **Many audio visualizers:** Waves, bars, particles, rings, and other styles react to system audio captured by [cava][cava].
+- **Visualizer only:** Choose the Visualizer only preset for transparent Neon Terrain, or select Arrangement → Visualizer only with any effect. Resize and position the widget on your desktop to complement your wallpaper.
 - **Live settings studio:** Preview changes as you customize layouts, colors, visualizers, progress bars, artwork, and motion.
 - **Make and share presets:** Save your own looks and exchange them as JSON with the Plasma, Quickshell, and browser studios.
 - **Custom QML styles:** Import your own visualizers and progress bars from trusted local QML files.
