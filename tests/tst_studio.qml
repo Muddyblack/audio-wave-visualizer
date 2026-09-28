@@ -195,6 +195,13 @@ TestCase {
         studio.update(Schema.rowPatch(layout, "hero"));
         compare(studio.draft.showMpris, true);
         compare(studio.draft.layoutMode, "hero");
+        studio.update(Schema.rowPatch(layout, "visualizer"));
+        compare(Schema.rowValue(layout, studio.draft), "visualizer");
+        const visualizer = Schema.PRESETS.find(p => p.id === "visualizer");
+        compare(visualizer.s.layoutMode, "visualizer");
+        compare(visualizer.s.visualizerType, 16);
+        compare(visualizer.s.showBg, false);
+        compare(visualizer.s.alwaysVisible, true);
         const cover = Schema.PRESETS.find(p => p.id === "cover");
         compare(cover.s.artBg, true);
         verify(cover.s.surfaceStyle === undefined);

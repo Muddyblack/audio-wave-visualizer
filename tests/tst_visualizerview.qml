@@ -402,6 +402,56 @@ TestCase {
         compare(bar.style, 0, "Without a cover the ring falls back to the default bar");
     }
 
+    function test_visualizerOnly_data() {
+        return [true, false].map(show => ({
+                    tag: String(show),
+                    showMpris: show
+                }));
+    }
+    function test_visualizerOnly(data) {
+        subject.configuration = Object.assign({}, defaults, {
+            layoutMode: "visualizer",
+            showMpris: data.showMpris,
+            showBg: true,
+            artBg: true,
+            showLyrics: true,
+            hoverDetails: "flip",
+            scrollVolume: true,
+            idleText: true,
+            alwaysVisible: true,
+            visualizerType: 16
+        });
+        compare(subject.layoutMode, "visualizer");
+        compare(LayoutSizes.size(subject.configuration), [360, 200]);
+        compare(subject.implicitWidth, 360);
+        compare(subject.implicitHeight, 200);
+        subject.width = 600;
+        subject.height = 300;
+        waitForRendering(subject);
+        const wave = findChild(subject, "visualizerOnlyWave");
+        verify(wave !== null && wave.visible);
+        compare(wave.width, 600);
+        compare(wave.height, 300);
+        compare(wave.visualizerType, 16);
+        compare(findChild(subject, "progressBar"), null);
+        compare(findChild(subject, "layoutTexts"), null);
+        compare(findChild(subject, "playArea"), null);
+        verify(!findChild(subject, "cardSurface").visible);
+        verify(!findChild(subject, "volumeWheel").enabled);
+        verify(!subject.lyricsEnabled);
+        verify(!subject.flipEnabled);
+        compare(subject.detailsMode, "off");
+        subject.player = null;
+        verify(subject.shouldShow);
+        verify(wave.visible);
+        subject.configuration = Object.assign({}, defaults, {
+            layoutMode: "classic"
+        });
+        compare(subject.layoutMode, "classic");
+        tryVerify(() => findChild(subject, "visualizerOnlyWave") === null);
+        verify(findChild(subject, "progressBar") !== null);
+    }
+
     function test_layouts_data() {
         return [].concat(...["classic", "mirrored", "inline", "hero", "stacked", "poster", "strip", "orbit"].map(mode => [
                 {

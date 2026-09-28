@@ -3,6 +3,9 @@
 // Shared layout tile diagrams (64 × 36 viewBox).
 // class f: filled .85 · f2: filled .35 · o: outline .6 · s: accent stroke.
 var shapes = {
+ "visualizer": [
+  { "tag": "path", "cls": "s", "d": "M4 18q5-20 10 0t10 0 10 0 10 0 10 0" }
+ ],
  "lyrics": [
   { "tag": "rect", "cls": "f2", "x": "8", "y": "3", "width": "42", "height": "3", "rx": "1" },
   { "tag": "rect", "cls": "f2", "x": "8", "y": "11", "width": "48", "height": "3", "rx": "1" },

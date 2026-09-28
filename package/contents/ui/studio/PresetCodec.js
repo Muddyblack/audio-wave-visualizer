@@ -38,7 +38,7 @@ function clean(settings, known) {
 }
 function browser(settings) {
     var out = Object.assign({}, settings);
-    if (out.showMpris === false && out.layoutMode !== 'pill' && out.layoutMode !== 'pillicon') {
+    if (out.showMpris === false && out.layoutMode !== 'pill' && out.layoutMode !== 'pillicon' && out.layoutMode !== 'visualizer') {
         out._cardLayout = out.layoutMode || 'classic';
         out.layoutMode = 'compact';
     }
@@ -52,7 +52,7 @@ function browser(settings) {
 function fromBrowser(settings) {
     return canonical(Object.assign({}, settings, {
         showMpris: settings.layoutMode === 'compact' ? false
-            : (settings.layoutMode === 'pill' || settings.layoutMode === 'pillicon') ? settings.showMpris !== false : true,
+            : (settings.layoutMode === 'pill' || settings.layoutMode === 'pillicon' || settings.layoutMode === 'visualizer') ? settings.showMpris !== false : true,
         artBg: settings.surfaceStyle === 'art'
     }));
 }
