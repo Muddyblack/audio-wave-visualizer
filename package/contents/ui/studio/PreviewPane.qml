@@ -50,7 +50,7 @@ Rectangle {
     }
     SamplePlayer {
         id: stagePlayer
-        track: pane.stateName === "long" ? "A Very Long Song Title That Keeps Going Past The Edge (Extended Mix)" : pane.stateName === "nometa" ? "https://rr3---sn.googlevideo.com/videoplayback?itag=251&clen=1&gir=yes" : "Slow Tide"
+        track: pane.stateName === "long" ? "A Very Long Song Title That Keeps Going Past The Edge (Extended Mix)" : pane.stateName === "nometa" ? "https://rr3---sn.googlevideo.com/videoplayback?itag=251&clen=1&gir=yes" : stagePlayer.sampleTrack
         artist: pane.stateName === "nometa" ? "" : pane.stateName === "long" ? "The Particularly Verbose Orchestra" : "Wren & Hollow"
         artUrl: pane.stateName === "nometa" ? "" : Qt.resolvedUrl("../../../icon.png").toString()
     }

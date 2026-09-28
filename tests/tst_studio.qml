@@ -360,6 +360,31 @@ TestCase {
         verify(studio.anyResults);
     }
 
+    function test_previewSkipButtons() {
+        studio.selectTab("buttons");
+        const preview = findChild(studio, "previewWidget");
+        verify(waitForRendering(preview));
+        const player = preview.player;
+        player.trackIndex = 0;
+        player.position = 91;
+        const previous = findChild(preview, "prevArea");
+        const next = findChild(preview, "nextArea");
+        verify(previous.enabled && next.enabled);
+        mouseClick(next);
+        compare(preview.track, "Evening Light");
+        compare(player.position, 0);
+        mouseClick(previous);
+        compare(preview.track, "Slow Tide");
+        mouseClick(previous);
+        compare(preview.track, "Homeward");
+        mouseClick(next);
+        compare(preview.track, "Slow Tide");
+        const tile = findChild(studio, "tile_dockStyle_glass");
+        verify(tile !== null);
+        verify(findChild(tile, "prevArea").enabled);
+        verify(findChild(tile, "nextArea").enabled);
+    }
+
     function test_shuffleRepeatSettingAndPreview() {
         studio.currentTabIndex = tabIndex("buttons");
         verify(waitForRendering(studio));
@@ -595,6 +620,48 @@ TestCase {
         const nextRow = findChild(studio, "row_lineWidth");
         verify(lastTile.mapToItem(gridRow, 0, lastTile.height).y <= gridRow.height);
         verify(nextRow.y >= gridRow.y + gridRow.height);
+    }
+
+    function test_presetPlaybackStaysStill() {
+        studio.selectTab("presets");
+        const tile = findChild(studio, "preset_glass");
+        verify(tile !== null);
+        verify(waitForRendering(tile));
+        const clocks = [];
+        function collect(item) {
+            if (item.ticking !== undefined && item.displayedPosition !== undefined)
+                clocks.push(item);
+            for (const child of item.children)
+                collect(child);
+        }
+        collect(tile);
+        verify(clocks.length > 0, "Exercise the real preset playback clocks");
+        const positions = clocks.map(clock => clock.displayedPosition);
+        for (const clock of clocks)
+            verify(!clock.ticking, "Still thumbnails must not run playback timers");
+        wait(1100);
+        compare(clocks.map(clock => clock.displayedPosition), positions);
+        const preview = findChild(studio, "previewWidget");
+        const frame = preview.visualizer.frameTimeMs;
+        tryVerify(() => preview.visualizer.frameTimeMs !== frame, 1000, "The main preview must keep animating");
+    }
+
+    function test_tileFramesFollowVisiblePages() {
+        studio.selectTab("presets");
+        const stillTime = studio.backend.frameTimeMs;
+        wait(160);
+        compare(studio.backend.frameTimeMs, stillTime);
+        for (const tab of ["viz", "controls", "art"]) {
+            studio.selectTab(tab);
+            const frame = studio.backend.frameTimeMs;
+            tryVerify(() => studio.backend.frameTimeMs !== frame);
+        }
+        studio.selectTab("about");
+        const stoppedTime = studio.backend.frameTimeMs;
+        wait(160);
+        compare(studio.backend.frameTimeMs, stoppedTime);
+        studio.query = "visualizer";
+        tryVerify(() => studio.backend.frameTimeMs !== stoppedTime);
     }
 
     function test_hiddenStudioStopsPreviewClocks() {

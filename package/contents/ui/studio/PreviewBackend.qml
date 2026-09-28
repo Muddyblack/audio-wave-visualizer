@@ -16,7 +16,9 @@ Item {
     property string backendMessage: ""
     property string backendAction: ""
     property string backendHint: ""
-    property bool plasmoidVisible: true
+    // Layouts also use this flag to gate their independent playback clocks.
+    // A still thumbnail must stop those clocks as well as the audio timer.
+    property bool plasmoidVisible: running
     property real bass: 0
     property real mid: 0
     property real high: 0

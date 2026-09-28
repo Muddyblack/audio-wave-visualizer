@@ -219,7 +219,9 @@ Rectangle {
 
     PreviewBackend {
         id: tileBackend
-        running: studioRoot.onScreen
+        // Only waveform, progress and artwork tiles consume animated frames.
+        // Search can expose these rows outside their normal tabs.
+        running: studioRoot.onScreen && (studioRoot.query.trim() !== "" || ["viz", "controls", "art"].indexOf(studioRoot.currentTab) !== -1)
     }
     PreviewBackend {
         id: stillBackend

@@ -144,6 +144,7 @@ Item {
         Item {
             TransportDock {
                 anchors.centerIn: parent
+                player: preview.studio.samplePlayer
                 opacity: preview.value === "hover" ? 0.55 : 1
                 configuration: Object.assign({}, preview.draft, {
                     dockStyle: preview.value === "hover" ? "glass" : preview.value
