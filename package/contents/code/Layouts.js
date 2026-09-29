@@ -2,6 +2,7 @@
 
 // Design sizes at 1×. `compact` is showMpris=false.
 const SIZES = {
+    visualizer: [360, 200],
     classic: [360, 104],
     mirrored: [360, 104],
     inline: [360, 104],
@@ -16,12 +17,12 @@ const SIZES = {
 };
 
 // Layouts the widget can draw; other stored values fall back to Classic.
-const MODES = ["classic", "mirrored", "inline", "hero", "stacked", "poster", "strip", "orbit", "lyrics", "pill", "pillicon"];
+const MODES = ["visualizer", "classic", "mirrored", "inline", "hero", "stacked", "poster", "strip", "orbit", "lyrics", "pill", "pillicon"];
 
 function mode(configuration) {
     const value = configuration.layoutMode || "classic";
-    // The panel forms show the track regardless of showMpris.
-    if (value === "pill" || value === "pillicon")
+    // Explicit panel and visualizer-only layouts ignore the legacy compact switch.
+    if (value === "pill" || value === "pillicon" || value === "visualizer")
         return value;
     if (!configuration.showMpris)
         return "compact";

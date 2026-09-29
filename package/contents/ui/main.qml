@@ -125,7 +125,7 @@ PlasmoidItem {
     }
     fullRepresentation: FittedFrame {
         id: fullFrame
-        fitContents: LayoutSizes.mode(cardConfiguration) !== "lyrics"
+        fitContents: !["lyrics", "visualizer"].includes(LayoutSizes.mode(cardConfiguration))
         readonly property var cardConfiguration: root.inPanel ? root.popupConfiguration : root.effectiveConfiguration
         designSize: {
             const dimensions = LayoutSizes.size(cardConfiguration);

@@ -141,6 +141,8 @@ function surfHTML(s, cls, fill) {
 }
 
 function widgetHTML(s, status, opt = {}) {
+  if (s.layoutMode === "visualizer")
+    s = { ...s, showBg: false, hoverDetails: "off", hoverLift: false, scrollVolume: false };
   const d = derive(s, status);
   const mode = s.layoutMode;
   const [W, H] = sizeOf(s);
@@ -209,6 +211,10 @@ function widgetHTML(s, status, opt = {}) {
 
   let pad, body;
   switch (mode) {
+    case 'visualizer':
+      pad = '0';
+      body = `<div class="L col">${wave}</div>`;
+      break;
     case 'classic': case 'mirrored': {
       pad = bg ? '4px 10px 0' : '0';
       const a = scaled(72, Math.min(72, H - (bg ? 4 : 0) - (d.hasPlayer ? 30 : 0)) - (ringMode ? 6 : 0));

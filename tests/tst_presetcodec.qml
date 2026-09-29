@@ -21,6 +21,12 @@ TestCase {
     function test_qmlBrowserQml_data() {
         return [
             {
+                tag: 'visualizer',
+                mode: 'visualizer',
+                show: false,
+                art: false
+            },
+            {
                 tag: 'classic',
                 mode: 'classic',
                 show: true,
