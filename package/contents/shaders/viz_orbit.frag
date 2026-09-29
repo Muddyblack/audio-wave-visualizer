@@ -106,7 +106,10 @@ vec4 particleAt(int i) {
 const float TAU=6.28318530718;
 float value(int j) {
     int n=int(halfCount)*2;
-    j=(j%n+n)%n;
+    // Integer % survives qsb translation but is invalid in GLSL 120 / ES 100.
+    // mod also wraps the negative neighbours used to close the ring; the .5
+    // keeps float rounding from landing on n at exact multiples.
+    j=int(mod(float(j)+.5,float(n)));
     return levelAt(j<int(halfCount)?j:n-1-j);
 }
 float angle(int j) {return float(j)/(halfCount*2.0)*TAU+ringRotation-TAU*.25;}
@@ -123,7 +126,7 @@ vec4 ink(vec2 p) {
     if(colorCount<1.5)return color0;
     float turn=mod(atan(p.y,p.x)-ringRotation+TAU*.25,TAU)/TAU;
     float f=turn*colorCount;int j=int(floor(f));
-    return mix(stopAt(j),stopAt((j+1)%int(colorCount)),fract(f));
+    return mix(stopAt(j),stopAt(int(mod(float(j+1)+.5,colorCount))),fract(f));
 }
 vec4 over(vec4 a,vec4 b) {return a+b*(1.0-a.a);}
 vec4 stroke(vec4 color,float d,float alpha) {

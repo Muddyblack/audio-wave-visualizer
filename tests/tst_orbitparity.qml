@@ -27,6 +27,11 @@ TestCase {
         height: 190
         orbit: canvas
     }
+    function init() {
+        // A loaded .qsb can report Compiled while the OpenGL driver rejects
+        // its GLSL later and retries the failed pipeline on every frame.
+        failOnWarning(/Failed to compile shader|Failed to build graphics pipeline state/);
+    }
     function test_epochPhasesStayPrecise() {
         canvas.visualFrameTime = 1789560000000;
         const rotation = shader.ringRotation;
@@ -85,7 +90,7 @@ TestCase {
                     const d = reference[channel](x, y) - actual[channel](x, y);
                     sum += d * d;
                 }
-                if (actual.alpha(x, y) > 0)
+                if (actual.alpha(x, y) > 0 && Math.max(actual.red(x, y), actual.green(x, y), actual.blue(x, y)) > 10)
                     lit++;
             }
         verify(lit > 20, 'Shader must draw visible pixels');
