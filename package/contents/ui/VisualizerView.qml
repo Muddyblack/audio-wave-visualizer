@@ -427,6 +427,7 @@ Item {
             commandSourceComponent: root.visualizer.commandSourceComponent ?? null
             fileUrl: String(root.metadata["xesam:url"] || "")
             language: root.configuration.lyricsLanguage ?? "auto"
+            playbackActive: root.visible && root.shouldShow
             karaokeActive: root.visible && root.layoutMode === "lyrics" && !(root.configuration.reducedMotion ?? false)
             player: root.player
             isPlaying: root.isPlaying

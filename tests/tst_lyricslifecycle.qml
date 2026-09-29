@@ -286,6 +286,32 @@ TestCase {
         compare(lyrics.currentLine, "");
     }
 
+    function test_hiddenPlaybackStopsAndCatchesUp() {
+        const player = createTemporaryObject(playerComponent, this, {
+            position: 1
+        });
+        const lyrics = createTemporaryObject(source, this, {
+            player: player,
+            positionUnitsPerSecond: 1,
+            isPlaying: true,
+            karaokeActive: true
+        });
+        lyrics.lines = lyrics.parse("[00:00]<00:00>First<00:10>\n[00:10]Second");
+        const clock = findChild(lyrics, "lyricsClock");
+        verify(clock.ticking);
+        lyrics.playbackActive = false;
+        verify(!clock.ticking);
+        const position = clock.displayedPosition;
+        for (let i = 0; i < 5; i++) {
+            wait(35);
+            lyrics.visualFrameTime = Date.now();
+        }
+        compare(clock.displayedPosition, position, "Hidden lyrics must ignore both timers and audio frames");
+        lyrics.playbackActive = true;
+        verify(clock.ticking);
+        verify(clock.displayedPosition > position, "Showing lyrics must catch up to playback");
+    }
+
     function test_cancelOnMetadataAndDestruction() {
         const lyrics = createTemporaryObject(source, this);
         const pending = request();

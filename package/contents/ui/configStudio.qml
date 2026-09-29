@@ -1,6 +1,5 @@
 import QtQuick
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.plasma5support as Plasma5Support
 import org.kde.plasma.private.mpris as Mpris
 import "studio" as Studio
 
@@ -432,11 +431,9 @@ Kirigami.Page {
         }
     }
 
-    Plasma5Support.DataSource {
+    PlasmaCommandSource {
         id: doctor
         property var done: null
-        engine: "executable"
-        connectedSources: []
         onNewData: (source, data) => {
             if (doctor.done)
                 doctor.done(data["stdout"] || "");
@@ -456,9 +453,7 @@ Kirigami.Page {
         active: studio.livePreview && studio.onScreen
         plasmoidVisible: active
         commandSourceComponent: Component {
-            Plasma5Support.DataSource {
-                engine: "executable"
-            }
+            PlasmaCommandSource {}
         }
     }
 
@@ -466,9 +461,7 @@ Kirigami.Page {
         id: studio
         anchors.fill: parent
         commandSourceComponent: Component {
-            Plasma5Support.DataSource {
-                engine: "executable"
-            }
+            PlasmaCommandSource {}
         }
         env: "kde"
         draft: root.draft
