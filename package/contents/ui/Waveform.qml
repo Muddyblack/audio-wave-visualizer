@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import "debug"
 
 // Picks the waveform renderer for the scene graph in use: WaveShader wherever
 // shaders run, WaveCanvas on the software renderer (which ignores ShaderEffect).
@@ -77,7 +78,7 @@ Item {
     }
 
     // Unknown until the window's scene graph starts; assume shaders until then.
-    readonly property bool shaderSupported: !simpleRender && GraphicsInfo.api !== GraphicsInfo.Software
+    readonly property bool shaderSupported: !simpleRender && !GpuDebug.noShaders && GraphicsInfo.api !== GraphicsInfo.Software
 
     Loader {
         id: shaderLoader

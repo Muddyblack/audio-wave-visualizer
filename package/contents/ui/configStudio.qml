@@ -2,6 +2,7 @@ import QtQuick
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.private.mpris as Mpris
 import "studio" as Studio
+import "debug"
 
 // Plasma settings page hosting the shared studio. Plasma sets every cfg_*
 // property (and its *Default) from main.xml and applies them on OK/Apply, so
@@ -429,6 +430,12 @@ Kirigami.Page {
             if (!same)
                 root[property] = value;
         }
+    }
+
+    // Diagnostics only: see debug/GpuDebug.qml.
+    PlasmaCommandSource {
+        onNewData: (source, data) => GpuDebug.handle(source, data)
+        Component.onCompleted: connectSource(GpuDebug.command)
     }
 
     PlasmaCommandSource {

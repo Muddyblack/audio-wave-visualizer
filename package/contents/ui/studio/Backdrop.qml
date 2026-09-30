@@ -1,5 +1,6 @@
 import QtQuick
 import "StudioCatalog.js" as Catalog
+import "../debug"
 
 // One static image, shared with the browser demo; no repaint loop.
 Rectangle {
@@ -14,7 +15,7 @@ Rectangle {
     // Cache the composited backdrop as a GPU texture so that resizing the
     // settings window only scales the texture rather than re-rendering or
     // re-rasterising (SVG) the image on every geometry update.
-    layer.enabled: true
+    layer.enabled: !GpuDebug.noLayers
     layer.smooth: true
     Image {
         objectName: "wallpaperImage"

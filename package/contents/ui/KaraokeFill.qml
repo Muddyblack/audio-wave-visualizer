@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import "debug"
 
 // Paint timed ranges over the original shaped text: wrapping, kerning and
 // ligatures remain those of the full verse, not separately laid out words.
@@ -115,10 +116,10 @@ Item {
             height: modelData.height
             visible: progress > 0 && width > 0
             Item {
-                width: GraphicsInfo.api === GraphicsInfo.Software ? segment.width * segment.progress : segment.width
+                width: GraphicsInfo.api === GraphicsInfo.Software || GpuDebug.noLayers ? segment.width * segment.progress : segment.width
                 height: segment.height
                 clip: true
-                layer.enabled: GraphicsInfo.api !== GraphicsInfo.Software
+                layer.enabled: !GpuDebug.noLayers && GraphicsInfo.api !== GraphicsInfo.Software
                 layer.effect: ShaderEffect {
                     property var source
                     property real progress: segment.progress

@@ -1,11 +1,12 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import "debug"
 
 OrbitCanvas {
     id: orbitRoot
     property bool simpleRender: false
     property bool shaderFailed: false
-    shaderEnabled: !orbitRoot.simpleRender && GraphicsInfo.api !== GraphicsInfo.Software && !orbitRoot.shaderFailed
+    shaderEnabled: !orbitRoot.simpleRender && !GpuDebug.noShaders && GraphicsInfo.api !== GraphicsInfo.Software && !orbitRoot.shaderFailed
     Loader {
         anchors.fill: parent
         active: orbitRoot.shaderEnabled

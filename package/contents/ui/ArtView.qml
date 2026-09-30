@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Effects
+import "debug"
 
 // Cover artwork. Without a `view` it draws the original rounded thumbnail; the
 // layouts pass the view so the artwork options
@@ -29,7 +30,7 @@ Item {
     // The canvas crops the cover itself, so it needs the artwork's real aspect
     // ratio, not the square-ish size the Image was asked to decode into.
     readonly property size artSize: Qt.size(Math.max(1, artImg.implicitWidth), Math.max(1, artImg.implicitHeight))
-    readonly property bool software: GraphicsInfo.api === GraphicsInfo.Software
+    readonly property bool software: GraphicsInfo.api === GraphicsInfo.Software || GpuDebug.noLayers
     readonly property bool coverReady: artImg.status === Image.Ready
     readonly property bool disc: shape === "vinyl" || shape === "cd"
     readonly property real cornerRadius: shape === "sharp" ? 2 : shape === "squircle" ? width * 0.3 : (shape === "circle" || disc) ? width / 2 : roundedRadius
@@ -420,7 +421,7 @@ Item {
 
     // Reflection below (GPU scene graph only; MultiEffect masks need it).
     Loader {
-        active: (root.cfg.artReflect ?? false) && root.coverReady && GraphicsInfo.api !== GraphicsInfo.Software
+        active: (root.cfg.artReflect ?? false) && root.coverReady && !root.software && !GpuDebug.noSources
         y: root.height + 3
         width: root.width
         height: root.height
