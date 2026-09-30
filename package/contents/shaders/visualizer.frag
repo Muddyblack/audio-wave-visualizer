@@ -172,7 +172,7 @@ vec4 styleTechHalf(vec2 p, float sign, float W, float H, int n, out float glow)
 {
     float mid = H * 0.5;
     float amp = H * 0.42;
-    float step = W / float(max(n - 1, 1));
+    float step = W / max(float(n - 1), 1.0);
     int j = int(floor(p.x / step));
     float line = 1.0e5;
     float dot = 1.0e5;

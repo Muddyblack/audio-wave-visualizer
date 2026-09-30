@@ -101,6 +101,8 @@
               kdePackages.kirigami
               # qsb, for `make shaders`
               qt6.qtshadertools
+              # Compiles every GLSL variant qsb emits (build_shaders.py --check).
+              glslang
               # Headless Quickshell integration tests and their process tools.
               quickshell
               (python3.withPackages (ps: [ ps.mutagen ps.pykakasi ps.pypinyin ]))

@@ -277,7 +277,9 @@ vec4 gradientColor(float x)
 {
     float f = clamp(x, 0.0, 1.0) * max(0.0, colorCount - 1.0);
     int i = int(floor(f));
-    return mix(colorStop(i), colorStop(min(i + 1, int(colorCount) - 1)), fract(f));
+    // Float min: GLSL 120 / ES 100 have no integer min(), and a driver that
+    // rejects the shader retries it every frame.
+    return mix(colorStop(i), colorStop(int(min(floor(f) + 1.0, colorCount - 1.0))), fract(f));
 }
 
 vec3 unpremultiply(vec4 color)
@@ -397,7 +399,7 @@ float interpolatedLevel(float x, float width, int n)
 {
     float f = clamp(x / max(width, 0.001), 0.0, 1.0) * float(n - 1);
     int i = int(floor(f));
-    return mix(level(i), level(min(n - 1, i + 1)), fract(f));
+    return mix(level(i), level(i + 1 < n ? i + 1 : n - 1), fract(f));
 }
 
 float sdRoundBox(vec2 p, vec2 lo, vec2 hi, float radius)

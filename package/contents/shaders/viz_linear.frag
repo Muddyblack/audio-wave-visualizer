@@ -81,7 +81,7 @@ float traceY(float x, float W, float H, int n, bool mountain, float phase, float
         vec2 a = (tracePoint(n - 2, W, H, n, mountain, phase, scaleA, side) + b) * 0.5;
         return mix(a.y, b.y, clamp((f - float(n) + 1.5) * 2.0, 0.0, 1.0));
     }
-    int i = clamp(int(floor(f + 0.5)), 1, n - 2);
+    int i = int(clamp(floor(f + 0.5), 1.0, float(n - 2)));
     float t = i == 1 ? 2.0 - sqrt(max(0.0, 4.0 - 2.0 * f)) : f - float(i) + 0.5;
     vec2 a, b, c;
     traceControls(i, W, H, n, mountain, phase, scaleA, side, a, b, c);
@@ -166,7 +166,7 @@ vec4 ribbonLayers(vec2 p, float W, float H, int n)
             vec2 start = (tracePoint(1, W, H, n, false, 0.0, 1.0, 1.0) + end) * 0.5;
             bottom = mix(start.y, end.y, clamp((f - float(n) + 1.5) * 2.0, 0.0, 1.0));
         } else {
-            int i = clamp(int(floor(f + 0.5)), 1, n - 2);
+            int i = int(clamp(floor(f + 0.5), 1.0, float(n - 2)));
             float t = i == 1 ? 2.0 - sqrt(max(0.0, 4.0 - 2.0 * f)) : f - float(i) + 0.5;
             vec2 b = tracePoint(n - 1 - i, W, H, n, false, 0.0, 1.0, 1.0);
             vec2 a = i == 1 ? tracePoint(n - 1, W, H, n, false, 0.0, 1.0, 1.0)
@@ -194,7 +194,7 @@ vec4 pixelMatrix(vec2 p, float W, float H, int n)
 {
     float slot = W / float(n);
     float cell = max(2.0, min(slot, 5.0) * 0.72);
-    int rows = max(3, int(floor(H / 5.0)));
+    int rows = int(max(3.0, floor(H / 5.0)));
     float pitch = H / float(rows);
     int row = int(floor(p.y / pitch));
     int j = int(floor(p.x / slot));
