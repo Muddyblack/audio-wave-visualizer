@@ -30,16 +30,19 @@ suspect something outside the widget's effects.
 
 ## The switches by hand
 
-The runs set `AWV_GPU_DEBUG` (`layers`, `sources`, `shaders`, `all`, or a list
-like `layers,sources`) in plasmashell's environment. Unset, it changes nothing.
+The runs write the widget's hidden `gpuDebug` entry (`layers`, `sources`,
+`shaders`, `all`, or a list like `layers,sources`). Empty by default, where it
+changes nothing and costs nothing. It applies live, without a restart, and the
+journal line confirms it:
 
 ```sh
-systemctl --user set-environment AWV_GPU_DEBUG=shaders
-systemctl --user restart plasma-plasmashell
-journalctl --user -b | grep AWV_GPU_DEBUG | tail -1   # confirms it took effect
-# undo:
-systemctl --user unset-environment AWV_GPU_DEBUG
-systemctl --user restart plasma-plasmashell
+set_debug() { qdbus org.kde.plasmashell /PlasmaShell org.kde.PlasmaShell.evaluateScript "
+    for (const c of desktops().concat(panels()))
+        for (const w of c.widgets('org.muddyblack.plasmaAudioVisualizer')) {
+            w.currentConfigGroup = ['General']; w.writeConfig('gpuDebug', '$1'); }"; }
+set_debug shaders
+journalctl --user -b | grep 'gpuDebug layers' | tail -1
+set_debug ""   # undo
 ```
 
 A longer memory log, every 5 s:

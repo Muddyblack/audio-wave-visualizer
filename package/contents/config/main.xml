@@ -442,6 +442,9 @@
         <entry name="scrollVolume" type="Bool">
             <default>true</default>
         </entry>
+        <entry name="gpuDebug" type="String">
+            <default></default>
+        </entry>
         <entry name="reducedMotion" type="Bool">
             <default>false</default>
         </entry>

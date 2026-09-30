@@ -13,10 +13,9 @@ PlasmoidItem {
     id: root
 
     // Diagnostics only: see debug/GpuDebug.qml.
-    PlasmaCommandSource {
-        onNewData: (source, data) => GpuDebug.handle(source, data)
-        Component.onCompleted: connectSource(GpuDebug.command)
-    }
+    readonly property string gpuDebug: plasmoid.configuration.gpuDebug ?? ""
+    onGpuDebugChanged: GpuDebug.apply(gpuDebug)
+    Component.onCompleted: GpuDebug.apply(gpuDebug)
     Studio.DailyLookController {
         configuration: root.effectiveConfiguration
         onApply: next => {
