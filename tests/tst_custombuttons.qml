@@ -88,6 +88,10 @@ TestCase {
         compare(subject.implicitWidth, 112);
         const api = item.buttons;
         verify(api.canGoPrevious && api.canTogglePlaying && api.canGoNext);
+        // Until the style's Row is laid out its buttons overlap, and every
+        // click lands on the topmost one.
+        const x = name => findChild(item, "exampleButton_" + name).mapToItem(item, 0, 0).x;
+        tryVerify(() => x("previous") < x("togglePlaying") && x("togglePlaying") < x("next"));
         mouseClick(findChild(item, "exampleButton_previous"));
         mouseClick(findChild(item, "exampleButton_togglePlaying"));
         mouseClick(findChild(item, "exampleButton_next"));

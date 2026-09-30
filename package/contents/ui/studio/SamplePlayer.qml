@@ -1,8 +1,11 @@
 import QtQuick
 
-// A sample track for the settings previews.
+// Sample tracks for the settings previews; no connection to real playback.
 QtObject {
-    property string track: "Slow Tide"
+    readonly property var tracks: ["Slow Tide", "Evening Light", "Homeward"]
+    property int trackIndex: 0
+    readonly property string sampleTrack: tracks[trackIndex]
+    property string track: sampleTrack
     property string artist: "Wren & Hollow"
     property string album: "Low Light"
     property string identity: "Music"
@@ -16,12 +19,16 @@ QtObject {
     property int loopState: 0
     property var metadata: ({
             "xesam:genre": ["Ambient"],
-            "xesam:trackNumber": 4,
+            "xesam:trackNumber": 4 + trackIndex,
             "xesam:contentCreated": "2024"
         })
     function previous() {
+        trackIndex = (trackIndex + tracks.length - 1) % tracks.length;
+        position = 0;
     }
     function next() {
+        trackIndex = (trackIndex + 1) % tracks.length;
+        position = 0;
     }
     function togglePlaying() {
     }

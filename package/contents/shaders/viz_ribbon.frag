@@ -54,9 +54,9 @@ void main()
     int n = int(barCount + 0.5);
     vec4 color = vec4(0.0);
     if (n >= 2) {
-        int steps = max(24, int(floor(W / 4.0)));
+        int steps = int(max(24.0, floor(W / 4.0)));
         float step = W / float(steps);
-        int j = clamp(int(floor(p.x / step)), 0, steps - 1);
+        int j = int(clamp(floor(p.x / step), 0.0, float(steps - 1)));
         float edges = 1e5;
         vec4 filaments = vec4(1e5);
         float centre = 1e5;

@@ -3,6 +3,7 @@ import QtQuick.Effects
 import "../code/WaveMath.js" as WaveMath
 import "../code/WaveDraw.js" as WaveDraw
 import "../code/ClassicWaveDraw.js" as ClassicWaveDraw
+import "debug"
 
 Canvas {
     id: wave
@@ -58,7 +59,7 @@ Canvas {
     // separate CPU image blur for every stroke, bar and dot in every frame.
     // Qt's software scene graph cannot render MultiEffect; keep the waveform
     // visible there without falling back to those expensive CPU shadows.
-    layer.enabled: visualizerType < 6 && glowWave && bloom > 0 && hasAudio && !backendFailed && GraphicsInfo.api !== GraphicsInfo.Software
+    layer.enabled: visualizerType < 6 && glowWave && bloom > 0 && hasAudio && !backendFailed && !GpuDebug.noLayers && GraphicsInfo.api !== GraphicsInfo.Software
     layer.effect: MultiEffect {
         shadowEnabled: true
         shadowColor: wave._mainColor

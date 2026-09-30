@@ -14,7 +14,8 @@ vec4 radialBurst(vec2 p, float W, float H, int n)
     // Only neighbouring angular bins can touch this pixel. This stays bounded
     // as the bar count grows, unlike a loop over the complete radial spectrum.
     for (int k = -3; k <= 3; k++) {
-        int i = (j + k + n) % n;
+        // Keep the GLSL 120 / ES 100 variants free of integer remainder.
+        int i = int(mod(float(j + k + n) + 0.5, float(n)));
         float a = float(i) / float(n) * turn - rotation;
         vec2 axis = vec2(cos(a), sin(a));
         float len = level(i) * c * 0.56 + 1.0;

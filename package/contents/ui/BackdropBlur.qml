@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Effects
+import "debug"
 
 // Only capture the supplied wallpaper, never the widget's foreground or an
 // ancestor containing this effect (which would create a recursive texture).
@@ -20,7 +21,7 @@ Item {
                 return false;
         return true;
     }
-    readonly property bool available: safeSource && sourceItem.Window.window === root.Window.window && GraphicsInfo.api !== GraphicsInfo.Software
+    readonly property bool available: safeSource && sourceItem.Window.window === root.Window.window && !GpuDebug.noSources && !GpuDebug.noLayers && GraphicsInfo.api !== GraphicsInfo.Software
 
     // mapToItem alone doesn't subscribe to ancestor movement. Read the geometry
     // of both chains so dragging/resizing/scaling the widget updates the crop.

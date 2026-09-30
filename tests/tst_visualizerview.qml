@@ -756,6 +756,26 @@ TestCase {
         compare(findChild(subject, "volumeWheel").enabled, false);
     }
 
+    function test_hiddenViewStopsLyricsClock() {
+        subject.configuration = Object.assign({}, defaults, {
+            showLyrics: true
+        });
+        subject.isPlaying = true;
+        const clock = findChild(subject, "lyricsClock");
+        verify(clock !== null);
+        clock.parent.lines = [
+            {
+                time: 0,
+                text: "A verse"
+            }
+        ];
+        verify(clock.ticking);
+        subject.visible = false;
+        verify(!clock.ticking);
+        subject.visible = true;
+        verify(clock.ticking);
+    }
+
     function test_lyricsParsing() {
         const lyrics = createTemporaryObject(lyricsComponent, testCase);
         const lines = lyrics.parse("[00:01.00]first\n[00:03.50][00:05]again\nno tag");

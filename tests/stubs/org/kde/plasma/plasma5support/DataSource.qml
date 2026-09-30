@@ -7,7 +7,7 @@ QtObject {
     function connectSource(source) {
         Commands.calls = Commands.calls.concat([source]);
         connectedSources = connectedSources.concat([source]);
-        if (source.startsWith("cat "))
+        if (typeof source === "string" && source.startsWith("cat "))
             newData(source, {
                 stdout: Commands.legacyFrame
             });

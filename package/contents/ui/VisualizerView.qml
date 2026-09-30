@@ -354,17 +354,21 @@ Item {
             volumeOsd.shown = false;
         }
     }
-    WheelHandler {
+    // A MouseArea, like the progress bar's wheel seek: Plasma's applet hosts
+    // deliver wheel events to it reliably, unlike to a bare WheelHandler. It is
+    // the lowest sibling, so the seek bar and cover ring still take the wheel first.
+    MouseArea {
         id: volumeWheel
         objectName: "volumeWheel"
-        target: null
+        z: -1
+        anchors.fill: parent
+        acceptedButtons: Qt.NoButton
         enabled: !root.visualizerOnly && root.visible && !root.zoomOpen && !root.flipped && root.layoutMode !== "lyrics" && (root.configuration.scrollVolume ?? false)
-        acceptedDevices: PointerDevice.Mouse | PointerDevice.TouchPad
         onEnabledChanged: {
             root.resetVolumeGesture();
         }
-        onWheel: event => {
-            event.accepted = root.scrollSystemVolume(event.angleDelta.y, event.pixelDelta.y);
+        onWheel: wheel => {
+            wheel.accepted = root.scrollSystemVolume(wheel.angleDelta.y, wheel.pixelDelta.y);
         }
     }
     Timer {
@@ -432,6 +436,7 @@ Item {
             commandSourceComponent: root.visualizer.commandSourceComponent ?? null
             fileUrl: String(root.metadata["xesam:url"] || "")
             language: root.configuration.lyricsLanguage ?? "auto"
+            playbackActive: root.visible && root.shouldShow
             karaokeActive: root.visible && root.layoutMode === "lyrics" && !(root.configuration.reducedMotion ?? false)
             player: root.player
             isPlaying: root.isPlaying

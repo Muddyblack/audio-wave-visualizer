@@ -12,6 +12,7 @@ Item {
     property string fileUrl: ""
     property string language: "auto"
     property bool karaokeActive: false
+    property bool playbackActive: true
     property bool synced: true
     property string localWarning: ""
     property string _command: ""
@@ -76,7 +77,7 @@ Item {
         player: root.player
         playing: root.isPlaying
         track: root.requestKey
-        active: root.synced && root.lines.length > 0
+        active: root.playbackActive && root.synced && root.lines.length > 0
     }
     onVisualFrameTimeChanged: {
         if (clock.active && isPlaying)

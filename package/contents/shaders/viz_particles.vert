@@ -7,7 +7,8 @@ layout(location = 0) out vec2 qt_TexCoord0;
 layout(location = 1) out vec4 particleData;
 void main() {
     int row = int(floor(qt_MultiTexCoord0.y * 125.0 + 0.5));
-    int lane = row % 4;
+    // No integer % in the GLSL 120 / ES 100 variants.
+    int lane = row - row / 4 * 4;
     int index = row / 4 + (lane == 3 ? 1 : 0);
     vec4 particle = particleAt(index);
     float extent = particle.z + (glowAmount > 0.5 ? 16.0 * max(0.2, bloom) : 1.0);

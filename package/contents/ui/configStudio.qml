@@ -1,8 +1,8 @@
 import QtQuick
 import org.kde.kirigami as Kirigami
-import org.kde.plasma.plasma5support as Plasma5Support
 import org.kde.plasma.private.mpris as Mpris
 import "studio" as Studio
+import "debug"
 
 // Plasma settings page hosting the shared studio. Plasma sets every cfg_*
 // property (and its *Default) from main.xml and applies them on OK/Apply, so
@@ -312,6 +312,8 @@ Kirigami.Page {
     property bool cfg_hoverLiftDefault
     property bool cfg_scrollVolume
     property bool cfg_scrollVolumeDefault
+    property string cfg_gpuDebug
+    property string cfg_gpuDebugDefault
     property bool cfg_reducedMotion
     property bool cfg_reducedMotionDefault
     property bool cfg_batterySaver
@@ -372,6 +374,7 @@ Kirigami.Page {
     }
 
     Component.onCompleted: {
+        GpuDebug.apply(cfg_gpuDebug ?? "");
         // Enumerate outside a binding: Qt can evaluate unrelated getters while
         // listing QObject properties, including draft and defaults themselves.
         configKeys = Object.keys(root).filter(key => key.startsWith("cfg_") && key.endsWith("Default")).map(key => key.slice(4, -7));
@@ -432,11 +435,12 @@ Kirigami.Page {
         }
     }
 
-    Plasma5Support.DataSource {
+    // Diagnostics only: see debug/GpuDebug.qml.
+    onCfg_gpuDebugChanged: GpuDebug.apply(cfg_gpuDebug ?? "")
+
+    PlasmaCommandSource {
         id: doctor
         property var done: null
-        engine: "executable"
-        connectedSources: []
         onNewData: (source, data) => {
             if (doctor.done)
                 doctor.done(data["stdout"] || "");
@@ -456,9 +460,7 @@ Kirigami.Page {
         active: studio.livePreview && studio.onScreen
         plasmoidVisible: active
         commandSourceComponent: Component {
-            Plasma5Support.DataSource {
-                engine: "executable"
-            }
+            PlasmaCommandSource {}
         }
     }
 
@@ -466,9 +468,7 @@ Kirigami.Page {
         id: studio
         anchors.fill: parent
         commandSourceComponent: Component {
-            Plasma5Support.DataSource {
-                engine: "executable"
-            }
+            PlasmaCommandSource {}
         }
         env: "kde"
         draft: root.draft

@@ -48,6 +48,10 @@ TestCase {
         signalName: "painted"
     }
 
+    function init() {
+        failOnWarning(/Failed to compile shader|Failed to build graphics pipeline state/);
+    }
+
     function compareRenderers(tag, properties, limit) {
         const canvas = createTemporaryObject(canvasComponent, testCase, properties);
         const shader = createTemporaryObject(shaderComponent, testCase, properties);
