@@ -7,16 +7,9 @@ import org.kde.plasma.private.mpris as Mpris
 import org.kde.kirigami as Kirigami
 import "studio" as Studio
 import "../code/Layouts.js" as LayoutSizes
-import "debug"
 
 PlasmoidItem {
     id: root
-
-    // Diagnostics only: see debug/GpuDebug.qml.
-    PlasmaCommandSource {
-        onNewData: (source, data) => GpuDebug.handle(source, data)
-        Component.onCompleted: connectSource(GpuDebug.command)
-    }
     Studio.DailyLookController {
         configuration: root.effectiveConfiguration
         onApply: next => {

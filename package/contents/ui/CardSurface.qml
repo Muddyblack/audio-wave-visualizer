@@ -1,6 +1,5 @@
 import QtQuick
 import QtQuick.Effects
-import "debug"
 
 // Cached card layers remain separate from the animated foreground.
 Item {
@@ -224,7 +223,7 @@ Item {
         id: backgroundCardEffect
         anchors.fill: parent
         source: backgroundCard
-        visible: !GpuDebug.noLayers && root.configuration.showBg && root.material === ""
+        visible: root.configuration.showBg && root.material === ""
 
         // Round the whole composited card (art + tint + border) in one pass.
         maskEnabled: true
@@ -244,7 +243,7 @@ Item {
     // cover crop; blur remains a GPU effect.
     Loader {
         anchors.fill: parent
-        active: (GraphicsInfo.api === GraphicsInfo.Software || GpuDebug.noLayers) && root.configuration.showBg && root.material === ""
+        active: GraphicsInfo.api === GraphicsInfo.Software && root.configuration.showBg && root.material === ""
         opacity: root.configuration.artBgTransparency
         sourceComponent: Item {
             Rectangle {

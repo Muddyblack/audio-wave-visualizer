@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import QtQuick.Layouts 1.1
 import QtQuick.Effects
-import "debug"
 
 // Playback controls. Shuffle/repeat use the MPRIS player properties.
 Item {
@@ -149,7 +148,7 @@ Item {
         border.color: root.dockStyle === "outline" ? Qt.rgba(root.controlColor.r, root.controlColor.g, root.controlColor.b, 0.55) : root.dockStyle === "tinted" ? Qt.rgba(root.accentColor.r, root.accentColor.g, root.accentColor.b, 0.52) : root.dockStyle === "soft" ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.16)
         border.width: 1
 
-        layer.enabled: visible && !GpuDebug.noLayers && (root.dockStyle === "glass" || root.dockStyle === "hover")
+        layer.enabled: visible && (root.dockStyle === "glass" || root.dockStyle === "hover")
         layer.effect: MultiEffect {
             shadowEnabled: true
             shadowColor: Qt.rgba(0, 0, 0, 0.35)
@@ -265,7 +264,7 @@ Item {
                 visible: playBtn.accent
                 radius: width / 2
                 color: root.accentColor
-                layer.enabled: visible && !GpuDebug.noLayers && GraphicsInfo.api !== GraphicsInfo.Software
+                layer.enabled: visible && GraphicsInfo.api !== GraphicsInfo.Software
                 layer.effect: MultiEffect {
                     shadowEnabled: true
                     shadowColor: root.accentColor

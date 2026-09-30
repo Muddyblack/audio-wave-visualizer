@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Layouts
 import ".."
-import "../debug"
 
 // Player chip, title, artist, album and lyric line at the configured size and
 // alignment. Layouts scale them like the HTML (for example Stacked uses title
@@ -107,7 +106,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.minimumWidth: 0
         implicitHeight: title.implicitHeight
-        layer.enabled: root.marquee && !GpuDebug.noLayers && GraphicsInfo.api !== GraphicsInfo.Software
+        layer.enabled: root.marquee && GraphicsInfo.api !== GraphicsInfo.Software
         layer.smooth: true
         layer.effect: ShaderEffect {
             property var source

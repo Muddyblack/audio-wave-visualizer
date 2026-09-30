@@ -3,7 +3,6 @@ import QtQuick
 import QtQuick.Effects
 import "../code/ColourStyle.js" as ColourStyle
 import "../code/ProgressDraw.js" as ProgressDraw
-import "debug"
 
 Item {
     id: root
@@ -341,7 +340,7 @@ Item {
                         color: Qt.rgba(root.pgEndColor.r, root.pgEndColor.g, root.pgEndColor.b, 0.82)
                     }
                 }
-                layer.enabled: !GpuDebug.noLayers
+                layer.enabled: true
                 layer.effect: MultiEffect {
                     shadowEnabled: true
                     shadowColor: root.pgStartColor
@@ -448,7 +447,7 @@ Item {
             x: Math.max(0, Math.min(parent.width - width, root.progressPixel - width / 2))
             color: Qt.rgba(root.controlColor.r, root.controlColor.g, root.controlColor.b, root.isPlaying ? 0.95 : 0.68)
             opacity: ((root.pbStyle === 0 || root.pbStyle === 2) && root.progress > 0) ? 1.0 : 0.0
-            layer.enabled: !GpuDebug.noLayers && (root.pbStyle === 0 || root.pbStyle === 2)
+            layer.enabled: root.pbStyle === 0 || root.pbStyle === 2
             layer.effect: MultiEffect {
                 shadowEnabled: true
                 shadowColor: root.pgStartColor
@@ -472,7 +471,7 @@ Item {
             border.width: 0.5
             border.color: Qt.rgba(0, 0, 0, 0x22 / 255)
             // The software scene graph cannot draw MultiEffect; keep the knob there.
-            layer.enabled: visible && !GpuDebug.noLayers && GraphicsInfo.api !== GraphicsInfo.Software
+            layer.enabled: visible && GraphicsInfo.api !== GraphicsInfo.Software
             layer.effect: MultiEffect {
                 shadowEnabled: true
                 shadowColor: "#000000"
