@@ -78,7 +78,7 @@ Item {
     }
 
     // Unknown until the window's scene graph starts; assume shaders until then.
-    readonly property bool shaderSupported: !simpleRender && !GpuDebug.noShaders && GraphicsInfo.api !== GraphicsInfo.Software
+    readonly property bool shaderSupported: !simpleRender && !GpuDebug.noShaders && !(GpuDebug.avoidGlShaders && GraphicsInfo.api === GraphicsInfo.OpenGL) && GraphicsInfo.api !== GraphicsInfo.Software
 
     Loader {
         id: shaderLoader

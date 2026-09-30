@@ -14,7 +14,28 @@ environment. They have no settings UI and change nothing in your configuration.
 | `shaders` | the WaveShader and OrbitShader `ShaderEffect`s | the Canvas renderer (the same one *Simple render* uses) |
 | `all` | all three of the above | |
 
+| `gl-shaders` | the NVIDIA fallback below: keeps the shaders on NVIDIA's OpenGL driver | |
+
 Values can be combined, e.g. `AWV_GPU_DEBUG=layers,sources`.
+
+## Known cause: NVIDIA's OpenGL driver
+
+With the proprietary NVIDIA driver, plasmashell grew by about 6.5 GB in 20
+seconds while the WaveShader / OrbitShader effects animated under Qt's OpenGL
+backend. With `shaders` switched off, or on the Vulkan backend, it stayed flat.
+So on NVIDIA under OpenGL the widget now draws the visualizer with Canvas
+automatically. The journal says
+`audio-wave-visualizer: NVIDIA driver, drawing the visualizer with Canvas under OpenGL`.
+
+To keep the GPU shaders on NVIDIA, run plasmashell on Vulkan instead:
+
+```sh
+systemctl --user set-environment QSG_RHI_BACKEND=vulkan
+systemctl --user restart plasma-plasmashell
+```
+
+`AWV_GPU_DEBUG=gl-shaders` turns the fallback off, e.g. to test a newer
+driver.
 
 ## 1. A memory logger
 
