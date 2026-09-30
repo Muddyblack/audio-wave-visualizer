@@ -312,6 +312,8 @@ Kirigami.Page {
     property bool cfg_hoverLiftDefault
     property bool cfg_scrollVolume
     property bool cfg_scrollVolumeDefault
+    property string cfg_gpuDebug
+    property string cfg_gpuDebugDefault
     property bool cfg_reducedMotion
     property bool cfg_reducedMotionDefault
     property bool cfg_batterySaver
@@ -372,6 +374,7 @@ Kirigami.Page {
     }
 
     Component.onCompleted: {
+        GpuDebug.apply(cfg_gpuDebug ?? "");
         // Enumerate outside a binding: Qt can evaluate unrelated getters while
         // listing QObject properties, including draft and defaults themselves.
         configKeys = Object.keys(root).filter(key => key.startsWith("cfg_") && key.endsWith("Default")).map(key => key.slice(4, -7));
@@ -433,10 +436,7 @@ Kirigami.Page {
     }
 
     // Diagnostics only: see debug/GpuDebug.qml.
-    PlasmaCommandSource {
-        onNewData: (source, data) => GpuDebug.handle(source, data)
-        Component.onCompleted: connectSource(GpuDebug.command)
-    }
+    onCfg_gpuDebugChanged: GpuDebug.apply(cfg_gpuDebug ?? "")
 
     PlasmaCommandSource {
         id: doctor
