@@ -76,6 +76,52 @@ PlasmoidItem {
     // Let Plasma's theme own native blur/contrast when explicitly selected.
     Plasmoid.backgroundHints: (root.effectiveConfiguration.compositorGlass ?? false) && root.effectiveConfiguration.showBg && ["glass", "liquid"].includes(root.effectiveConfiguration.surfaceStyle) ? "TranslucentBackground" : "NoBackground"
 
+    function toggleCardPopup(anchor) {
+        if (!inPanel) {
+            expanded = !expanded;
+            return;
+        }
+        cardPopup.visualParent = anchor;
+        cardPopup.visible = !cardPopup.visible;
+    }
+
+    // Plasma's standard AppletPopup always paints a theme frame, independently
+    // of Plasmoid.backgroundHints. Use a borderless dialog for our own card.
+    PlasmaCore.Dialog {
+        id: cardPopup
+        type: PlasmaCore.Dialog.PopupMenu
+        location: Plasmoid.location
+        backgroundHints: PlasmaCore.Dialog.NoBackground
+        hideOnWindowDeactivate: true
+        visible: false
+        mainItem: Item {
+            // Leave transparent space for the card's lifted shadow.
+            width: LayoutSizes.size(root.popupConfiguration)[0] + 24
+            height: LayoutSizes.size(root.popupConfiguration)[1] + 24
+            focus: true
+            Keys.onEscapePressed: cardPopup.visible = false
+            VisualizerView {
+                anchors.fill: parent
+                anchors.margins: 12
+                configuration: root.popupConfiguration
+                visualizer: vis
+                player: mpris2Model.currentPlayer
+                playerCount: mpris2Model.playerRows
+                switchPlayer: mpris2Model.cyclePlayer
+                onBattery: powerSource.onBattery
+                isPlaying: player?.playbackStatus === Mpris.PlaybackStatus.Playing
+                accentColor: Kirigami.Theme.highlightColor
+                systemTextColor: Kirigami.Theme.textColor
+                defaultFontFamily: Kirigami.Theme.defaultFont.family
+                fallbackIcon: Component {
+                    Kirigami.Icon {
+                        source: Qt.resolvedUrl("../../icon.png")
+                    }
+                }
+            }
+        }
+    }
+
     Mpris.Mpris2Model {
         id: mpris2Model
         // Row 0 is Plasma's automatic player choice; the others are players.
@@ -121,7 +167,7 @@ PlasmoidItem {
         Layout.preferredWidth: shouldShow ? implicitWidth : 0
         Layout.maximumWidth: shouldShow ? implicitWidth : 0
         Layout.minimumHeight: Plasmoid.formFactor === PlasmaCore.Types.Vertical ? implicitHeight : 0
-        onPopupRequested: root.expanded = !root.expanded
+        onPopupRequested: root.toggleCardPopup(pill)
         fallbackIcon: Component {
             Kirigami.Icon {
                 source: pill.desktopEntry !== "" ? pill.desktopEntry : Qt.resolvedUrl("../../icon.png")
@@ -170,9 +216,8 @@ PlasmoidItem {
             accentColor: Kirigami.Theme.highlightColor
             systemTextColor: Kirigami.Theme.textColor
             defaultFontFamily: Kirigami.Theme.defaultFont.family
-            // Pill click in an inline panel form: let Plasma open a popup
-            // with the full card (same as the compact representation does).
-            onPopupRequested: root.expanded = !root.expanded
+            // Use the same borderless card popup for both panel forms.
+            onPopupRequested: root.toggleCardPopup(view)
             // Hover details (tooltip or drawer) in a borderless popup below the card.
             PlasmaCore.Dialog {
                 id: detailsDialog
