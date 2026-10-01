@@ -40,8 +40,14 @@ PlasmoidItem {
         return copy;
     }
     readonly property bool inPanel: Plasmoid.formFactor === PlasmaCore.Types.Horizontal || Plasmoid.formFactor === PlasmaCore.Types.Vertical
-    // In panels the pill (or, in vertical panels, the icon) opens the full card.
-    preferredRepresentation: inPanel && plasmoid.configuration.autoPillInPanel ? compactRepresentation : fullRepresentation
+    // When autoPillInPanel is on, let Plasma show the full representation
+    // inline whenever the panel can fit at least a small panel form (30 × 30
+    // for a pill-icon).  The full representation then picks the best layout
+    // for the available space: the user's chosen layout when it fits, or a
+    // pill / pill-icon fallback when it does not.
+    // When the option is off the full card is always used (switchWidth 0).
+    switchWidth: inPanel && plasmoid.configuration.autoPillInPanel ? 30 : 0
+    switchHeight: inPanel && plasmoid.configuration.autoPillInPanel ? 30 : 0
     // The popup card: Classic with a card, glass unless a material is chosen,
     // at least 14 px radius, lifted shadow and no hover details.
     readonly property var popupConfiguration: {
@@ -124,8 +130,25 @@ PlasmoidItem {
     }
     fullRepresentation: FittedFrame {
         id: fullFrame
+        // When inPanel, the full rep may be shown inline (panel is big
+        // enough for at least a pill) or as a popup (expanded from the
+        // compact pill).  Only the popup should use popupConfiguration.
+        readonly property bool isPopup: root.inPanel && root.expanded
+        // Check whether the user's chosen layout fits the space the panel
+        // actually gave us.  When it does not, fall back to a compact panel
+        // form so the widget still renders inline instead of scaling the
+        // full card down to an unreadable size.
+        readonly property var chosenDesignSize: LayoutSizes.size(root.effectiveConfiguration)
+        readonly property bool chosenLayoutFits: !root.inPanel || isPopup || (root.width >= chosenDesignSize[0] && root.height >= chosenDesignSize[1])
+        readonly property var inlinePanelConfig: {
+            const source = root.effectiveConfiguration, copy = {};
+            for (const key of Object.keys(source))
+                copy[key] = source[key];
+            copy.layoutMode = Plasmoid.formFactor === PlasmaCore.Types.Vertical || plasmoid.configuration.layoutMode === "pillicon" ? "pillicon" : "pill";
+            return copy;
+        }
+        readonly property var cardConfiguration: isPopup ? root.popupConfiguration : chosenLayoutFits ? root.effectiveConfiguration : inlinePanelConfig
         fitContents: !["lyrics", "visualizer"].includes(LayoutSizes.mode(cardConfiguration))
-        readonly property var cardConfiguration: root.inPanel ? root.popupConfiguration : root.effectiveConfiguration
         designSize: {
             const dimensions = LayoutSizes.size(cardConfiguration);
             return Qt.size(dimensions[0], dimensions[1]);
@@ -137,7 +160,7 @@ PlasmoidItem {
             backdropSource: root.desktopWallpaper
             renderScale: fullFrame.fitScale
             anchors.fill: parent
-            configuration: root.inPanel ? root.popupConfiguration : root.effectiveConfiguration
+            configuration: fullFrame.cardConfiguration
             visualizer: vis
             player: mpris2Model.currentPlayer
             playerCount: mpris2Model.playerRows
@@ -147,6 +170,9 @@ PlasmoidItem {
             accentColor: Kirigami.Theme.highlightColor
             systemTextColor: Kirigami.Theme.textColor
             defaultFontFamily: Kirigami.Theme.defaultFont.family
+            // Pill click in an inline panel form: let Plasma open a popup
+            // with the full card (same as the compact representation does).
+            onPopupRequested: root.expanded = !root.expanded
             // Hover details (tooltip or drawer) in a borderless popup below the card.
             PlasmaCore.Dialog {
                 id: detailsDialog
