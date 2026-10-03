@@ -10,7 +10,24 @@ Item {
     property string artUrl: ""
     property string desktopEntry: ""
     property Component fallbackIcon
+    property bool flipHoverEnabled: true
     property var view: null
+    property var _flipOwner: null
+    function updateFlipOwner() {
+        const owner = flipHoverEnabled && view?.registerFlipHoverTarget ? view : null;
+        if (_flipOwner === owner)
+            return;
+        if (_flipOwner?.unregisterFlipHoverTarget)
+            _flipOwner.unregisterFlipHoverTarget(root);
+        _flipOwner = owner;
+        if (owner)
+            owner.registerFlipHoverTarget(root, 8);
+    }
+    onViewChanged: updateFlipOwner()
+    onFlipHoverEnabledChanged: updateFlipOwner()
+    Component.onCompleted: updateFlipOwner()
+    Component.onDestruction: if (_flipOwner?.unregisterFlipHoverTarget)
+        _flipOwner.unregisterFlipHoverTarget(root)
     // Corner radius of the "rounded" shape (the panel pill uses 6 px).
     property real roundedRadius: 10
 

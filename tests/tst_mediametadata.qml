@@ -147,6 +147,31 @@ TestCase {
         wait(100);
         verify(queue.width > 100);
         verify(info.height > 50);
+        const infoLookup = findChild(info, "artistInfoLookup");
+        info.view = Object.assign({}, view, {
+            samplePlayback: false,
+            configuration: {
+                onlineTrackInfo: false
+            }
+        });
+        compare(infoLookup.active, false);
+        compare(infoLookup.command, "");
+        info.view = Object.assign({}, info.view, {
+            configuration: {
+                onlineTrackInfo: true
+            }
+        });
+        compare(infoLookup.active, true);
+        infoLookup.result = {
+            summary: "Example"
+        };
+        info.view = Object.assign({}, info.view, {
+            configuration: {
+                onlineTrackInfo: false
+            }
+        });
+        compare(infoLookup.active, false);
+        compare(infoLookup.result, {});
         popup.close();
     }
 }

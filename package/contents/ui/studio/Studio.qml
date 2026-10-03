@@ -13,6 +13,8 @@ Rectangle {
     id: studioRoot
     property var draft: ({})
     property var defaults: ({})
+    property string presentationTarget: "desktop"
+    property int previewRotation: 0
     property string libraryPath: ""
     property alias presetLibrary: library
     // "kde" or "hypr": platform notes and placement rows.
@@ -134,6 +136,9 @@ Rectangle {
         query = "";
     }
     property bool canDiscard: false
+    // Optional controls supplied by the host beside the settings search.
+    property Component toolbarExtra: null
+    signal previewPopupRequested
     signal edited(var draft)
     signal discard
     signal undo
@@ -158,15 +163,84 @@ Rectangle {
     onHeightChanged: updateLayoutMode()
     Component.onCompleted: updateLayoutMode()
     readonly property int inset: compact ? 10 : 20
-    readonly property bool anyResults: Schema.SECTIONS.some(section => section.rows.some(row => Schema.rowVisible(row, section, draft, env, query.trim().toLowerCase())) && (query.trim() !== "" || section.tab === currentTab))
+    readonly property bool anyResults: Schema.SECTIONS.some(section => section.rows.some(row => rowVisible(row, section)) && (query.trim() !== "" || section.tab === currentTab))
     property alias backend: tileBackend
     property alias stillBackend: stillBackend
     property alias samplePlayer: samplePlayer
 
+    function acceptsPreset(settings) {
+        const panel = ["pill", "pillicon"].includes(settings.layoutMode || "classic");
+        return presentationTarget === "desktop" || panel === (presentationTarget === "panel");
+    }
+    readonly property var appearanceTabs: Schema.TABS.filter(tab => Schema.APPEARANCE_TABS.includes(tab.id))
+    readonly property var mainTabs: Schema.MAIN_TABS.filter(tab => presentationTarget !== "panel" || tab.id !== "lyrics")
+    onPresentationTargetChanged: {
+        presetFilter = "all";
+        if (currentGroup === "appearance" || (presentationTarget === "panel" && currentTab === "lyrics"))
+            selectTab("layout");
+    }
+    onAppearanceTabsChanged: {
+        if (currentGroup === "appearance" && !appearanceTabs.some(tab => tab.id === currentTab))
+            selectTab("layout");
+    }
+
+    function rowVisible(row, section) {
+        if (section.title === "Panel placement" && presentationTarget === "desktop")
+            return false;
+        if (env === "kde" && presentationTarget === "popup" && row.k === "glassRefraction")
+            return false;
+        if (env === "kde" && presentationTarget === "popup" && row.k === "compositorGlass" && draft.artBg)
+            return false;
+        if (presentationTarget !== "desktop" && row.k === "autoPillInPanel")
+            return false;
+        if (presentationTarget === "panel") {
+            if (section.tab === "lyrics" || (section.tab === "buttons" && section.title === "Playback buttons"))
+                return false;
+            if (section.tab === "buttons" && ["dockSrc", "customDockBgColor"].includes(row.id || row.k))
+                return false;
+        }
+        return Schema.rowVisible(row, section, draft, env, query.trim().toLowerCase());
+    }
+    function rowDefinition(row) {
+        if (env === "kde" && presentationTarget === "popup" && row.k === "glassBlur")
+            return Object.assign({}, row, {
+                label: "Preview wallpaper blur",
+                desc: "Adjusts wallpaper blur in this preview. Actual popup blur strength is set in KDE System Settings → Desktop Effects → Blur."
+            });
+        if (env === "kde" && presentationTarget === "popup" && row.k === "compositorGlass")
+            return Object.assign({}, row, {
+                label: "Blur behind card",
+                desc: "Blur application windows behind the rounded card. Requires KWin’s Blur effect."
+            });
+        if (row.k === "pillClick" && env === "kde")
+            return Object.assign({}, row, {
+                label: "Click action",
+                opts: [["popup", "Nothing"], ["toggle", "Play / pause"]]
+            });
+        if (row.k === "pillEq" && draft.layoutMode === "pillicon")
+            return Object.assign({}, row, {
+                opts: [["off", "Off"], ["static", "Static"], ["live", "Bouncing"], ["wave", "Orbit"], ["visualizer", "Mini visualizer"]]
+            });
+        if (row.k !== "layoutMode" || presentationTarget === "desktop")
+            return row;
+        return Object.assign({}, row, {
+            opts: row.opts.filter(option => (["pill", "pillicon"].includes(option.v)) === (presentationTarget === "panel"))
+        });
+    }
+
     function update(patch) {
-        edited(Object.assign({}, draft, Schema.normalize(patch)));
+        const next = Schema.normalize(patch);
+        if (presentationTarget === "panel") {
+            if (next.visualizerType !== undefined || next.customVisualizer !== undefined)
+                next.pillEq = draft.layoutMode === "pillicon" ? "visualizer" : "wave";
+            if (next.progressBarStyle !== undefined || next.customProgressBar !== undefined)
+                next.pillProgress = next.progressBarStyle === -1 && !next.customProgressBar ? "off" : next.progressBarStyle === 10 && !next.customProgressBar ? "ring" : "bar";
+        }
+        edited(Object.assign({}, draft, next));
     }
     function applyLook(settings) {
+        if (!acceptsPreset(settings))
+            return;
         const next = Schema.applyPreset(defaults, draft, settings, keepColors);
         edited(next);
     }
@@ -186,7 +260,9 @@ Rectangle {
     function saveUserPreset(name) {
         addUserPreset({
             name: name,
-            settings: Schema.changedKeys(defaults, draft)
+            settings: Object.assign(Schema.changedKeys(defaults, draft), {
+                layoutMode: draft.layoutMode
+            })
         });
     }
     function renameUserPreset(index, name) {
@@ -286,7 +362,7 @@ Rectangle {
                 width: parent.width - 36
                 spacing: 8
                 Rectangle {
-                    width: Math.max(80, parent.width - surprise.width - (discardBtn.visible ? discardBtn.width + header.spacing : 0) - header.spacing)
+                    width: Math.max(80, parent.width - surprise.width - (discardBtn.visible ? discardBtn.width + header.spacing : 0) - (extraSlot.hasExtra ? extraSlot.width + header.spacing : 0) - header.spacing)
                     height: 36
                     radius: 10
                     color: Theme.sunk
@@ -349,6 +425,19 @@ Rectangle {
                         }
                     }
                 }
+                Item {
+                    id: extraSlot
+                    objectName: "toolbarExtraSlot"
+                    readonly property bool hasExtra: studioRoot.toolbarExtra !== null
+                    visible: hasExtra
+                    width: hasExtra && extraLoader.item ? extraLoader.item.implicitWidth : 0
+                    height: 36
+                    Loader {
+                        id: extraLoader
+                        anchors.centerIn: parent
+                        sourceComponent: studioRoot.toolbarExtra
+                    }
+                }
                 StudioButton {
                     id: discardBtn
                     enabled: studioRoot.canDiscard
@@ -362,6 +451,10 @@ Rectangle {
                     text: "Surprise me"
                     onClicked: {
                         const next = Schema.surprise(studioRoot.defaults, studioRoot.draft);
+                        if (studioRoot.presentationTarget === "panel")
+                            next.layoutMode = studioRoot.draft.layoutMode === "pillicon" ? "pillicon" : "pill";
+                        else if (studioRoot.presentationTarget === "popup" && ["pill", "pillicon"].includes(next.layoutMode))
+                            next.layoutMode = "classic";
                         next.userPresets = studioRoot.draft.userPresets ?? "";
                         studioRoot.edited(next);
                     }
@@ -391,7 +484,7 @@ Rectangle {
                         spacing: 2
                         Repeater {
                             id: tabRepeater
-                            model: Schema.MAIN_TABS
+                            model: studioRoot.mainTabs
                             Item {
                                 id: tab
                                 required property var modelData
@@ -447,7 +540,7 @@ Rectangle {
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
                                     onClicked: {
-                                        studioRoot.selectTab(tab.modelData.id === "appearance" ? "viz" : tab.modelData.id);
+                                        studioRoot.selectTab(tab.modelData.id === "appearance" ? (studioRoot.presentationTarget === "panel" ? "layout" : "viz") : tab.modelData.id);
                                         studioRoot.query = "";
                                         body.contentY = 0;
                                     }
@@ -505,7 +598,7 @@ Rectangle {
                         y: 10
                         spacing: 6
                         Repeater {
-                            model: Schema.TABS.filter(t => Schema.APPEARANCE_TABS.indexOf(t.id) !== -1)
+                            model: studioRoot.appearanceTabs
                             StudioButton {
                                 required property var modelData
                                 text: modelData.label
@@ -601,7 +694,8 @@ Rectangle {
                         visible: studioRoot.ready && !studioRoot.anyResults
                         topPadding: 30
                         horizontalAlignment: Text.AlignHCenter
-                        text: "No settings match that search."
+                        text: studioRoot.query.trim() !== "" ? "No settings match that search." : "No settings are available for this design."
+                        wrapMode: Text.WordWrap
                         color: Theme.dim
                         font.family: Theme.fontFamily
                         font.pixelSize: 12

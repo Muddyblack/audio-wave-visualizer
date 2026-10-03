@@ -339,9 +339,9 @@ ShellRoot {
                 // Named so the details' own `view` property does not shadow it.
                 readonly property var cardView: view
                 anchor.item: view
-                anchor.rect.x: -50
-                anchor.rect.y: (view.detailsPopupMode === "drawer" ? view.height - 14 : view.height + 10) - 50
-                implicitWidth: Math.max(view.width, 250) + 100
+                anchor.rect.x: (view.detailsPopupMode === "drawer" ? 0 : view.detailsPointer.x + 12) - 50
+                anchor.rect.y: (view.detailsPopupMode === "drawer" ? view.height : view.detailsPointer.y + 20) - 50
+                implicitWidth: (view.detailsPopupMode === "drawer" ? Math.max(view.width, 380) : 310) + 100
                 implicitHeight: hoverDetails.implicitHeight + 100
                 color: "transparent"
                 visible: view.detailsVisible && panel.visible

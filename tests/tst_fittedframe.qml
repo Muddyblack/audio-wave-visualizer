@@ -24,6 +24,39 @@ TestCase {
 
     function init() {
         frame.fitContents = true;
+        frame.contentRotation = 0;
+    }
+    function test_sidewaysContentAndInput_data() {
+        return [
+            {
+                tag: "left",
+                angle: -90
+            },
+            {
+                tag: "right",
+                angle: 90
+            }
+        ];
+    }
+    function test_sidewaysContentAndInput(data) {
+        frame.designSize = Qt.size(250, 332);
+        frame.contentRotation = data.angle;
+        frame.width = 166;
+        frame.height = 125;
+        wait(0);
+        compare(frame.implicitWidth, 332);
+        compare(frame.implicitHeight, 250);
+        compare(frame.fitScale, 0.5);
+        const canvas = findChild(frame, "fittedCanvas");
+        for (const point of [[0, 0], [250, 0], [0, 332], [250, 332]]) {
+            const mapped = canvas.mapToItem(frame, point[0], point[1]);
+            verify(mapped.x >= -0.01 && mapped.x <= frame.width + 0.01);
+            verify(mapped.y >= -0.01 && mapped.y <= frame.height + 0.01, "Mapped y=" + mapped.y + "; canvas=" + canvas.x + "," + canvas.y + " " + canvas.width + "x" + canvas.height + "; rotation=" + canvas.rotation);
+        }
+        const target = button.mapToItem(frame, 25, 15);
+        const before = frame.clicks;
+        mouseClick(frame, target.x, target.y);
+        compare(frame.clicks, before + 1);
     }
     function test_readingLayoutReflows() {
         frame.designSize = Qt.size(380, 320);

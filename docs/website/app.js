@@ -120,6 +120,7 @@ function dockHTML(s, playing) {
   return `<div class="dock ${s.dockStyle}">${s.showShuffleRepeat ? b('shuffle', 'xs' + (P.shuffle ? ' on' : '')) : ''}${s.showSkipButtons ? b('prev') : ''}<button class="play" data-act="play" aria-label="${playing ? 'Pause' : 'Play'}">${icon(playing ? 'pause' : 'play')}</button>${s.showSkipButtons ? b('next') : ''}${s.showShuffleRepeat ? b('repeat', 'xs' + (P.repeat ? ' on' : '')) : ''}</div>`;
 }
 function pbHTML(style, o, on, len, fixed) {
+  if (style === -1) return '';
   const rem = o.timeFormat === 'remaining';
   const el = fixed == null ? fmtTime(P.pos) : '1:31';
   const tot = rem ? '-' + fmtTime(len - (fixed == null ? P.pos : 91)) : fmtTime(len);
@@ -186,7 +187,7 @@ function widgetHTML(s, status, opt = {}) {
         : s.pillContent === 'artist-title' ? `<span class="pt">${esc(a1)}</span><span class="psep">—</span><span class="pa">${esc(t1)}</span>`
         : `<span class="pt">${esc(t1)}</span><span class="psep">·</span><span class="pa">${esc(a1)}</span>`;
       const b = n => `<button data-act="${n}" aria-label="${n}">${icon(n)}</button>`;
-      const ctl = !d.hasPlayer || s.pillControls === 'none' ? '' : `<span class="pctl">${s.pillControls === 'all' ? b('prev') : ''}${b(d.playing ? 'pause' : 'play').replace('data-act="pause"', 'data-act="play"')}${s.pillControls === 'all' ? b('next') : ''}</span>`;
+      const ctl = !d.hasPlayer || s.pillControls === 'none' ? '' : `<span class="pctl${s.pillControlsOnHover ? ' hover-only' : ''}">${s.pillControls === 'all' ? b('prev') : ''}${b(d.playing ? 'pause' : 'play').replace('data-act="pause"', 'data-act="play"')}${s.pillControls === 'all' ? b('next') : ''}</span>`;
       body = `${s.pillArt ? artHTML(s, d, 20, { coverOK, title, ring, small: true }) : ''}${eq}<span class="ptxt ${tcls}">${parts}</span>${ctl}`;
     }
     const line = s.pillProgress === 'underline' && d.hasPlayer ? '<i class="pline"><i></i></i>' : '';

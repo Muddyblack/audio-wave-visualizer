@@ -121,6 +121,71 @@ TestCase {
         verify(subject !== null);
         waitForRendering(subject);
     }
+    Component {
+        id: hostContextMenu
+        MouseArea {
+            anchors.fill: parent
+            acceptedButtons: Qt.RightButton
+            property int menuRequests: 0
+            onPressed: menuRequests++
+        }
+    }
+    function test_pillScrollsOnlyOverflowingText() {
+        backend.frameTimeMs = 0;
+        subject.presentation = "pill";
+        subject.configuration = Object.assign({}, defaults, {
+            marquee: true,
+            pillMaxWidth: 220,
+            pillControls: "all"
+        });
+        player.track = "A very long song title that cannot possibly fit in this panel pill";
+        verify(waitForRendering(subject));
+        const row = findChild(subject, "pillTextRow");
+        const viewport = findChild(subject, "pillTextViewport");
+        const initialWidth = subject.implicitWidth;
+        backend.frameTimeMs = 5000;
+        verify(row.x < 0);
+        verify(viewport.clip);
+        compare(subject.implicitWidth, initialWidth);
+        mouseClick(findChild(subject, "pillNextArea"));
+        compare(player.nextCalls, 1);
+        subject.configuration = Object.assign({}, subject.configuration, {
+            reducedMotion: true
+        });
+        compare(row.x, 0);
+        subject.configuration = Object.assign({}, subject.configuration, {
+            reducedMotion: false,
+            marquee: false
+        });
+        compare(row.x, 0);
+        subject.configuration = Object.assign({}, subject.configuration, {
+            marquee: true,
+            pillContent: "title"
+        });
+        player.track = "Short";
+        verify(waitForRendering(subject));
+        backend.frameTimeMs = 9000;
+        compare(row.x, 0);
+    }
+    function test_rightClickReachesHost_data() {
+        return ["pill", "pillicon", "classic"].map(layout => ({
+                    tag: layout,
+                    layout: layout
+                }));
+    }
+    function test_rightClickReachesHost(data) {
+        const host = createTemporaryObject(hostContextMenu, testCase);
+        subject.parent = host;
+        subject.configuration = Object.assign({}, defaults, {
+            layoutMode: data.layout,
+            hoverDetails: "flip"
+        });
+        verify(waitForRendering(subject));
+        const target = data.layout === "classic" ? findChild(subject, "titleViewport") : subject;
+        mouseClick(target, target.width / 2, target.height / 2, Qt.RightButton);
+        compare(host.menuRequests, 1, "Plasma must receive the right-click for its applet menu");
+        compare(subject.detailsOpen, false);
+    }
     function test_sharedColourModeReachesProgressAndControls_data() {
         return [0, 1, 2, 3, 4, 5, 6, 7, 8, 10].map(style => ({
                     tag: "progress-" + style,
@@ -632,6 +697,135 @@ TestCase {
         compare(switches, 1);
         verify(!findChild(subject, "lyricLine").visible, "No lyrics without the opt-in");
     }
+    function test_extendedDetailsAndOnlineConsent() {
+        compare(defaults.onlineTrackInfo, false);
+        player.metadata = {
+            "xesam:albumArtist": ["Album Artist"],
+            "xesam:composer": ["Composer"],
+            "xesam:discNumber": 2,
+            "xesam:audioBPM": 120,
+            "xesam:contentCreated": "2001-02-03"
+        };
+        subject.configuration = Object.assign({}, defaults, {
+            hoverDetails: "tooltip",
+            detailFields: ["albumArtist", "composer", "disc", "bpm", "date", "releaseType", "summary"]
+        });
+        const details = createTemporaryObject(detailsComponent, testCase, {
+            view: subject,
+            x: 400
+        });
+        const lookup = findChild(details, "trackDetailsLookup");
+        compare(lookup.active, false);
+        compare(lookup.command, "");
+        compare(details.rows.map(row => row[1]), ["Album Artist", "Composer", "2", "120", "2001-02-03"]);
+        subject.configuration = Object.assign({}, subject.configuration, {
+            onlineTrackInfo: true
+        });
+        mouseMove(subject, 20, 20);
+        tryCompare(lookup, "active", true);
+        lookup.result = {
+            releaseType: "Album",
+            summary: "An artist summary",
+            releaseDate: "1999-01-01"
+        };
+        compare(details.rows[4][1], "2001-02-03");
+        compare(details.rows[5][1], "Album");
+        compare(details.showSummary, true);
+        subject.configuration = Object.assign({}, subject.configuration, {
+            onlineTrackInfo: false
+        });
+        compare(lookup.active, false);
+        compare(lookup.result, {});
+        compare(details.showSummary, false);
+        compare(details.rows.length, 5);
+        subject.configuration = Object.assign({}, subject.configuration, {
+            onlineTrackInfo: true
+        });
+        details.mode = "back";
+        compare(lookup.active, false, "A closed flip card must not look up metadata");
+        details.visible = false;
+        compare(lookup.active, false);
+    }
+    function test_lookupUsesBridgeMetadataAndClearsRecordingChoice() {
+        player.artist = "";
+        player.album = "";
+        player.metadata = {
+            "xesam:artist": ["Bridge artist"],
+            "xesam:album": "Bridge album"
+        };
+        subject.configuration = Object.assign({}, defaults, {
+            appleTrackInfo: true
+        });
+        const details = createTemporaryObject(detailsComponent, testCase, {
+            view: subject,
+            x: 400
+        });
+        const lookup = findChild(details, "trackDetailsLookup");
+        compare(lookup.payload.artist, "Bridge artist");
+        compare(lookup.payload.album, "Bridge album");
+        compare(lookup.payload.duration, 180);
+        compare(lookup.payload.apple, true);
+        compare(lookup.active, false, "Apple fallback requires the master online switch");
+        details.selectedRecordingId = "chosen-recording";
+        compare(lookup.payload.recordingId, "chosen-recording");
+        player.track = "Another song";
+        compare(details.selectedRecordingId, "");
+        compare(lookup.payload.recordingId, "");
+    }
+    function test_detailsSectionsAndScrolling() {
+        failOnWarning(/TypeError|ReferenceError|Binding loop/);
+        testCase.height = 500;
+        subject.samplePlayback = true;
+        player.metadata = {
+            "xesam:composer": ["Hiroaki Tsutsumi"],
+            "xesam:audioBPM": 124
+        };
+        subject.configuration = Object.assign({}, defaults, {
+            detailFields: ["album", "genre", "length", "composer", "producers", "performers", "label", "date", "format", "player", "volume", "summary"]
+        });
+        const details = createTemporaryObject(detailsComponent, testCase, {
+            view: subject,
+            mode: "drawer",
+            width: 380,
+            height: 360
+        });
+        const lookup = findChild(details, "trackDetailsLookup");
+        lookup.result = {
+            genres: ["Soundtrack"],
+            producers: "Example producer",
+            performers: "Example performer (piano, synthesizer)",
+            label: "Example Records",
+            releaseDate: "2025-07-01",
+            summary: "A sample artist summary to check the expanded details panel. Catalog credits appear here only when a recording can be matched reliably."
+        };
+        compare(details.sections.map(section => section.title), ["Song", "Credits", "Release", "Playback"]);
+        verify(!details.rows.some(row => row[0] === "Volume"));
+        verify(waitForRendering(details));
+        const scroll = findChild(details, "trackInfoScroll");
+        verify(scroll.contentHeight > scroll.height);
+        grabImage(details).save("/tmp/track-info-drawer.png");
+        details.mode = "tooltip";
+        details.width = details.implicitWidth;
+        details.height = details.implicitHeight;
+        verify(details.height <= 300);
+        verify(waitForRendering(details));
+        grabImage(details).save("/tmp/track-info-tooltip.png");
+        details.mode = "back";
+        details.width = 360;
+        details.height = 104;
+        verify(waitForRendering(details));
+        verify(scroll.contentHeight > scroll.height);
+        grabImage(details).save("/tmp/track-info-flip.png");
+        scroll.contentItem.contentY = 40;
+        player.track = "Next song";
+        compare(scroll.contentItem.contentY, 0, "A new song opens at its header");
+        lookup.status = "empty";
+        lookup.result = {
+            reason: "not-found"
+        };
+        verify(details.rows.some(row => row[0] === "Length"));
+        verify(details.rows.some(row => row[0] === "Source"));
+    }
     function test_detailRowsSkipMissingData() {
         subject.configuration = Object.assign({}, defaults, {
             detailFields: ["album", "genre", "format", "player", "length", "volume"]
@@ -639,42 +833,179 @@ TestCase {
         const details = createTemporaryObject(detailsComponent, testCase, {
             view: subject
         });
-        compare(details.rows.map(row => row[0]), ["Album", "Source", "Length", "Volume"]);
+        compare(details.rows.map(row => row[0]), ["Album", "Source", "Length"]);
         compare(details.rows[2][1], "3:00");
     }
-    function test_flipRequiresExplicitClickAndKeepsControlsReachable() {
+    function test_flipFromTitleWithCoverBackground_data() {
+        return [
+            {
+                tag: "inline",
+                layout: "inline",
+                scale: 1
+            },
+            {
+                tag: "inline-scaled",
+                layout: "inline",
+                scale: .75
+            },
+            {
+                tag: "classic",
+                layout: "classic",
+                scale: 1
+            }
+        ];
+    }
+    function test_flipFromTitleWithCoverBackground(data) {
+        failOnWarning(/TypeError|ReferenceError/);
+        subject.scale = data.scale;
+        subject.configuration = Object.assign({}, defaults, {
+            layoutMode: data.layout,
+            hoverDetails: "flip",
+            artBg: true,
+            artBgKeepThumb: false,
+            showBg: true,
+            progressBarStyle: 10,
+            flipInfoButton: false
+        });
+        player.artUrl = Qt.resolvedUrl("fixtures/cover-white.ppm").toString();
+        tryVerify(() => subject.artIsBackground);
+        verify(waitForRendering(subject));
+        const title = findChild(subject, "titleViewport");
+        verify(title !== null && title.visible && title.width > 0);
+        const play = findChild(subject, "playArea");
+        mouseMove(play);
+        wait(750);
+        verify(!subject.flipped, "Controls still do not trigger flip");
+        mouseMove(title, title.width / 2, title.height / 2);
+        wait(200);
+        verify(!subject.flipped, "Title hover still has a short delay");
+        tryCompare(subject, "flipped", true, 1500);
+        mouseMove(testCase, 395, 135);
+        tryCompare(subject, "flipped", false, 1000);
+    }
+    function test_coverPressAndEdgeNeverFlip() {
         subject.configuration = Object.assign({}, defaults, {
             hoverDetails: "flip",
-            showShuffleRepeat: true
+            artClick: "zoom"
         });
-        mouseMove(subject, 20, 20);
-        wait(400);
-        verify(!subject.flipped, "Entering the card must not hide its controls");
-        const shuffle = findChild(subject, "shuffleArea");
-        mouseClick(shuffle);
-        compare(player.shuffle, true);
-        mouseClick(findChild(subject, "repeatArea"));
-        compare(player.loopState, 2);
+        player.artUrl = Qt.resolvedUrl("../package/icon.png").toString();
+        const art = findChild(subject, "classicArt");
+        tryCompare(art, "coverReady", true);
+        mouseMove(art, 1, art.height / 2);
+        wait(750);
+        verify(!subject.flipped, "The seek ring edge does not trigger flip");
+        mousePress(art, art.width / 2, art.height / 2);
+        wait(750);
+        verify(!subject.flipped, "A held cover click does not trigger flip");
+        mouseRelease(art, art.width / 2, art.height / 2);
+        verify(subject.zoomOpen, "The configured cover click still works");
+        subject.zoomOpen = false;
+    }
+    function test_flipKeepsSharedBackground_data() {
+        return ["color", "glass", "solid", "atmosphere", "cover"].map(style => ({
+                    tag: style,
+                    style: style
+                }));
+    }
+    function test_flipKeepsSharedBackground(data) {
+        subject.configuration = Object.assign({}, defaults, {
+            hoverDetails: "flip",
+            showBg: true,
+            surfaceStyle: data.style === "cover" ? "color" : data.style,
+            artBg: data.style === "cover",
+            artBgBlur: 0,
+            reducedMotion: true
+        });
+        if (data.style === "cover") {
+            player.artUrl = Qt.resolvedUrl("fixtures/cover-white.ppm").toString();
+            wait(300);
+        }
+        const surface = findChild(subject, "cardSurface");
+        compare(surface.parent, subject, "Both faces share the same surface");
+        verify(waitForRendering(subject));
+        wait(100); // Allow material loaders to finish before comparing the two faces.
+        const before = grabImage(subject).pixel(subject.width - 6, subject.height - 6);
+        mouseClick(findChild(subject, "flipDetailsButton"));
+        verify(subject.flipped);
+        verify(waitForRendering(subject));
+        const background = findChild(findChild(subject, "flipBack"), "trackInfoBackground");
+        verify(background !== null);
+        verify(!background.visible, "Details do not paint another background");
+        compare(findChild(subject, "cardSurface"), surface);
+        compare(grabImage(subject).pixel(subject.width - 6, subject.height - 6), before);
+    }
+    function test_flipOnlyAfterCoverHover_data() {
+        return [
+            {
+                tag: "normal",
+                scale: 1
+            },
+            {
+                tag: "scaled",
+                scale: .75
+            },
+            {
+                tag: "loaded-cover",
+                scale: 1,
+                cover: true
+            },
+            {
+                tag: "loaded-cover-ring",
+                scale: .75,
+                cover: true,
+                ring: true
+            }
+        ];
+    }
+    function test_flipOnlyAfterCoverHover(data) {
+        subject.scale = data.scale;
+        subject.configuration = Object.assign({}, defaults, {
+            hoverDetails: "flip",
+            showShuffleRepeat: true,
+            artClick: "zoom",
+            progressBarStyle: data.ring ? 10 : 0
+        });
+        if (data.cover)
+            player.artUrl = Qt.resolvedUrl("../package/icon.png").toString();
+        const button = findChild(subject, "flipDetailsButton");
+        verify(button.visible, "Info button is available as a backup by default");
+        subject.configuration = Object.assign({}, subject.configuration, {
+            flipInfoButton: false
+        });
+        verify(!button.visible);
+        const next = findChild(subject, "nextArea");
+        mouseMove(findChild(subject, "playArea"));
+        wait(750);
+        verify(!subject.flipped, "Hovering playback controls never flips");
         mouseClick(findChild(subject, "playArea"));
         compare(player.playCalls, 1);
-        const button = findChild(subject, "flipDetailsButton");
-        const position = button.mapToItem(subject, 0, 0);
-        mouseClick(button);
-        verify(subject.flipped);
-        const back = findChild(subject, "flipBack");
-        tryCompare(back, "enabled", true);
-        compare(button.mapToItem(subject, 0, 0), position, "Return button must not rotate");
-        mouseMove(testCase, 395, 135);
-        verify(subject.flipped, "Moving the pointer must not flip the card again");
+        const art = findChild(subject, "classicArt");
+        if (data.cover)
+            tryCompare(art, "coverReady", true);
+        mouseMove(art, art.width / 2, art.height / 2);
+        wait(200);
+        verify(!subject.flipped, "Passing over the cover does not flip immediately");
+        mouseMove(findChild(subject, "playArea"));
+        wait(700);
+        verify(!subject.flipped, "Leaving the cover cancels the pending flip");
+        mouseMove(art, art.width / 2, art.height / 2);
+        tryCompare(subject, "flipped", true, 1500);
+        tryCompare(findChild(subject, "flipBack"), "enabled", true);
+        verify(button.visible);
         mouseClick(button);
         verify(!subject.flipped);
         tryCompare(findChild(subject, "playbackFace"), "enabled", true);
-        mouseClick(findChild(subject, "playArea"));
-        compare(player.playCalls, 2);
-        mouseClick(button);
-        verify(subject.flipped);
+        mouseMove(art, art.width / 2, art.height / 2);
+        tryCompare(subject, "flipped", true, 1500);
         keyClick(Qt.Key_Escape);
         verify(!subject.flipped);
+        subject.configuration = Object.assign({}, subject.configuration, {
+            flipInfoButton: true
+        });
+        mouseClick(button);
+        verify(subject.flipped, "Click remains a backup");
+        mouseMove(testCase, 395, 135);
+        tryCompare(subject, "flipped", false, 1000);
     }
     function test_artTiltKeepsClickTargetsStable() {
         subject.configuration = Object.assign({}, defaults, {
@@ -825,7 +1156,7 @@ TestCase {
         });
         mouseWheel(subject, 100, 50, 0, 120);
         compare(volumeCommands.length, 1);
-        verify(volumeCommands[0].includes("system_volume.py"));
+        verify(volumeCommands[0].includes("system_volume.sh"));
         verify(volumeCommands[0].includes(" 0.0400 "));
         compare(player.volume, 0.5, "Wheel scrolling must leave MPRIS volume alone");
         const worker = findChild(subject, "volumeWorker");
@@ -835,6 +1166,19 @@ TestCase {
         fuzzyCompare(subject.displayedVolume, 0.54, 0.000001);
         verify(findChild(subject, "volumeOsd").shown);
     }
+    function test_scrollVolumeOnPanelPill() {
+        subject.systemVolumeCommandSourceComponent = volumeCommandComponent;
+        subject.presentation = "pill";
+        subject.width = 300;
+        subject.height = 30;
+        subject.configuration = Object.assign({}, defaults, {
+            scrollVolume: true,
+            pillControls: "all"
+        });
+        mouseWheel(subject, 150, 15, 0, 120);
+        compare(volumeCommands.length, 1, "Wheel over the pill text must reach system volume");
+    }
+
     function test_volumeHighResolutionAndQueue() {
         subject.systemVolumeCommandSourceComponent = volumeCommandComponent;
         subject.configuration = Object.assign({}, defaults, {
@@ -867,6 +1211,70 @@ TestCase {
         verify(!osd.shown);
     }
 
+    function test_cardRingSeekWithPlasmaUnits() {
+        subject.positionUnitsPerSecond = 1000000;
+        player.length = 180000000;
+        player.position = 60000000;
+        subject.configuration = Object.assign({}, defaults, {
+            progressBarStyle: 10
+        });
+        const area = findChild(subject, "ringSeekArea");
+        verify(area && area.visible);
+        mouseClick(area, area.width - 4, area.height / 2);
+        fuzzyCompare(player.position, 45000000, 1000);
+    }
+
+    function test_panelSeekRecoversAfterMissingDuration() {
+        subject.presentation = "pill";
+        subject.configuration = Object.assign({}, defaults, {
+            pillProgress: "bar",
+            progressBarStyle: 0,
+            seekGestures: false
+        });
+        const progress = findChild(subject, "pillStyledProgress");
+        const area = findChild(progress, "pbArea");
+        waitForRendering(subject);
+        verify(progress.visible);
+        mouseClick(area, area.width / 2, area.height / 2);
+        fuzzyCompare(player.position, 90, 0.1);
+        player.length = 0;
+        player.track = "Short without duration";
+        verify(!progress.visible);
+        player.length = 120;
+        player.track = "Next video";
+        tryCompare(progress, "visible", true);
+        mouseClick(area, area.width / 2, area.height / 2);
+        fuzzyCompare(player.position, 60, 0.1);
+    }
+
+    function test_panelStyledProgressAndWindowEffects() {
+        subject.presentation = "pill";
+        subject.surfaceEffectMargin = 12;
+        subject.configuration = Object.assign({}, defaults, {
+            pillProgress: "bar",
+            progressBarStyle: 4,
+            showBg: true,
+            cardShadow: "lifted"
+        });
+        const progress = findChild(subject, "pillStyledProgress");
+        verify(progress.visible);
+        compare(progress.style, 4);
+        verify(!progress.showTimes);
+        const wave = findChild(progress, "waveformSeek");
+        compare(wave.height, 8);
+        verify(wave.y + wave.height <= progress.height);
+        const surface = findChild(subject, "cardSurface");
+        compare(surface.shadowMargin, 12);
+        tryVerify(() => !!findChild(subject, "cardShadow"));
+        for (const layer of findChild(subject, "cardShadow").layers)
+            verify(layer.y + layer.blur * 1.5 <= 12, "Shadow must fade inside the popup padding");
+        subject.configuration = Object.assign({}, subject.configuration, {
+            artBgTransparency: 0
+        });
+        compare(findChild(subject, "cardShadow").parent.opacity, 0);
+        subject.surfaceEffectMargin = 160;
+    }
+
     function test_panelPill() {
         subject.presentation = "pill";
         subject.configuration = Object.assign({}, defaults, {
@@ -882,8 +1290,20 @@ TestCase {
         verify(findChild(subject, "pillUnderline").visible);
         mouseClick(findChild(subject, "pillPlayArea"));
         compare(player.playCalls, 1);
+        mouseClick(findChild(subject, "pillPrevArea"));
+        compare(player.previousCalls, 1);
         mouseClick(findChild(subject, "pillNextArea"));
         compare(player.nextCalls, 1);
+        subject.configuration = Object.assign({}, subject.configuration, {
+            pillControls: "play"
+        });
+        verify(!findChild(subject, "pillPrevArea").visible);
+        verify(findChild(subject, "pillPlayArea").visible);
+        verify(!findChild(subject, "pillNextArea").visible);
+        subject.configuration = Object.assign({}, subject.configuration, {
+            pillControls: "none"
+        });
+        verify(!findChild(subject, "pillPlayArea").visible);
         let popups = 0;
         subject.popupRequested.connect(() => popups++);
         mouseClick(findChild(subject, "pillClickArea"), 8, 15);
@@ -894,6 +1314,38 @@ TestCase {
         mouseClick(findChild(subject, "pillClickArea"), 8, 15);
         compare(player.playCalls, 2, "pillClick toggle plays/pauses");
         compare(popups, 1);
+    }
+    function test_panelPillHoverControls() {
+        subject.presentation = "pill";
+        subject.configuration = Object.assign({}, defaults, {
+            pillControls: "all",
+            pillControlsOnHover: true
+        });
+        waitForRendering(subject);
+        mouseMove(testCase, testCase.width - 1, testCase.height - 1);
+        const controls = findChild(subject, "pillControls");
+        tryCompare(controls, "opacity", 0);
+        verify(!controls.enabled);
+        const pillWidth = subject.implicitWidth;
+        mouseMove(subject, 10, 15);
+        tryCompare(controls, "opacity", 1);
+        verify(controls.enabled);
+        compare(subject.implicitWidth, pillWidth);
+        mouseClick(findChild(subject, "pillPrevArea"));
+        mouseClick(findChild(subject, "pillPlayArea"));
+        mouseClick(findChild(subject, "pillNextArea"));
+        compare(player.previousCalls, 1);
+        compare(player.playCalls, 1);
+        compare(player.nextCalls, 1);
+        mouseMove(testCase, testCase.width - 1, testCase.height - 1);
+        tryCompare(controls, "opacity", 0);
+        verify(!controls.enabled);
+        compare(subject.implicitWidth, pillWidth);
+        subject.configuration = Object.assign({}, subject.configuration, {
+            pillControlsOnHover: false
+        });
+        compare(controls.opacity, 1);
+        verify(controls.enabled);
     }
     function test_panelPillLongMetadataStaysInside() {
         subject.presentation = "pill";

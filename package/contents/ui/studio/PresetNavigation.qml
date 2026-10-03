@@ -21,7 +21,7 @@ Item {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 6
             Repeater {
-                model: Schema.PRESET_VIEWS
+                model: Schema.PRESET_VIEWS.filter(view => navigation.studio.presentationTarget === "desktop" || view[0] !== "daily")
                 StudioButton {
                     required property var modelData
                     text: modelData[1]

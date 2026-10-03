@@ -520,6 +520,7 @@ textarea.sel:focus{border-color:color-mix(in srgb,var(--brand) 40%,transparent)}
 .L-pillicon .eq{position:absolute;right:1px;bottom:3px;height:9px;padding:1px;border-radius:3px;background:#000a}
 .L-pillicon .eq i{width:1.5px}
 .pctl{display:flex;gap:0;margin-left:2px}
+.w:not(:hover):not(:focus-within) .pctl.hover-only{opacity:0;pointer-events:none}
 .pctl button{width:20px;height:20px;border:0;background:none;padding:0;display:grid;place-items:center;color:var(--control);opacity:.8;border-radius:50%}
 .pctl button:hover{background:var(--studio-rangeTrack);opacity:1}
 .pctl svg{width:10px;height:10px;fill:currentColor}

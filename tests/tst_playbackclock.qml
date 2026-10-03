@@ -11,6 +11,10 @@ TestCase {
         QtObject {
             property real length: 180000000
             property real position: 10000000
+            property int refreshCalls: 0
+            function updatePosition() {
+                refreshCalls++;
+            }
         }
     }
     Component {
@@ -42,6 +46,17 @@ TestCase {
         verify(subject !== null);
         positionSpy.clear();
         secondsSpy.clear();
+    }
+
+    function test_refreshesPositionWhenShownAndNotWhileHidden() {
+        player.refreshCalls = 0;
+        subject.refreshPosition();
+        compare(player.refreshCalls, 0);
+        subject.active = true;
+        compare(player.refreshCalls, 1);
+        subject.active = false;
+        subject.refreshPosition();
+        compare(player.refreshCalls, 1);
     }
 
     function test_explicitSecondsForLongQuickshellTracks() {
@@ -87,7 +102,10 @@ TestCase {
         player.length = 240000000;
         compare(subject.lengthValue, 240000000);
         player.length = 0;
-        compare(subject.lengthValue, 240000000, "Transient empty metadata keeps the valid length");
+        compare(subject.lengthValue, 0, "Missing duration must not reuse the previous video's seek range");
+        compare(subject.displayedPosition, 0);
+        verify(!subject.canSeek);
+        verify(!subject.seekToFraction(0.5));
         player.length = 240000000;
         player.position = 90000000;
         compare(subject.displayedPosition, 90000000);

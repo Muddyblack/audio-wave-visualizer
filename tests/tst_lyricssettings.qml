@@ -8,6 +8,7 @@ TestCase {
     // The live preview reads the host's applied capture settings, separately
     // from the cfg_* draft supplied to the settings page.
     property QtObject plasmoid: QtObject {
+        property int formFactor: 0
         property QtObject configuration: QtObject {
             property int numBars: 4
             property int framerate: 60
@@ -50,6 +51,72 @@ TestCase {
         compare(page.title, "General");
         verify(page.parent !== null);
         stack.clear();
+    }
+
+    function test_panelAndPopupDraftsPreviewAndDiscardTogether() {
+        const properties = {
+            title: "General"
+        };
+        for (const key of Object.keys(defaults)) {
+            properties["cfg_" + key] = defaults[key];
+            properties["cfg_" + key + "Default"] = defaults[key];
+        }
+        plasmoid.formFactor = 2;
+        const page = createTemporaryObject(pageComponent, this, properties);
+        verify(page !== null);
+        const studio = findChild(page, "settingsStudio");
+        verify(studio !== null);
+        studio.update({
+            panelDisplayMode: "pill"
+        });
+        compare(page.cfg_panelDisplayMode, "pill");
+        studio.update({
+            panelOrientation: "right"
+        });
+        compare(page.cfg_panelOrientation, "right");
+        compare(studio.previewRotation, 0);
+        compare(page.editingTarget, "panel");
+        compare(studio.draft.layoutMode, "pill");
+        studio.update({
+            pillControls: "all"
+        });
+        page.editingPopup = true;
+        compare(studio.draft.layoutMode, "classic");
+        studio.update({
+            layoutMode: "orbit",
+            visualizerType: 3,
+            bgRadius: 3
+        });
+        compare(studio.draft.layoutMode, "orbit");
+        compare(studio.draft.bgRadius, 3);
+        const sync = findChild(page, "syncAppearance");
+        verify(sync !== null);
+        const toolbarSlot = findChild(studio, "toolbarExtraSlot");
+        verify(toolbarSlot !== null);
+        verify(toolbarSlot.width > 200);
+        compare(sync.parent.parent.parent, toolbarSlot);
+        compare(page.footer, null);
+        page.editingPopup = false;
+        compare(sync.text, "Use popup look");
+        sync.clicked();
+        compare(studio.draft.layoutMode, "pill");
+        compare(studio.draft.bgRadius, 3);
+        compare(studio.draft.pillEq, "wave");
+        compare(studio.draft.visualizerType, 3);
+        compare(studio.draft.pillControls, "all");
+        verify(page.hasChanges);
+        page.discard();
+        compare(page.cfg_panelDisplayMode, defaults.panelDisplayMode);
+        compare(page.cfg_panelOrientation, defaults.panelOrientation);
+        compare(page.cfg_panelAppearance, "");
+        compare(page.cfg_popupAppearance, "");
+        compare(studio.draft.pillControls, defaults.pillControls);
+        verify(!page.hasChanges);
+        plasmoid.formFactor = 0;
+    }
+
+    function cleanup() {
+        plasmoid.formFactor = 0;
     }
 
     function test_plasmaRoundTrip() {

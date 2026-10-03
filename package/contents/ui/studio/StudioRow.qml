@@ -12,7 +12,7 @@ Item {
     property bool first: false
 
     readonly property var section: Schema.SECTIONS[sectionIndex]
-    readonly property var rowData: section.rows[rowIndex]
+    readonly property var rowData: studio.rowDefinition(section.rows[rowIndex])
     readonly property var value: Schema.rowValue(rowData, studio.draft)
     readonly property bool disabledRow: !!rowData.disabled && rowData.disabled(studio.draft)
     readonly property bool hasHead: !!rowData.label && ["customStyle", "presets", "userPresets"].indexOf(rowData.type) === -1
@@ -24,7 +24,7 @@ Item {
     }
 
     objectName: "row_" + (rowData.k || rowData.id)
-    visible: Schema.rowVisible(rowData, section, studio.draft, studio.env, studio.query.trim().toLowerCase())
+    visible: studio.rowVisible(rowData, section)
     height: visible ? content.height + 26 : 0
     opacity: disabledRow ? 0.4 : 1
     enabled: !disabledRow

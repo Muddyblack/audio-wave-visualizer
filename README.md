@@ -47,6 +47,12 @@
 
 The widget follows system audio with [cava][cava] and shows album artwork, track information, and playback controls from MPRIS players. Choose a ready-made look or tune one in the built-in settings studio.
 
+The panel pill defaults to a music-reactive mini visualizer. Enable **Layout → Track text → Scroll long titles** to scroll overflowing pill text; Reduced motion keeps it still.
+
+Track info groups selected fields into Song, Credits, Release and Playback sections. Tooltip gives a compact preview; Drawer opens a wider panel below the widget. Flip opens after hovering over the cover or song title for 350 ms, leaving playback controls and seeking unaffected. The info button remains available as a click backup; disable “Show flip info button” for hover-only. Leave the widget, press Escape or click × to return. Long details scroll, and volume stays with the playback controls. Choose Essentials, Credits or All details in one click, or Customize to select fields by group. Surprise me and daily looks preserve the track-info setup.
+
+**Online track information is off by default.** Enable it in the settings studio’s Track info tab to send song title, artist, album and length to MusicBrainz and the artist name to English Wikipedia. Recording matches can add songwriters, composers, producers, performers, arrangers, version notes and ISRCs. Label, country and edition date appear only when a specific release is identified. **Apple catalog fallback has a separate default-off switch**: when enabled alongside online information, unmatched titles and artists can be sent to Apple’s public music catalog for album, genre, date and track details. Choose which fields to display. Player metadata takes priority; ambiguous matches are not guessed. Source links identify the catalog used. Results are cached locally for 24 hours, separately by song and provider setting. Shared appearance presets cannot enable either online setting.
+
 [![vid](docs/readme/video_thumbnail.png)](https://youtu.be/ytHqeP4cBgA)
 
 ## Features
@@ -129,6 +135,14 @@ Pick from many visualizers, change the layout and colours, add lyrics, and previ
 <p align="center">
   <img src="docs/readme/studio_with_preview.png" width="780" alt="Settings studio with preset cards and live widget preview">
 </p>
+
+In a Plasma panel, **Behaviour → Panel placement → Display → Automatic** shows the selected card directly when the widget has enough width and height, including in large side panels. Small panels fall back to the pill or icon; **Pill / icon** keeps that compact presentation at any size. **Automatic** orientation turns the pill along a side panel and rotates a full card when that lets it fit. Choose **Upright**, **Rotate left**, or **Rotate right** under **Behaviour → Panel placement** to override it. Popups stay upright. **Panel pill** and **Card / popup** have separate designs and live previews. Choose Hover, Click or Both under Layout to open the compact widget's popup, and add playback controls under Buttons. **Apply** saves both designs. Desktop widgets keep their usual editor.
+
+**Use popup look / Use pill look** copies the other design’s colours, artwork and effect styles into the selected design. The pill enables the copied visualizer and progress styles. Each view keeps its layout and playback controls. Apply saves the copy; Discard restores the previous designs. Export still shares the selected look as JSON v1, including after syncing. Legacy preset imports remain supported.
+
+Use the pin button in the popup card’s bottom-right corner to keep it open above other windows, even after clicking elsewhere. Click the pin again or press Escape to close it.
+
+Glass and liquid popups support **Blur behind card** under **Card / popup → Appearance → Card**. Plasma supplies KWin with a rounded mask while its theme frame and shadow are hidden. KWin’s Blur effect controls the actual strength; the wallpaper slider adjusts the preview. New popup designs enable this by default; saved choices are preserved. This uses Plasma’s internal SVG background item, with a borderless fallback if that item is unavailable. A shell helper keeps one small mask file per widget in the session runtime directory, updated only when its geometry changes. No C++ plugin, compilation or extra packages are needed.
 
 The studio is built into both the Plasma and Quickshell settings. The browser version lets you explore the same looks before installing. See [how preset sharing works](docs/sharing-presets.md).
 

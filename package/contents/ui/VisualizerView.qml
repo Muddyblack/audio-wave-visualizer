@@ -21,6 +21,8 @@ Item {
     // Synthetic previews must not send sample metadata to lyrics services.
     property bool samplePlayback: false
     property Item backdropSource: null
+    // Hosts with a separate window can constrain shadows to its padding.
+    property real surfaceEffectMargin: 160
     // Host scale is separate from logical layout size, for artwork sampling.
     property real renderScale: scale
     property color accentColor: "#b4befe"
@@ -154,14 +156,101 @@ Item {
     readonly property string detailsMode: visualizerOnly || layoutMode === "lyrics" || !hasPlayer || trackUnknown ? "off" : (configuration.hoverDetails ?? "off")
     readonly property bool panelForm: layoutMode === "pill" || layoutMode === "pillicon"
     readonly property bool flipEnabled: detailsMode === "flip" && layoutMode !== "strip" && !panelForm
+    property var flipHoverTargets: []
+    function registerFlipHoverTarget(target, inset = 0) {
+        if (!flipHoverTargets.some(entry => entry.item === target))
+            flipHoverTargets = flipHoverTargets.concat([
+                {
+                    item: target,
+                    inset: inset
+                }
+            ]);
+    }
+    function unregisterFlipHoverTarget(target) {
+        flipHoverTargets = flipHoverTargets.filter(entry => entry.item !== target);
+    }
+    readonly property bool flipTargetHovered: {
+        if (!flipEnabled || flipped || !front.enabled || zoomOpen || !cardHovered || flipPress.pressed)
+            return false;
+        for (const entry of flipHoverTargets) {
+            const target = entry.item;
+            if (!target || !target.visible || target.width <= 0 || target.height <= 0)
+                continue;
+            const point = target.mapFromItem(root, detailsPointer.x, detailsPointer.y);
+            const inset = Math.min(entry.inset, target.width / 4, target.height / 4);
+            if (point.x >= inset && point.x <= target.width - inset && point.y >= inset && point.y <= target.height - inset)
+                return true;
+        }
+        return false;
+    }
+    onFlipTargetHoveredChanged: {
+        if (flipTargetHovered)
+            flipDelay.restart();
+        else
+            flipDelay.stop();
+    }
+    TapHandler {
+        id: flipPress
+        target: null
+        enabled: root.flipEnabled
+        // Right-click belongs to the host's applet/settings menu.
+        acceptedButtons: Qt.LeftButton
+        gesturePolicy: TapHandler.DragThreshold
+    }
+    Timer {
+        id: flipDelay
+        interval: 350
+        onTriggered: {
+            if (root.flipTargetHovered) {
+                root.detailsOpen = true;
+                root.forceActiveFocus();
+            }
+        }
+    }
     property bool detailsOpen: false
+    property bool detailsHovered: false
+    property bool detailsHoverHeld: false
+    readonly property point detailsPointer: cardHover.point.position
+    activeFocusOnTab: flipEnabled
+    Keys.onEscapePressed: detailsOpen = false
+    Keys.onReturnPressed: if (flipEnabled)
+        detailsOpen = !detailsOpen
+    onCardHoveredChanged: {
+        if (cardHovered) {
+            detailsLeave.stop();
+            flipLeave.stop();
+            detailsHoverHeld = true;
+        } else {
+            detailsLeave.restart();
+            if (flipped)
+                flipLeave.restart();
+        }
+    }
+    onDetailsHoveredChanged: {
+        if (detailsHovered)
+            detailsLeave.stop();
+        else if (!cardHovered)
+            detailsLeave.restart();
+    }
+    Timer {
+        id: detailsLeave
+        interval: 250
+        onTriggered: if (!root.cardHovered && !root.detailsHovered)
+            root.detailsHoverHeld = false
+    }
+    Timer {
+        id: flipLeave
+        interval: 300
+        onTriggered: if (!root.cardHovered)
+            root.detailsOpen = false
+    }
     readonly property bool flipped: flipEnabled && detailsOpen
     onFlipEnabledChanged: {
         if (!flipEnabled)
             detailsOpen = false;
     }
     // Tooltip and drawer are shown by the host in a popup outside the card.
-    readonly property bool detailsVisible: (detailsMode === "tooltip" || detailsMode === "drawer" || (detailsMode === "flip" && (layoutMode === "strip" || panelForm))) && cardHovered
+    readonly property bool detailsVisible: (detailsMode === "tooltip" || detailsMode === "drawer" || (detailsMode === "flip" && (layoutMode === "strip" || panelForm))) && (cardHovered || detailsHovered || detailsHoverHeld)
     readonly property string detailsPopupMode: detailsMode === "drawer" ? "drawer" : "tooltip"
     // Solid cards are light: system text and controls switch to dark ink.
     readonly property var appearance: ColourStyle.appearance(configuration, accentColor, systemTextColor, coverAccent, artUrl !== "")
@@ -309,8 +398,8 @@ Item {
             return;
         const step = Math.max(-1, Math.min(1, pendingVolumeStep));
         pendingVolumeStep -= step;
-        const script = decodeURIComponent(Qt.resolvedUrl("../code/system_volume.py").toString().replace(/^file:\/\//, ""));
-        volumeCommand = "python3 '" + script.replace(/'/g, "'\\''") + "' " + step.toFixed(4) + " # " + (++volumeRequestId);
+        const script = decodeURIComponent(Qt.resolvedUrl("../code/system_volume.sh").toString().replace(/^file:\/\//, ""));
+        volumeCommand = "bash '" + script.replace(/'/g, "'\\''") + "' " + step.toFixed(4) + " # " + (++volumeRequestId);
         volumeWorker.connectSource(volumeCommand);
         volumeCommandTimeout.restart();
     }
@@ -462,6 +551,24 @@ Item {
     readonly property bool showMpris: configuration.showMpris
     onShowMprisChanged: _refreshArtUrl()
 
+    CardSurface {
+        effectMargin: root.surfaceEffectMargin
+        objectName: "cardSurface"
+        visible: root.shouldShow && !root.visualizerOnly
+        backdropSource: root.backdropSource
+        anchors.fill: parent
+        configuration: root.layoutMode === "lyrics" ? Object.assign({}, root.configuration, {
+            artBg: false
+        }) : root.configuration
+        artUrl: root.artUrl
+        hasPlayer: root.hasPlayer
+        cardRadius: root.panelForm ? root.height / 2 : root.configuration.bgRadius
+        accentColor: root.waveColor
+        coverColor1: root.coverColor1
+        coverColor2: root.coverColor2
+        bass: root.visualizer.bass ?? 0
+    }
+
     Item {
         id: front
         objectName: "playbackFace"
@@ -510,23 +617,6 @@ Item {
                     easing.type: Easing.InOutCubic
                 }
             }
-        }
-
-        CardSurface {
-            objectName: "cardSurface"
-            visible: !root.visualizerOnly
-            backdropSource: root.backdropSource
-            anchors.fill: parent
-            configuration: root.layoutMode === "lyrics" ? Object.assign({}, root.configuration, {
-                artBg: false
-            }) : root.configuration
-            artUrl: root.artUrl
-            hasPlayer: root.hasPlayer
-            cardRadius: root.panelForm ? root.height / 2 : root.configuration.bgRadius
-            accentColor: root.waveColor
-            coverColor1: root.coverColor1
-            coverColor2: root.coverColor2
-            bass: root.visualizer.bass ?? 0
         }
 
         // Panel forms: hover tint without a card, and a click on the pill.
@@ -595,13 +685,6 @@ Item {
                     }
                 }
             }
-            CardMaterial {
-                anchors.fill: parent
-                material: root.configuration.showBg && ["liquid", "solid", "atmosphere"].indexOf(root.configuration.surfaceStyle) !== -1 ? root.configuration.surfaceStyle : "glass"
-                radius: root.configuration.bgRadius
-                cover1: root.coverColor1
-                cover2: root.coverColor2
-            }
             TrackDetails {
                 anchors.fill: parent
                 view: root
@@ -610,8 +693,7 @@ Item {
         }
     }
 
-    // This control stays outside both transformed faces. Hovering the card
-    // must never hide playback controls or move the way back to them.
+    // Return stays reachable while the cover hover opens the back.
     Controls.ToolButton {
         objectName: "flipDetailsButton"
         anchors.top: parent.top
@@ -619,7 +701,7 @@ Item {
         anchors.margins: 4
         width: 22
         height: 22
-        visible: root.flipEnabled && root.shouldShow && !root.zoomOpen
+        visible: root.flipEnabled && (root.flipped || (root.configuration.flipInfoButton ?? true)) && root.shouldShow && !root.zoomOpen
         focusPolicy: Qt.StrongFocus
         text: root.flipped ? "×" : "i"
         Accessible.name: root.flipped ? "Return to playback controls" : "Show track details"

@@ -40,7 +40,7 @@ Column {
                 objectName: "userPreset_" + index
                 readonly property var look: saved.list[index]
                 readonly property var lookSettings: Schema.normalize(look.settings)
-                visible: !saved.favoritesOnly || saved.studio.favorites.indexOf(look.id) !== -1
+                visible: saved.studio.acceptsPreset(lookSettings) && (!saved.favoritesOnly || saved.studio.favorites.indexOf(look.id) !== -1)
                 favorite: saved.studio.favorites.indexOf(look.id) !== -1
                 onFavoriteToggled: saved.studio.toggleFavorite(look.id)
                 width: saved.tileWidth

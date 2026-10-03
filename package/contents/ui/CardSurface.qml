@@ -13,6 +13,10 @@ Item {
     property color coverColor1: "#6c7086"
     property color coverColor2: "#45475a"
     property real bass: 0
+    property real effectMargin: 160
+    readonly property real shadowMargin: Math.min(90, effectMargin)
+    readonly property real shadowScale: Math.min(1, effectMargin / 120)
+    readonly property real pulseMargin: Math.min(40, effectMargin)
 
     // A loaded cover background (the "Cover" material) wins over surfaceStyle.
     readonly property bool coverActive: configuration.showMpris && configuration.artBg && artUrl !== ""
@@ -48,7 +52,7 @@ Item {
 
     readonly property bool isPanelForm: root.cardRadius >= height / 2 - 2
     readonly property real ambientGlowRadius: Math.max(20, Math.min(160, root.configuration.ambientGlowRadius ?? (isPanelForm ? 24 : 80)))
-    readonly property real ambientGlowMargin: isPanelForm ? Math.min(28, ambientGlowRadius) : ambientGlowRadius
+    readonly property real ambientGlowMargin: Math.min(effectMargin, isPanelForm ? Math.min(28, ambientGlowRadius) : ambientGlowRadius)
 
     readonly property var ambientGlowStops: {
         const mode = root.configuration.ambientGlowMode ?? "cover";
@@ -98,13 +102,17 @@ Item {
     // Card shadow: static, behind everything, only with a visible card.
     Loader {
         anchors.fill: parent
-        anchors.margins: -90
+        anchors.margins: -root.shadowMargin
         active: root.configuration.showBg && (root.configuration.cardShadow ?? "none") !== "none"
+        opacity: root.configuration.artBgTransparency ?? 1
         sourceComponent: CardGlow {
             objectName: "cardShadow"
-            margin: 90
+            margin: root.shadowMargin
             radius: root.cardRadius
-            layers: root.shadowLayers
+            layers: root.shadowLayers.map(layer => Object.assign({}, layer, {
+                    y: layer.y * root.shadowScale,
+                    blur: layer.blur * root.shadowScale
+                }))
         }
     }
 
@@ -229,6 +237,10 @@ Item {
         // Round the whole composited card (art + tint + border) in one pass.
         maskEnabled: true
         maskSource: cardRoundMask
+        // Keep the rounded mask's antialiasing instead of exposing bright
+        // cover pixels along a hard threshold at the dimmed card edge.
+        maskThresholdMin: 0.5
+        maskSpreadAtMin: 1.0
 
         // Background card transparency — art + blur fade together as one layer.
         // Wave, text and controls remain fully opaque on top.
@@ -274,6 +286,8 @@ Item {
     // texture (layer.enabled) so the MultiEffect can sample it; never shown.
     Rectangle {
         id: cardRoundMask
+        antialiasing: true
+        layer.smooth: true
         anchors.fill: parent
         radius: root.cardRadius
         color: "black"
@@ -348,17 +362,17 @@ Item {
     // Bass pulse: the glow is painted once; audio frames change only opacity.
     Loader {
         anchors.fill: parent
-        anchors.margins: -40
+        anchors.margins: -root.pulseMargin
         active: root.configuration.bassPulse ?? false
         sourceComponent: CardGlow {
             objectName: "bassGlow"
-            margin: 40
+            margin: root.pulseMargin
             radius: root.cardRadius
             layers: [
                 {
                     y: 0,
-                    blur: 22,
-                    spread: 2,
+                    blur: 22 * root.pulseMargin / 40,
+                    spread: 2 * root.pulseMargin / 40,
                     color: root.accentColor
                 }
             ]

@@ -64,7 +64,41 @@ var STATES = [["normal", "Playing"], ["paused", "Paused"], ["long", "Long title"
 
 // Colour keys "Keep my colours" preserves; placement is never part of a look.
 var COLOR_KEYS = ["controlsColorSource", "progressColorSource", "customProgressColor", "useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "hueReactive", "bgColor", "glassTintColor", "lyricsHighlightColor", "lyricsTextStyleColor"];
-var PLACEMENT_KEYS = ["monitor", "verticalPosition", "desktopLayer", "pauseWhenCovered", "hAnchor", "widgetWidth", "widgetHeight"];
+var PLACEMENT_KEYS = ["monitor", "verticalPosition", "desktopLayer", "pauseWhenCovered", "hAnchor", "widgetWidth", "widgetHeight", "panelDisplayMode", "panelOrientation"];
+var TRACK_INFO_KEYS = ["hoverDetails", "detailFields", "detailCustomize", "flipInfoButton", "onlineTrackInfo", "appleTrackInfo"];
+var DETAIL_FIELD_GROUPS = [
+    {id: "detailSong", label: "Song", opts: [["genre", "Genre"], ["length", "Length"], ["bpm", "BPM"], ["recordingNote", "Version"], ["comment", "Comment"]]},
+    {id: "detailCredits", label: "Credits", opts: [["albumArtist", "Album artist"], ["composer", "Composer"], ["lyricist", "Lyricist"], ["writers", "Songwriters"], ["producers", "Producers"], ["performers", "Performers"], ["arrangers", "Arrangers"]]},
+    {id: "detailRelease", label: "Release", opts: [["album", "Album & year"], ["date", "Release date"], ["releaseType", "Release type"], ["track", "Track number"], ["disc", "Disc number"], ["trackCount", "Album track count"], ["label", "Label"], ["country", "Country"], ["editionDate", "Edition date"], ["isrc", "ISRC"]]},
+    {id: "detailOther", label: "Playback & artist summary", opts: [["format", "Audio format"], ["player", "Player"], ["summary", "Artist summary"]]}
+];
+var DETAIL_PROFILES = {
+    essentials: ["album", "genre", "format", "player"],
+    credits: ["album", "genre", "length", "composer", "lyricist", "writers", "producers", "performers"],
+    all: DETAIL_FIELD_GROUPS.reduce(function (keys, group) { return keys.concat(group.opts.map(function (option) { return option[0]; })); }, [])
+};
+function detailProfile(state) {
+    if (state.detailCustomize) return "custom";
+    var chosen = fields(state.detailFields).slice().sort().join(",");
+    for (var key in DETAIL_PROFILES) {
+        if (DETAIL_PROFILES[key].slice().sort().join(",") === chosen) return key;
+    }
+    return "custom";
+}
+function detailProfilePatch(value) {
+    return value === "custom" ? {detailCustomize: true} : {detailCustomize: false, detailFields: DETAIL_PROFILES[value].slice()};
+}
+function detailFieldGroup(group) {
+    return {id: group.id, type: "chips", full: true, label: group.label, opts: group.opts,
+        get: function (state) { return fields(state.detailFields); },
+        set: function (value) { return {detailFields: fields(value)}; },
+        when: function (state) { return state.hoverDetails !== "off" && detailProfile(state) === "custom"; }};
+}
+function preserveTrackInfo(next, current) {
+    TRACK_INFO_KEYS.forEach(function (key) { if (current[key] !== undefined) next[key] = current[key]; });
+    return next;
+}
+
 
 function isPill(s) {
     return s.layoutMode === "pill" || s.layoutMode === "pillicon";
@@ -139,7 +173,7 @@ var SECTIONS = [
     tab("controls", "Progress bar", [
         { id: "customProgressBar", type: "customStyle", full: true, label: "Custom progress bars", desc: "Import a trusted QML progress bar with playback timing and seeking.", docs: CUSTOM_QML_DOCS + "#custom-progress-bars" },
         { k: "progressBarStyle", type: "tiles", full: true, label: "Style", desc: "Click anywhere on it in the widget to seek.", tw: 104,
-          opts: PBS.map(function (l, i) { return { v: i, label: l, pv: "progress" }; }) },
+          opts: [{ v: -1, label: "None", pv: "progress" }].concat(PBS.map(function (l, i) { return { v: i, label: l, pv: "progress" }; })) },
         { k: "seekHover", type: "switch", label: "Seek preview", desc: "Target time, jump delta and a ghost playhead." },
         { k: "seekGestures", type: "switch", label: "Seek gestures", desc: "Wheel seeks; double-click the outer thirds to jump 10 seconds." },
         { k: "wheelSeekSeconds", type: "range", label: "Wheel seek step", min: 0, max: 10, step: 1, fmt: "s", desc: "Seconds per notch; 0 disables wheel seeking." },
@@ -150,6 +184,10 @@ var SECTIONS = [
           get: function (s) { return s.showTimes ? s.timeFormat : "off"; },
           set: function (v) { return v === "off" ? { showTimes: false } : { showTimes: true, timeFormat: v }; } }
     ]),
+    tab("buttons", "Panel buttons", [
+        { k: "pillControls", type: "seg", label: "Buttons", desc: "Add playback controls directly to the panel pill.", opts: [["none", "None"], ["play", "Play / pause"], ["all", "Previous · Play · Next"]], when: function (s) { return s.layoutMode === "pill"; } },
+        { k: "pillControlsOnHover", type: "switch", label: "Show buttons on hover only", desc: "Reveal playback buttons while the pointer is over the pill. Keeps the pill's width steady.", when: function (s) { return s.layoutMode === "pill" && s.pillControls !== "none"; } }
+    ], isPill),
     tab("buttons", "Playback buttons", [
         { id: "customButtons", type: "customStyle", full: true, label: "Custom button styles", desc: "Import a trusted QML style for the playback controls.", docs: CUSTOM_QML_DOCS + "#custom-playback-buttons" },
         { k: "dockStyle", type: "tiles", full: true, label: "Style", desc: "Choose the shape around your playback controls.", tw: 118,
@@ -174,12 +212,11 @@ var SECTIONS = [
         { id: "pillNote", type: "note", full: true, note: "pill" },
         { k: "pillContent", type: "seg", label: "Text", opts: [["title", "Title"], ["title-artist", "Title · Artist"], ["artist-title", "Artist — Title"]], when: function (s) { return s.layoutMode === "pill"; } },
         { k: "pillArt", type: "switch", label: "Cover thumbnail", when: function (s) { return s.layoutMode === "pill"; } },
-        { k: "pillEq", type: "seg", label: "Motion", desc: "Static bars cost no frames at all — the cleanest choice for a panel.", opts: [["off", "Off"], ["static", "Static"], ["live", "Bouncing"], ["wave", "Mini visualizer"]] },
-        { k: "pillProgress", type: "seg", label: "Progress", opts: [["off", "Off"], ["underline", "Underline"], ["ring", "Cover ring"]] },
-        { k: "pillControls", type: "seg", label: "Buttons", opts: [["none", "None"], ["play", "Play"], ["all", "All"]], when: function (s) { return s.layoutMode === "pill"; } },
+        { k: "pillEq", type: "seg", label: "Motion", desc: "Mini visualizer follows the music using your selected visualizer style. Choose Static for still bars.", opts: [["off", "Off"], ["static", "Static"], ["live", "Bouncing"], ["wave", "Mini visualizer"]] },
+        { k: "pillProgress", type: "seg", label: "Progress", opts: [["off", "Off"], ["underline", "Underline"], ["ring", "Cover ring"], ["bar", "Styled bar"]] },
         { k: "pillMaxWidth", type: "range", label: "Maximum width", min: 140, max: 420, step: 10, fmt: "px", when: function (s) { return s.layoutMode === "pill"; } },
-        { k: "pillClick", type: "seg", label: "Click", opts: [["popup", "Open card"], ["toggle", "Play / pause"]] },
-        { k: "autoPillInPanel", type: "switch", label: "Pill automatically in panels", desc: "Plasma: the desktop keeps your card layout, panels get the pill.", when: function (s, env) { return env === "kde"; } }
+        { k: "pillPopupTrigger", type: "seg", label: "Open popup", desc: "Hover closes when you leave the pill and card. Click toggles it. Both lets a click pin the hovered card; click again to close.", opts: [["hover", "Hover"], ["click", "Click"], ["both", "Both"]], when: function (s, env) { return env === "kde"; }, set: function (v) { return { pillPopupTrigger: v, pillClick: "popup" }; } },
+        { k: "pillClick", type: "seg", label: "Click", opts: [["popup", "Open card"], ["toggle", "Play / pause"]], when: function (s, env) { return env !== "kde" || s.pillPopupTrigger === "hover"; } }
     ], isPill),
     tab("layout", "Poster", [
         { k: "posterAlign", type: "seg", label: "Alignment", opts: [["left", "Left"], ["center", "Centre"]] },
@@ -190,10 +227,10 @@ var SECTIONS = [
         { k: "showAlbum", type: "switch", label: "Album in the top line" }
     ], function (s) { return s.layoutMode === "poster"; }),
     tab("layout", "Track text", [
-        { k: "titleSize", type: "range", label: "Text size", desc: "Artist and album follow the title.", min: 9, max: 16, step: 1, fmt: "px" },
-        { k: "textAlign", type: "seg", label: "Alignment", opts: [["left", "Left"], ["center", "Centre"], ["right", "Right"]] },
-        { k: "marquee", type: "switch", label: "Scroll long titles", desc: "Try the Long title state." }
-    ], notPill),
+        { k: "titleSize", when: notPill, type: "range", label: "Text size", desc: "Artist and album follow the title.", min: 9, max: 16, step: 1, fmt: "px" },
+        { k: "textAlign", when: notPill, type: "seg", label: "Alignment", opts: [["left", "Left"], ["center", "Centre"], ["right", "Right"]] },
+        { k: "marquee", type: "switch", label: "Scroll long titles", desc: "Scroll overflowing titles, including the panel pill. Disabled by Reduced motion." }
+    ], function (s) { return s.layoutMode !== "pillicon"; }),
     tab("art", "Cover", [
         { k: "showArtThumb", type: "switch", label: "Show artwork", desc: "Falls back to the player’s icon when a track has no cover.", disabled: function (s) { return layoutValue(s) === "compact"; } },
         { k: "artShape", type: "tiles", full: true, label: "Shape", desc: "Vinyl and CD spin while music plays.", tw: 84,
@@ -259,10 +296,13 @@ var SECTIONS = [
         { k: "lyricsFollowPosition", type: "seg", label: "Current line position", opts: [["top", "Top"], ["center", "Centre"], ["bottom", "Bottom"]] }
     ], function (s) { return s.layoutMode === "lyrics"; }),
     tab("info", "On hover", [
-        { k: "hoverDetails", type: "seg", label: "Details", desc: "Tooltip and drawer appear on hover. Flip card adds an info button; click it again or press Escape to return.", opts: [["off", "Off"], ["tooltip", "Tooltip"], ["drawer", "Drawer"], ["flip", "Flip card"]] },
-        { k: "detailFields", type: "chips", full: true, label: "Show", when: function (s) { return s.hoverDetails !== "off"; },
-          opts: [["album", "Album & year"], ["track", "Track number"], ["genre", "Genre"], ["length", "Length"], ["format", "Audio format"], ["player", "Player"], ["volume", "Volume"]] }
-    ]),
+        { k: "onlineTrackInfo", type: "switch", label: "Online track information", desc: "Off by default. Sends song title, artist, album and length to MusicBrainz, and artist name to English Wikipedia when details open. Adds recording credits when available. Results are cached for 24 hours." },
+        { k: "appleTrackInfo", type: "switch", label: "Apple catalog fallback", desc: "Off by default. If MusicBrainz cannot match the song, send its title and artist to Apple’s public catalog. Requires online track information.", when: function (s) { return s.onlineTrackInfo; } },
+        { k: "hoverDetails", type: "seg", label: "Details", desc: "Tooltip is a compact preview near the pointer; drawer is a wider panel below the widget. Flip opens after hovering over the cover or song title for a moment. Playback buttons and seeking never trigger it. Leave the card, press Escape or use × to return.", opts: [["off", "Off"], ["tooltip", "Tooltip"], ["drawer", "Drawer"], ["flip", "Flip card"]] },
+        { k: "flipInfoButton", type: "switch", label: "Show flip info button", desc: "Keep a click target alongside cover and title hover. The return button remains available while flipped.", when: function (s) { return s.hoverDetails === "flip"; } },
+        { id: "detailProfile", type: "seg", full: true, label: "What to show", desc: "Choose a set in one click, or customize the fields below. Missing information stays hidden. These choices survive Surprise me and daily looks.", when: function (s) { return s.hoverDetails !== "off"; },
+          opts: [["essentials", "Essentials"], ["credits", "Credits"], ["all", "All details"], ["custom", "Customize"]], get: detailProfile, set: detailProfilePatch }
+    ].concat(DETAIL_FIELD_GROUPS.map(detailFieldGroup))),
     tab("card", "Background", [
         { k: "showBg", type: "switch", label: "Show a card", desc: "Off: the widget floats directly on the wallpaper (current default)." },
         { k: "surfaceStyle", type: "tiles", full: true, label: "Material", tw: 84, when: function (s) { return s.showBg; },
@@ -319,6 +359,10 @@ var SECTIONS = [
         { k: "customTextColor", type: "color", label: "Custom text colour", swatches: SWATCHES, when: function (s) { return !s.useSystemText; } },
         { k: "autoContrast", type: "switch", label: "Adapt to light cards", desc: "Dark text and icons on the Solid material.", when: function (s) { return s.useSystemText || s.useSystemControls; } }
     ]),
+    tab("behavior", "Panel placement", [
+        { k: "panelDisplayMode", type: "seg", label: "Display", desc: "Automatic shows the full card when it fits and your pill or icon design otherwise. Card or Pill / icon forces one at any panel size.", opts: [["adaptive", "Automatic"], ["card", "Card"], ["pill", "Pill / icon"]] },
+        { k: "panelOrientation", type: "seg", label: "Direction", desc: "Automatic follows the panel edge. Upright uses an icon in narrow side panels.", opts: [["auto", "Automatic"], ["normal", "Upright"], ["left", "Rotate left"], ["right", "Rotate right"]] }
+    ], function (s, env) { return env === "kde"; }),
     tab("behavior", "When nothing plays", [
         { k: "alwaysVisible", type: "switch", label: "Keep visible", desc: "Off hides the widget until a player appears. Try the “Nothing playing” state." },
         { k: "idleText", type: "switch", label: "Friendly idle message", when: function (s) { return s.alwaysVisible; } },
@@ -443,7 +487,7 @@ var PRESETS = [
     preset("dothalo", ["desktop", "adaptive"], "Dot Halo", "A dotted neon ring spikes outward on every beat. Swap the custom colour for any glow.", "neon", { layoutMode: "orbit", orbitStyle: "dots", artShape: "circle", vizColorMode: "solid", useSystemAccent: false, customColor: "#39ff14", bloom: 1.4, orbitReach: 1.15, showBg: true, bgColor: "#05070a", artBgTransparency: .8, bgRadius: 24, progressBarStyle: 1, showTimes: false, dockStyle: "bare" }),
     preset("orbiticon", ["panel"], "Orbit Icon", "A tiny radial ring around the cover, living in the bar.", "breeze", { layoutMode: "pillicon", pillEq: "wave", artShape: "circle", vizColorMode: "palette", vizPalette: "aurora", hoverDetails: "tooltip" }, "hypr"),
     preset("quiet", ["desktop", "glass"], "Quiet Glass", "Title leads, calm mirror bars, one soft accent, round play button.", "olive", { layoutMode: "stacked", showBg: true, surfaceStyle: "glass", bgRadius: 22, useSystemAccent: false, customColor: "#d1e5bd", visualizerType: 2, glowWave: false, progressBarStyle: 1, dockStyle: "accent", showSource: true, showAlbum: true, cardShadow: "soft", edgeHighlight: true, titleSize: 12 }),
-    preset("panelpill", ["panel"], "Panel Pill", "Clean text pill for Plasma panels. Static EQ — zero animation cost.", "breeze", { layoutMode: "pill", pillEq: "static", pillProgress: "underline", pillControls: "play", hoverDetails: "tooltip" }, "kde"),
+    preset("panelpill", ["panel"], "Panel Pill", "Text pill for Plasma panels with a mini visualizer that follows the music.", "breeze", { layoutMode: "pill", pillEq: "wave", pillProgress: "underline", pillControls: "play", hoverDetails: "tooltip" }, "kde"),
     preset("baricon", ["panel"], "Bar Icon", "Just the cover with a progress ring, for a Hyprland bar.", "neon", { layoutMode: "pillicon", artShape: "circle", pillProgress: "ring", pillEq: "live", hoverDetails: "tooltip" }, "hypr"),
     preset("ribbonpill", ["panel", "adaptive"], "Ribbon Pill", "A glowing silk ribbon living in the panel, Aurora palette.", "dusk", { layoutMode: "pill", pillEq: "wave", visualizerType: 15, vizColorMode: "palette", vizPalette: "aurora", hueReactive: true, pillArt: false, pillContent: "title", showBg: true, surfaceStyle: "glass" }, "kde"),
     preset("ribbon", ["desktop", "adaptive"], "Silk Ribbon", "Bass thickens it, mids bend it, highs light the filaments. Ember palette.", "breeze", { layoutMode: "hero", visualizerType: 15, vizColorMode: "palette", vizPalette: "ember", hueReactive: true, bloom: 1.3, showBg: true, surfaceStyle: "color", bgColor: "#0a0b10", artBgTransparency: .7, bgRadius: 20, progressBarStyle: 1, showTimes: false, dockStyle: "bare", artShape: "circle" }),
@@ -477,7 +521,7 @@ function applyPreset(defaults, current, settings, keepColors) {
         next[key] = settings[key];
     if (keepColors)
         COLOR_KEYS.forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
-    PLACEMENT_KEYS.concat(["customVisualizers", "customProgressBars", "customButtonStyles", "userPresets", "favoritePresets", "autoDailyLook", "dailyLookApplied"]).forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
+    PLACEMENT_KEYS.concat(["panelAppearance", "popupAppearance", "customVisualizers", "customProgressBars", "customButtonStyles", "userPresets", "favoritePresets", "autoDailyLook", "dailyLookApplied"]).forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
     return next;
 }
 
@@ -493,7 +537,7 @@ function same(a, b) {
 function changedKeys(defaults, current) {
     var out = {};
     for (var key in current) {
-        if (key === "autoDailyLook" || key === "dailyLookApplied" || key === "favoritePresets" || key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || key === "customButtonStyles" || PLACEMENT_KEYS.indexOf(key) !== -1 || defaults[key] === undefined)
+        if (key === "panelAppearance" || key === "popupAppearance" || key === "autoDailyLook" || key === "dailyLookApplied" || key === "favoritePresets" || key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || key === "customButtonStyles" || PLACEMENT_KEYS.indexOf(key) !== -1 || defaults[key] === undefined)
             continue;
         if (!same(current[key], defaults[key]))
             out[key] = current[key];
@@ -504,7 +548,7 @@ function changedKeys(defaults, current) {
 function matchesPreset(defaults, current, p) {
     var target = applyPreset(defaults, current, p.s, false);
     for (var key in defaults) {
-        if (key === "autoDailyLook" || key === "dailyLookApplied" || key === "favoritePresets" || key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || key === "customButtonStyles" || PLACEMENT_KEYS.indexOf(key) !== -1)
+        if (key === "panelAppearance" || key === "popupAppearance" || key === "autoDailyLook" || key === "dailyLookApplied" || key === "favoritePresets" || key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || key === "customButtonStyles" || PLACEMENT_KEYS.indexOf(key) !== -1)
             continue;
         if (current[key] !== undefined && !same(current[key], target[key]))
             return false;
@@ -529,7 +573,7 @@ function importPreset(text, known) {
 function surprise(defaults, current, extraLayouts) {
     function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
     function coin(p) { return Math.random() < p; }
-    return applyPreset(defaults, current, normalize({
+    var next = applyPreset(defaults, current, normalize({
         layoutMode: pick(["classic", "classic", "mirrored", "inline", "hero", "stacked", "strip", "pill", "orbit", "orbit", "poster"].concat(extraLayouts || [])),
         vizDirection: pick(["up", "up", "down"]), orbitStyle: pick(["bars", "wave", "dots", "ribbon", "sparks"]),
         visualizerType: Math.floor(Math.random() * VIZ.length), progressBarStyle: Math.floor(Math.random() * PBS.length),
@@ -537,8 +581,9 @@ function surprise(defaults, current, extraLayouts) {
         artShape: pick(["sharp", "rounded", "squircle", "circle", "vinyl", "cd"]), dockStyle: pick(["glass", "bare", "accent"]),
         accentFromArt: coin(.5), vizColorMode: pick(["solid", "gradient", "cover", "palette", "rainbow"]), vizPalette: pick(Object.keys(PALETTES)),
         fillWave: coin(.5), glowWave: coin(.6), cardShadow: pick(["none", "soft", "lifted"]), edgeHighlight: coin(.5), artGlow: coin(.4),
-        showSource: coin(.4), showAlbum: coin(.4), hoverDetails: pick(["off", "tooltip", "flip"]), pillEq: pick(["static", "live", "wave"]), pillProgress: pick(["off", "underline", "ring"])
+        showSource: coin(.4), showAlbum: coin(.4), pillEq: pick(["static", "live", "wave"]), pillProgress: pick(["off", "underline", "ring"])
     }), false);
+    return preserveTrackInfo(next, current);
 }
 
 function exportPreset(name, settings, known) {
@@ -555,11 +600,11 @@ function dailyUpdate(defaults, current, day) {
     PRESETS.forEach(function (preset) { keys = keys.concat(Object.keys(preset.s)); });
     var next = copy(current);
     keys.forEach(function (key) {
-        if (PLACEMENT_KEYS.indexOf(key) === -1 && defaults[key] !== undefined) next[key] = defaults[key];
+        if (PLACEMENT_KEYS.indexOf(key) === -1 && TRACK_INFO_KEYS.indexOf(key) === -1 && defaults[key] !== undefined) next[key] = defaults[key];
     });
     Object.assign(next, dailyLook(day).s);
     next.dailyLookApplied = day;
-    return next;
+    return preserveTrackInfo(next, current);
 }
 function defaultsFromXml(xml) {
     var defaults = {}, match;

@@ -240,6 +240,7 @@ Item {
     }
 
     Component.onCompleted: {
+        configurationReady = true;
         // Resolve $XDG_RUNTIME_DIR once at startup so we can use the absolute path
         // without spawning a shell to expand variables on every frame.
         if (runtimeDirectory)
@@ -656,34 +657,12 @@ Item {
         onTriggered: vis.restarting = false
     }
 
-    Connections {
-        target: vis.configuration
-        ignoreUnknownSignals: true
-        function onNumBarsChanged() {
-            configurationRestart.restart();
-        }
-        function onSensitivityChanged() {
-            configurationRestart.restart();
-        }
-        function onFramerateChanged() {
-            configurationRestart.restart();
-        }
-        function onNoiseReductionChanged() {
-            configurationRestart.restart();
-        }
-        function onInputSourceChanged() {
-            configurationRestart.restart();
-        }
-        function onLowCutoffChanged() {
-            configurationRestart.restart();
-        }
-        function onHighCutoffChanged() {
-            configurationRestart.restart();
-        }
-        function onInputMethodChanged() {
-            configurationRestart.restart();
-        }
-    }
+    // A presentation draft is a plain JS object; Plasma's live configuration
+    // is a QObject. Observe capture values so both forms restart identically.
+    property bool configurationReady: false
+    readonly property string captureSettings: JSON.stringify([configuration.numBars, configuration.sensitivity, configuration.framerate, configuration.noiseReduction, configuration.inputSource, configuration.lowCutoff, configuration.highCutoff, configuration.inputMethod])
+    onCaptureSettingsChanged: if (configurationReady)
+        configurationRestart.restart()
 
     // Applying several settings (or dragging a slider) needs one restart with
     // the final values, rather than a competing shell/backend for each signal.

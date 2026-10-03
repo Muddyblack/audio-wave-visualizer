@@ -73,6 +73,21 @@ TestCase {
         // Explicit defaults survive a destination with different defaults.
         compare(result.settings.titleSize, known.titleSize);
     }
+    function test_importCannotEnableOnlineInformation() {
+        const settings = Object.assign({}, known, {
+            onlineTrackInfo: false,
+            appleTrackInfo: false
+        });
+        const result = Schema.importPreset(JSON.stringify({
+            name: "Online",
+            settings: {
+                onlineTrackInfo: true,
+                appleTrackInfo: true
+            }
+        }), settings);
+        verify(result.settings.onlineTrackInfo === undefined);
+        verify(result.settings.appleTrackInfo === undefined);
+    }
     function test_legacyBrowserToQml() {
         const imported = Schema.importPreset(JSON.stringify({
             name: 'Old browser look',

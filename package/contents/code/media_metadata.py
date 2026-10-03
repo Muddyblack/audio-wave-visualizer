@@ -259,11 +259,305 @@ def favicon(host):
     return {"status": "ready", "url": cache.as_uri()}
 
 
-def info(artist, album):
+def normalized(value):
+    """Ignore typography, but retain version words such as live/remix."""
+    import unicodedata
+
+    return " ".join(
+        re.findall(r"\w+", unicodedata.normalize("NFKC", str(value)).casefold())
+    )
+
+
+def lookup_title(title, artist):
+    # Browser players often repeat the known artist in the video title.
+    # Keep version qualifiers and only remove an exact artist prefix.
+    for match in re.finditer(r"\s+[-–—]\s+", title):
+        if artist and normalized(title[: match.start()]) == normalized(artist):
+            return title[match.end() :].strip() or title
+    return title
+
+
+def search_term(value):
+    return re.sub(r'([+\-!(){}\[\]^"~*?:\\/])', r"\\\1", value)
+
+
+def artist_names(credits):
+    names = []
+    for credit in credits:
+        if isinstance(credit, dict):
+            names.extend(
+                [credit.get("name", ""), credit.get("artist", {}).get("name", "")]
+            )
+    combined = "".join(
+        c.get("name", c.get("artist", {}).get("name", "")) + c.get("joinphrase", "")
+        for c in credits
+        if isinstance(c, dict)
+    )
+    return {normalized(n) for n in names + [combined] if n}
+
+
+def recording_match(records, title, artist, album, duration, selected_id=""):
+    matches = []
+    for record in records:
+        if normalized(record.get("title", "")) != normalized(title):
+            continue
+        if artist and normalized(artist) not in artist_names(
+            record.get("artist-credit", [])
+        ):
+            continue
+        length = float(record.get("length") or 0) / 1000
+        if duration and length and abs(length - duration) > 3:
+            continue
+        # A title alone is insufficient evidence, even when search returns one hit.
+        if not artist and not (duration and length and abs(length - duration) <= 2):
+            continue
+        matches.append(record)
+    if album:
+        album_matches = [
+            r
+            for r in matches
+            if any(
+                normalized(x.get("title", "")) == normalized(album)
+                for x in r.get("releases", [])
+            )
+        ]
+        if album_matches:
+            matches = album_matches
+    unique = {r["id"]: r for r in matches if r.get("id")}
+    return unique.get(selected_id) or (
+        next(iter(unique.values())) if len(unique) == 1 else None
+    ), len(unique) > 1
+
+
+def recording_info(title, artist, album, duration, selected_id=""):
+    query = f'recording:"{search_term(title)}"'
+    if artist:
+        query += f' AND artist:"{search_term(artist)}"'
+    elif duration:
+        query += f" AND dur:[{max(0, int((duration - 2) * 1000))} TO {int((duration + 2) * 1000)}]"
+    else:
+        return {"reason": "metadata"}
+    data = get_json(
+        "https://musicbrainz.org/ws/2/recording/?"
+        + urlencode({"query": query, "fmt": "json", "limit": 100})
+    )
+    record, ambiguous = recording_match(
+        data.get("recordings", []), title, artist, album, duration, selected_id
+    )
+    if not record or data.get("count", 0) > 100:
+        candidates = []
+        if data.get("count", 0) <= 100:
+            for candidate in data.get("recordings", []):
+                if recording_match(
+                    data.get("recordings", []),
+                    title,
+                    artist,
+                    album,
+                    duration,
+                    candidate.get("id", ""),
+                )[0]:
+                    seconds = int((candidate.get("length") or 0) / 1000)
+                    label = " · ".join(
+                        filter(
+                            None,
+                            [
+                                candidate.get("title", ""),
+                                candidate.get("disambiguation", ""),
+                                candidate.get("first-release-date", ""),
+                                f"{seconds // 60}:{seconds % 60:02}" if seconds else "",
+                            ],
+                        )
+                    )
+                    candidates.append({"id": candidate["id"], "label": label})
+        return {
+            "reason": "ambiguous"
+            if ambiguous or data.get("count", 0) > 100
+            else "not-found",
+            "candidates": candidates[:20],
+        }
+    rid = record["id"]
+    if not re.fullmatch(r"[0-9a-f-]{36}", rid):
+        raise ValueError("Invalid recording identifier")
+    # Keep a useful match even if the subsequent credits request is unavailable.
+    result = {
+        "recordingUrl": "https://musicbrainz.org/recording/" + rid,
+        "matchedTitle": record.get("title", ""),
+        "matchedArtist": "".join(
+            c.get("name", c.get("artist", {}).get("name", "")) + c.get("joinphrase", "")
+            for c in record.get("artist-credit", [])
+            if isinstance(c, dict)
+        ),
+        "matchBasis": "artist" if artist else "duration",
+    }
+    try:
+        detail = get_json(
+            "https://musicbrainz.org/ws/2/recording/"
+            + rid
+            + "?"
+            + urlencode(
+                {
+                    "fmt": "json",
+                    "inc": "artist-credits+releases+release-groups+genres+tags+isrcs+artist-rels+work-rels+work-level-rels",
+                }
+            )
+        )
+        result["recordingNote"] = detail.get("disambiguation", "")
+        result["isrc"] = ", ".join(detail.get("isrcs", []))
+        result["genres"] = [
+            g["name"] for g in (detail.get("genres") or detail.get("tags") or [])[:8]
+        ]
+        credits = {}
+        relationships = list(detail.get("relations", []))
+        for relation in detail.get("relations", []):
+            if relation.get("type") == "performance":
+                relationships.extend(relation.get("work", {}).get("relations", []))
+        fields = {
+            "composer": "composer",
+            "lyricist": "lyricist",
+            "writer": "writers",
+            "producer": "producers",
+            "instrument": "performers",
+            "vocal": "performers",
+            "performer": "performers",
+            "arranger": "arrangers",
+        }
+        for relation in relationships:
+            field = fields.get(relation.get("type"))
+            name = relation.get("artist", {}).get("name", "")
+            if not field or not name:
+                continue
+            attributes = relation.get("attributes", [])
+            if field == "performers" and attributes:
+                name += " (" + ", ".join(attributes) + ")"
+            credits.setdefault(field, [])
+            if name not in credits[field]:
+                credits[field].append(name)
+        result.update({key: ", ".join(values) for key, values in credits.items()})
+        releases = detail.get("releases", [])
+        if album:
+            releases = [
+                r
+                for r in releases
+                if normalized(r.get("title", "")) == normalized(album)
+            ]
+        groups = {
+            r["release-group"]["id"]: r["release-group"]
+            for r in releases
+            if r.get("release-group", {}).get("id")
+        }
+        if len(groups) == 1:
+            group = next(iter(groups.values()))
+            result.update(
+                album=group.get("title", ""),
+                albumUrl="https://musicbrainz.org/release-group/" + group["id"],
+                releaseType=" · ".join(
+                    filter(
+                        None,
+                        [group.get("primary-type", "")]
+                        + group.get("secondary-types", []),
+                    )
+                ),
+            )
+            if group.get("first-release-date"):
+                result.update(
+                    releaseDate=group["first-release-date"],
+                    year=group["first-release-date"][:4],
+                )
+        # Edition-specific facts must not be borrowed from an arbitrary reissue.
+        if len(releases) == 1 and re.fullmatch(
+            r"[0-9a-f-]{36}", releases[0].get("id", "")
+        ):
+            release = get_json(
+                "https://musicbrainz.org/ws/2/release/"
+                + releases[0]["id"]
+                + "?fmt=json&inc=labels"
+            )
+            labels = list(
+                dict.fromkeys(
+                    x["label"]["name"]
+                    for x in release.get("label-info", [])
+                    if x.get("label", {}).get("name")
+                )
+            )
+            result.update(
+                label=", ".join(labels),
+                country=release.get("country", ""),
+                editionDate=release.get("date", ""),
+            )
+            result.setdefault("album", release.get("title", ""))
+    except (OSError, ValueError, KeyError, TypeError):
+        result["partial"] = True
+    return result
+
+
+def apple_info(title, artist, album, duration):
+    if not title or not (artist or duration):
+        return {}
+    data = get_json(
+        "https://itunes.apple.com/search?"
+        + urlencode(
+            {
+                "term": " ".join(filter(None, [title, artist])),
+                "entity": "song",
+                "limit": 50,
+            }
+        )
+    )
+    songs = [r for r in data.get("results", []) if r.get("kind") == "song"]
+    candidates = []
+    for song in songs:
+        if normalized(song.get("trackName", "")) != normalized(title):
+            continue
+        if artist and normalized(song.get("artistName", "")) != normalized(artist):
+            continue
+        length = float(song.get("trackTimeMillis") or 0) / 1000
+        if duration and length and abs(duration - length) > 3:
+            continue
+        if not artist and not (duration and length and abs(duration - length) <= 2):
+            continue
+        candidates.append(song)
+    if album:
+        same_album = [
+            s
+            for s in candidates
+            if normalized(s.get("collectionName", "")) == normalized(album)
+        ]
+        if same_album:
+            candidates = same_album
+    unique = {s.get("trackId"): s for s in candidates if s.get("trackId")}
+    if len(unique) != 1:
+        return {"reason": "ambiguous" if len(unique) > 1 else "not-found"}
+    song = next(iter(unique.values()))
+    url = song.get("trackViewUrl", "")
+    if urlsplit(url).scheme != "https" or urlsplit(url).hostname not in (
+        "music.apple.com",
+        "itunes.apple.com",
+    ):
+        url = ""
+    return {
+        "catalogUrl": url,
+        "matchedTitle": song.get("trackName", ""),
+        "matchedArtist": song.get("artistName", ""),
+        "album": song.get("collectionName", ""),
+        "releaseDate": song.get("releaseDate", "")[:10],
+        "year": song.get("releaseDate", "")[:4],
+        "genres": [song["primaryGenreName"]] if song.get("primaryGenreName") else [],
+        "trackNumber": song.get("trackNumber", 0),
+        "discNumber": song.get("discNumber", 0),
+        "trackCount": song.get("trackCount", 0),
+        "matchBasis": "artist" if artist else "duration",
+    }
+
+
+def info(artist, album, track="", duration=0, apple=False, recording_id=""):
     artist, album = artist.strip()[:240], album.strip()[:240]
-    if not artist:
-        return {"status": "empty"}
-    key = hashlib.sha256(json.dumps([artist, album]).encode()).hexdigest()
+    track = lookup_title(str(track).strip()[:240], artist)
+    duration = max(0, min(86400, float(duration or 0)))
+    if not artist and not track:
+        return {"status": "empty", "reason": "metadata"}
+    key = hashlib.sha256(
+        json.dumps([6, artist, album, track, duration, apple, recording_id]).encode()
+    ).hexdigest()
     cache = (
         Path(os.environ.get("XDG_CACHE_HOME", str(Path.home() / ".cache")))
         / "plasma-audio-visualizer"
@@ -277,7 +571,13 @@ def info(artist, album):
         pass
     result = {"status": "empty"}
     failed = False
-    if album:
+    if track:
+        try:
+            result.update(recording_info(track, artist, album, duration, recording_id))
+            failed = bool(result.get("partial"))
+        except (OSError, ValueError, KeyError, TypeError):
+            failed = True
+    if album and artist and not result.get("albumUrl"):
         # Quoted Lucene terms; do not let titles become search operators.
         def escape(s):
             return re.sub(r'([+\-!(){}\[\]^"~*?:\\/])', r"\\\1", s)
@@ -302,27 +602,53 @@ def info(artist, album):
                 release = matches[0]
                 result.update(
                     year=release.get("first-release-date", "")[:4],
+                    releaseDate=release.get("first-release-date", ""),
+                    releaseType=" · ".join(
+                        filter(
+                            None,
+                            [release.get("primary-type", "")]
+                            + release.get("secondary-types", []),
+                        )
+                    ),
                     genres=[t["name"] for t in release.get("tags", [])[:8]],
                     albumUrl="https://musicbrainz.org/release-group/" + release["id"],
                 )
         except (OSError, ValueError, KeyError):
             failed = True
-    try:
-        data = get_json(
-            "https://en.wikipedia.org/w/api.php?"
-            + urlencode(
-                {
-                    "action": "query",
-                    "format": "json",
-                    "redirects": 1,
-                    "prop": "extracts|pageprops|info",
-                    "inprop": "url",
-                    "exintro": 1,
-                    "explaintext": 1,
-                    "exchars": 1200,
-                    "titles": artist,
+    if apple and track and not result.get("recordingUrl"):
+        try:
+            fallback = apple_info(track, artist, album, duration)
+            if fallback.get("catalogUrl"):
+                # Keep provider data coherent; do not mix unrelated album matches.
+                summary = {
+                    k: result[k] for k in ("summary", "artistUrl") if k in result
                 }
+                result = {**summary, **fallback}
+            elif not result.get("reason"):
+                result.update(fallback)
+        except (OSError, ValueError, KeyError, TypeError):
+            failed = True
+    summary_artist = artist or result.get("matchedArtist", "")
+    try:
+        data = (
+            get_json(
+                "https://en.wikipedia.org/w/api.php?"
+                + urlencode(
+                    {
+                        "action": "query",
+                        "format": "json",
+                        "redirects": 1,
+                        "prop": "extracts|pageprops|info",
+                        "inprop": "url",
+                        "exintro": 1,
+                        "explaintext": 1,
+                        "exchars": 1200,
+                        "titles": summary_artist,
+                    }
+                )
             )
+            if summary_artist
+            else {}
         )
         pages = list(data.get("query", {}).get("pages", {}).values())
         for page in pages:
@@ -339,11 +665,16 @@ def info(artist, album):
         failed = True
     result["status"] = (
         "ready"
-        if result.get("summary") or result.get("albumUrl")
+        if result.get("summary")
+        or result.get("albumUrl")
+        or result.get("recordingUrl")
+        or result.get("catalogUrl")
         else "error"
         if failed
         else "empty"
     )
+    if failed and result["status"] == "ready":
+        result["partial"] = True
     # Successful and negative lookups are cached; temporary failures remain retryable.
     if not failed:
         try:
@@ -361,7 +692,14 @@ def main():
         mode, payload = sys.argv[1:3]
         data = json.loads(payload)
         if mode == "info":
-            result = info(data.get("artist", ""), data.get("album", ""))
+            result = info(
+                data.get("artist", ""),
+                data.get("album", ""),
+                data.get("track", ""),
+                data.get("duration", 0),
+                data.get("apple", False) is True,
+                str(data.get("recordingId", "")),
+            )
         elif mode == "favicon":
             result = favicon(data.get("host", ""))
         else:

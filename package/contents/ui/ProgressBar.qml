@@ -45,6 +45,7 @@ Item {
     property real visualFrameTime: 0
     property bool reducedMotion: false
     property bool showTimes: true
+    property bool compact: false
     property string timeFormat: "total"
     property bool centerTimes: false
     // Layouts hide the bar while another element (the cover ring) shows progress.
@@ -61,7 +62,7 @@ Item {
     }
 
     // Visible only if we have a player and a valid track length
-    visible: !root.suppressed && !!root.player && lengthValue > 0
+    visible: (root.style !== -1 || root.customProgressBar !== "") && !root.suppressed && !!root.player && lengthValue > 0
     opacity: visible ? 1.0 : 0.0
 
     readonly property int pbStyle: root.style === 10 ? 0 : root.style
@@ -112,7 +113,7 @@ Item {
         anchors.right: parent.right
         anchors.top: parent.top
         anchors.topMargin: 1
-        height: 18
+        height: root.compact ? 8 : 18
         visible: !root.customReady && (root.pbStyle === 4)
         antialiasing: true
         renderStrategy: Canvas.Cooperative
@@ -211,7 +212,7 @@ Item {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        height: 10
+        height: root.compact ? 8 : 10
         visible: !root.customReady && (root.pbStyle === 5 || root.pbStyle === 7)
         antialiasing: true
         renderStrategy: Canvas.Cooperative
@@ -283,7 +284,7 @@ Item {
         anchors.top: parent.top
         anchors.topMargin: root.pbStyle === 1 ? 4 : root.pbStyle === 8 ? 3 : 2
         visible: !root.customReady && root.pbStyle !== 4 && root.pbStyle !== 5 && root.pbStyle !== 7 && root.pbStyle !== 9
-        height: root.transientPulse * 2 + (root.pbStyle === 1 ? 1 : root.pbStyle === 2 || root.pbStyle === 6 ? (pbArea.containsMouse ? (root.pbStyle === 6 ? 5 : 6) : 4) : root.pbStyle === 3 ? (pbArea.containsMouse ? 8 : 6) : root.pbStyle === 8 ? (pbArea.containsMouse ? 6 : 5) : (pbArea.containsMouse ? 5 : 3))
+        height: root.compact ? 2 : root.transientPulse * 2 + (root.pbStyle === 1 ? 1 : root.pbStyle === 2 || root.pbStyle === 6 ? (pbArea.containsMouse ? (root.pbStyle === 6 ? 5 : 6) : 4) : root.pbStyle === 3 ? (pbArea.containsMouse ? 8 : 6) : root.pbStyle === 8 ? (pbArea.containsMouse ? 6 : 5) : (pbArea.containsMouse ? 5 : 3))
         radius: height / 2
         color: root.pbStyle === 6 ? "transparent" : root.pbStyle === 1 ? Qt.rgba(root.textColor.r, root.textColor.g, root.textColor.b, 0.06) : Qt.rgba(root.textColor.r, root.textColor.g, root.textColor.b, 0.12)
         border.color: Qt.rgba(1, 1, 1, 0.10)
@@ -568,6 +569,6 @@ Item {
         hoverTips: root.seekHover
         gestures: root.seekGestures
         reducedMotion: root.reducedMotion
-        trackCenter: root.pbStyle === 4 ? 10 : progressTrack.y + progressTrack.height / 2
+        trackCenter: root.compact ? 4 : root.pbStyle === 4 ? 10 : progressTrack.y + progressTrack.height / 2
     }
 }

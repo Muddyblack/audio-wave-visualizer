@@ -8,13 +8,13 @@ Column {
     readonly property int columns: Math.max(1, Math.floor((width + 8) / 158))
     readonly property real tileWidth: (width - (columns - 1) * 8) / columns
     readonly property bool favoritesOnly: studio.presetFilter === "favorites"
-    readonly property var looks: (studio.presetFilter === "daily" ? [studio.daily] : Schema.PRESETS).filter(p => favoritesOnly ? studio.favorites.indexOf(p.id) !== -1 : studio.presetFilter === "all" || studio.presetFilter === "daily" || p.cat.indexOf(studio.presetFilter) !== -1)
+    readonly property var looks: (studio.presetFilter === "daily" ? [studio.daily] : Schema.PRESETS).filter(p => studio.acceptsPreset(p.s)).filter(p => favoritesOnly ? studio.favorites.indexOf(p.id) !== -1 : studio.presetFilter === "all" || studio.presetFilter === "daily" || p.cat.indexOf(studio.presetFilter) !== -1)
     spacing: 10
 
     PresetTools {
         width: parent.width
         studio: picker.studio
-        showFilter: !picker.favoritesOnly && picker.studio.presetFilter !== "daily"
+        showFilter: picker.studio.presentationTarget === "desktop" && !picker.favoritesOnly && picker.studio.presetFilter !== "daily"
     }
     Text {
         width: parent.width

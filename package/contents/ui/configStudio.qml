@@ -1,8 +1,12 @@
 import QtQuick
+import org.kde.plasma.core as PlasmaCore
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.private.mpris as Mpris
 import "studio" as Studio
 import "debug"
+import "../code/PresentationSettings.js" as Presentations
+import "../code/SyncWidgets.js" as SyncWidgets
+import "studio/Schema.js" as Schema
 
 // Plasma settings page hosting the shared studio. Plasma sets every cfg_*
 // property (and its *Default) from main.xml and applies them on OK/Apply, so
@@ -13,6 +17,11 @@ Kirigami.Page {
     padding: 0
     implicitWidth: Kirigami.Units.gridUnit * 60
     implicitHeight: Kirigami.Units.gridUnit * 40
+
+    property string cfg_panelAppearance
+    property string cfg_panelAppearanceDefault
+    property string cfg_popupAppearance
+    property string cfg_popupAppearanceDefault
 
     property string cfg_customVisualizer
     property string cfg_customVisualizerDefault
@@ -117,6 +126,10 @@ Kirigami.Page {
     property string cfg_layoutMode
     property string cfg_layoutModeDefault
     property bool cfg_autoPillInPanel
+    property string cfg_panelDisplayMode
+    property string cfg_panelDisplayModeDefault
+    property string cfg_panelOrientation
+    property string cfg_panelOrientationDefault
     property bool cfg_autoPillInPanelDefault
     property string cfg_pillContent
     property string cfg_pillContentDefault
@@ -128,9 +141,13 @@ Kirigami.Page {
     property string cfg_pillProgressDefault
     property string cfg_pillControls
     property string cfg_pillControlsDefault
+    property bool cfg_pillControlsOnHover
+    property bool cfg_pillControlsOnHoverDefault
     property int cfg_pillMaxWidth
     property int cfg_pillMaxWidthDefault
     property string cfg_pillClick
+    property string cfg_pillPopupTrigger
+    property string cfg_pillPopupTriggerDefault
     property string cfg_pillClickDefault
     property string cfg_posterAlign
     property string cfg_posterAlignDefault
@@ -296,8 +313,16 @@ Kirigami.Page {
     property string cfg_lyricsReadingDefault
     property real cfg_lyricsOffset
     property real cfg_lyricsOffsetDefault
+    property bool cfg_flipInfoButton
+    property bool cfg_flipInfoButtonDefault
     property string cfg_hoverDetails
     property string cfg_hoverDetailsDefault
+    property bool cfg_appleTrackInfo
+    property bool cfg_appleTrackInfoDefault
+    property bool cfg_onlineTrackInfo
+    property bool cfg_onlineTrackInfoDefault
+    property bool cfg_detailCustomize
+    property bool cfg_detailCustomizeDefault
     property var cfg_detailFields
     property var cfg_detailFieldsDefault
     property bool cfg_idleText
@@ -342,6 +367,12 @@ Kirigami.Page {
     property var configKeys: []
     readonly property var draft: configValues(false)
     readonly property var defaults: configValues(true)
+
+    readonly property bool panelHost: plasmoid.formFactor === PlasmaCore.Types.Horizontal || plasmoid.formFactor === PlasmaCore.Types.Vertical
+    property bool editingPopup: false
+    readonly property string editingTarget: panelHost ? (editingPopup ? "popup" : "panel") : "desktop"
+    readonly property var editingDraft: Presentations.resolve(draft, editingTarget)
+    readonly property var editingDefaults: Presentations.resolve(defaults, editingTarget)
 
     // Reading each cfg_ property here keeps both snapshots reactive to Plasma.
     function configValues(useDefaults) {
@@ -454,9 +485,15 @@ Kirigami.Page {
     }
     VisualizerCore {
         id: previewAudio
-        // Follow the active widget's capture settings; draft appearance stays
-        // local to the preview until Apply.
-        configuration: plasmoid.configuration
+        // Preview the selected effects while keeping the applied capture source.
+        // Draft audio settings must not restart the live widget's shared feeder.
+        configuration: {
+            const preview = Object.assign({}, root.editingDraft);
+            for (const key of ["numBars", "sensitivity", "framerate", "noiseReduction", "inputSource", "lowCutoff", "highCutoff", "inputMethod"])
+                if (plasmoid.configuration[key] !== undefined)
+                    preview[key] = plasmoid.configuration[key];
+            return preview;
+        }
         active: studio.livePreview && studio.onScreen
         plasmoidVisible: active
         commandSourceComponent: Component {
@@ -464,25 +501,84 @@ Kirigami.Page {
         }
     }
 
+    PlasmaCommandSource {
+        id: syncAll
+        property string status: ""
+        onNewData: (source, data) => {
+            const count = parseInt(String(data["stdout"] || "").trim());
+            status = data["exit code"] === 0 && !isNaN(count) ? (count === 0 ? "No other widgets found" : "Copied to " + count + (count === 1 ? " other widget" : " other widgets")) : "Could not reach Plasma";
+            disconnectSource(source);
+            statusReset.restart();
+        }
+        Timer {
+            id: statusReset
+            interval: 4000
+            onTriggered: syncAll.status = ""
+        }
+    }
+
+    // Placement (monitor, position, size) stays with each widget.
+    function copyToAllWidgets() {
+        const plugin = plasmoid.metaData?.pluginId || /plasmoids\/([^\/]+)\//.exec(Qt.resolvedUrl("."))?.[1] || "";
+        syncAll.connectSource(SyncWidgets.command(plugin, plasmoid.id, SyncWidgets.values(root.draft, Schema.PLACEMENT_KEYS)));
+    }
+
+    Component {
+        id: presentationTools
+        Row {
+            spacing: 8
+            Studio.StudioSeg {
+                objectName: "presentationTarget"
+                visible: root.panelHost
+                width: implicitWidth
+                options: [[false, "Panel pill"], [true, "Card / popup"]]
+                value: root.editingPopup
+                onActivated: value => root.editingPopup = value
+            }
+            Studio.StudioButton {
+                objectName: "syncAppearance"
+                visible: root.panelHost
+                compact: true
+                text: root.editingPopup ? "Use pill look" : "Use popup look"
+                tooltip: "Copy the other design into this one: colours, artwork, visualizer and progress styles. The pill enables the copied effects. Each view keeps its layout and playback controls. Apply saves; Discard undoes."
+                onClicked: root.assign(Presentations.syncAppearance(root.draft, root.editingPopup ? "panel" : "popup"))
+            }
+            Studio.StudioButton {
+                objectName: "syncAllWidgets"
+                compact: true
+                text: syncAll.status || "Copy to all widgets"
+                tooltip: "Copy these settings, including both panel designs, to every other copy of this widget, such as one per monitor. Each keeps its own monitor and position. Apply here first; the others change immediately and cannot be undone."
+                onClicked: root.copyToAllWidgets()
+            }
+        }
+    }
+
     Studio.Studio {
         id: studio
+        objectName: "settingsStudio"
         anchors.fill: parent
+        presentationTarget: root.editingTarget
+        toolbarExtra: presentationTools
+
         commandSourceComponent: Component {
             PlasmaCommandSource {}
         }
         env: "kde"
-        draft: root.draft
-        defaults: root.defaults
+        draft: root.editingDraft
+        defaults: root.editingDefaults
         canDiscard: root.hasChanges
         previewAccent: Kirigami.Theme.highlightColor
         liveVisualizer: previewAudio
         livePlayer: previewMpris.currentPlayer
+        livePositionUnitsPerSecond: 1000000
         liveIsPlaying: previewMpris.currentPlayer?.playbackStatus === Mpris.PlaybackStatus.Playing
         diagnosticsRunner: done => {
             doctor.done = done;
             doctor.connectSource("'" + Qt.resolvedUrl("../code/doctor.sh").toString().replace(/^file:\/\//, "") + "'");
         }
-        onEdited: next => root.assign(next)
+        onPreviewPopupRequested: if (root.panelHost)
+            root.editingPopup = true
+        onEdited: next => root.assign(Presentations.edit(root.draft, next, root.editingTarget))
         onDiscard: root.discard()
         onUndo: root.undo()
     }

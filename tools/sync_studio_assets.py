@@ -334,6 +334,24 @@ def main():
     parser.add_argument("--check", action="store_true")
     args = parser.parse_args()
     mismatches = []
+    defaults_path = SOURCE_CODE / "ConfigDefaults.js"
+    defaults = (
+        "// Generated from main.xml by tools/sync_studio_assets.py.\n"
+        + "var values = "
+        + json.dumps(
+            {
+                key: entry["default"]
+                for key, entry in parse_kcfg(SOURCE_CONFIG / "main.xml").items()
+            },
+            indent=2,
+        )
+        + ";\n"
+    ).encode()
+    if args.check:
+        if not defaults_path.exists() or defaults_path.read_bytes() != defaults:
+            mismatches.append(str(defaults_path.relative_to(ROOT)))
+    else:
+        defaults_path.write_bytes(defaults)
     funding = funding_module()
     license = license_module()
     version = (

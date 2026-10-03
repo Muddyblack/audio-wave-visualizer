@@ -49,6 +49,17 @@ TestCase {
         verify(interaction.hoverText.indexOf("1:40") >= 0);
         verify(interaction.hoverText.indexOf("+0:50") >= 0);
     }
+    function test_noneHidesProgress() {
+        bar.style = -1;
+        verify(!bar.visible);
+    }
+    function test_popupClosingCommitsPendingClick() {
+        mouseClick(area, 270, 5);
+        bar.visible = false;
+        compare(testPlayer.position, 180);
+        wait(450);
+        compare(testPlayer.position, 180);
+    }
     function test_doubleClickJumpsFromCurrentPosition() {
         mouseDoubleClickSequence(area, 275, 5, Qt.LeftButton);
         tryCompare(testPlayer, "position", 60);
@@ -116,7 +127,7 @@ TestCase {
         clock.checkLoop();
         compare(testPlayer.position, 65);
     }
-    function test_chaptersSnapButDraggingRemainsPrecise() {
+    function test_chaptersSnapOnlyNearMarkers() {
         bar.chapters = [
             {
                 start: 0,
@@ -129,8 +140,20 @@ TestCase {
         ];
         mouseMove(area, 150, 5);
         compare(interaction.chapterTitle, "Drop");
-        mouseClick(area, 150, 5);
+        mouseClick(area, 120, 5);
         compare(testPlayer.position, 80);
+        mouseClick(area, 150, 5);
+        compare(testPlayer.position, 100, "Clicks within a chapter seek to the clicked time");
+    }
+    function test_singleLongChapterDoesNotForceSeekToZero() {
+        bar.chapters = [
+            {
+                start: 0,
+                title: "Full mix"
+            }
+        ];
+        mouseClick(area, 150, 5);
+        compare(testPlayer.position, 100);
     }
     function test_waveformKeepsShapeWithoutPeaks() {
         bar.style = 4;

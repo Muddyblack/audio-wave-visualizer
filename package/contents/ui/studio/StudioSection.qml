@@ -10,7 +10,7 @@ Column {
 
     readonly property var sectionData: Schema.SECTIONS[sectionIndex]
     readonly property string query: studio.query.trim().toLowerCase()
-    readonly property var visibleRows: sectionData.rows.map((row, i) => i).filter(i => Schema.rowVisible(sectionData.rows[i], sectionData, studio.draft, studio.env, query))
+    readonly property var visibleRows: sectionData.rows.map((row, i) => i).filter(i => studio.rowVisible(sectionData.rows[i], sectionData))
     readonly property bool shown: (query !== "" || sectionData.tab === studio.currentTab) && visibleRows.length > 0
 
     readonly property bool librarySection: ["presets", "saved"].indexOf(sectionData.tab) !== -1

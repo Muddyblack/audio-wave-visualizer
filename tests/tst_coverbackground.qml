@@ -77,7 +77,7 @@ TestCase {
         for (const point of [[2, 2], [data.w - 3, 2], [2, data.h - 3], [data.w - 3, data.h - 3], [data.w / 2, data.h / 2]]) {
             const [x, y] = point;
             verify(picture.alpha(x, y) > 240, "Cover must fill every edge");
-            verify(picture.red(x, y) > 100 || picture.blue(x, y) > 100, "Every edge must contain cover pixels");
+            verify(picture.red(x, y) > 100 || picture.blue(x, y) > 100, "Every edge must contain cover pixels at " + x + "," + y + ": " + picture.red(x, y) + "," + picture.blue(x, y));
         }
     }
 }

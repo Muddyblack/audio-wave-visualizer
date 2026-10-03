@@ -268,6 +268,31 @@ TestCase {
         }
     }
 
+    function test_snapshotConfigurationRestartsForCaptureChangesOnly() {
+        subject.resolvedRunDir = runtimeDir + "/audio-wave-widget";
+        const snapshot = {
+            numBars: 4,
+            framerate: 60,
+            sensitivity: 100,
+            noiseReduction: 0.77,
+            inputMethod: "auto"
+        };
+        subject.configuration = snapshot;
+        wait(130);
+        Support.Commands.calls = [];
+        subject.configuration = Object.assign({}, snapshot, {
+            visualizerType: 20,
+            customColor: "#112233"
+        });
+        wait(130);
+        compare(Support.Commands.calls.filter(value => value.includes("pkill")).length, 0);
+        subject.configuration = Object.assign({}, snapshot, {
+            numBars: 8
+        });
+        wait(130);
+        compare(Support.Commands.calls.filter(value => value.includes("pkill")).length, 1);
+    }
+
     // run.py runs this command against a real feeder stuck in a backend probe.
     function test_restartStopsFeederBeforeSpawning() {
         subject.resolvedRunDir = runtimeDir + "/audio-wave-widget";

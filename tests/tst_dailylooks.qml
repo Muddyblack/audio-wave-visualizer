@@ -22,6 +22,41 @@ TestCase {
         xhr.send();
         defaults = Schema.defaultsFromXml(xhr.responseText);
     }
+    function test_trackInfoSurvivesRandomAndDailyLooks() {
+        for (const online of [false, true]) {
+            const current = Object.assign({}, defaults, {
+                autoDailyLook: true,
+                hoverDetails: "flip",
+                detailFields: ["composer", "length"],
+                detailCustomize: true,
+                flipInfoButton: false,
+                onlineTrackInfo: online,
+                appleTrackInfo: online
+            });
+            const keys = ["hoverDetails", "detailFields", "detailCustomize", "flipInfoButton", "onlineTrackInfo", "appleTrackInfo"];
+            for (let i = 0; i < 20; i++) {
+                const next = Schema.surprise(defaults, current);
+                for (const key of keys)
+                    compare(next[key], current[key], key);
+            }
+            const daily = Schema.dailyUpdate(defaults, current, "2026-10-02");
+            for (const key of keys)
+                compare(daily[key], current[key], key);
+        }
+    }
+    function test_detailProfilesAndCustomization() {
+        let state = Object.assign({}, defaults);
+        for (const profile of ["essentials", "credits", "all"]) {
+            Object.assign(state, Schema.detailProfilePatch(profile));
+            compare(Schema.detailProfile(state), profile);
+            compare(state.onlineTrackInfo, false);
+            compare(state.appleTrackInfo, false);
+        }
+        const fields = state.detailFields.slice();
+        Object.assign(state, Schema.detailProfilePatch("custom"));
+        compare(state.detailFields, fields);
+        compare(Schema.detailProfile(state), "custom");
+    }
     function test_dateSeedAndExchange() {
         const first = Schema.dailyLook("2026-09-16");
         compare(JSON.stringify(first), JSON.stringify(Schema.dailyLook("2026-09-16")));
@@ -44,6 +79,8 @@ TestCase {
             inputSource: "my-monitor",
             framerate: 27,
             sensitivity: 123,
+            onlineTrackInfo: true,
+            appleTrackInfo: true,
             userPresets: '[{"name":"Saved","settings":{}}]',
             favoritePresets: '["glass"]',
             customVisualizers: "trusted.qml",
@@ -52,7 +89,7 @@ TestCase {
             monitor: "DP-2"
         });
         const next = Schema.dailyUpdate(defaults, current, "2026-09-16");
-        for (const key of ["inputSource", "framerate", "sensitivity", "userPresets", "favoritePresets", "customVisualizers", "verticalPosition", "widgetWidth", "monitor"])
+        for (const key of ["inputSource", "framerate", "sensitivity", "onlineTrackInfo", "appleTrackInfo", "userPresets", "favoritePresets", "customVisualizers", "verticalPosition", "widgetWidth", "monitor"])
             compare(next[key], current[key], key);
         compare(next.dailyLookApplied, "2026-09-16");
         next.customColor = "#123456";

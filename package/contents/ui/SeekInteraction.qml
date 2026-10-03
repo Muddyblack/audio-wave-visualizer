@@ -42,14 +42,19 @@ Item {
         return Math.max(0, Math.min(1, value));
     }
     function clickTarget(f) {
-        let start = -1;
-        const seconds = f * clock.lengthValue / clock.unitsPerSecond;
+        // Snap only near a chapter marker. Snapping every click to the start
+        // of its chapter makes long mixes look as though seeking is broken.
+        let nearest = f;
+        let distance = 6;
         for (const chapter of chapters) {
-            if (chapter.start > seconds)
-                break;
-            start = chapter.start;
+            const marker = chapter.start * clock.unitsPerSecond / clock.lengthValue;
+            const pixels = Math.abs(marker - f) * width;
+            if (pixels < distance) {
+                nearest = marker;
+                distance = pixels;
+            }
         }
-        return start >= 0 ? start * clock.unitsPerSecond / clock.lengthValue : f;
+        return nearest;
     }
     function cancel() {
         clickDelay.stop();
@@ -78,8 +83,13 @@ Item {
         }
     }
     onVisibleChanged: {
-        if (!visible)
+        if (!visible) {
+            // A hover popup may close before the double-click timeout expires.
+            // Preserve the click the user already made; track changes still cancel it.
+            if (clickDelay.running)
+                root.clock.seekToFraction(root._clickFraction);
             cancel();
+        }
     }
     Connections {
         target: root.clock

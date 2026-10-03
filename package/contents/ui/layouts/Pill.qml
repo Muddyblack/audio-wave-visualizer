@@ -9,12 +9,31 @@ Item {
     id: root
     required property var view
     readonly property var cfg: view.configuration
-    readonly property string eqMode: view.hasPlayer ? (cfg.pillEq ?? "static") : "off"
+    readonly property string eqMode: view.hasPlayer ? (cfg.pillEq ?? "wave") : "off"
     readonly property string controls: view.hasPlayer ? (cfg.pillControls ?? "none") : "none"
     readonly property string content: cfg.pillContent ?? "title-artist"
     readonly property string titleText: view.displayTrack !== "" ? view.displayTrack : qsTr("No media")
     readonly property bool withArtist: content !== "title" && view.artist !== ""
     readonly property real maxWidth: cfg.pillMaxWidth ?? 300
+
+    readonly property bool scrollText: (cfg.marquee ?? false) && !(cfg.reducedMotion ?? false) && textRow.implicitWidth > textViewport.width + 1
+    property real scrollStart: view.visualFrameTime
+    onTitleTextChanged: scrollStart = view.visualFrameTime
+    onScrollTextChanged: scrollStart = view.visualFrameTime
+    readonly property real scrollOffset: {
+        if (!scrollText)
+            return 0;
+        const distance = Math.max(0, textRow.implicitWidth - textViewport.width);
+        const travel = Math.max(1000, distance / 28 * 1000);
+        const phase = Math.max(0, view.visualFrameTime - scrollStart) % (2 * travel + 2400);
+        if (phase < 1200)
+            return 0;
+        if (phase < 1200 + travel)
+            return distance * (phase - 1200) / travel;
+        if (phase < 2400 + travel)
+            return distance;
+        return distance * (1 - (phase - 2400 - travel) / travel);
+    }
 
     implicitHeight: 30
     implicitWidth: Math.min(maxWidth, row.implicitWidth + 15)
@@ -24,6 +43,7 @@ Item {
         anchors.fill: parent
         anchors.leftMargin: 5
         anchors.rightMargin: 10
+        anchors.bottomMargin: root.cfg.pillProgress === "bar" ? 8 : 0
         spacing: 8
 
         ArtView {
@@ -72,6 +92,8 @@ Item {
         }
 
         Item {
+            id: textViewport
+            objectName: "pillTextViewport"
             Layout.fillWidth: true
             Layout.minimumWidth: 0
             Layout.alignment: Qt.AlignVCenter
@@ -81,7 +103,10 @@ Item {
 
             RowLayout {
                 id: textRow
-                anchors.fill: parent
+                objectName: "pillTextRow"
+                anchors.verticalCenter: parent.verticalCenter
+                width: root.scrollText ? implicitWidth : parent.width
+                x: -root.scrollOffset
                 spacing: 5
                 Text {
                     renderType: Text.CurveRendering ?? Text.QtRendering
@@ -94,7 +119,7 @@ Item {
                     font.pixelSize: 12
                     font.weight: Font.DemiBold
                     font.italic: root.view.trackUnknown
-                    elide: Text.ElideRight
+                    elide: root.scrollText ? Text.ElideNone : Text.ElideRight
                 }
                 Text {
                     renderType: Text.CurveRendering ?? Text.QtRendering
@@ -115,13 +140,17 @@ Item {
                     color: root.view.textColor
                     opacity: 0.6
                     font.pixelSize: 12
-                    elide: Text.ElideRight
+                    elide: root.scrollText ? Text.ElideNone : Text.ElideRight
                 }
             }
         }
 
         Row {
+            objectName: "pillControls"
             visible: root.controls !== "none"
+            // Reserve the space so entering or leaving cannot resize the panel item.
+            opacity: !(root.cfg.pillControlsOnHover ?? false) || root.view.cardHovered ? 1 : 0
+            enabled: opacity > 0
             Layout.leftMargin: 2
             Layout.alignment: Qt.AlignVCenter
             PillButton {
@@ -145,6 +174,19 @@ Item {
                 onClicked: root.view.nextTrack()
             }
         }
+    }
+
+    PanelProgress {
+        objectName: "pillStyledProgress"
+        view: root.view
+        visible: root.cfg.pillProgress === "bar" && root.view.hasPlayer && available
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        anchors.leftMargin: (root.cfg.pillArt ?? true) ? 30 : 12
+        anchors.rightMargin: 12
+        anchors.bottomMargin: 1
+        height: 9
     }
 
     // Underline progress (HTML `.pline`).

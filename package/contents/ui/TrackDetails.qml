@@ -1,237 +1,321 @@
 import QtQuick
 import QtQuick.Layouts
+import QtQuick.Controls.Basic as Controls
+import "../code/TrackInfo.js" as TrackInfo
 
-// Track details (HTML `.hc` and the flipped card's `.back`): cover, title and
-// artist, the configured detail rows and the lyric line.
-// mode: tooltip · drawer · back
 Item {
     id: root
     required property var view
     property string mode: "tooltip"
     readonly property bool back: mode === "back"
     readonly property bool drawer: mode === "drawer"
-
+    readonly property bool artwork: mode === "artwork"
+    readonly property color foreground: back ? view.textColor : "#f1f4f8"
+    readonly property color muted: back ? Qt.rgba(foreground.r, foreground.g, foreground.b, .75) : "#bac4d2"
     function fieldList() {
-        const fields = view.configuration.detailFields ?? "album,genre,format,player";
+        const fields = view.configuration?.detailFields ?? "album,genre,format,player";
         return (Array.isArray(fields) ? fields : String(fields).split(",")).map(field => String(field).trim()).filter(Boolean);
     }
+    property string selectedRecordingId: ""
+    onInfoPayloadChanged: {
+        selectedRecordingId = "";
+        if (scroll.contentItem)
+            scroll.contentItem.contentY = 0;
+    }
+    readonly property var infoPayload: TrackInfo.payload(root.view)
+    MediaLookup {
+        id: lookup
+        objectName: root.artwork ? "artistInfoLookup" : "trackDetailsLookup"
+        mode: "info"
+        active: root.visible && root.view.visible && root.view.shouldShow && (root.artwork ? !!root.view.zoomOpen : root.back ? !!root.view.flipped : !!root.view.detailsVisible) && (root.view.configuration?.onlineTrackInfo ?? false) && !root.view.samplePlayback && (!!payload.artist || !!payload.track)
+        payload: Object.assign({}, root.infoPayload, {
+            recordingId: root.selectedRecordingId
+        })
+        commandSourceComponent: root.view.visualizer?.commandSourceComponent ?? null
+    }
+    function linkAttribute(url) {
+        return String(url).replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/</g, "&lt;");
+    }
+    function metadataText(key) {
+        const value = (view.metadata ?? {})[key];
+        return Array.isArray(value) ? value.join(", ") : String(value ?? "");
+    }
+    function detail(label, value) {
+        return value ? [label, value] : null;
+    }
+    readonly property string detailAlbum: infoPayload.album || lookup.result.album || ""
+    readonly property string detailArtist: infoPayload.artist || lookup.result.matchedArtist || ""
+    readonly property string detailYear: view.year || lookup.result.year || ""
+    readonly property bool showSummary: fieldList().indexOf("summary") >= 0 && !!lookup.result.summary
     // Rows without advertised data are left out.
-    readonly property var rows: fieldList().map(key => {
+    function rowFor(key) {
         switch (key) {
+        case "albumArtist":
+            return detail(qsTr("Album artist"), metadataText("xesam:albumArtist"));
+        case "composer":
+            return detail(qsTr("Composer"), metadataText("xesam:composer") || lookup.result.composer || "");
+        case "lyricist":
+            return detail(qsTr("Lyricist"), metadataText("xesam:lyricist") || lookup.result.lyricist || "");
+        case "writers":
+            return detail(qsTr("Writers"), lookup.result.writers || "");
+        case "producers":
+            return detail(qsTr("Producers"), lookup.result.producers || "");
+        case "performers":
+            return detail(qsTr("Performers"), lookup.result.performers || "");
+        case "arrangers":
+            return detail(qsTr("Arrangers"), lookup.result.arrangers || "");
+        case "label":
+            return detail(qsTr("Label"), lookup.result.label || "");
+        case "country":
+            return detail(qsTr("Country"), lookup.result.country || "");
+        case "editionDate":
+            return detail(qsTr("Edition date"), lookup.result.editionDate || "");
+        case "recordingNote":
+            return detail(qsTr("Version"), lookup.result.recordingNote || "");
+        case "isrc":
+            return detail(qsTr("ISRC"), lookup.result.isrc || "");
+        case "trackCount":
+            return detail(qsTr("Album tracks"), lookup.result.trackCount ? String(lookup.result.trackCount) : "");
+        case "disc":
+            return detail(qsTr("Disc"), Number(metadataText("xesam:discNumber")) > 0 ? metadataText("xesam:discNumber") : lookup.result.discNumber ? String(lookup.result.discNumber) : "");
+        case "bpm":
+            return detail(qsTr("BPM"), Number(metadataText("xesam:audioBPM")) > 0 ? metadataText("xesam:audioBPM") : "");
+        case "comment":
+            return detail(qsTr("Comment"), metadataText("xesam:comment"));
+        case "date":
+            return detail(qsTr("Released"), metadataText("xesam:contentCreated").slice(0, 10) || lookup.result.releaseDate || "");
+        case "releaseType":
+            return detail(qsTr("Type"), lookup.result.releaseType || "");
         case "format":
-            return back && (view.formatBadges ?? []).length ? [qsTr("Format"), view.formatBadges.join(" · ")] : null;
+            return (view.formatBadges ?? []).length ? [qsTr("Format"), view.formatBadges.join(" · ")] : null;
         case "album":
-            return view.album !== "" ? [qsTr("Album"), view.album + (view.year !== "" ? " (" + view.year + ")" : "")] : null;
+            return detailAlbum !== "" ? [qsTr("Album"), detailAlbum + (detailYear !== "" ? " (" + detailYear + ")" : "")] : null;
         case "track":
-            return view.trackNumber > 0 ? [qsTr("Track"), String(view.trackNumber)] : null;
+            return view.trackNumber > 0 ? [qsTr("Track"), String(view.trackNumber)] : lookup.result.trackNumber ? [qsTr("Track"), String(lookup.result.trackNumber)] : null;
         case "genre":
-            return view.genre !== "" ? [qsTr("Genre"), view.genre] : null;
+            return detail(qsTr("Genre"), view.genre || (lookup.result.genres ?? []).join(", "));
         case "length":
-            return view.lengthText !== "" ? [qsTr("Length"), view.lengthText] : null;
+            return !!view.lengthText ? [qsTr("Length"), view.lengthText] : null;
         case "player":
-            return view.sourceName !== "" ? [qsTr("Source"), view.sourceName] : null;
-        case "volume":
-            return view.volume >= 0 ? [qsTr("Volume"), "", view.volume] : null;
+            return !!view.sourceName ? [qsTr("Source"), view.sourceName] : null;
         default:
             return null;
         }
-    }).filter(Boolean)
-    readonly property bool showLyric: (view.configuration.showLyrics ?? false) && view.lyricDisplayLine !== ""
-
-    implicitWidth: back ? 0 : 250
-    implicitHeight: back ? 0 : content.implicitHeight + (drawer ? 32 : 24)
-
-    // Tooltip/drawer card: #16181acc glass, 14 px radius, deep shadow.
-    Loader {
-        anchors.fill: parent
-        anchors.margins: -50
-        active: !root.back
-        sourceComponent: CardGlow {
-            margin: 50
-            radius: 14
-            layers: [
-                {
-                    y: 18,
-                    blur: 40,
-                    color: Qt.rgba(0, 0, 0, 0x77 / 255)
-                }
-            ]
-        }
     }
+    readonly property var rows: fieldList().map(rowFor).filter(Boolean)
+    readonly property var sections: [
+        {
+            title: qsTr("Song"),
+            keys: ["genre", "length", "bpm", "recordingNote", "comment"]
+        },
+        {
+            title: qsTr("Credits"),
+            keys: ["albumArtist", "composer", "lyricist", "writers", "producers", "performers", "arrangers"]
+        },
+        {
+            title: qsTr("Release"),
+            keys: ["album", "date", "releaseType", "track", "disc", "trackCount", "label", "country", "editionDate", "isrc"]
+        },
+        {
+            title: qsTr("Playback"),
+            keys: ["format", "player"]
+        }
+    ].map(section => ({
+                title: section.title,
+                rows: section.keys.filter(key => fieldList().indexOf(key) >= 0).map(rowFor).filter(Boolean)
+            })).filter(section => section.rows.length)
+    readonly property string notice: TrackInfo.notice(lookup.status, lookup.result)
+    readonly property bool showLyric: (view.configuration?.showLyrics ?? false) && !!view.lyricDisplayLine
+    implicitWidth: drawer ? 380 : 310
+    implicitHeight: artwork ? content.implicitHeight + 24 : Math.min(mode === "tooltip" ? 300 : 480, content.implicitHeight + 28)
+
     Rectangle {
         anchors.fill: parent
-        visible: !root.back
-        color: Qt.rgba(0x16 / 255, 0x18 / 255, 0x1a / 255, 0xcc / 255)
-        border.color: Qt.rgba(1, 1, 1, 0x21 / 255)
-        border.width: 1
-        topLeftRadius: root.drawer ? 0 : 14
-        topRightRadius: root.drawer ? 0 : 14
-        bottomLeftRadius: 14
-        bottomRightRadius: 14
-    }
-
-    component DetailRow: RowLayout {
-        id: row
-        required property var modelData
-        property int pixelSize: 10
-        property real labelWidth: 48
-        spacing: root.back ? 10 : 12
-        Text {
-            Layout.preferredWidth: row.labelWidth
-            text: row.modelData[0]
-            color: "#eef0ec"
-            opacity: 0.5
-            font.pixelSize: row.pixelSize
-        }
-        Text {
-            Layout.fillWidth: true
-            visible: row.modelData.length < 3
-            text: row.modelData[1]
-            color: "#eef0ec"
-            horizontalAlignment: root.back ? Text.AlignLeft : Text.AlignRight
-            elide: Text.ElideRight
-            font.pixelSize: row.pixelSize
-        }
-        Item {
-            Layout.fillWidth: true
-            visible: row.modelData.length >= 3
-            implicitHeight: 4
-            Rectangle {
-                anchors.right: root.back ? undefined : parent.right
-                anchors.verticalCenter: parent.verticalCenter
-                width: 60
-                height: 4
-                radius: 4
-                color: Qt.rgba(1, 1, 1, 0x26 / 255)
-                clip: true
-                Rectangle {
-                    width: parent.width * Math.max(0, Math.min(1, row.modelData[2] ?? 0))
-                    height: parent.height
-                    color: root.view.waveColor
-                }
-            }
+        objectName: "trackInfoBackground"
+        visible: !root.artwork && !root.back
+        color: "#f5141a24"
+        radius: root.back ? Math.max(0, root.view.configuration?.bgRadius ?? 14) : 14
+        border.color: "#30ffffff"
+        Rectangle {
+            anchors.top: parent.top
+            anchors.horizontalCenter: parent.horizontalCenter
+            width: 32
+            height: 3
+            radius: 2
+            color: "#8293ac"
+            visible: root.drawer
         }
     }
+    HoverHandler {
+        enabled: !root.back && !root.artwork
+        onHoveredChanged: if (root.view.detailsHovered !== undefined)
+            root.view.detailsHovered = hovered
+    }
+    Component.onDestruction: if (!back && !artwork && view.detailsHovered !== undefined)
+        view.detailsHovered = false
 
-    // Tooltip and drawer layout.
-    ColumnLayout {
-        id: content
-        visible: !root.back
+    Controls.ScrollView {
+        id: scroll
+        objectName: "trackInfoScroll"
         anchors.fill: parent
-        anchors.margins: 12
-        anchors.topMargin: root.drawer ? 20 : 12
-        spacing: 9
-
-        RowLayout {
-            spacing: 10
-            Layout.fillWidth: true
-            ArtView {
-                Layout.preferredWidth: 40
-                Layout.preferredHeight: 40
-                view: root.view
-                artUrl: root.view.artUrl
-                desktopEntry: root.view.desktopEntry
-                fallbackIcon: root.view.fallbackIcon
+        anchors.margins: root.back ? 10 : 14
+        anchors.rightMargin: root.back ? 30 : 14
+        clip: true
+        contentWidth: availableWidth
+        contentHeight: content.implicitHeight
+        Controls.ScrollBar.horizontal.policy: Controls.ScrollBar.AlwaysOff
+        Controls.ScrollBar.vertical.policy: contentHeight > availableHeight ? Controls.ScrollBar.AlwaysOn : Controls.ScrollBar.AlwaysOff
+        ColumnLayout {
+            id: content
+            width: scroll.availableWidth
+            spacing: root.back ? 8 : 12
+            RowLayout {
+                visible: !root.artwork
+                Layout.fillWidth: true
+                spacing: 10
+                ArtView {
+                    Layout.preferredWidth: root.back ? 32 : 44
+                    Layout.preferredHeight: Layout.preferredWidth
+                    view: root.artwork ? null : root.view
+                    flipHoverEnabled: false
+                    artUrl: root.view.artUrl
+                    desktopEntry: root.view.desktopEntry
+                    fallbackIcon: root.view.fallbackIcon
+                }
+                ColumnLayout {
+                    Layout.fillWidth: true
+                    spacing: 3
+                    Text {
+                        Layout.fillWidth: true
+                        text: root.view.displayTrack
+                        textFormat: Text.PlainText
+                        color: root.foreground
+                        font.pixelSize: root.back ? 12 : 14
+                        font.bold: true
+                        elide: Text.ElideRight
+                    }
+                    Text {
+                        Layout.fillWidth: true
+                        visible: !!text
+                        text: root.detailArtist
+                        textFormat: Text.PlainText
+                        color: root.muted
+                        font.pixelSize: 11
+                        elide: Text.ElideRight
+                    }
+                }
             }
             ColumnLayout {
+                objectName: "detailRows"
                 Layout.fillWidth: true
-                spacing: 0
-                Text {
-                    Layout.fillWidth: true
-                    text: root.view.displayTrack
-                    color: "#eef0ec"
-                    font.pixelSize: 12
-                    font.bold: true
-                    elide: Text.ElideRight
-                }
-                Text {
-                    Layout.fillWidth: true
-                    text: root.view.artist
-                    color: "#eef0ec"
-                    opacity: 0.6
-                    font.pixelSize: 10
-                    elide: Text.ElideRight
+                spacing: 12
+                Repeater {
+                    model: root.sections
+                    ColumnLayout {
+                        id: section
+                        required property var modelData
+                        Layout.fillWidth: true
+                        spacing: 5
+                        RowLayout {
+                            Layout.fillWidth: true
+                            spacing: 8
+                            Text {
+                                text: section.modelData.title.toUpperCase()
+                                color: root.muted
+                                font.pixelSize: 9
+                                font.letterSpacing: 1
+                                font.bold: true
+                            }
+                            Rectangle {
+                                Layout.fillWidth: true
+                                height: 1
+                                color: Qt.rgba(root.foreground.r, root.foreground.g, root.foreground.b, .15)
+                            }
+                        }
+                        Repeater {
+                            model: section.modelData.rows
+                            RowLayout {
+                                id: row
+                                required property var modelData
+                                Layout.fillWidth: true
+                                spacing: 10
+                                Text {
+                                    Layout.preferredWidth: Math.min(78, scroll.availableWidth * .32)
+                                    Layout.alignment: Qt.AlignTop
+                                    text: row.modelData[0]
+                                    textFormat: Text.PlainText
+                                    wrapMode: Text.Wrap
+                                    color: root.muted
+                                    font.pixelSize: 11
+                                }
+                                Text {
+                                    Layout.fillWidth: true
+                                    text: row.modelData[1]
+                                    textFormat: Text.PlainText
+                                    color: root.foreground
+                                    font.pixelSize: 11
+                                    wrapMode: Text.Wrap
+                                    maximumLineCount: root.mode === "tooltip" ? 2 : 20
+                                    elide: Text.ElideRight
+                                }
+                            }
+                        }
+                    }
                 }
             }
-        }
-        FormatBadges {
-            Layout.fillWidth: true
-            badges: root.fieldList().indexOf("format") >= 0 ? root.view.formatBadges ?? [] : []
-        }
-        ColumnLayout {
-            objectName: "detailRows"
-            Layout.fillWidth: true
-            spacing: 4
-            Repeater {
-                model: root.back ? [] : root.rows
-                DetailRow {
-                    Layout.fillWidth: true
-                }
-            }
-        }
-        Text {
-            Layout.fillWidth: true
-            Layout.topMargin: -1
-            visible: root.showLyric
-            text: root.view.lyricDisplayLine
-            color: root.view.waveColor
-            opacity: 0.9
-            font.italic: true
-            font.pixelSize: 10
-            elide: Text.ElideRight
-        }
-        Text {
-            Layout.fillWidth: true
-            visible: root.showLyric && root.view.lyricLine !== "" && root.view.lyricNotice !== ""
-            text: root.view.lyricNotice
-            textFormat: Text.PlainText
-            wrapMode: Text.Wrap
-            color: root.view.textColor
-            opacity: 0.75
-            font.pixelSize: 10
-        }
-    }
-
-    // Back of the flipped card: [cover 62][title + rows].
-    RowLayout {
-        visible: root.back
-        anchors.fill: parent
-        anchors.leftMargin: 12
-        anchors.rightMargin: 12
-        anchors.topMargin: 10
-        anchors.bottomMargin: 10
-        spacing: 12
-
-        ArtView {
-            readonly property real edge: Math.max(0, Math.min(62, root.height - 22))
-            Layout.preferredWidth: edge
-            Layout.preferredHeight: edge
-            Layout.alignment: Qt.AlignVCenter
-            view: root.view
-            artUrl: root.view.artUrl
-            desktopEntry: root.view.desktopEntry
-            fallbackIcon: root.view.fallbackIcon
-        }
-        ColumnLayout {
-            Layout.fillWidth: true
-            Layout.alignment: Qt.AlignVCenter
-            spacing: 1
             Text {
                 Layout.fillWidth: true
-                Layout.bottomMargin: 2
-                text: root.view.displayTrack
-                color: root.view.textColor
+                visible: root.showSummary
+                text: lookup.result.summary || ""
+                textFormat: Text.PlainText
+                color: root.muted
                 font.pixelSize: 11
-                font.bold: true
+                wrapMode: Text.Wrap
+                maximumLineCount: root.mode === "tooltip" ? 3 : 100
                 elide: Text.ElideRight
             }
-            Repeater {
-                model: root.back ? root.rows : []
-                DetailRow {
-                    Layout.fillWidth: true
-                    pixelSize: 9
-                    labelWidth: 40
-                }
+            Text {
+                Layout.fillWidth: true
+                visible: root.showLyric
+                text: root.view.lyricDisplayLine || ""
+                textFormat: Text.PlainText
+                color: root.foreground
+                font.italic: true
+                font.pixelSize: 11
+                wrapMode: Text.Wrap
+            }
+            Text {
+                Layout.fillWidth: true
+                visible: !!root.notice
+                text: root.notice
+                textFormat: Text.PlainText
+                color: root.muted
+                font.pixelSize: 10
+                wrapMode: Text.Wrap
+            }
+            Controls.ComboBox {
+                Layout.fillWidth: true
+                visible: model.length > 0
+                model: lookup.result.candidates || []
+                textRole: "label"
+                currentIndex: -1
+                displayText: qsTr("Choose a recording…")
+                onActivated: index => root.selectedRecordingId = model[index].id
+            }
+            Controls.Button {
+                visible: lookup.status === "error" || !!lookup.result.partial
+                text: qsTr("Retry lookup")
+                onClicked: lookup.reset()
+            }
+            Text {
+                Layout.fillWidth: true
+                visible: !!text
+                text: [lookup.result.recordingUrl ? '<a href="' + root.linkAttribute(lookup.result.recordingUrl) + '">Recording · MusicBrainz</a>' : '', lookup.result.albumUrl ? '<a href="' + root.linkAttribute(lookup.result.albumUrl) + '">Album · MusicBrainz</a>' : '', lookup.result.catalogUrl ? '<a href="' + root.linkAttribute(lookup.result.catalogUrl) + '">Apple Music</a>' : '', root.showSummary && lookup.result.artistUrl ? '<a href="' + root.linkAttribute(lookup.result.artistUrl) + '">Wikipedia · CC BY-SA</a>' : ''].filter(Boolean).join("  ·  ")
+                textFormat: Text.RichText
+                linkColor: root.back ? root.view.waveColor : "#b7d5ff"
+                font.pixelSize: 10
+                wrapMode: Text.Wrap
+                onLinkActivated: link => Qt.openUrlExternally(link)
             }
         }
     }

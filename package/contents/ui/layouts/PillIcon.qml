@@ -7,11 +7,29 @@ Item {
     id: root
     required property var view
     readonly property var cfg: view.configuration
-    readonly property string eqMode: view.hasPlayer ? (cfg.pillEq ?? "static") : "off"
+    readonly property string eqMode: view.hasPlayer ? (cfg.pillEq ?? "wave") : "off"
     readonly property bool orbit: eqMode === "wave"
 
     implicitWidth: 30
     implicitHeight: 30
+
+    LayoutWave {
+        objectName: "pillIconWave"
+        anchors.fill: parent
+        view: root.view
+        visible: root.eqMode === "visualizer"
+    }
+
+    PanelProgress {
+        objectName: "pillIconProgress"
+        view: root.view
+        visible: root.cfg.pillProgress === "bar" && root.view.hasPlayer
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        height: 9
+        z: 2
+    }
 
     OrbitView {
         simpleRender: root.cfg.simpleRender ?? false

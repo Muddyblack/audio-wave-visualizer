@@ -54,7 +54,7 @@ Item {
     }
     Timer {
         id: timeout
-        interval: 25000
+        interval: root.mode === "info" ? 65000 : 25000
         onTriggered: {
             root.cancel();
             root.status = "error";

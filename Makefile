@@ -21,7 +21,7 @@ view: ## preview widget (planar)
 	@if command -v nix >/dev/null 2>&1 && [ -f flake.nix ]; then \
 	  nix run .#view; \
 	else \
-	  plasmoidviewer -a package -f planar; \
+	  QML_XHR_ALLOW_FILE_READ=1 plasmoidviewer -a package -f planar; \
 	fi
 
 view-hyprland: ## run standalone Quickshell desktop widget (Ctrl+C to stop)

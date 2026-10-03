@@ -39,7 +39,7 @@ Flow {
                 onClicked: {
                     const key = chip.modelData[0];
                     const current = control.selected;
-                    const next = chip.pressed ? current.filter(k => k !== key) : control.options.map(o => o[0]).filter(k => current.indexOf(k) !== -1 || k === key);
+                    const next = chip.pressed ? current.filter(k => k !== key) : current.concat([key]);
                     control.activated(next);
                 }
             }

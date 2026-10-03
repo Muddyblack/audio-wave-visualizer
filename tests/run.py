@@ -22,6 +22,10 @@ subprocess.run(
     [sys.executable, str(REPO / "tools/sync_studio_assets.py"), "--check"], check=True
 )
 subprocess.run([sys.executable, str(REPO / "tests/test_audio_sources.py")], check=True)
+subprocess.run([sys.executable, str(REPO / "tests/test_system_volume.py")], check=True)
+subprocess.run(
+    [sys.executable, str(REPO / "tests/test_popup_blur_mask.py")], check=True
+)
 subprocess.run(
     [sys.executable, str(REPO / "tests/test_command_sources.py")], check=True
 )

@@ -62,6 +62,152 @@ TestCase {
         studio.livePlayer = null;
         studio.dependencyReport = "";
         studio.env = "hypr";
+        studio.presentationTarget = "desktop";
+    }
+
+    Component {
+        id: detailChips
+        Studio.StudioChips {
+            width: 250
+            options: [["composer", "Composer"]]
+            value: ["album", "length"]
+            onActivated: next => value = next
+        }
+    }
+    function test_customDetailGroupsKeepOtherSelections() {
+        const chips = createTemporaryObject(detailChips, testCase, {
+            z: 100
+        });
+        verify(waitForRendering(chips));
+        mouseClick(chips, 30, 12);
+        compare(chips.value, ["album", "length", "composer"]);
+        mouseClick(chips, 30, 12);
+        compare(chips.value, ["album", "length"]);
+    }
+    function test_panelTitleScrollSettingAndVisualizerDefault() {
+        compare(defaults.pillEq, "wave");
+        studio.presentationTarget = "panel";
+        studio.draft = Object.assign({}, defaults, {
+            layoutMode: "pill"
+        });
+        const section = Schema.SECTIONS.find(section => section.rows.some(row => row.k === "marquee"));
+        const row = section.rows.find(row => row.k === "marquee");
+        verify(studio.rowVisible(row, section));
+        compare(Schema.PRESETS.find(preset => preset.id === "panelpill").s.pillEq, "wave");
+    }
+    function test_presentationTargetsOfferRelevantLayouts() {
+        const row = Schema.SECTIONS.find(section => section.rows.some(row => row.k === "layoutMode")).rows.find(row => row.k === "layoutMode");
+        studio.presentationTarget = "panel";
+        compare(studio.rowDefinition(row).opts.map(option => option.v), ["pill", "pillicon"]);
+        studio.presentationTarget = "popup";
+        verify(studio.rowDefinition(row).opts.some(option => option.v === "orbit"));
+        verify(!studio.rowDefinition(row).opts.some(option => option.v === "pill"));
+        studio.presentationTarget = "desktop";
+        compare(studio.rowDefinition(row).opts.length, row.opts.length);
+    }
+
+    function test_popupOffersRoundedBlurAndPreviewSlider() {
+        studio.env = "kde";
+        studio.presentationTarget = "popup";
+        studio.draft = Object.assign({}, defaults, {
+            showBg: true,
+            artBg: false,
+            surfaceStyle: "glass"
+        });
+        const section = Schema.SECTIONS.find(section => section.rows.some(row => row.k === "compositorGlass"));
+        const nativeRow = section.rows.find(row => row.k === "compositorGlass");
+        verify(studio.rowVisible(nativeRow, section));
+        compare(studio.rowDefinition(nativeRow).label, "Blur behind card");
+        const blurRow = section.rows.find(row => row.k === "glassBlur");
+        verify(studio.rowVisible(blurRow, section));
+        compare(studio.rowDefinition(blurRow).type, "range");
+        compare(studio.rowDefinition(blurRow).label, "Preview wallpaper blur");
+        for (const key of ["glassRefraction"]) {
+            const rowSection = Schema.SECTIONS.find(section => section.rows.some(row => row.k === key));
+            const row = rowSection.rows.find(row => row.k === key);
+            verify(!!row);
+            verify(!studio.rowVisible(row, rowSection));
+        }
+        studio.draft = Object.assign({}, studio.draft, {
+            artBg: true
+        });
+        verify(!studio.rowVisible(nativeRow, section));
+        studio.presentationTarget = "desktop";
+        compare(studio.rowDefinition(nativeRow).label, nativeRow.label);
+    }
+
+    function test_panelPresetsAndTabsMatchTheTarget() {
+        studio.presentationTarget = "panel";
+        studio.draft = Object.assign({}, defaults, {
+            layoutMode: "pill",
+            pillEq: "static"
+        });
+        verify(studio.acceptsPreset({
+            layoutMode: "pill"
+        }));
+        verify(!studio.acceptsPreset({
+            layoutMode: "orbit"
+        }));
+        verify(studio.appearanceTabs.some(tab => tab.id === "controls"));
+        verify(studio.appearanceTabs.some(tab => tab.id === "viz"));
+        const buttons = Schema.SECTIONS.find(section => section.tab === "buttons" && section.rows.some(row => row.k === "pillControls"));
+        verify(!!buttons);
+        verify(studio.rowVisible(buttons.rows[0], buttons));
+        studio.update({
+            pillControls: "all"
+        });
+        compare(studio.draft.pillControls, "all");
+        studio.update({
+            visualizerType: 6
+        });
+        compare(studio.draft.pillEq, "wave");
+        studio.update({
+            progressBarStyle: 4
+        });
+        compare(studio.draft.pillProgress, "bar");
+        compare(studio.draft.progressBarStyle, 4);
+        studio.update({
+            progressBarStyle: 10
+        });
+        compare(studio.draft.pillProgress, "ring");
+        studio.update({
+            progressBarStyle: -1,
+            customProgressBar: ""
+        });
+        compare(studio.draft.pillProgress, "off");
+        compare(studio.draft.progressBarStyle, -1);
+        studio.draft = Object.assign({}, studio.draft, {
+            pillEq: "wave"
+        });
+        verify(studio.appearanceTabs.some(tab => tab.id === "viz"));
+        studio.saveUserPreset("Panel test");
+        compare(studio.userPresetList()[0].settings.layoutMode, "pill");
+        studio.applyLook({
+            layoutMode: "orbit"
+        });
+        compare(studio.draft.layoutMode, "pill");
+        studio.presentationTarget = "popup";
+        verify(studio.acceptsPreset({
+            layoutMode: "orbit"
+        }));
+        verify(!studio.acceptsPreset({
+            layoutMode: "pill"
+        }));
+        verify(studio.appearanceTabs.some(tab => tab.id === "controls"));
+    }
+
+    function test_panelPlacementLivesUnderBehaviour() {
+        const section = Schema.SECTIONS.find(section => section.title === "Panel placement");
+        compare(section.tab, "behavior");
+        studio.env = "kde";
+        for (const target of ["panel", "popup", "desktop"]) {
+            studio.presentationTarget = target;
+            for (const row of section.rows)
+                compare(studio.rowVisible(row, section), target !== "desktop");
+        }
+        studio.env = "hypr";
+        studio.presentationTarget = "panel";
+        verify(!studio.rowVisible(section.rows[0], section));
     }
 
     function test_missingMetadataToolsShowInstallHelp() {

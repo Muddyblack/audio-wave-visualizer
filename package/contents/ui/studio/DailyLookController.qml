@@ -1,5 +1,6 @@
 import QtQuick
 import "Schema.js" as Schema
+import "../../code/ConfigDefaults.js" as ConfigDefaults
 
 // Shared runtime scheduler. The host persists the date together with the look.
 // No reroll on restart; manual edits remain until the next local date.
@@ -19,21 +20,10 @@ Item {
     }
     onConfigurationChanged: Qt.callLater(check)
     Component.onCompleted: {
-        if (defaults.showMpris === undefined) {
-            const request = new XMLHttpRequest();
-            request.open("GET", Qt.resolvedUrl("../../config/main.xml"));
-            request.onreadystatechange = function () {
-                if (request.readyState === XMLHttpRequest.DONE) {
-                    controller.defaults = Schema.defaultsFromXml(request.responseText);
-                    controller.ready = true;
-                    controller.check();
-                }
-            };
-            request.send();
-        } else {
-            ready = true;
-            Qt.callLater(check);
-        }
+        if (defaults.showMpris === undefined)
+            defaults = Object.assign({}, ConfigDefaults.values);
+        ready = true;
+        Qt.callLater(check);
     }
     Timer {
         interval: 30000

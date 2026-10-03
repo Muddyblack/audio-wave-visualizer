@@ -102,7 +102,7 @@ Item {
         id: progressComponent
         Item {
             ProgressBar {
-                visible: preview.value !== 10
+                visible: preview.value !== 10 && preview.value !== -1
                 anchors.centerIn: parent
                 width: parent.width * 0.82
                 height: implicitHeight

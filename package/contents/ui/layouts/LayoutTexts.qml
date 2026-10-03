@@ -10,6 +10,21 @@ ColumnLayout {
     id: root
     objectName: "layoutTexts"
     required property var view
+    property var _flipOwner: null
+    function updateFlipOwner() {
+        const owner = view?.registerFlipHoverTarget ? view : null;
+        if (_flipOwner === owner)
+            return;
+        if (_flipOwner?.unregisterFlipHoverTarget)
+            _flipOwner.unregisterFlipHoverTarget(titleViewport);
+        _flipOwner = owner;
+        if (owner)
+            owner.registerFlipHoverTarget(titleViewport);
+    }
+    onViewChanged: updateFlipOwner()
+    Component.onCompleted: updateFlipOwner()
+    Component.onDestruction: if (_flipOwner?.unregisterFlipHoverTarget)
+        _flipOwner.unregisterFlipHoverTarget(titleViewport)
     Layout.minimumWidth: 0
     property real titleFactor: 1
     property real artistSize: 0.82

@@ -21,9 +21,11 @@ Rectangle {
 
     readonly property var draft: studio.draft
     readonly property var cardSize: LayoutSizes.size(draft)
+    readonly property bool sideways: Math.abs(studio.previewRotation) % 180 === 90
+    readonly property var rotatedSize: sideways ? [cardSize[1], cardSize[0]] : cardSize
     readonly property bool pill: Schema.isPill(draft)
     readonly property bool liveMode: studio.livePreview && !!studio.liveVisualizer
-    readonly property real fitScale: Math.max(0.25, Math.min(1, (width - 40) / (cardSize[0] + (pill ? 160 : 0)), Math.max(0, height - previewTop - previewBottom) / cardSize[1]))
+    readonly property real fitScale: Math.max(0.25, Math.min(1, (width - 40) / (rotatedSize[0] + (pill && !sideways ? 160 : 0)), Math.max(0, height - previewTop - previewBottom) / (rotatedSize[1] + (pill && sideways ? 160 : 0))))
     readonly property real zoomScale: zoom === "fit" ? fitScale : Number(zoom)
 
     radius: 18
@@ -59,6 +61,7 @@ Rectangle {
     Rectangle {
         visible: pane.pill
         anchors.centerIn: widgetBox
+        rotation: pane.studio.previewRotation
         width: (pane.cardSize[0] + 160) * pane.zoomScale
         height: (pane.studio.env === "kde" ? 44 : 36) * pane.zoomScale
         radius: (pane.studio.env === "kde" ? 12 : 14) * pane.zoomScale
@@ -71,20 +74,25 @@ Rectangle {
         id: widgetBox
         anchors.horizontalCenter: parent.horizontalCenter
         y: pane.previewTop + (pane.height - pane.previewTop - pane.previewBottom - height) / 2
-        width: pane.cardSize[0] * pane.zoomScale
-        height: pane.cardSize[1] * pane.zoomScale
+        width: pane.rotatedSize[0] * pane.zoomScale
+        height: pane.rotatedSize[1] * pane.zoomScale
         // Created once the host has supplied a draft.
         Loader {
+            anchors.centerIn: parent
+            width: pane.cardSize[0]
+            height: pane.cardSize[1]
+            scale: pane.zoomScale
+            rotation: pane.studio.previewRotation
             active: !!pane.draft && pane.draft.showMpris !== undefined
             sourceComponent: VisualizerView {
                 samplePlayback: !pane.liveMode
                 backdropSource: stageWallpaper
                 objectName: "previewWidget"
+                renderScale: pane.zoomScale
                 width: pane.cardSize[0]
                 height: pane.cardSize[1]
-                scale: pane.zoomScale
-                transformOrigin: Item.TopLeft
                 configuration: pane.draft
+                onPopupRequested: pane.studio.previewPopupRequested()
                 setLyricsOffset: value => pane.studio.update({
                         lyricsOffset: value
                     })

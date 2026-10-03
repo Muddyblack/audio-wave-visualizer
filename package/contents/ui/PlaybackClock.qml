@@ -89,12 +89,11 @@ Item {
     }
     function syncFromPlayer(hard) {
         const len = player ? Math.max(0, player.length || player.mprisLength || 0) : 0;
-        // Some players briefly clear length while updating metadata.
-        if (len > 0 || !player)
-            lengthValue = len;
+        // An unknown duration must not leave the previous video's seek bar
+        // running. Browsers can keep the same player and track id across videos.
+        lengthValue = Number.isFinite(len) ? len : 0;
         if (len <= 0) {
-            if (!player)
-                setPosition(0);
+            setPosition(0);
             return;
         }
         const rawPosition = clamp(player.position || 0, 0, lengthValue);
@@ -103,6 +102,12 @@ Item {
         anchorMs = Date.now();
         if (hard || drift > unitsPerSecond * 1.25 || !playing || displayedPosition <= 0 || displayedPosition >= lengthValue)
             displayedPosition = rawPosition;
+    }
+
+    function refreshPosition() {
+        // Plasma caches Position; many players do not emit regular updates.
+        if (active && player && typeof player.updatePosition === "function")
+            player.updatePosition();
     }
 
     function tick() {
@@ -129,17 +134,27 @@ Item {
         lengthValue = 0;
         setPosition(0);
         syncFromPlayer(true);
+        refreshPosition();
     }
-    onPlayingChanged: syncFromPlayer(true)
+    onPlayingChanged: {
+        syncFromPlayer(true);
+        refreshPosition();
+    }
     onTrackChanged: {
         clearLoop();
         syncFromPlayer(true);
+        refreshPosition();
     }
     onActiveChanged: {
-        if (active)
+        if (active) {
+            refreshPosition();
             tick();
+        }
     }
-    Component.onCompleted: syncFromPlayer(true)
+    Component.onCompleted: {
+        syncFromPlayer(true);
+        refreshPosition();
+    }
 
     Connections {
         target: clock.player
