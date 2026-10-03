@@ -150,8 +150,13 @@ while True:
             binary.write_text(script)
             binary.chmod(0o755)
         self.restart_with(["pw:music", "80", "8000"])
-        self.wait_for(lambda: (self.runtime / "captured").exists())
-        self.assertEqual((self.runtime / "captured").read_bytes(), b"PCM!")
+        self.wait_for(
+            lambda: (
+                (self.runtime / "captured").read_bytes() == b"PCM!"
+                if (self.runtime / "captured").exists()
+                else False
+            )
+        )
         self.wait_for(lambda: self.read("status").strip() == "ok fifo")
         args = (self.runtime / "capture-args").read_text()
         self.assertEqual(

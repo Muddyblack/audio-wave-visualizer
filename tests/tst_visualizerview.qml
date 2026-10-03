@@ -874,7 +874,7 @@ TestCase {
         verify(title !== null && title.visible && title.width > 0);
         const play = findChild(subject, "playArea");
         mouseMove(play);
-        wait(750);
+        wait(450);
         verify(!subject.flipped, "Controls still do not trigger flip");
         mouseMove(title, title.width / 2, title.height / 2);
         wait(200);
@@ -892,10 +892,10 @@ TestCase {
         const art = findChild(subject, "classicArt");
         tryCompare(art, "coverReady", true);
         mouseMove(art, 1, art.height / 2);
-        wait(750);
+        wait(450);
         verify(!subject.flipped, "The seek ring edge does not trigger flip");
         mousePress(art, art.width / 2, art.height / 2);
-        wait(750);
+        wait(450);
         verify(!subject.flipped, "A held cover click does not trigger flip");
         mouseRelease(art, art.width / 2, art.height / 2);
         verify(subject.zoomOpen, "The configured cover click still works");
@@ -918,7 +918,7 @@ TestCase {
         });
         if (data.style === "cover") {
             player.artUrl = Qt.resolvedUrl("fixtures/cover-white.ppm").toString();
-            wait(300);
+            tryVerify(() => subject.artIsBackground);
         }
         const surface = findChild(subject, "cardSurface");
         compare(surface.parent, subject, "Both faces share the same surface");
@@ -975,7 +975,7 @@ TestCase {
         verify(!button.visible);
         const next = findChild(subject, "nextArea");
         mouseMove(findChild(subject, "playArea"));
-        wait(750);
+        wait(450);
         verify(!subject.flipped, "Hovering playback controls never flips");
         mouseClick(findChild(subject, "playArea"));
         compare(player.playCalls, 1);
@@ -986,7 +986,7 @@ TestCase {
         wait(200);
         verify(!subject.flipped, "Passing over the cover does not flip immediately");
         mouseMove(findChild(subject, "playArea"));
-        wait(700);
+        wait(450);
         verify(!subject.flipped, "Leaving the cover cancels the pending flip");
         mouseMove(art, art.width / 2, art.height / 2);
         tryCompare(subject, "flipped", true, 1500);

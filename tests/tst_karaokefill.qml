@@ -53,27 +53,21 @@ TestCase {
         wait(30);
         verify(fill.segments.length > 0);
         fill.position = 0;
-        waitForRendering(surface);
         compare(greenPixels(), 0);
         fill.position = 2;
-        waitForRendering(surface);
         const halfway = greenPixels();
         verify(halfway > 0);
         fill.position = 3;
-        waitForRendering(surface);
         verify(greenPixels() > halfway * 1.3);
         fill.position = 0;
-        waitForRendering(surface);
         compare(greenPixels(), 0, "Seeking backwards clears the fill immediately");
         verse.width = 100;
         wait(30);
         verify(fill.segments.length > 1, "A timed word range may cross wrapped rows");
         fill.reducedMotion = true;
         fill.position = 1.01;
-        waitForRendering(surface);
         const reduced = greenPixels();
         fill.position = 3;
-        waitForRendering(surface);
         compare(greenPixels(), reduced, "Reduced motion highlights the word without wiping");
     }
 }

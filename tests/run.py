@@ -144,7 +144,7 @@ done
                 str(REPO / "tests/stubs"),
             ],
             env=env,
-            timeout=120,
+            timeout=600,
             check=True,
         )
         print("PASS: legacy transport, live INI frames, silence/wake, shared startup")

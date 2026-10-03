@@ -500,17 +500,13 @@ TestCase {
         verify(!tile.renaming);
     }
 
-    function test_allTabsRender_data() {
-        return Schema.TABS.map((tab, index) => ({
-                    tag: tab.id,
-                    index: index
-                }));
-    }
-
-    function test_allTabsRender(data) {
-        studio.currentTabIndex = data.index;
-        verify(waitForRendering(studio));
-        verify(studio.anyResults);
+    // One function, not data rows: init() resets the whole studio per row.
+    function test_allTabsRender() {
+        for (let index = 0; index < Schema.TABS.length; index++) {
+            studio.currentTabIndex = index;
+            verify(waitForRendering(studio), "Tab " + Schema.TABS[index].id + " did not render");
+            verify(studio.anyResults, "Tab " + Schema.TABS[index].id + " has no results");
+        }
     }
 
     function test_previewSkipButtons() {
@@ -558,70 +554,61 @@ TestCase {
         verify(findChild(preview, "repeatAreaBadge").visible);
     }
 
-    function test_wrappedTabsAreReachable_data() {
-        return [
-            {
-                tag: "normal",
-                width: 1200
-            },
-            {
-                tag: "narrow",
-                width: 440
+    // One function, not data rows: init() re-renders the whole studio per row.
+    function test_wrappedTabsAreReachable() {
+        for (const width of [1200, 440]) {
+            testCase.width = width;
+            verify(waitForRendering(studio));
+            const tabs = findChild(studio, "studioTabs");
+            compare(tabs.height, 36, "Main navigation always stays on one line (" + width + "px)");
+            if (width === 440) {
+                const mainScroller = findChild(studio, "mainTabScroller");
+                const nextMain = findChild(studio, "mainTabsForward");
+                verify(nextMain.visible, "Overflowed main tabs show a forward control");
+                mouseClick(nextMain);
+                verify(mainScroller.contentX > 0);
+                verify(findChild(studio, "mainTabsBack").visible);
+                mainScroller.contentX = 0;
             }
-        ];
-    }
-    function test_wrappedTabsAreReachable(data) {
-        testCase.width = data.width;
-        verify(waitForRendering(studio));
-        const tabs = findChild(studio, "studioTabs");
-        compare(tabs.height, 36, "Main navigation always stays on one line");
-        if (data.width === 440) {
-            const mainScroller = findChild(studio, "mainTabScroller");
-            const nextMain = findChild(studio, "mainTabsForward");
-            verify(nextMain.visible, "Overflowed main tabs show a forward control");
-            mouseClick(nextMain);
-            verify(mainScroller.contentX > 0);
-            verify(findChild(studio, "mainTabsBack").visible);
-            mainScroller.contentX = 0;
+            for (const entry of Schema.MAIN_TABS) {
+                const tab = findChild(studio, "mainTab_" + entry.id);
+                verify(tab !== null);
+                const scroller = findChild(studio, "mainTabScroller");
+                scroller.contentX = Math.max(0, Math.min(tab.x, scroller.contentWidth - scroller.width));
+                verify(waitForRendering(studio));
+                mouseClick(tab);
+                compare(studio.currentGroup, entry.id);
+            }
+            if (width === 440) {
+                studio.selectTab("presets");
+                const presetScroller = findChild(studio, "presetTabScroller");
+                const nextPreset = findChild(studio, "presetTabsForward");
+                verify(nextPreset.visible, "Overflowed preset tabs show a forward control");
+                mouseClick(nextPreset);
+                verify(presetScroller.contentX > 0);
+                verify(findChild(studio, "presetTabsBack").visible);
+            }
+            studio.selectTab("viz");
+            if (width === 440) {
+                const appearanceScroller = findChild(studio, "appearanceScroller");
+                const nextAppearance = findChild(studio, "appearanceTabsForward");
+                verify(nextAppearance.visible, "Overflowed appearance tabs show a forward control");
+                mouseClick(nextAppearance);
+                verify(appearanceScroller.contentX > 0);
+                verify(findChild(studio, "appearanceTabsBack").visible);
+                appearanceScroller.contentX = 0;
+            }
+            for (const id of Schema.APPEARANCE_TABS) {
+                const tab = findChild(studio, "subTab_" + id);
+                verify(tab !== null);
+                const scroller = findChild(studio, "appearanceScroller");
+                scroller.contentX = Math.max(0, Math.min(tab.parent.x, scroller.contentWidth - scroller.width));
+                verify(waitForRendering(studio));
+                mouseClick(tab);
+                compare(studio.currentTab, id);
+            }
+            verify(findChild(studio, "studioBody").y >= tabs.y + tabs.height);
         }
-        for (const entry of Schema.MAIN_TABS) {
-            const tab = findChild(studio, "mainTab_" + entry.id);
-            verify(tab !== null);
-            const scroller = findChild(studio, "mainTabScroller");
-            scroller.contentX = Math.max(0, Math.min(tab.x, scroller.contentWidth - scroller.width));
-            verify(waitForRendering(studio));
-            mouseClick(tab);
-            compare(studio.currentGroup, entry.id);
-        }
-        if (data.width === 440) {
-            studio.selectTab("presets");
-            const presetScroller = findChild(studio, "presetTabScroller");
-            const nextPreset = findChild(studio, "presetTabsForward");
-            verify(nextPreset.visible, "Overflowed preset tabs show a forward control");
-            mouseClick(nextPreset);
-            verify(presetScroller.contentX > 0);
-            verify(findChild(studio, "presetTabsBack").visible);
-        }
-        studio.selectTab("viz");
-        if (data.width === 440) {
-            const appearanceScroller = findChild(studio, "appearanceScroller");
-            const nextAppearance = findChild(studio, "appearanceTabsForward");
-            verify(nextAppearance.visible, "Overflowed appearance tabs show a forward control");
-            mouseClick(nextAppearance);
-            verify(appearanceScroller.contentX > 0);
-            verify(findChild(studio, "appearanceTabsBack").visible);
-            appearanceScroller.contentX = 0;
-        }
-        for (const id of Schema.APPEARANCE_TABS) {
-            const tab = findChild(studio, "subTab_" + id);
-            verify(tab !== null);
-            const scroller = findChild(studio, "appearanceScroller");
-            scroller.contentX = Math.max(0, Math.min(tab.parent.x, scroller.contentWidth - scroller.width));
-            verify(waitForRendering(studio));
-            mouseClick(tab);
-            compare(studio.currentTab, id);
-        }
-        verify(findChild(studio, "studioBody").y >= tabs.y + tabs.height);
     }
 
     function test_smallSettingsWindow() {
@@ -703,7 +690,7 @@ TestCase {
         verify(name.mapToItem(saved, 0, name.height).y <= saved.height);
     }
 
-    function test_fillControlMatchesRendererSupport_data() {
+    function fillCases() {
         const cases = [];
         for (let type = 0; type < Schema.VIZ.length; type++) {
             cases.push({
@@ -725,17 +712,31 @@ TestCase {
                 });
             }
         }
-        return cases;
+        return cases.map(data => Object.assign(data, {
+                state: Object.assign({}, defaults, {
+                    layoutMode: data.layout,
+                    visualizerType: data.type,
+                    orbitStyle: data.orbitStyle,
+                    fillWave: false
+                })
+            }));
     }
 
-    function test_fillControlMatchesRendererSupport(data) {
+    // One function, not data rows: init() resets the whole studio per row.
+    function test_fillControlMatchesRendererSupport() {
+        const section = Schema.SECTIONS.find(section => section.rows.some(row => row.k === "fillWave"));
+        const row = section.rows.find(row => row.k === "fillWave");
+        for (const data of fillCases())
+            compare(Schema.rowVisible(row, section, data.state, studio.env, ""), data.supported, data.tag);
+    }
+
+    function test_fillControlRendersWithSupport_data() {
+        return fillCases().filter(data => data.tag === "Smooth Wave" || data.tag === "Rounded Bars");
+    }
+
+    function test_fillControlRendersWithSupport(data) {
         studio.currentTabIndex = tabIndex("viz");
-        studio.draft = Object.assign({}, defaults, {
-            layoutMode: data.layout,
-            visualizerType: data.type,
-            orbitStyle: data.orbitStyle,
-            fillWave: false
-        });
+        studio.draft = data.state;
         verify(waitForRendering(studio));
         const row = findChild(studio, "row_fillWave");
         compare(row !== null && row.visible, data.supported);

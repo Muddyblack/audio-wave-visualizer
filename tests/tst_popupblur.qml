@@ -55,4 +55,11 @@ TestCase {
         compare(blur.frame.imagePath, blur.maskPath);
         popup.visible = false;
     }
+    // Guard: warn loudly when Plasma's Dialog internals change and findFrame() can
+    // no longer locate the FrameSvgItem.  A silent failure would turn blur off
+    // without any other test catching it.
+    function test_frameMustBeReachable() {
+        tryCompare(blur, "ready", true);
+        verify(blur.frame !== null, "PopupBlur.findFrame() could not locate Plasma's FrameSvgItem — " + "blur is silently disabled. Check if a Plasma update changed the " + "Dialog's internal item tree (imagePath/fixedMargins/mask/enabledBorders).");
+    }
 }
