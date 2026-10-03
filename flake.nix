@@ -128,7 +128,7 @@
             shellHook = ''
               # Qt's propagated tools can put the unwrapped D-Bus first.
               export PATH="${sessionBus}/bin:$PATH"
-              export NIXPKGS_QT6_QML_IMPORT_PATH="${pkgs.lib.makeSearchPath pkgs.qt6.qtbase.qtQmlPrefix [ pkgs.qt6.qtdeclarative pkgs.kdePackages.kirigami.unwrapped pkgs.kdePackages.plasma-workspace pkgs.kdePackages.libplasma ]}''${NIXPKGS_QT6_QML_IMPORT_PATH:+:$NIXPKGS_QT6_QML_IMPORT_PATH}"
+              export NIXPKGS_QT6_QML_IMPORT_PATH="${pkgs.lib.makeSearchPath pkgs.qt6.qtbase.qtQmlPrefix [ pkgs.qt6.qtdeclarative pkgs.kdePackages.kirigami.unwrapped pkgs.kdePackages.plasma-workspace pkgs.kdePackages.libplasma pkgs.kdePackages.ksvg ]}''${NIXPKGS_QT6_QML_IMPORT_PATH:+:$NIXPKGS_QT6_QML_IMPORT_PATH}"
               # qmltestrunner/qmllint are unwrapped: Qt reads QML_IMPORT_PATH,
               # not the Nix wrapper variable above. A desktop profile can hide
               # this missing path locally, while a clean CI runner cannot.
