@@ -5,7 +5,7 @@
 var sharedKeys = ["appleTrackInfo", "onlineTrackInfo", "panelAppearance", "popupAppearance", "inputSource", "inputMethod",
     "sensitivity", "noiseReduction", "lowCutoff", "highCutoff", "frequencyScale",
     "bassWeight", "trebleWeight", "silenceDecay", "framerate", "alwaysVisible",
-    "gpuDebug", "reducedMotion", "batterySaver", "simpleRender", "autoPillInPanel", "panelDisplayMode", "panelOrientation",
+    "gpuDebug", "reducedMotion", "batterySaver", "simpleRender", "autoPillInPanel", "panelDisplayMode", "panelOrientation", "panelCardSizing", "panelCardScale",
     "autoDailyLook", "dailyLookApplied", "favoritePresets", "userPresets",
     "customVisualizers", "customProgressBars", "customButtonStyles", "lyricsOffset",
     "monitor", "verticalPosition", "desktopLayer", "pauseWhenCovered", "hAnchor",

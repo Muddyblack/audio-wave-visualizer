@@ -158,6 +158,12 @@
         <entry name="panelDisplayMode" type="String">
             <default>adaptive</default>
         </entry>
+        <entry name="panelCardSizing" type="String">
+            <default>fit</default>
+        </entry>
+        <entry name="panelCardScale" type="Double">
+            <default>1</default>
+        </entry>
         <entry name="panelOrientation" type="String">
             <default>auto</default>
         </entry>

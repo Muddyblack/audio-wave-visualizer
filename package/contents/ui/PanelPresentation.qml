@@ -12,15 +12,22 @@ QtObject {
     property bool rightEdge: false
     property string orientation: "auto"
     property string displayMode: "adaptive"
+    property string cardSizing: "fit"
+    property real cardScale: 1
     readonly property int sideRotation: rightEdge ? 90 : -90
     readonly property int forcedRotation: orientation === "left" ? -90 : orientation === "right" ? 90 : 0
     readonly property var uprightCardSize: Layouts.size(cardConfiguration)
     readonly property int cardRotation: orientation === "auto" ? (vertical && availableSize.width < uprightCardSize[0] ? sideRotation : 0) : forcedRotation
-    readonly property var cardSize: cardRotation === 0 ? uprightCardSize : [uprightCardSize[1], uprightCardSize[0]]
+    readonly property var baseCardSize: cardRotation === 0 ? uprightCardSize : [uprightCardSize[1], uprightCardSize[0]]
+    // Fit grows the card to the panel's thickness, which the panel decides
+    // independently of our request, so the size cannot oscillate.
+    readonly property real thickness: vertical ? availableSize.width : availableSize.height
+    readonly property real sizeFactor: cardSizing === "fixed" ? Math.max(0.5, cardScale) : Math.min(4, Math.max(1, thickness / baseCardSize[vertical ? 0 : 1]))
+    readonly property var cardSize: [Math.round(baseCardSize[0] * sizeFactor), Math.round(baseCardSize[1] * sizeFactor)]
     // Scaling layouts may shrink slightly to fit; reflowing ones need full size.
     readonly property real fitFloor: ["lyrics", "visualizer"].includes(Layouts.mode(cardConfiguration)) ? 1 : 0.8
-    readonly property bool canRequestCard: displayMode === "card" || displayMode !== "pill" && (vertical ? availableSize.width >= cardSize[0] * fitFloor : availableSize.height >= cardSize[1] * fitFloor)
-    readonly property bool showCard: canRequestCard && (displayMode === "card" || availableSize.width >= cardSize[0] * fitFloor && availableSize.height >= cardSize[1] * fitFloor)
+    readonly property bool canRequestCard: displayMode === "card" || displayMode !== "pill" && (vertical ? availableSize.width >= baseCardSize[0] * fitFloor : availableSize.height >= baseCardSize[1] * fitFloor)
+    readonly property bool showCard: canRequestCard && (displayMode === "card" || availableSize.width >= baseCardSize[0] * fitFloor && availableSize.height >= baseCardSize[1] * fitFloor)
     readonly property var fallback: Object.assign({}, pillConfiguration, {
         layoutMode: vertical && orientation === "normal" ? "pillicon" : pillConfiguration.layoutMode
     })
