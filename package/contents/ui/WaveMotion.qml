@@ -32,6 +32,9 @@ QtObject {
         Motion.reset(motion);
     }
     function advance() {
+        // A queued callLater can outlive the object; its id is null by then.
+        if (!motion || _destroying)
+            return;
         Motion.advance(motion);
     }
 
