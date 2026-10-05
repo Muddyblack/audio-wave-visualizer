@@ -211,7 +211,7 @@ var SECTIONS = [
     ]),
     tab("layout", "Panel pill", [
         { id: "pillNote", type: "note", full: true, note: "pill" },
-        { k: "pillContent", type: "seg", label: "Text", opts: [["title", "Title"], ["title-artist", "Title · Artist"], ["artist-title", "Artist — Title"]], when: function (s) { return s.layoutMode === "pill"; } },
+        { k: "pillContent", type: "seg", label: "Text", opts: [["title", "Title"], ["title-artist", "Title · Artist"], ["artist-title", "Artist — Title"], ["none", "None (visualizer only)"]], when: function (s) { return s.layoutMode === "pill"; } },
         { k: "pillArt", type: "switch", label: "Cover thumbnail", when: function (s) { return s.layoutMode === "pill"; } },
         { k: "pillEq", type: "seg", label: "Motion", desc: "Mini visualizer follows the music using your selected visualizer style. Choose Static for still bars.", opts: [["off", "Off"], ["static", "Static"], ["live", "Bouncing"], ["wave", "Mini visualizer"]] },
         { k: "pillProgress", type: "seg", label: "Progress", opts: [["off", "Off"], ["underline", "Underline"], ["ring", "Cover ring"], ["bar", "Styled bar"]] },
