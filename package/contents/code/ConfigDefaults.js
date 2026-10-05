@@ -55,6 +55,8 @@ var values = {
   "popupAppearance": "",
   "autoPillInPanel": true,
   "panelDisplayMode": "adaptive",
+  "panelCardSizing": "fit",
+  "panelCardScale": 1.0,
   "panelOrientation": "auto",
   "pillContent": "title-artist",
   "pillArt": true,

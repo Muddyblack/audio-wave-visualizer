@@ -202,8 +202,15 @@ TestCase {
         studio.env = "kde";
         for (const target of ["panel", "popup", "desktop"]) {
             studio.presentationTarget = target;
-            for (const row of section.rows)
-                compare(studio.rowVisible(row, section), target !== "desktop");
+            for (const sizing of ["fit", "fixed"]) {
+                studio.update({
+                    panelCardSizing: sizing
+                });
+                for (const row of section.rows) {
+                    const expected = target !== "desktop" && (row.k !== "panelCardScale" || sizing === "fixed");
+                    compare(studio.rowVisible(row, section), expected, target + ": " + sizing + ": " + row.k);
+                }
+            }
         }
         studio.env = "hypr";
         studio.presentationTarget = "panel";

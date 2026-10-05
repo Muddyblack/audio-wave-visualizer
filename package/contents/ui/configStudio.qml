@@ -128,6 +128,10 @@ Kirigami.Page {
     property bool cfg_autoPillInPanel
     property string cfg_panelDisplayMode
     property string cfg_panelDisplayModeDefault
+    property string cfg_panelCardSizing
+    property string cfg_panelCardSizingDefault
+    property real cfg_panelCardScale
+    property real cfg_panelCardScaleDefault
     property string cfg_panelOrientation
     property string cfg_panelOrientationDefault
     property bool cfg_autoPillInPanelDefault

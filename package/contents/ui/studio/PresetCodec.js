@@ -1,7 +1,7 @@
 // Portable look format used by the browser and QML. No desktop placement or
 // nested preset library is transferred. Legacy {name, settings} and bare maps work.
 var excluded = ['appleTrackInfo', 'onlineTrackInfo', 'panelAppearance', 'popupAppearance', 'customProgressBar', 'customProgressBars', 'customVisualizer', 'customVisualizers', 'customButtons', 'customButtonStyles', 'userPresets', 'favoritePresets', 'autoDailyLook', 'dailyLookApplied', 'monitor', 'verticalPosition', 'desktopLayer',
-                'pauseWhenCovered', 'hAnchor', 'widgetWidth', 'widgetHeight', 'dockMode', 'dockMargin', 'barHeight', 'widthExpansion', 'dockPosition', 'panelDisplayMode', 'panelOrientation'];
+                'pauseWhenCovered', 'hAnchor', 'widgetWidth', 'widgetHeight', 'dockMode', 'dockMargin', 'barHeight', 'widthExpansion', 'dockPosition', 'panelDisplayMode', 'panelOrientation', 'panelCardSizing', 'panelCardScale'];
 function object(value) {
     return value !== null && typeof value === 'object' && !Array.isArray(value);
 }

@@ -64,7 +64,7 @@ var STATES = [["normal", "Playing"], ["paused", "Paused"], ["long", "Long title"
 
 // Colour keys "Keep my colours" preserves; placement is never part of a look.
 var COLOR_KEYS = ["controlsColorSource", "progressColorSource", "customProgressColor", "useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "hueReactive", "bgColor", "glassTintColor", "lyricsHighlightColor", "lyricsTextStyleColor"];
-var PLACEMENT_KEYS = ["monitor", "verticalPosition", "desktopLayer", "pauseWhenCovered", "hAnchor", "widgetWidth", "widgetHeight", "panelDisplayMode", "panelOrientation"];
+var PLACEMENT_KEYS = ["monitor", "verticalPosition", "desktopLayer", "pauseWhenCovered", "hAnchor", "widgetWidth", "widgetHeight", "panelDisplayMode", "panelOrientation", "panelCardSizing", "panelCardScale"];
 var TRACK_INFO_KEYS = ["hoverDetails", "detailFields", "detailCustomize", "flipInfoButton", "onlineTrackInfo", "appleTrackInfo"];
 var DETAIL_FIELD_GROUPS = [
     {id: "detailSong", label: "Song", opts: [["genre", "Genre"], ["length", "Length"], ["bpm", "BPM"], ["recordingNote", "Version"], ["comment", "Comment"]]},
@@ -362,6 +362,8 @@ var SECTIONS = [
     ]),
     tab("behavior", "Panel placement", [
         { k: "panelDisplayMode", type: "seg", label: "Display", desc: "Automatic shows the full card when it fits and your pill or icon design otherwise. Card or Pill / icon forces one at any panel size.", opts: [["adaptive", "Automatic"], ["card", "Card"], ["pill", "Pill / icon"]] },
+        { k: "panelCardSizing", type: "seg", label: "Card size", desc: "Fit grows the card to fill the panel's thickness. Fixed uses the scale below.", opts: [["fit", "Fit panel"], ["fixed", "Fixed"]] },
+        { k: "panelCardScale", type: "range", label: "Card scale", desc: "Scales the card in the panel; the panel must have room for it.", min: .5, max: 3, step: .05, fmt: "pct", when: function (s) { return s.panelCardSizing === "fixed"; } },
         { k: "panelOrientation", type: "seg", label: "Direction", desc: "Automatic follows the panel edge. Upright uses an icon in narrow side panels.", opts: [["auto", "Automatic"], ["normal", "Upright"], ["left", "Rotate left"], ["right", "Rotate right"]] }
     ], function (s, env) { return env === "kde"; }),
     tab("behavior", "When nothing plays", [

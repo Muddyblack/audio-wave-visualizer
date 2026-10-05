@@ -61,6 +61,8 @@ PlasmoidItem {
         rightEdge: Plasmoid.location === PlasmaCore.Types.RightEdge
         orientation: plasmoid.configuration.panelOrientation ?? "auto"
         displayMode: plasmoid.configuration.panelDisplayMode ?? "adaptive"
+        cardSizing: plasmoid.configuration.panelCardSizing ?? "fit"
+        cardScale: plasmoid.configuration.panelCardScale ?? 1
     }
     // Desktop wallpaper is a separate scene item, safe to sample without
     // capturing our own text or other applets. Panel popups use another window.

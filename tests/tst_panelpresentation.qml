@@ -18,6 +18,8 @@ TestCase {
     }
     function init() {
         placement.displayMode = "adaptive";
+        placement.cardSizing = "fixed";
+        placement.cardScale = 1;
         placement.orientation = "normal";
         placement.rightEdge = false;
         placement.vertical = true;
@@ -72,6 +74,21 @@ TestCase {
         };
         placement.availableSize = Qt.size(379, 400);
         verify(!placement.showCard);
+    }
+    function test_fitGrowsCardToPanelThickness() {
+        placement.cardSizing = "fit";
+        placement.vertical = false;
+        placement.availableSize = Qt.size(500, 208);
+        compare(placement.preferredSize, [720, 208]);
+        placement.availableSize = Qt.size(500, 90);
+        compare(placement.preferredSize, [360, 104]);
+        placement.vertical = true;
+        placement.availableSize = Qt.size(720, 500);
+        compare(placement.preferredSize, [720, 208]);
+    }
+    function test_fixedScaleSizesCard() {
+        placement.cardScale = 1.5;
+        compare(placement.preferredSize, [540, 156]);
     }
     function test_cardModeShowsCardAtAnySize() {
         placement.displayMode = "card";
