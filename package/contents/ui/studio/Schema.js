@@ -191,7 +191,8 @@ var SECTIONS = [
     tab("buttons", "Playback buttons", [
         { id: "customButtons", type: "customStyle", full: true, label: "Custom button styles", desc: "Import a trusted QML style for the playback controls.", docs: CUSTOM_QML_DOCS + "#custom-playback-buttons" },
         { k: "dockStyle", type: "tiles", full: true, label: "Style", desc: "Choose the shape around your playback controls.", tw: 118,
-          opts: [{ v: "glass", label: "Glass pill", pv: "dock" }, { v: "soft", label: "Soft pill", pv: "dock" }, { v: "outline", label: "Outline pill", pv: "dock" }, { v: "tinted", label: "Tinted pill", pv: "dock" }, { v: "bare", label: "Bare icons", pv: "dock" }, { v: "accent", label: "Accent play", pv: "dock" }, { v: "hover", label: "On hover", pv: "dock" }] },
+          opts: [{ v: "glass", label: "Glass pill", pv: "dock" }, { v: "soft", label: "Soft pill", pv: "dock" }, { v: "outline", label: "Outline pill", pv: "dock" }, { v: "tinted", label: "Tinted pill", pv: "dock" }, { v: "bare", label: "Bare icons", pv: "dock" }, { v: "accent", label: "Accent play", pv: "dock" }] },
+        { k: "controlsOnHover", type: "switch", label: "Show on hover only", desc: "Hide the playback buttons until the pointer is over the card. Works with any style." },
         { k: "showSkipButtons", type: "switch", label: "Previous & next" },
         { k: "showShuffleRepeat", type: "switch", label: "Shuffle & repeat", desc: "For players that support them." }
     ]),
@@ -502,7 +503,7 @@ var PRESETS = [
     preset("vinyl", ["desktop", "adaptive"], "Vinyl", "A record that spins while playing, sparkles, colour from the cover.", "dusk", { layoutMode: "inline", artShape: "vinyl", showBg: true, surfaceStyle: "glass", bgRadius: 18, visualizerType: 14, accentFromArt: true, progressBarStyle: 4, showTimes: false, dockStyle: "accent", cardShadow: "soft", grain: true }),
     preset("hero", ["desktop"], "Hero Wave", "The visualizer takes the stage; track info tucks underneath.", "breeze", { layoutMode: "hero", showBg: true, surfaceStyle: "glass", bgRadius: 18, fillWave: true, lineWidth: 2.2, dockStyle: "bare", cardShadow: "soft", artShape: "squircle", showTimes: false, vizColorMode: "gradient" }),
     preset("strip", ["desktop"], "Slim Strip", "A wide, low bar for the bottom of the screen.", "dusk", { layoutMode: "strip", showBg: true, surfaceStyle: "glass", bgRadius: 23, visualizerType: 3, dockStyle: "bare", lineWidth: 1.4, artShape: "circle" }),
-    preset("mirror", ["desktop"], "Mirrored Minimal", "Art on the right, dotted progress, no card, controls on hover.", "olive", { layoutMode: "mirrored", visualizerType: 12, progressBarStyle: 7, dockStyle: "hover", textAlign: "right" }),
+    preset("mirror", ["desktop"], "Mirrored Minimal", "Art on the right, dotted progress, no card, controls on hover.", "olive", { layoutMode: "mirrored", visualizerType: 12, progressBarStyle: 7, dockStyle: "glass", controlsOnHover: true, textAlign: "right" }),
     preset("visualizer", ["desktop"], "Visualizer only", "Transparent Neon Terrain for an audio-reactive desktop. Choose any effect in Visualizer.", "neon", { layoutMode: "visualizer", visualizerType: 16, showBg: false, alwaysVisible: true, useSystemAccent: false, customColor: "#c084fc", vizColorMode: "palette", vizPalette: "iris" }),
     preset("compact", ["current", "desktop"], "Compact", "No art column — visualizer, progress and title only.", "breeze", { layoutMode: "compact", visualizerType: 4 })
 ];

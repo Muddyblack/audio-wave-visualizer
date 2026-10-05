@@ -118,7 +118,7 @@ TestCase {
     function test_hoverControlsRecoverWithoutCardHover() {
         subject.configuration = {
             useSystemDockBg: true,
-            dockStyle: "hover"
+            controlsOnHover: true
         };
         subject.cardHovered = false;
         mouseMove(testCase, 0, 0);

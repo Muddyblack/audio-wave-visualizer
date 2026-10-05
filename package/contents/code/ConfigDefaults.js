@@ -109,6 +109,7 @@ var values = {
   "accentFromArt": false,
   "autoContrast": true,
   "dockStyle": "glass",
+  "controlsOnHover": false,
   "showSkipButtons": true,
   "showShuffleRepeat": false,
   "showTimes": true,

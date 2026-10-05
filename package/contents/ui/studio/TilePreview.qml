@@ -145,9 +145,9 @@ Item {
             TransportDock {
                 anchors.centerIn: parent
                 player: preview.studio.samplePlayer
-                opacity: preview.value === "hover" ? 0.55 : 1
                 configuration: Object.assign({}, preview.draft, {
-                    dockStyle: preview.value === "hover" ? "glass" : preview.value
+                    dockStyle: preview.value,
+                    controlsOnHover: false
                 })
                 isPlaying: true
                 controlColor: preview.draft.controlsColorSource === "accent" || preview.draft.controlsColorSource === "visualizer" ? preview.studio.accent : preview.draft.useSystemControls === false ? preview.draft.customControlColor : "#ffffff"

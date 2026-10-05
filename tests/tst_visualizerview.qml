@@ -656,7 +656,7 @@ TestCase {
         mouseClick(repeat);
         compare(player.loopState, 2, "Repeat cycles to the playlist");
         subject.configuration = Object.assign({}, defaults, {
-            dockStyle: "hover"
+            controlsOnHover: true
         });
         mouseMove(testCase, 395, 135);
         tryCompare(findChild(subject, "playArea").parent.parent.parent, "opacity", 0);

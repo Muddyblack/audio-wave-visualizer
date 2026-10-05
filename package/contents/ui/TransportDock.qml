@@ -35,8 +35,10 @@ Item {
         }
     }
 
-    readonly property string dockStyle: configuration.dockStyle ?? "glass"
-    readonly property bool framed: ["glass", "hover", "soft", "outline", "tinted"].indexOf(dockStyle) !== -1
+    // "hover" was once a style of its own; it now means glass plus the toggle.
+    readonly property string dockStyle: configuration.dockStyle === "hover" ? "glass" : (configuration.dockStyle ?? "glass")
+    readonly property bool controlsOnHover: (configuration.controlsOnHover ?? false) || configuration.dockStyle === "hover"
+    readonly property bool framed: ["glass", "soft", "outline", "tinted"].indexOf(dockStyle) !== -1
     readonly property bool showSkip: configuration.showSkipButtons ?? true
     readonly property bool showExtras: configuration.showShuffleRepeat ?? false
     readonly property bool canTogglePlaying: !!player && player.canTogglePlaying !== false && (typeof player.togglePlaying === "function" || typeof player.playPause === "function" || typeof player.PlayPause === "function" || typeof player.play === "function" || typeof player.Play === "function")
@@ -53,7 +55,7 @@ Item {
     readonly property bool loopOn: !!player && (player.loopStatus !== undefined ? player.loopStatus >= 2 : (player.loopState ?? 0) > 0)
     // The parent card's hover state can miss a transition when a child takes
     // the pointer. Keep the dock itself as a second way to reveal controls.
-    readonly property bool hiddenUntilHover: !customReady && dockStyle === "hover" && !cardHovered && !dockHover.hovered
+    readonly property bool hiddenUntilHover: !customReady && controlsOnHover && !cardHovered && !dockHover.hovered
 
     HoverHandler {
         id: dockHover
@@ -149,7 +151,7 @@ Item {
         border.color: root.dockStyle === "outline" ? Qt.rgba(root.controlColor.r, root.controlColor.g, root.controlColor.b, 0.55) : root.dockStyle === "tinted" ? Qt.rgba(root.accentColor.r, root.accentColor.g, root.accentColor.b, 0.52) : root.dockStyle === "soft" ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.16)
         border.width: 1
 
-        layer.enabled: visible && !GpuDebug.noLayers && (root.dockStyle === "glass" || root.dockStyle === "hover")
+        layer.enabled: visible && !GpuDebug.noLayers && root.dockStyle === "glass"
         layer.effect: MultiEffect {
             shadowEnabled: true
             shadowColor: Qt.rgba(0, 0, 0, 0.35)
@@ -160,7 +162,7 @@ Item {
 
         // Soft top highlight — the glassy sheen catching light.
         Rectangle {
-            visible: root.dockStyle === "glass" || root.dockStyle === "hover"
+            visible: root.dockStyle === "glass"
             anchors.left: parent.left
             anchors.right: parent.right
             anchors.top: parent.top

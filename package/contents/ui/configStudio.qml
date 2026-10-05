@@ -237,6 +237,8 @@ Kirigami.Page {
     property bool cfg_autoContrastDefault
     property string cfg_dockStyle
     property string cfg_dockStyleDefault
+    property bool cfg_controlsOnHover
+    property bool cfg_controlsOnHoverDefault
     property bool cfg_showSkipButtons
     property bool cfg_showSkipButtonsDefault
     property bool cfg_showShuffleRepeat

@@ -322,6 +322,9 @@
         <entry name="dockStyle" type="String">
             <default>glass</default>
         </entry>
+        <entry name="controlsOnHover" type="Bool">
+            <default>false</default>
+        </entry>
         <entry name="showSkipButtons" type="Bool">
             <default>true</default>
         </entry>
