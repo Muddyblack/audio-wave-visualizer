@@ -63,7 +63,7 @@ var BACKDROPS = Catalog.StudioCatalog.wallpapers.map(function (wallpaper) { retu
 var STATES = [["normal", "Playing"], ["paused", "Paused"], ["long", "Long title"], ["nometa", "No metadata"], ["idle", "Nothing playing"], ["backend", "cava missing"]];
 
 // Colour keys "Keep my colours" preserves; placement is never part of a look.
-var COLOR_KEYS = ["controlsColorSource", "progressColorSource", "customProgressColor", "useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "hueReactive", "bgColor", "glassTintColor", "lyricsHighlightColor", "lyricsTextStyleColor"];
+var COLOR_KEYS = ["controlsColorSource", "progressColorSource", "customProgressColor", "useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "vizCustomColors", "hueReactive", "bgColor", "glassTintColor", "lyricsHighlightColor", "lyricsTextStyleColor"];
 var PLACEMENT_KEYS = ["monitor", "verticalPosition", "desktopLayer", "pauseWhenCovered", "hAnchor", "widgetWidth", "widgetHeight", "panelDisplayMode", "panelOrientation", "panelCardSizing", "panelCardScale"];
 var TRACK_INFO_KEYS = ["hoverDetails", "detailFields", "detailCustomize", "flipInfoButton", "onlineTrackInfo", "appleTrackInfo"];
 var DETAIL_FIELD_GROUPS = [
@@ -343,7 +343,9 @@ var SECTIONS = [
         { k: "customColor", type: "color", label: "Custom colour", swatches: SWATCHES, when: function (s) { return !s.accentFromArt && !s.useSystemAccent; } }
     ]),
     tab("colors", "Colour mode & visualizer light", [
-        { k: "vizColorMode", type: "seg", label: "Colour mode", desc: "Used by the visualizer. Choose Colour mode for progress and controls below to share its palette or animated rainbow.", opts: [["solid", "Solid"], ["gradient", "Gradient"], ["cover", "Cover"], ["palette", "Palette"], ["rainbow", "Rainbow"]] },
+        { k: "vizColorMode", type: "seg", label: "Colour mode", desc: "Used by the visualizer. Choose Colour mode for progress and controls below to share its palette or animated rainbow.", opts: [["solid", "Solid"], ["gradient", "Gradient"], ["cover", "Cover"], ["palette", "Palette"], ["custom", "Custom"], ["rainbow", "Rainbow"]] },
+        { k: "vizCustomColors", type: "colorlist", full: true, label: "Your colour range", desc: "Any number of colours, blended left to right. Click a colour to change it, × removes it, + adds one. The glow takes the middle of the range.",
+          when: function (s) { return s.vizColorMode === "custom"; } },
         { k: "vizPalette", type: "tiles", full: true, label: "Palette", desc: "Curated palettes with bounded hues, so they never turn muddy.", tw: 84,
           when: function (s) { return s.vizColorMode === "palette"; },
           opts: Object.keys(PALETTES).map(function (k) { return { v: k, label: k[0].toUpperCase() + k.slice(1), pv: "palette" }; }) },

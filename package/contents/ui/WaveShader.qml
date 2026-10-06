@@ -43,7 +43,7 @@ Item {
     property bool edgeFade: false
     readonly property real _timeSeconds: !reducedMotion && (visualizerType === 9 || visualizerType === 10 || visualizerType === 11 || visualizerType === 13 || visualizerType >= 15) ? visualFrameTime / 1000 : 0
     readonly property bool _usesBass: visualizerType === 11 || visualizerType === 13 || visualizerType >= 15
-    readonly property var _colors: WaveMath.colorStops(waveColor, vizColorMode, vizPalette, coverColor1, coverColor2, hueReactive, hueReactive && !reducedMotion ? high : 0.5, !reducedMotion && (hueReactive || vizColorMode === "rainbow") ? visualFrameTime / 1000 : 0, reducedMotion)
+    readonly property var _colors: WaveMath.limitStops(WaveMath.colorStops(waveColor, vizColorMode, vizPalette, coverColor1, coverColor2, hueReactive, hueReactive && !reducedMotion ? high : 0.5, !reducedMotion && (hueReactive || vizColorMode === "rainbow") ? visualFrameTime / 1000 : 0, reducedMotion), 6)
     readonly property string _shaderFamily: visualizerType === 16 ? "viz_terrain" : visualizerType === 17 ? "viz_tunnel" : visualizerType === 18 ? "viz_fluid" : visualizerType === 19 || visualizerType === 20 ? "viz_scope" : visualizerType <= 5 ? "visualizer" : visualizerType === 11 || visualizerType === 13 ? "viz_radial" : visualizerType === 14 ? "viz_sparkles" : visualizerType === 21 ? "viz_particles" : visualizerType === 15 ? "viz_ribbon" : "viz_linear"
     // Two Gaussians fitted to WaveCanvas' MultiEffect shadow (shadowBlur 1,
     // blurMax 8): line, edge, dot and translucent-fill profiles.

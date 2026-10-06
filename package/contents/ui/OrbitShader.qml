@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import "../code/WaveMath.js" as WaveMath
 
 // All five orbit styles in one GPU pass; particle simulation stays on audio time.
 ShaderEffect {
@@ -18,14 +19,16 @@ ShaderEffect {
     readonly property real fillAmount: orbit.fillWave ? 1 : 0
     readonly property real glowAmount: orbit.glowWave ? Math.max(0, Math.min(2, orbit.bloom)) : 0
     readonly property real failed: orbit.backendFailed ? 1 : 0
-    readonly property real colorCount: Math.min(6, orbit.colorStops.length)
+    // The shader holds six stops; longer user ranges are resampled to fit.
+    readonly property var stops: WaveMath.limitStops(orbit.colorStops, 6)
+    readonly property real colorCount: stops.length
     readonly property real particleCount: Math.min(32, orbit.particles.length)
-    readonly property color color0: orbit.colorStops[0] || "#ffffff"
-    readonly property color color1: orbit.colorStops[1] || orbit.colorStops[0]
-    readonly property color color2: orbit.colorStops[2] || orbit.colorStops[0]
-    readonly property color color3: orbit.colorStops[3] || orbit.colorStops[0]
-    readonly property color color4: orbit.colorStops[4] || orbit.colorStops[0]
-    readonly property color color5: orbit.colorStops[5] || orbit.colorStops[0]
+    readonly property color color0: effect.stops[0] || "#ffffff"
+    readonly property color color1: effect.stops[1] || effect.stops[0]
+    readonly property color color2: effect.stops[2] || effect.stops[0]
+    readonly property color color3: effect.stops[3] || effect.stops[0]
+    readonly property color color4: effect.stops[4] || effect.stops[0]
+    readonly property color color5: effect.stops[5] || effect.stops[0]
     property vector4d levels0: Qt.vector4d(0, 0, 0, 0)
     property vector4d levels1: Qt.vector4d(0, 0, 0, 0)
     property vector4d levels2: Qt.vector4d(0, 0, 0, 0)

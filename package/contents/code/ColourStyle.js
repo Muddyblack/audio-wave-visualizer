@@ -37,7 +37,7 @@ function appearance(s, systemAccent, systemText, coverAccent, hasCover) {
 }
 function linked(s, wave, control, systemAccent, cover1, cover2, high, seconds) {
     var stops = s.controlsColorSource === "visualizer" || s.progressColorSource === "visualizer"
-        ? WaveMath.colorStops(wave, s.vizColorMode, s.vizPalette, cover1, cover2, s.hueReactive, high, seconds, s.reducedMotion ?? false)
+        ? WaveMath.colorStops(wave, s.vizColorMode, s.vizColorMode === "custom" ? s.vizCustomColors : s.vizPalette, cover1, cover2, s.hueReactive, high, seconds, s.reducedMotion ?? false)
         : [wave];
     return resolve(s, wave, control, s.useSystemControls ? systemAccent : control,
         s.useSystemControls ? "#ffffff" : control, stops);

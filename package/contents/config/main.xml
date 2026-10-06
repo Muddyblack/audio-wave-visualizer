@@ -235,6 +235,9 @@
         <entry name="vizPalette" type="String">
             <default>aurora</default>
         </entry>
+        <entry name="vizCustomColors" type="String">
+            <default>#ff6a3d,#ffc36b,#5ef2c1,#4aa8ff</default>
+        </entry>
         <entry name="hueReactive" type="Bool">
             <default>false</default>
         </entry>

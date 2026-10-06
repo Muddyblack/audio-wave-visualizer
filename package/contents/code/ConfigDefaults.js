@@ -80,6 +80,7 @@ var values = {
   "vizDirection": "up",
   "vizColorMode": "solid",
   "vizPalette": "aurora",
+  "vizCustomColors": "#ff6a3d,#ffc36b,#5ef2c1,#4aa8ff",
   "hueReactive": false,
   "bloom": 1.0,
   "ribbonCurvature": 1.0,

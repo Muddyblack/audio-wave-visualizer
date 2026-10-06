@@ -83,6 +83,7 @@ Item {
                     seg: segComponent,
                     chips: chipsComponent,
                     color: colorComponent,
+                    colorlist: colorListComponent,
                     select: selectComponent,
                     tiles: tilesComponent,
                     note: noteComponent,
@@ -155,6 +156,13 @@ Item {
         id: colorComponent
         StudioSwatches {
             swatches: row.rowData.swatches
+            value: String(row.value)
+            onActivated: value => row.commit(value)
+        }
+    }
+    Component {
+        id: colorListComponent
+        StudioColorList {
             value: String(row.value)
             onActivated: value => row.commit(value)
         }

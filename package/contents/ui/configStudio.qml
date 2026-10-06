@@ -179,6 +179,8 @@ Kirigami.Page {
     property string cfg_vizColorModeDefault
     property string cfg_vizPalette
     property string cfg_vizPaletteDefault
+    property string cfg_vizCustomColors
+    property string cfg_vizCustomColorsDefault
     property bool cfg_hueReactive
     property bool cfg_hueReactiveDefault
     property real cfg_bloom

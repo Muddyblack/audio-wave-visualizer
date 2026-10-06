@@ -44,7 +44,7 @@ Item {
                 coverColor1: root.view.coverColor1
                 coverColor2: root.view.coverColor2
                 vizColorMode: root.cfg.vizColorMode ?? "solid"
-                vizPalette: root.cfg.vizPalette ?? "aurora"
+                vizPalette: root.cfg.vizColorMode === "custom" ? (root.cfg.vizCustomColors ?? "") : (root.cfg.vizPalette ?? "aurora")
                 hueReactive: root.cfg.hueReactive ?? false
                 lineWidth: root.cfg.lineWidth
                 fillWave: root.cfg.fillWave

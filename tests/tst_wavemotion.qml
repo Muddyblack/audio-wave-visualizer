@@ -131,6 +131,23 @@ TestCase {
         compare(shifted.b, 0);
         compare(shifted.a, 1);
     }
+    function test_customRangeAnyLengthAndShaderLimit() {
+        const list = "#ff0000, #00ff00;#0000ff,not-a-colour,#ffffff,#000000,#123456,#abcdef";
+        compare(WaveMath.parseColors(list).length, 7);
+        const stops = WaveMath.colorStops("red", "custom", list, "red", "blue", false, 0.5, 0, false);
+        compare(stops.length, 7);
+        verify(Qt.colorEqual(stops[1], "#00ff00"));
+        // An empty or invalid list falls back to the accent instead of blanking.
+        const fallback = WaveMath.colorStops("#336699", "custom", "oops", "red", "blue", false, 0.5, 0, false);
+        compare(fallback.length, 1);
+        verify(Qt.colorEqual(fallback[0], "#336699"));
+        const limited = WaveMath.limitStops(stops, 6);
+        compare(limited.length, 6);
+        verify(Qt.colorEqual(limited[0], "#ff0000"));
+        verify(Qt.colorEqual(limited[5], "#abcdef"));
+        compare(WaveMath.limitStops(["red", "blue"], 6).length, 2);
+        compare(WaveMath.hexOf("#336699"), "#336699");
+    }
     function test_reducedMotionFreezesRainbowAndHueDrift() {
         for (const mode of ["solid", "gradient", "palette", "rainbow"]) {
             const first = WaveMath.colorStops("#b4befe", mode, "iris", "red", "blue", true, 0, 0, true);
