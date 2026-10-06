@@ -48,8 +48,14 @@ Column {
                 height: parent.height
                 gradient: Gradient {
                     orientation: Gradient.Horizontal
-                    GradientStop { position: 0; color: control.colors[index] ?? "#808080" }
-                    GradientStop { position: 1; color: control.colors[Math.min(index + 1, control.colors.length - 1)] ?? "#808080" }
+                    GradientStop {
+                        position: 0
+                        color: control.colors[index] ?? "#808080"
+                    }
+                    GradientStop {
+                        position: 1
+                        color: control.colors[Math.min(index + 1, control.colors.length - 1)] ?? "#808080"
+                    }
                 }
             }
         }

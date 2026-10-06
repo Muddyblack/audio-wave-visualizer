@@ -29,9 +29,7 @@ subprocess.run(
 subprocess.run(
     [sys.executable, str(REPO / "tests/test_command_sources.py")], check=True
 )
-subprocess.run(
-    [sys.executable, str(REPO / "tests/test_leak_guards.py")], check=True
-)
+subprocess.run([sys.executable, str(REPO / "tests/test_leak_guards.py")], check=True)
 subprocess.run([sys.executable, str(REPO / "tests/test_feeder.py")], check=True)
 subprocess.run([sys.executable, str(REPO / "tests/test_waybar.py")], check=True)
 subprocess.run([sys.executable, str(REPO / "tests/test_stereo_capture.py")], check=True)

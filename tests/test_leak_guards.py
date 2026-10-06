@@ -44,25 +44,38 @@ for folder in FOLDERS:
     for path in sorted((REPO / folder).rglob("*.qml")):
         text = path.read_text()
         if "Qt.createQmlObject" in text:
-            report(path, "createQmlObject", "leaks a component per call; use a Component")
+            report(
+                path, "createQmlObject", "leaks a component per call; use a Component"
+            )
         if ".createObject(" in text and ".destroy(" not in text:
             report(path, "createObject", "created objects are never destroy()ed")
         for body in blocks(text, "Timer"):
             if not re.search(r"repeat:\s*true", body):
                 continue
             if re.search(r"running:\s*true\s*(\n|$)", body):
-                report(path, "alwaysOnTimer", "repeating Timer is always running; gate it")
+                report(
+                    path, "alwaysOnTimer", "repeating Timer is always running; gate it"
+                )
             interval = re.search(r"interval:\s*(\d+)\s*(\n|$)", body)
             if interval and int(interval.group(1)) < 16:
                 report(path, "fastTimer", f"{interval.group(1)} ms repeating Timer")
 
 for path in sorted((REPO / "package/contents/code").glob("*.js")):
     text = path.read_text()
-    for name in re.findall(r"^(?:var|let)\s+(\w+)\s*=\s*(?:\{\}|new Map\(\)|\[\])\s*;", text, re.M):
+    for name in re.findall(
+        r"^(?:var|let)\s+(\w+)\s*=\s*(?:\{\}|new Map\(\)|\[\])\s*;", text, re.M
+    ):
         writes = re.search(rf"\b{name}\s*(\[[^\]]+\]\s*=|\.set\(|\.push\()", text)
-        shrinks = re.search(rf"\b{name}\s*(\.delete\(|\.clear\(|\.length\s*=|\.shift\(|\.splice\(|\s*=\s*(\{{\}}|\[\]))", text.replace(f"var {name}", "", 1))
+        shrinks = re.search(
+            rf"\b{name}\s*(\.delete\(|\.clear\(|\.length\s*=|\.shift\(|\.splice\(|\s*=\s*(\{{\}}|\[\]))",
+            text.replace(f"var {name}", "", 1),
+        )
         if writes and not shrinks:
-            report(path, f"unboundedCache:{name}", "module-level collection only ever grows")
+            report(
+                path,
+                f"unboundedCache:{name}",
+                "module-level collection only ever grows",
+            )
 
 if problems:
     sys.exit("Memory-growth guard failed:\n  " + "\n  ".join(problems))
