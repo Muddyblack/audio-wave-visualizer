@@ -287,6 +287,6 @@ void main()
             color = styleDots(p, W, H, n, type == 5, glow);
     }
     // MultiEffect shadow: the drawing over a wave-coloured blurred alpha.
-    vec4 shadow = color0 * clamp(glow * glowAmount, 0.0, 1.0);
+    vec4 shadow = glowTint() * clamp(glow * glowAmount, 0.0, 1.0);
     fragColor = over(color, shadow) * (qt_Opacity * edgeMask());
 }

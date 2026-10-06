@@ -13,7 +13,7 @@ function draw(ctx, o) {
     const val = j => values[j < half ? j : n - 1 - j];
     const ang = j => j / n * Math.PI * 2 + o.rot - Math.PI / 2;
     const at = (r, a) => [cx + Math.cos(a) * r, cy + Math.sin(a) * r];
-    const glowColor = stops[0];
+    const glowColor = o.glowTint || stops[0];
 
     // The HTML uses a clockwise conic gradient starting at the top and turning
     // with the ring; Qt's conical gradient runs counter-clockwise, so the stops

@@ -31,6 +31,7 @@ Canvas {
     property string vizDirection: "up"
     property string vizColorMode: "solid"
     property string vizPalette: "aurora"
+    property string glowColors: ""
     property bool hueReactive: false
     property real bloom: 1
     property real ribbonCurvature: 1
@@ -44,6 +45,8 @@ Canvas {
     readonly property var colorStops: WaveMath.colorStops(waveColor, vizColorMode, vizPalette, coverColor1, coverColor2, hueReactive, hueReactive && !reducedMotion ? high : .5, !reducedMotion && (hueReactive || vizColorMode === "rainbow") ? visualFrameTime / 1000 : 0, reducedMotion)
     readonly property bool _colored: vizColorMode !== "solid" || hueReactive
     readonly property color _mainColor: _colored ? colorStops[0] : waveColor
+    readonly property color _glowTint: WaveMath.glowTint(glowColors, visualFrameTime / 1000, reducedMotion)
+    readonly property color _glowColor: _glowTint.a > 0 ? _glowTint : _mainColor
     readonly property int _sampleCount: WaveMath.count(numBars, width, visualizerType)
 
     antialiasing: true
@@ -62,7 +65,7 @@ Canvas {
     layer.enabled: visualizerType < 6 && glowWave && bloom > 0 && hasAudio && !backendFailed && !GpuDebug.noLayers && GraphicsInfo.api !== GraphicsInfo.Software
     layer.effect: MultiEffect {
         shadowEnabled: true
-        shadowColor: wave._mainColor
+        shadowColor: wave._glowColor
         shadowOpacity: 1.0
         shadowBlur: 1.0
         blurMax: 8 * Math.max(0, Math.min(2, wave.bloom))
@@ -215,6 +218,7 @@ Canvas {
                 previousStereo: previousStereo,
                 fill: fillWave,
                 glow: glowWave,
+                glowTint: _glowTint.a > 0 ? _glowTint : null,
                 bloom: bloom,
                 curvature: ribbonCurvature,
                 fullness: ribbonFullness,

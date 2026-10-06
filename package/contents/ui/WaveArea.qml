@@ -64,7 +64,8 @@ Waveform {
     vizVerticalOffset: root.configuration.vizVerticalOffset ?? 0
     vizDirection: root.configuration.vizDirection ?? "up"
     vizColorMode: root.configuration.vizColorMode ?? "solid"
-    vizPalette: root.configuration.vizPalette ?? "aurora"
+    vizPalette: root.configuration.vizColorMode === "custom" ? (root.configuration.vizCustomColors ?? "") : (root.configuration.vizPalette ?? "aurora")
+    glowColors: root.configuration.glowColorMode === "custom" ? (root.configuration.glowCustomColors ?? "") : ""
     hueReactive: root.configuration.hueReactive ?? false
     bloom: root.configuration.bloom ?? 1
     ribbonCurvature: root.configuration.ribbonCurvature ?? 1

@@ -31,6 +31,7 @@ Item {
     property string vizDirection: "up"
     property string vizColorMode: "solid"
     property string vizPalette: "aurora"
+    property string glowColors: ""
     property bool hueReactive: false
     property real bloom: 1
     property real ribbonCurvature: 1
@@ -43,7 +44,7 @@ Item {
     property bool edgeFade: false
     readonly property real _timeSeconds: !reducedMotion && (visualizerType === 9 || visualizerType === 10 || visualizerType === 11 || visualizerType === 13 || visualizerType >= 15) ? visualFrameTime / 1000 : 0
     readonly property bool _usesBass: visualizerType === 11 || visualizerType === 13 || visualizerType >= 15
-    readonly property var _colors: WaveMath.colorStops(waveColor, vizColorMode, vizPalette, coverColor1, coverColor2, hueReactive, hueReactive && !reducedMotion ? high : 0.5, !reducedMotion && (hueReactive || vizColorMode === "rainbow") ? visualFrameTime / 1000 : 0, reducedMotion)
+    readonly property var _colors: WaveMath.limitStops(WaveMath.colorStops(waveColor, vizColorMode, vizPalette, coverColor1, coverColor2, hueReactive, hueReactive && !reducedMotion ? high : 0.5, !reducedMotion && (hueReactive || vizColorMode === "rainbow") ? visualFrameTime / 1000 : 0, reducedMotion), 6)
     readonly property string _shaderFamily: visualizerType === 16 ? "viz_terrain" : visualizerType === 17 ? "viz_tunnel" : visualizerType === 18 ? "viz_fluid" : visualizerType === 19 || visualizerType === 20 ? "viz_scope" : visualizerType <= 5 ? "visualizer" : visualizerType === 11 || visualizerType === 13 ? "viz_radial" : visualizerType === 14 ? "viz_sparkles" : visualizerType === 21 ? "viz_particles" : visualizerType === 15 ? "viz_ribbon" : "viz_linear"
     // Two Gaussians fitted to WaveCanvas' MultiEffect shadow (shadowBlur 1,
     // blurMax 8): line, edge, dot and translucent-fill profiles.
@@ -185,6 +186,7 @@ Item {
         readonly property real glowSigma2: wave.glowSigma2 * Math.max(0.01, wave.bloom)
         readonly property real glowGain2: wave.glowGain2
         readonly property color waveColor: wave.waveColor
+        readonly property color glowColor: WaveMath.glowTint(wave.glowColors, wave.visualFrameTime / 1000, wave.reducedMotion)
         readonly property real timeSeconds: wave._timeSeconds
         readonly property real bass: wave._usesBass ? wave.bass : 0
         readonly property real mid: wave.visualizerType >= 15 && !wave.reducedMotion ? wave.mid : 0

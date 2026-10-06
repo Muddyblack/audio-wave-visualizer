@@ -20,6 +20,7 @@ layout(std140, binding = 0) uniform buf {
     float glowSigma2;
     float glowGain2;
     vec4 waveColor;
+    vec4 glowColor;
     vec4 levels0;
     vec4 levels1;
     vec4 levels2;
@@ -439,9 +440,15 @@ vec4 tint(vec3 rgb, float alpha)
     return vec4(rgb * alpha, alpha);
 }
 
+// An own glow colour (alpha > 0) wins; otherwise the middle of the colour range.
+vec4 glowTint()
+{
+    return glowColor.a > 0.0 ? glowColor : colorStop(int(floor(colorCount * 0.5)));
+}
+
 vec4 htmlShadow(float glow)
 {
-    return colorStop(int(floor(colorCount * 0.5))) * clamp(glow * glowAmount, 0.0, 1.0);
+    return glowTint() * clamp(glow * glowAmount, 0.0, 1.0);
 }
 
 // Poster texture: fade both sides (transparent → opaque at 14 % and 86 %).

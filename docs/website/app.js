@@ -428,7 +428,7 @@ async function refreshAudioInputs() {
 }
 
 function colorStops(s, d, t) {
-  return WaveMath.colorStops(d.accent, s.vizColorMode, s.vizPalette,
+  return WaveMath.colorStops(d.accent, s.vizColorMode, s.vizColorMode === 'custom' ? s.vizCustomColors : s.vizPalette,
     d.t.pal.p1, d.t.pal.p2, s.hueReactive, bands(t).high, t, s.reducedMotion);
 }
 

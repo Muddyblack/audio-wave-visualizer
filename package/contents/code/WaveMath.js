@@ -57,6 +57,44 @@ function shiftHue(value, degrees) {
     return Qt.hsla(((parts[0] + degrees) % 360 + 360) % 360 / 360, parts[1], parts[2], c.a);
 }
 
+// A user range is "#rrggbb,#rrggbb,..." of any length; entries that are not
+// colours are dropped so a half-typed value never blanks the visualizer.
+function parseColors(list) {
+    return String(list || "").split(/[\s,;]+/).filter(item => /^#([0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i.test(item));
+}
+
+// The GPU shaders carry at most six stops; longer ranges are resampled
+// evenly along their length so the whole gradient is still represented.
+function limitStops(stops, max) {
+    if (stops.length <= max)
+        return stops;
+    const out = [];
+    for (let i = 0; i < max; i++) {
+        const x = i / (max - 1) * (stops.length - 1), left = Math.floor(x), f = x - left;
+        const a = color(stops[left]), b = color(stops[Math.min(left + 1, stops.length - 1)]);
+        out.push(f === 0 ? a : Qt.rgba(a.r + (b.r - a.r) * f, a.g + (b.g - a.g) * f, a.b + (b.b - a.b) * f, a.a + (b.a - a.a) * f));
+    }
+    return out;
+}
+
+function hexOf(value) {
+    const c = color(value);
+    return "#" + [c.r, c.g, c.b].map(v => ("0" + Math.round(Math.max(0, Math.min(1, v)) * 255).toString(16)).slice(-2)).join("");
+}
+
+// The glow's own colour: a point on the user's glow range that drifts slowly
+// along it (still on the middle in reduced motion). Transparent means "no own
+// colour", so every renderer keeps its default of the middle of the colour range.
+function glowTint(list, seconds, reducedMotion) {
+    const own = parseColors(list);
+    if (!own.length)
+        return Qt.rgba(0, 0, 0, 0);
+    const x = (reducedMotion ? 0.5 : 0.5 + 0.5 * Math.sin(seconds * 0.4)) * (own.length - 1);
+    const left = Math.floor(x), f = x - left;
+    const a = color(own[left]), b = color(own[Math.min(left + 1, own.length - 1)]);
+    return Qt.rgba(a.r + (b.r - a.r) * f, a.g + (b.g - a.g) * f, a.b + (b.b - a.b) * f, 1);
+}
+
 function colorStops(accent, mode, palette, cover1, cover2, reactive, high, seconds, reducedMotion) {
     const t = reducedMotion ? 0 : seconds;
     let stops;
@@ -64,6 +102,12 @@ function colorStops(accent, mode, palette, cover1, cover2, reactive, high, secon
     case "gradient": stops = [accent, shiftHue(accent, 55)]; break;
     case "cover": stops = [cover1, accent, cover2]; break;
     case "palette": stops = palettes[palette] || palettes.aurora; break;
+    case "custom": {
+        // `palette` carries the user's colour list for this mode.
+        const own = parseColors(palette);
+        stops = own.length ? own : [accent];
+        break;
+    }
     case "rainbow":
         return [0, 60, 120, 180, 240, 300].map(h => Qt.hsla(((h + t * 24) % 360 + 360) % 360 / 360, 0.85, 0.65, 1));
     default: stops = [accent];

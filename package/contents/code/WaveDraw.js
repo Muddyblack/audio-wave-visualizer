@@ -140,7 +140,7 @@ function draw(ctx, o) {
         return;
     const t = o.reducedMotion ? 0 : o.time;
     const stops = o.stops, paint = paintFor(ctx, stops, w);
-    const glowColor = stops[Math.floor(stops.length / 2)];
+    const glowColor = o.glowTint || stops[Math.floor(stops.length / 2)];
     const glow = o.glow ? Math.max(0, Math.min(2, o.bloom)) : 0;
     ctx.lineJoin = "round";
     ctx.lineCap = "round";
