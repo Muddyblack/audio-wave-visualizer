@@ -23,6 +23,7 @@ ShaderEffect {
     readonly property var stops: WaveMath.limitStops(orbit.colorStops, 6)
     readonly property real colorCount: stops.length
     readonly property real particleCount: Math.min(32, orbit.particles.length)
+    readonly property color glowColor: orbit.glowTint
     readonly property color color0: effect.stops[0] || "#ffffff"
     readonly property color color1: effect.stops[1] || effect.stops[0]
     readonly property color color2: effect.stops[2] || effect.stops[0]

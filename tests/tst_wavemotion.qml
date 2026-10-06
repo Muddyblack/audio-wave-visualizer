@@ -148,6 +148,12 @@ TestCase {
         compare(WaveMath.limitStops(["red", "blue"], 6).length, 2);
         compare(WaveMath.hexOf("#336699"), "#336699");
     }
+    function test_glowTintUsesOwnRangeOrNothing() {
+        compare(WaveMath.glowTint("", 0, false).a, 0);
+        const middle = WaveMath.glowTint("#000000,#ff0000,#0000ff", 5, true);
+        verify(Qt.colorEqual(middle, "#ff0000"));
+        compare(WaveMath.glowTint("#000000,#ffffff", 3, false).a, 1);
+    }
     function test_reducedMotionFreezesRainbowAndHueDrift() {
         for (const mode of ["solid", "gradient", "palette", "rainbow"]) {
             const first = WaveMath.colorStops("#b4befe", mode, "iris", "red", "blue", true, 0, 0, true);

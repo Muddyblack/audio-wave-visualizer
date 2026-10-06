@@ -8,6 +8,7 @@ layout(std140,binding=0) uniform buf {
     float fillAmount; float glowAmount; float particleCount; float colorCount;
     float failed;
     vec4 color0; vec4 color1; vec4 color2; vec4 color3; vec4 color4; vec4 color5;
+    vec4 glowColor;
     vec4 levels0;
     vec4 levels1;
     vec4 levels2;
@@ -132,7 +133,7 @@ vec4 over(vec4 a,vec4 b) {return a+b*(1.0-a.a);}
 vec4 stroke(vec4 color,float d,float alpha) {
     float core=coverage(d)*alpha;
     float glow=exp(-pow(max(0.0,d)/3.5,2.0))*.28*glowAmount*alpha;
-    return over(color*core,color0*glow);
+    return over(color*core,(glowColor.a>0.0?glowColor:color0)*glow);
 }
 vec2 point(int j,float scale) {return polar(innerRadius+2.0+value(j)*reach*scale,angle(j));}
 float curveDistance(vec2 p,int bin,float scale) {

@@ -55,6 +55,7 @@ Item {
                 vizDirection: [1, 6, 7, 8].indexOf(preview.value) !== -1 ? (preview.draft.vizDirection ?? "up") : "up"
                 vizColorMode: preview.draft.vizColorMode ?? "solid"
                 vizPalette: preview.draft.vizColorMode === "custom" ? (preview.draft.vizCustomColors ?? "") : (preview.draft.vizPalette ?? "aurora")
+                glowColors: preview.draft.glowColorMode === "custom" ? (preview.draft.glowCustomColors ?? "") : ""
                 hueReactive: preview.draft.hueReactive ?? false
                 reducedMotion: preview.draft.reducedMotion ?? false
                 simpleRender: preview.draft.simpleRender ?? false
@@ -81,6 +82,7 @@ Item {
                 waveColor: preview.studio.accent
                 vizColorMode: preview.draft.vizColorMode ?? "solid"
                 vizPalette: preview.draft.vizColorMode === "custom" ? (preview.draft.vizCustomColors ?? "") : (preview.draft.vizPalette ?? "aurora")
+                glowColors: preview.draft.glowColorMode === "custom" ? (preview.draft.glowCustomColors ?? "") : ""
                 hueReactive: preview.draft.hueReactive ?? false
                 lineWidth: 1
                 glowWave: preview.draft.glowWave ?? true

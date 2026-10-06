@@ -38,6 +38,7 @@ Item {
     property string vizDirection: "up"
     property string vizColorMode: "solid"
     property string vizPalette: "aurora"
+    property string glowColors: ""
     property bool hueReactive: false
     property real bloom: 1
     property real ribbonCurvature: 1
@@ -112,6 +113,7 @@ Item {
             vizDirection: root.vizDirection
             vizColorMode: root.vizColorMode
             vizPalette: root.vizPalette
+            glowColors: root.glowColors
             hueReactive: root.hueReactive
             bloom: root.bloom
             ribbonCurvature: root.ribbonCurvature
@@ -157,6 +159,7 @@ Item {
             vizDirection: root.vizDirection
             vizColorMode: root.vizColorMode
             vizPalette: root.vizPalette
+            glowColors: root.glowColors
             hueReactive: root.hueReactive
             bloom: root.bloom
             ribbonCurvature: root.ribbonCurvature

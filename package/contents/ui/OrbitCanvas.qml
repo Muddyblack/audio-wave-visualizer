@@ -22,6 +22,7 @@ Item {
     property color coverColor2: waveColor
     property string vizColorMode: "solid"
     property string vizPalette: "aurora"
+    property string glowColors: ""
     property bool hueReactive: false
     property real lineWidth: 1.8
     property bool fillWave: false
@@ -42,6 +43,7 @@ Item {
     readonly property real ringRotation: orbitRotate && !reducedMotion ? (seconds * 0.2) % (Math.PI * 2) : 0
     readonly property bool sparks: orbitStyle === "sparks" && !reducedMotion
     readonly property bool drawing: visible && hasAudio && !backendFailed
+    readonly property color glowTint: WaveMath.glowTint(glowColors, seconds, reducedMotion)
     readonly property var colorStops: WaveMath.colorStops(waveColor, vizColorMode, vizPalette, coverColor1, coverColor2, hueReactive, hueReactive && !reducedMotion ? high : 0.5, !reducedMotion && (hueReactive || vizColorMode === "rainbow") ? seconds : 0, reducedMotion)
 
     function values() {
@@ -112,6 +114,7 @@ Item {
                     stops: orbit.colorStops,
                     lineWidth: orbit.lineWidth,
                     fill: orbit.fillWave,
+                    glowTint: orbit.glowTint.a > 0 ? orbit.glowTint : null,
                     glow: orbit.glowWave ? Math.max(0, Math.min(2, orbit.bloom)) : 0,
                     particles: orbit.particles
                 });

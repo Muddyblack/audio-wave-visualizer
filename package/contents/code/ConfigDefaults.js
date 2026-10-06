@@ -81,6 +81,8 @@ var values = {
   "vizColorMode": "solid",
   "vizPalette": "aurora",
   "vizCustomColors": "#ff6a3d,#ffc36b,#5ef2c1,#4aa8ff",
+  "glowColorMode": "same",
+  "glowCustomColors": "#ff6a3d,#ff3d9a,#7a5cff",
   "hueReactive": false,
   "bloom": 1.0,
   "ribbonCurvature": 1.0,

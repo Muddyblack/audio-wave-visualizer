@@ -31,6 +31,7 @@ Item {
     property string vizDirection: "up"
     property string vizColorMode: "solid"
     property string vizPalette: "aurora"
+    property string glowColors: ""
     property bool hueReactive: false
     property real bloom: 1
     property real ribbonCurvature: 1
@@ -185,6 +186,7 @@ Item {
         readonly property real glowSigma2: wave.glowSigma2 * Math.max(0.01, wave.bloom)
         readonly property real glowGain2: wave.glowGain2
         readonly property color waveColor: wave.waveColor
+        readonly property color glowColor: WaveMath.glowTint(wave.glowColors, wave.visualFrameTime / 1000, wave.reducedMotion)
         readonly property real timeSeconds: wave._timeSeconds
         readonly property real bass: wave._usesBass ? wave.bass : 0
         readonly property real mid: wave.visualizerType >= 15 && !wave.reducedMotion ? wave.mid : 0

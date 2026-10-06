@@ -82,6 +82,19 @@ function hexOf(value) {
     return "#" + [c.r, c.g, c.b].map(v => ("0" + Math.round(Math.max(0, Math.min(1, v)) * 255).toString(16)).slice(-2)).join("");
 }
 
+// The glow's own colour: a point on the user's glow range that drifts slowly
+// along it (still on the middle in reduced motion). Transparent means "no own
+// colour", so every renderer keeps its default of the middle of the colour range.
+function glowTint(list, seconds, reducedMotion) {
+    const own = parseColors(list);
+    if (!own.length)
+        return Qt.rgba(0, 0, 0, 0);
+    const x = (reducedMotion ? 0.5 : 0.5 + 0.5 * Math.sin(seconds * 0.4)) * (own.length - 1);
+    const left = Math.floor(x), f = x - left;
+    const a = color(own[left]), b = color(own[Math.min(left + 1, own.length - 1)]);
+    return Qt.rgba(a.r + (b.r - a.r) * f, a.g + (b.g - a.g) * f, a.b + (b.b - a.b) * f, 1);
+}
+
 function colorStops(accent, mode, palette, cover1, cover2, reactive, high, seconds, reducedMotion) {
     const t = reducedMotion ? 0 : seconds;
     let stops;
