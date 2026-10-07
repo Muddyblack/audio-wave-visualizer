@@ -25,21 +25,13 @@ Item {
         color: Qt.rgba(1, 1, 1, 0x1a / 255)
         visible: area.containsMouse
     }
-    Canvas {
+    VectorIcon {
         anchors.centerIn: parent
         width: 10
         height: 10
         opacity: area.containsMouse ? 1 : 0.8
-        readonly property var signature: [button.icon, button.color]
-        onSignatureChanged: requestPaint()
-        onPaint: {
-            const ctx = getContext("2d");
-            ctx.reset();
-            ctx.scale(width / 24, height / 24);
-            ctx.fillStyle = button.color;
-            ctx.path = button.paths[button.icon] ?? "";
-            ctx.fill();
-        }
+        path: button.paths[button.icon] ?? ""
+        color: button.color
     }
     MouseArea {
         id: area

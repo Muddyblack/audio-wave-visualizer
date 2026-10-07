@@ -5,8 +5,9 @@ import "../code/WaveDraw.js" as WaveDraw
 import "../code/ClassicWaveDraw.js" as ClassicWaveDraw
 import "debug"
 
-Canvas {
+CrispCanvas {
     id: wave
+    maxPixelScale: 2
 
     property var bars: []
     property int numBars: bars.length
@@ -63,6 +64,7 @@ Canvas {
     // Qt's software scene graph cannot render MultiEffect; keep the waveform
     // visible there without falling back to those expensive CPU shadows.
     layer.enabled: visualizerType < 6 && glowWave && bloom > 0 && hasAudio && !backendFailed && !GpuDebug.noLayers && GraphicsInfo.api !== GraphicsInfo.Software
+    layer.textureSize: canvasSize
     layer.effect: MultiEffect {
         shadowEnabled: true
         shadowColor: wave._glowColor
@@ -87,6 +89,8 @@ Canvas {
         _drawCache.fillBelow = null;
         repaint();
     }
+
+    onPixelScaleChanged: invalidateGradients()
 
     onBarsChanged: {
         if (hasAudio && !backendFailed)
@@ -173,6 +177,7 @@ Canvas {
 
     function paintFrame(ctx) {
         ctx.reset();
+        ctx.scale(pixelScale, pixelScale);
         ctx.lineCap = "round";
         ctx.lineJoin = "round";
 

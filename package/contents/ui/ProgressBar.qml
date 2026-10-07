@@ -106,7 +106,7 @@ Item {
     }
 
     // ── Style 4 — Android Waveform seekbar ───────────────────
-    Canvas {
+    CrispCanvas {
         id: waveformSeek
         objectName: "waveformSeek"
         anchors.left: parent.left
@@ -190,6 +190,7 @@ Item {
         onPaint: {
             const ctx = getContext("2d");
             ctx.reset();
+            ctx.scale(pixelScale, pixelScale);
             ProgressDraw.draw(ctx, {
                 width: width,
                 height: height,
@@ -206,7 +207,7 @@ Item {
     }
 
     // ── Styles 5 (Squiggle) and 7 (Dotted) ──
-    Canvas {
+    CrispCanvas {
         id: lineSeek
         objectName: "lineSeek"
         anchors.left: parent.left
@@ -261,6 +262,7 @@ Item {
         onPaint: {
             const ctx = getContext("2d");
             ctx.reset();
+            ctx.scale(pixelScale, pixelScale);
             ProgressDraw.draw(ctx, {
                 width: width,
                 height: height,

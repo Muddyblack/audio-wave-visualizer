@@ -211,29 +211,15 @@ Item {
                 }
             }
 
-            Canvas {
+            VectorIcon {
                 id: prevIcon
                 anchors.centerIn: parent
                 width: 12
                 height: 12
                 opacity: prevArea.containsMouse ? 1.0 : 0.78
-                onPaint: {
-                    const ctx = getContext("2d");
-                    ctx.reset();
-                    ctx.fillStyle = root.controlColor;
-                    ctx.beginPath();
-                    ctx.moveTo(10, 1.5);
-                    ctx.lineTo(1.5, 6);
-                    ctx.lineTo(10, 10.5);
-                    ctx.closePath();
-                    ctx.fill();
-                }
-                Connections {
-                    target: root
-                    function onControlColorChanged() {
-                        prevIcon.requestPaint();
-                    }
-                }
+                designSize: 12
+                path: "M10 1.5 L1.5 6 L10 10.5 Z"
+                color: root.controlColor
             }
             MouseArea {
                 id: prevArea
@@ -277,41 +263,15 @@ Item {
                 }
             }
 
-            Canvas {
+            VectorIcon {
                 id: playIcon
                 anchors.centerIn: parent
                 width: playBtn.accent ? 10 : 12
                 height: width
                 opacity: playBtn.accent ? 1 : (playArea.containsMouse ? 1.0 : 0.86)
-                onPaint: {
-                    const ctx = getContext("2d");
-                    ctx.reset();
-                    ctx.scale(width / 12, height / 12);
-                    ctx.fillStyle = playBtn.accent ? "#11140f" : root.controlColor;
-                    if (root.isPlaying) {
-                        // Draw two vertical pause bars
-                        ctx.fillRect(2, 1, 3.5, 10);
-                        ctx.fillRect(6.5, 1, 3.5, 10);
-                    } else {
-                        // Draw play triangle
-                        ctx.beginPath();
-                        ctx.moveTo(2.5, 1);
-                        ctx.lineTo(10.5, 6);
-                        ctx.lineTo(2.5, 11);
-                        ctx.closePath();
-                        ctx.fill();
-                    }
-                }
-                onWidthChanged: requestPaint()
-                Connections {
-                    target: root
-                    function onIsPlayingChanged() {
-                        playIcon.requestPaint();
-                    }
-                    function onControlColorChanged() {
-                        playIcon.requestPaint();
-                    }
-                }
+                designSize: 12
+                path: root.isPlaying ? "M2 1h3.5v10H2z M6.5 1H10v10H6.5z" : "M2.5 1 L10.5 6 L2.5 11 Z"
+                color: playBtn.accent ? "#11140f" : root.controlColor
             }
             MouseArea {
                 id: playArea
@@ -340,29 +300,15 @@ Item {
                 }
             }
 
-            Canvas {
+            VectorIcon {
                 id: nextIcon
                 anchors.centerIn: parent
                 width: 12
                 height: 12
                 opacity: nextArea.containsMouse ? 1.0 : 0.78
-                onPaint: {
-                    const ctx = getContext("2d");
-                    ctx.reset();
-                    ctx.fillStyle = root.controlColor;
-                    ctx.beginPath();
-                    ctx.moveTo(2, 1.5);
-                    ctx.lineTo(10.5, 6);
-                    ctx.lineTo(2, 10.5);
-                    ctx.closePath();
-                    ctx.fill();
-                }
-                Connections {
-                    target: root
-                    function onControlColorChanged() {
-                        nextIcon.requestPaint();
-                    }
-                }
+                designSize: 12
+                path: "M2 1.5 L10.5 6 L2 10.5 Z"
+                color: root.controlColor
             }
             MouseArea {
                 id: nextArea

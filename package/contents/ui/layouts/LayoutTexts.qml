@@ -71,8 +71,8 @@ ColumnLayout {
             visible: status === Image.Ready
             Layout.preferredWidth: visible ? 10 : 0
             Layout.preferredHeight: visible ? 10 : 0
-            sourceSize.width: 32
-            sourceSize.height: 32
+            sourceSize.width: 64
+            sourceSize.height: 64
             fillMode: Image.PreserveAspectFit
             asynchronous: true
             cache: true

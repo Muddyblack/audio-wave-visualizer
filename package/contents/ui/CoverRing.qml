@@ -102,7 +102,7 @@ Item {
         active: ring.visible && ring.width > 0 && ring.height > 0 && ring.playbackActive
     }
 
-    Canvas {
+    CrispCanvas {
         id: ringCanvas
         objectName: "ringCanvas"
         visible: !ring.circularDial
@@ -133,6 +133,7 @@ Item {
         onPaint: {
             const ctx = getContext("2d");
             ctx.reset();
+            ctx.scale(pixelScale, pixelScale);
             const w = width, h = height;
             const band = ring.band;
             if (w <= band * 2 || h <= band * 2)

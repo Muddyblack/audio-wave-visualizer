@@ -36,21 +36,13 @@ Item {
         }
     }
 
-    Canvas {
+    VectorIcon {
         anchors.centerIn: parent
         width: 10
         height: 10
         opacity: !toggle.available ? 0.2 : toggle.active ? 1 : 0.45
-        readonly property var signature: [toggle.active, toggle.controlColor, toggle.accentColor, toggle.iconPath]
-        onSignatureChanged: requestPaint()
-        onPaint: {
-            const ctx = getContext("2d");
-            ctx.reset();
-            ctx.scale(width / 24, height / 24);
-            ctx.fillStyle = toggle.active ? toggle.accentColor : toggle.controlColor;
-            ctx.path = toggle.iconPath;
-            ctx.fill();
-        }
+        path: toggle.iconPath
+        color: toggle.active ? toggle.accentColor : toggle.controlColor
     }
 
     Text {

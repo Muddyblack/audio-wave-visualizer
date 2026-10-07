@@ -12,6 +12,28 @@ TestCase {
     UI.FittedFrame {
         id: frame
         property int clicks: 0
+        UI.CrispCanvas {
+            id: crisp
+            width: 40
+            height: 20
+            onPaint: {
+                const ctx = getContext("2d");
+                ctx.reset();
+                ctx.scale(pixelScale, pixelScale);
+                ctx.fillStyle = "red";
+                ctx.fillRect(0, 0, 20, 20);
+                ctx.fillStyle = "blue";
+                ctx.fillRect(20, 0, 20, 20);
+            }
+        }
+        UI.VectorIcon {
+            id: vectorIcon
+            x: 50
+            width: 24
+            height: 24
+            color: "#00ff00"
+            path: "M4 2 L22 12 L4 22 Z"
+        }
         MouseArea {
             id: button
             x: 100
@@ -108,5 +130,77 @@ TestCase {
         compare(frame.width, data.w);
         compare(frame.height, data.h);
         fuzzyCompare(frame.fitScale, Math.min(data.w / 360, data.h / 104), 0.0001);
+    }
+
+    function test_canvasRasterizesAtFittedScale() {
+        frame.designSize = Qt.size(360, 104);
+        frame.width = 360;
+        frame.height = 104;
+        compare(crisp.pixelScale, 1);
+        compare(crisp.canvasSize, Qt.size(40, 20));
+        frame.width = 720;
+        frame.height = 208;
+        fuzzyCompare(frame.fitScale, 2, 0.0001);
+        compare(crisp.pixelScale, 2);
+        compare(crisp.canvasSize, Qt.size(80, 40));
+        // A shrunken card never rasterizes below its design size.
+        frame.width = 180;
+        frame.height = 52;
+        compare(crisp.pixelScale, 1);
+    }
+
+    function test_scaledCanvasShowsWholeDrawing() {
+        frame.designSize = Qt.size(360, 104);
+        frame.width = 720;
+        frame.height = 208;
+        crisp.requestPaint();
+        tryVerify(() => {
+            const picture = grabImage(frame);
+            const left = crisp.mapToItem(frame, 10, 10);
+            const right = crisp.mapToItem(frame, 30, 10);
+            const sx = Screen.devicePixelRatio;
+            const sy = Screen.devicePixelRatio;
+            return picture.red(Math.round(left.x * sx), Math.round(left.y * sy)) > 240 && picture.blue(Math.round(right.x * sx), Math.round(right.y * sy)) > 240;
+        });
+    }
+
+    function test_vectorIconScalesAndChangesPath() {
+        frame.designSize = Qt.size(360, 104);
+        frame.width = 720;
+        frame.height = 208;
+        vectorIcon.path = "M4 2 L22 12 L4 22 Z";
+        const point = vectorIcon.mapToItem(frame, 12, 12);
+        tryVerify(() => {
+            const picture = grabImage(frame);
+            const x = Math.round(point.x * Screen.devicePixelRatio);
+            const y = Math.round(point.y * Screen.devicePixelRatio);
+            return picture.green(x, y) > 240 && picture.red(x, y) < 20;
+        });
+        vectorIcon.path = "M4 2 H9 V22 H4 Z M15 2 H20 V22 H15 Z";
+        tryVerify(() => {
+            const picture = grabImage(frame);
+            return picture.red(Math.round(point.x * Screen.devicePixelRatio), Math.round(point.y * Screen.devicePixelRatio)) > 240;
+        });
+    }
+
+    function test_canvasResolutionBudget() {
+        frame.designSize = Qt.size(360, 104);
+        frame.width = 3600;
+        frame.height = 1040;
+        compare(crisp.pixelScale, 4);
+        crisp.width = 800;
+        verify(crisp.canvasSize.width <= 2048);
+        crisp.width = 40;
+        frame.width = 361;
+        frame.height = 104 * 361 / 360;
+        compare(crisp.pixelScale, 1);
+        frame.width = 450;
+        frame.height = 130;
+        compare(crisp.pixelScale, 1.25);
+        crisp.maxPixelScale = 1.5;
+        frame.width = 1080;
+        frame.height = 312;
+        compare(crisp.pixelScale, 1.5);
+        crisp.maxPixelScale = 4;
     }
 }

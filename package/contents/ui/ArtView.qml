@@ -176,7 +176,7 @@ Item {
         }
 
         // Placeholder without a cover: a title-hued gradient or initials.
-        Canvas {
+        CrispCanvas {
             anchors.fill: parent
             visible: root.showFallbackArt
             renderStrategy: Canvas.Cooperative
@@ -188,6 +188,7 @@ Item {
             onPaint: {
                 const ctx = getContext("2d");
                 ctx.reset();
+                ctx.scale(pixelScale, pixelScale);
                 const w = width, h = height;
                 if (w <= 0 || h <= 0)
                     return;
@@ -220,7 +221,7 @@ Item {
         }
 
         // Vinyl grooves or the iridescent CD face under the cover print.
-        Canvas {
+        CrispCanvas {
             id: discCanvas
             anchors.fill: parent
             visible: root.disc && root.coverReady
@@ -233,6 +234,7 @@ Item {
             onPaint: {
                 const ctx = getContext("2d");
                 ctx.reset();
+                ctx.scale(pixelScale, pixelScale);
                 const w = Math.min(width, height), R = w / 2;
                 if (w <= 0)
                     return;

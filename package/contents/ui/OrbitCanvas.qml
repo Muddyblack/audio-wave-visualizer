@@ -93,12 +93,14 @@ Item {
         id: painter
         anchors.fill: parent
         active: !orbit.shaderEnabled
-        sourceComponent: Canvas {
+        sourceComponent: CrispCanvas {
+            maxPixelScale: 2
             antialiasing: true
             renderStrategy: Canvas.Cooperative
             onPaint: {
                 const ctx = getContext("2d");
                 ctx.reset();
+                ctx.scale(pixelScale, pixelScale);
                 if (orbit.backendFailed)
                     return;
                 const g = orbit.geometry();
