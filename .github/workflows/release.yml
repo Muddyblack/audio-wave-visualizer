@@ -69,8 +69,8 @@ jobs:
             The Windows asset is attached a few minutes after the release appears, once its build has passed.
           files: ${{ steps.info.outputs.artifact }}
 
-  # The workflow every push runs — the overlay's own selftest, the build,
-  # the built .exe's selftest, the installer — with the release's version in
+  # The Windows source and synthetic audio tests, the build, the bundled
+  # .exe's selftests, and the installer — with the release's version in
   # the file names.
   windows:
     uses: ./.github/workflows/windows.yml

@@ -4,14 +4,15 @@ Status: **working, but never run on real Windows.** `windows/app.py` hosts the
 same render tree the Plasma widget and Hyprland panel draw, and
 `windows/audio_capture.py` replaces cava with WASAPI loopback capture, so the
 bars react to whatever is playing. Building, packaging and CI (PyInstaller,
-the Inno installer, `windows.yml`/`release.yml`, Scoop/WinGet manifests) were
-wired up first and are unchanged.
+the Inno installer, `windows.yml`/`release.yml`, Scoop/WinGet manifests)
+are covered by the Windows workflow described below.
 
 What has actually been verified, and where:
 
 | | verified | how |
 |---|---|---|
 | render tree loads outside Quickshell/Plasma | yes | `--selftest`, zero QML warnings, Linux + Windows in CI |
+| synthetic capture → FFT → `frame.ini`, silence and shutdown | automated | `windows/selftest_audio.py`, source and packaged executable |
 | capture → `frame.ini` → bars move | yes, **on Linux** | `soundcard` against a PulseAudio monitor |
 | bottom-of-Z-order pin, tray, DPI scaling | **no** | needs a real machine — CI runners have no desktop |
 | WASAPI loopback specifically | **no** | CI runners have no audio device |
@@ -147,9 +148,11 @@ python windows/app.py
 
 `python windows/app.py --selftest` loads `Overlay.qml` headless and exits 1 on
 any QML warning. It deliberately does not import `audio_capture`, so it opens
-no audio device and needs neither numpy nor soundcard; CI checks that module
-imports separately, on Windows only (importing `soundcard` on Linux needs a
-running PulseAudio). The selftest needs `QT_QPA_PLATFORM=offscreen`, which the
+no audio device and needs neither numpy nor soundcard. The synthetic audio
+suite imports the real SoundCard backend on Windows
+without opening a device, so missing CFFI headers or DLLs fail the packaged
+check. On Linux, audio-device imports are lazy so synthetic tests need no
+PulseAudio server. The selftest needs `QT_QPA_PLATFORM=offscreen`, which the
 script sets itself unless something (a real desktop session, including `nix develop` run
 from one — verified while wiring this up: it inherited `QT_QPA_PLATFORM=wayland`
 from the host session and the app then aborted with no message trying to use
@@ -163,7 +166,8 @@ On Windows (PyInstaller does not cross-compile):
 ```powershell
 pip install -r windows\build-requirements.txt
 pyinstaller --noconfirm windows\audio-visualizer.spec
-"dist\Audio Visualizer\Audio Visualizer.exe" --selftest
+& "dist\Audio Visualizer\Audio Visualizer.exe" --selftest
+& "dist\Audio Visualizer\Audio Visualizer.exe" --selftest-audio
 ```
 
 The installer wraps that folder (Inno Setup, `windows/installer.iss`):
@@ -179,9 +183,33 @@ Keep the installer's `AppId` (`808901FC-...`) as it is — that GUID is also
 `PRODUCT_CODE` in `windows/package-manifests.py`; changing one without the
 other breaks WinGet's upgrade detection.
 
-CI does all of this on every push and pull request
-(`.github/workflows/windows.yml`), and on demand from any branch (*Actions →
-Windows → Run workflow*). A tag runs the same workflow from `release.yml`,
+CI uses `.github/workflows/windows.yml` with two levels:
+
+- **Pull requests:** source QML loading and synthetic audio tests on Windows
+  and Linux. No installer or executable packaging on each revision.
+- **Main/master pushes, manual runs and releases:** the same source tests,
+  then PyInstaller, both selftests against the built `.exe`, ZIP and installer.
+  Build artifacts are retained for 14 days for download and manual testing.
+
+Automatic runs skip changes outside the Windows code, shared widget contents/icon,
+settings parser and Windows/release workflows. Dependencies are cached, older
+superseded non-release runs are cancelled, and test/build jobs have time limits.
+To check an executable before merging, use *Actions → Windows → Run workflow*
+and select the branch.
+
+The audio suite runs in seconds without a sound device. It feeds synthetic
+stereo audio and silence through the actual FFT and frame publisher, checks
+frame format/range, low framerates, many bands, unchanged-frame refresh,
+error reporting and thread shutdown. Run it locally with:
+
+```powershell
+python windows\selftest_audio.py
+```
+
+The bundled `--selftest-audio` runs the same suite, including a real Windows
+SoundCard import to check the WASAPI/CFFI bundle. It does not record from WASAPI.
+
+A tag runs the same workflow from `release.yml`,
 which attaches the installer and the zip to the release once they pass —
 after the `.plasmoid`, which a failing Windows build does not hold back.
 
@@ -250,9 +278,9 @@ them yet:
   output changes (headphones plugged in mid-playback), and whether capture
   latency leaves the visualizer feeling responsive — a "does it look right"
   check, not a unit test;
-- whether PyInstaller bundles `soundcard`'s cffi backend correctly; the spec
-  lists `audio_capture` as a hidden import because `app.py` only imports it
-  outside `--selftest`, but the cffi side is untested in a frozen build;
+- actual WASAPI recording from the packaged executable: CI's
+  `--selftest-audio` checks the real backend imports, CFFI declarations and
+  synthetic capture, but runners have no playback device;
 - tray icon behavior at 100/125/150% display scaling, light/dark taskbar;
 - multi-monitor: does the overlay span all monitors, one, or need to be
   per-monitor — undecided, needs a call once there's something to look at.

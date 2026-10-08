@@ -12,6 +12,7 @@ Run it:
   python windows/app.py --selftest   load Overlay.qml headless, exit 1 on any
                                       QML warning/error — what CI runs; it
                                       opens no audio device.
+  python windows/app.py --selftest-audio   synthetic capture and backend imports
 """
 
 import os
@@ -63,9 +64,23 @@ def _pin_to_bottom(view: QQuickView) -> None:
     if sys.platform != "win32":
         return
     import ctypes
+    from ctypes import wintypes
+
+    # HWND is pointer-sized; ctypes otherwise converts it to a 32-bit int.
+    set_window_pos = ctypes.windll.user32.SetWindowPos
+    set_window_pos.argtypes = [
+        wintypes.HWND,
+        wintypes.HWND,
+        ctypes.c_int,
+        ctypes.c_int,
+        ctypes.c_int,
+        ctypes.c_int,
+        wintypes.UINT,
+    ]
+    set_window_pos.restype = wintypes.BOOL
 
     HWND_BOTTOM, SWP_NOSIZE, SWP_NOMOVE, SWP_NOACTIVATE = 1, 0x0001, 0x0002, 0x0010
-    ctypes.windll.user32.SetWindowPos(
+    set_window_pos(
         int(view.winId()),
         HWND_BOTTOM,
         0,
@@ -77,6 +92,11 @@ def _pin_to_bottom(view: QQuickView) -> None:
 
 
 def main(argv: list[str]) -> int:
+    if "--selftest-audio" in argv:
+        from selftest_audio import main as audio_selftest
+
+        return audio_selftest()
+
     selftest = "--selftest" in argv
 
     app = QApplication(argv)

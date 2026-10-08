@@ -1,9 +1,10 @@
 name: Windows
 
 # The overlay's --selftest on both Windows and Linux, and the Windows build:
-# the .exe, checked with its own --selftest, zipped and wrapped in the
-# installer. release.yml runs this same workflow for a tag and attaches what
-# it builds to the release. See docs/windows.md.
+# the .exe, checked with QML and synthetic audio selftests, zipped and
+# wrapped in the installer on main/master, manual runs and releases.
+# release.yml runs this workflow for a tag and attaches its build to the
+# release. See docs/windows.md.
 #
 # --selftest loads the real render tree headless and fails on any QML warning.
 # It deliberately opens no audio device: GitHub runners have none, so whether
@@ -27,6 +28,10 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: windows-${{ github.event_name }}-${{ inputs.version || github.ref }}
+  cancel-in-progress: ${{ inputs.version == '' }}
+
 jobs:
   # Only meaningful for pull_request/push: a workflow_dispatch run was asked
   # for by hand and a workflow_call run is release.yml cutting a release, so
@@ -48,9 +53,11 @@ jobs:
             relevant:
               - 'windows/**'
               - '.github/workflows/windows.yml'
+              - '.github/workflows/release.yml'
               # The overlay hosts this shared render tree and its settings
               # parser, so a change there can break the Windows build alone.
               - 'package/contents/**'
+              - 'package/icon.png'
               - 'hyprland/Configuration.js'
 
   test:
@@ -58,6 +65,7 @@ jobs:
     if: |
       always() &&
       (github.event_name == 'workflow_dispatch' || inputs.version != '' || needs.changes.outputs.relevant == 'true')
+    timeout-minutes: 10
     strategy:
       fail-fast: false
       matrix:
@@ -69,6 +77,8 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: windows/*requirements.txt
 
       - name: Qt runtime libraries
         if: runner.os == 'Linux'
@@ -79,17 +89,19 @@ jobs:
       - name: install
         run: python -m pip install -r windows/requirements.txt
 
+      - name: Synthetic audio regression tests
+        run: python windows/selftest_audio.py
+
       - name: overlay loads
+        timeout-minutes: 2
         run: python windows/app.py --selftest
 
-      # --selftest never imports it, so nothing else would catch a break here.
-      # Windows only: importing soundcard on Linux needs a running PulseAudio.
-      - name: capture module imports
-        if: runner.os == 'Windows'
-        run: python -c "import sys; sys.path.insert(0, 'windows'); import audio_capture"
-
+  # PRs run the quick source checks. Build the distributable after merge,
+  # on demand, and for every release; avoid packaging on every PR revision.
   build:
     needs: test
+    if: github.event_name != 'pull_request'
+    timeout-minutes: 20
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v7
@@ -97,6 +109,8 @@ jobs:
       - uses: actions/setup-python@v7
         with:
           python-version: "3.12"
+          cache: pip
+          cache-dependency-path: windows/*requirements.txt
 
       - name: version
         shell: pwsh
@@ -121,8 +135,10 @@ jobs:
         env:
           QT_QPA_PLATFORM: offscreen
         run: |
-          $p = Start-Process -FilePath "dist/Audio Visualizer/Audio Visualizer.exe" -ArgumentList "--selftest" -Wait -PassThru
-          if ($p.ExitCode -ne 0) { exit $p.ExitCode }
+          foreach ($test in @("--selftest", "--selftest-audio")) {
+            $p = Start-Process -FilePath "dist/Audio Visualizer/Audio Visualizer.exe" -ArgumentList $test -Wait -PassThru
+            if ($p.ExitCode -ne 0) { throw "$test failed with exit code $($p.ExitCode)" }
+          }
 
       - name: zip
         shell: pwsh

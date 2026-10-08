@@ -11,6 +11,7 @@
 # bundle — app.py resolves them from _MEIPASS.
 
 import os
+from PyInstaller.utils.hooks import collect_data_files
 
 ROOT = os.path.abspath(os.path.join(SPECPATH, ".."))  # noqa: F821 — set by PyInstaller
 
@@ -23,12 +24,14 @@ datas = [
     # Only the settings parser; the rest of hyprland/ is Quickshell-only.
     (os.path.join(ROOT, "hyprland", "Configuration.js"), "hyprland"),
 ]
+# SoundCard reads its CFFI declarations from .py.h files at import time.
+datas += collect_data_files("soundcard", includes=["*.py.h"])
 
 a = Analysis(  # noqa: F821
     [os.path.join(ROOT, "windows", "app.py")],
     pathex=[os.path.join(ROOT, "windows")],
     # app.py imports it only when not running --selftest.
-    hiddenimports=["audio_capture"],
+    hiddenimports=["audio_capture", "_cffi_backend"],
     datas=datas,
     excludes=["tkinter"],
 )

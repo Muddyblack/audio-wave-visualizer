@@ -14,7 +14,6 @@ import time
 from pathlib import Path
 
 import numpy as np
-import soundcard
 
 FFT_SIZE = 2048
 MAX_RANGE = 1000.0
@@ -42,6 +41,8 @@ def _write_status(run: Path, line: str) -> None:
 
 def _loopback_microphone():
     """The default output device, opened for recording what it plays."""
+    import soundcard
+
     speaker = soundcard.default_speaker()
     try:
         return soundcard.get_microphone(str(speaker.name), include_loopback=True)
@@ -72,12 +73,12 @@ class _Feed(threading.Thread):
         self.noise_reduction = float(config.get("noiseReduction", 0.77))
         self.low = int(config.get("lowCutoff", 50))
         self.high = int(config.get("highCutoff", 10000))
-        self._stop = threading.Event()
+        self._stop_event = threading.Event()
         self._last_frame = ""
         self._last_second = -1
 
     def stop(self) -> None:
-        self._stop.set()
+        self._stop_event.set()
 
     def run(self) -> None:
         try:
@@ -99,7 +100,7 @@ class _Feed(threading.Thread):
             samplerate=SAMPLERATE, blocksize=block
         ) as recorder:
             _write_status(self.run_dir, "ok loopback")
-            while not self._stop.is_set():
+            while not self._stop_event.is_set():
                 chunk = recorder.record(block)
                 mono = chunk.mean(axis=1) if chunk.ndim > 1 else chunk
                 # A low framerate makes the block longer than the window; only

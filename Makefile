@@ -31,7 +31,7 @@ view-hyprland: ## run standalone Quickshell desktop widget (Ctrl+C to stop)
 	  nix run .#view-hyprland; \
 	fi
 
-run-windows: ## run the Windows overlay scaffold (see docs/windows.md — not a working visualizer yet)
+run-windows: ## run the desktop audio overlay (Windows support: docs/windows.md)
 	@python3 -m pip install -q -r windows/requirements.txt && python3 windows/app.py
 
 settings-hyprland: ## open settings in the running Quickshell widget
