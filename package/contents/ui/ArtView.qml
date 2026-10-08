@@ -306,6 +306,8 @@ Item {
             anchors.fill: parent
             clip: true
             visible: false
+            layer.enabled: true
+            layer.textureSize: Qt.size(Math.min(2048, Math.ceil(width * root.sampleScale)), Math.min(2048, Math.ceil(height * root.sampleScale)))
 
             Image {
                 id: artImg
@@ -373,6 +375,8 @@ Item {
                 anchors.fill: parent
                 clip: true
                 visible: false
+                layer.enabled: true
+                layer.textureSize: Qt.size(Math.min(2048, Math.ceil(width * root.sampleScale)), Math.min(2048, Math.ceil(height * root.sampleScale)))
 
                 Image {
                     id: labelImg

@@ -141,6 +141,7 @@ Item {
         border.color: "#50ffffff"
         Text {
             id: label
+            renderType: Text.CurveRendering ?? Text.QtRendering
             anchors.centerIn: parent
             width: Math.min(implicitWidth, parent.width - 12)
             textFormat: Text.PlainText

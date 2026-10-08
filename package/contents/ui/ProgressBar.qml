@@ -7,6 +7,9 @@ import "debug"
 
 Item {
     id: root
+    FitScale {
+        id: fit
+    }
     property var player: null
     property bool isPlaying: false
     property bool hasAudio: false
@@ -345,6 +348,7 @@ Item {
                     }
                 }
                 layer.enabled: !GpuDebug.noLayers
+                layer.textureSize: Qt.size(Math.ceil(width * fit.steps), Math.ceil(height * fit.steps))
                 layer.effect: MultiEffect {
                     shadowEnabled: true
                     shadowColor: root.pgStartColor
@@ -452,6 +456,7 @@ Item {
             color: Qt.rgba(root.controlColor.r, root.controlColor.g, root.controlColor.b, root.isPlaying ? 0.95 : 0.68)
             opacity: ((root.pbStyle === 0 || root.pbStyle === 2) && root.progress > 0) ? 1.0 : 0.0
             layer.enabled: !GpuDebug.noLayers && (root.pbStyle === 0 || root.pbStyle === 2)
+            layer.textureSize: Qt.size(Math.ceil(width * fit.steps), Math.ceil(height * fit.steps))
             layer.effect: MultiEffect {
                 shadowEnabled: true
                 shadowColor: root.pgStartColor
@@ -476,6 +481,7 @@ Item {
             border.color: Qt.rgba(0, 0, 0, 0x22 / 255)
             // The software scene graph cannot draw MultiEffect; keep the knob there.
             layer.enabled: visible && !GpuDebug.noLayers && GraphicsInfo.api !== GraphicsInfo.Software
+            layer.textureSize: Qt.size(Math.ceil(width * fit.steps), Math.ceil(height * fit.steps))
             layer.effect: MultiEffect {
                 shadowEnabled: true
                 shadowColor: "#000000"

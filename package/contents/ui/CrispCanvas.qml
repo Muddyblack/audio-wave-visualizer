@@ -15,16 +15,10 @@ Item {
     // Animated canvases repaint every frame, so they lower this to bound CPU cost.
     property real maxPixelScale: 4
 
-    readonly property real pixelScale: {
-        let fitted = 1;
-        for (let item = parent; item; item = item.parent) {
-            if (item.objectName === "fittedCanvas") {
-                fitted = item.scale;
-                break;
-            }
-        }
-        return Math.min(maxPixelScale, 2048 / Math.max(1, width, height), Math.max(1, Math.round(fitted * 4) / 4));
+    FitScale {
+        id: fit
     }
+    readonly property real pixelScale: Math.min(maxPixelScale, 2048 / Math.max(1, width, height), fit.steps)
 
     readonly property size canvasSize: Qt.size(painter.width, painter.height)
     property alias renderStrategy: painter.renderStrategy
