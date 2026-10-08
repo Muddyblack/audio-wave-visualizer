@@ -381,8 +381,9 @@ Kirigami.Page {
     readonly property var defaults: configValues(true)
 
     readonly property bool panelHost: plasmoid.formFactor === PlasmaCore.Types.Horizontal || plasmoid.formFactor === PlasmaCore.Types.Vertical
-    property bool editingPopup: false
-    readonly property string editingTarget: panelHost ? (editingPopup ? "popup" : "panel") : "desktop"
+    // Outside a panel the card is the desktop widget; the pill stays editable so it can be set up before it is placed.
+    property bool editingPopup: !panelHost
+    readonly property string editingTarget: editingPopup ? (panelHost ? "popup" : "desktop") : "panel"
     readonly property var editingDraft: Presentations.resolve(draft, editingTarget)
     readonly property var editingDefaults: Presentations.resolve(defaults, editingTarget)
 
@@ -541,7 +542,6 @@ Kirigami.Page {
             spacing: 8
             Studio.StudioSeg {
                 objectName: "presentationTarget"
-                visible: root.panelHost
                 width: implicitWidth
                 options: [[false, "Panel pill"], [true, "Card / popup"]]
                 value: root.editingPopup
@@ -549,7 +549,6 @@ Kirigami.Page {
             }
             Studio.StudioButton {
                 objectName: "syncAppearance"
-                visible: root.panelHost
                 compact: true
                 text: root.editingPopup ? "Use pill look" : "Use popup look"
                 tooltip: "Copy the other design into this one: colours, artwork, visualizer and progress styles. The pill enables the copied effects. Each view keeps its layout and playback controls. Apply saves; Discard undoes."
@@ -588,8 +587,7 @@ Kirigami.Page {
             doctor.done = done;
             doctor.connectSource("'" + Qt.resolvedUrl("../code/doctor.sh").toString().replace(/^file:\/\//, "") + "'");
         }
-        onPreviewPopupRequested: if (root.panelHost)
-            root.editingPopup = true
+        onPreviewPopupRequested: root.editingPopup = true
         onEdited: next => root.assign(Presentations.edit(root.draft, next, root.editingTarget))
         onDiscard: root.discard()
         onUndo: root.undo()
