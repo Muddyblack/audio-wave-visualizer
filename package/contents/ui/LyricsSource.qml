@@ -1,5 +1,4 @@
 import QtQuick
-import QtQuick.LocalStorage
 import "../code/Lyrics.js" as Lyrics
 
 // Opt-in lyrics: local sidecars / ID3 first, then LRCLIB. The owner creates
@@ -32,6 +31,7 @@ Item {
     property string status: "idle"
     property int _retryCount: 0
     property var _request: null
+    property var _cache: undefined
     function cancelRequest() {
         localTimeout.stop();
         networkTimeout.stop();
@@ -206,7 +206,11 @@ Item {
     }
 
     function database() {
-        return LocalStorage.openDatabaseSync("PlasmaAudioVisualizerLyrics", "1", "Synced lyrics cache", 2000000);
+        if (_cache === undefined) {
+            const component = Qt.createComponent("LyricsCache.qml");
+            _cache = component.status === Component.Ready ? component.createObject(root) : null;
+        }
+        return _cache ? _cache.open() : null;
     }
 
     function loadOnline() {
