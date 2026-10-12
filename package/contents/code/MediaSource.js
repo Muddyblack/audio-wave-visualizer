@@ -41,3 +41,14 @@ function displayName(identity, desktopEntry, dbusName, metadata) {
         return "TIDAL";
     return host || identity || "";
 }
+
+// Browsers report CanGoNext/CanGoPrevious as false for most YouTube pages even
+// though the page handles the key, and the flag can flicker while seeking.
+// Always let the user try the skip on a browser; the call is a no-op if unused.
+function canSkip(player, flag) {
+    if (!player)
+        return false;
+    if (isBrowser(player.identity, player.desktopEntry, player.dbusName))
+        return player.canControl !== false;
+    return flag !== false;
+}

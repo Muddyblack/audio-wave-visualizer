@@ -2,6 +2,7 @@ import QtQuick 2.15
 import QtQuick.Layouts 1.1
 import QtQuick.Effects
 import "debug"
+import "../code/MediaSource.js" as MediaSource
 
 // Playback controls. Shuffle/repeat use the MPRIS player properties.
 Item {
@@ -45,8 +46,8 @@ Item {
     readonly property bool showSkip: configuration.showSkipButtons ?? true
     readonly property bool showExtras: configuration.showShuffleRepeat ?? false
     readonly property bool canTogglePlaying: !!player && player.canTogglePlaying !== false && (typeof player.togglePlaying === "function" || typeof player.playPause === "function" || typeof player.PlayPause === "function" || typeof player.play === "function" || typeof player.Play === "function")
-    readonly property bool canGoPrevious: !!player && player.canGoPrevious !== false && (typeof player.previous === "function" || typeof player.Previous === "function")
-    readonly property bool canGoNext: !!player && player.canGoNext !== false && (typeof player.next === "function" || typeof player.Next === "function")
+    readonly property bool canGoPrevious: !!player && MediaSource.canSkip(player, player.canGoPrevious) && (typeof player.previous === "function" || typeof player.Previous === "function")
+    readonly property bool canGoNext: !!player && MediaSource.canSkip(player, player.canGoNext) && (typeof player.next === "function" || typeof player.Next === "function")
     readonly property bool customReady: custom.ready
     readonly property string customError: custom.error
     // Plasma reports ShuffleStatus (Off = 1, On = 2) and LoopStatus (None = 1,

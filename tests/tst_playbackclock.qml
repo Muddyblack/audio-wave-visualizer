@@ -102,7 +102,8 @@ TestCase {
         player.length = 240000000;
         compare(subject.lengthValue, 240000000);
         player.length = 0;
-        compare(subject.lengthValue, 0, "Missing duration must not reuse the previous video's seek range");
+        compare(subject.lengthValue, 240000000, "A transient missing duration while seeking keeps the bar");
+        tryCompare(subject, "lengthValue", 0, 4000, "Missing duration must not reuse the previous video's seek range");
         compare(subject.displayedPosition, 0);
         verify(!subject.canSeek);
         verify(!subject.seekToFraction(0.5));

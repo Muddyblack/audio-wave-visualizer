@@ -87,10 +87,17 @@ Item {
             seekToFraction(loopStart);
         }
     }
-    function syncFromPlayer(hard) {
+    function syncFromPlayer(hard, reset) {
         const len = player ? Math.max(0, player.length || player.mprisLength || 0) : 0;
         // An unknown duration must not leave the previous video's seek bar
         // running. Browsers can keep the same player and track id across videos.
+        if (len <= 0 && lengthValue > 0 && !reset) {
+            // Browsers briefly drop mpris:length while seeking. Keep the bar
+            // for a moment and only clear it if the length stays unknown.
+            graceTimer.restart();
+            return;
+        }
+        graceTimer.stop();
         lengthValue = Number.isFinite(len) ? len : 0;
         if (len <= 0) {
             setPosition(0);
@@ -133,7 +140,7 @@ Item {
         // Only transient empty metadata from the same player is retained.
         lengthValue = 0;
         setPosition(0);
-        syncFromPlayer(true);
+        syncFromPlayer(true, true);
         refreshPosition();
     }
     onPlayingChanged: {
@@ -142,7 +149,7 @@ Item {
     }
     onTrackChanged: {
         clearLoop();
-        syncFromPlayer(true);
+        syncFromPlayer(true, true);
         refreshPosition();
     }
     onActiveChanged: {
@@ -168,6 +175,12 @@ Item {
         function onMprisLengthChanged() {
             clock.syncFromPlayer(true);
         }
+    }
+
+    Timer {
+        id: graceTimer
+        interval: 2000
+        onTriggered: clock.syncFromPlayer(true, true)
     }
 
     Timer {

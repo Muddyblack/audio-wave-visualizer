@@ -367,12 +367,12 @@ Item {
     }
     function previousTrack() {
         const p = player;
-        if (p && p.canGoPrevious !== false)
+        if (p && MediaSource.canSkip(p, p.canGoPrevious))
             (p.previous || p.Previous || function () {}).call(p);
     }
     function nextTrack() {
         const p = player;
-        if (p && p.canGoNext !== false)
+        if (p && MediaSource.canSkip(p, p.canGoNext))
             (p.next || p.Next || function () {}).call(p);
     }
     function activatePill() {
