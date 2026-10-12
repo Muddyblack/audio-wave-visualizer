@@ -1,2 +1,2 @@
 // Generated from package/metadata.json by tools/sync_studio_assets.py.
-var current = "3.1.5";
+var current = "3.1.6";

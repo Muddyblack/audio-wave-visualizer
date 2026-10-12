@@ -49,7 +49,11 @@ Item {
         request.onreadystatechange = function () {};
         request.abort();
     }
-    Component.onDestruction: cancelRequest()
+    Component.onDestruction: {
+        cancelRequest();
+        if (_cache !== null && _cache !== undefined)
+            _cache.destroy();
+    }
 
     readonly property int durationSeconds: clock.lengthValue > 0 ? Math.round(clock.lengthValue / clock.unitsPerSecond) : 0
     readonly property string onlineKey: track !== "" && artist !== "" ? [track, artist, album, durationSeconds].join("") : ""
