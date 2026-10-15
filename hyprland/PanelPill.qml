@@ -167,6 +167,7 @@ Item {
 
     Card {
         id: pill
+        visible: root.visible && !!root.Window.window && root.Window.window.visible
         anchors.fill: parent
         presentation: root.isIconOnly && (!root.expandOnHover || !root.isHovered) ? "pillicon" : "pill"
         configuration: root.configuration
@@ -195,6 +196,7 @@ Item {
         color: "transparent"
         visible: false
         Card {
+            visible: popup.visible
             anchors.fill: parent
             configuration: root.popupConfiguration
         }

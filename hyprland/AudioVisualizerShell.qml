@@ -90,7 +90,8 @@ ShellRoot {
         }
     }
     function configure() {
-        settingsEditor.draft = Object.assign({}, configuration);
+        if (settingsLoader.item)
+            settingsLoader.item.draft = Object.assign({}, configuration);
         settingsOpen = true;
     }
     function saveSettings(overrides) {
@@ -306,6 +307,8 @@ ShellRoot {
             }
             Shared.VisualizerView {
                 id: view
+                // Window visibility does not propagate to QQuickItem.visible.
+                visible: panel.visible
                 backdropSource: backdrop.item
                 anchors.fill: parent
                 configuration: root.configuration
@@ -347,6 +350,7 @@ ShellRoot {
                 visible: view.detailsVisible && panel.visible
                 Shared.TrackDetails {
                     id: hoverDetails
+                    visible: detailsPopup.visible
                     anchors.fill: parent
                     anchors.margins: 50
                     view: detailsPopup.cardView
@@ -364,28 +368,36 @@ ShellRoot {
         color: "#1e1e2e"
         onVisibleChanged: if (!visible)
             root.settingsOpen = false
-        SettingsPage {
-            id: settingsEditor
+        Loader {
+            id: settingsLoader
             anchors.fill: parent
-            screenNames: Quickshell.screens.map(s => s.name)
-            defaults: root.baseline
-            savedDraft: root.configuration
-            commandSourceComponent: Component {
-                CommandProcess {}
+            active: root.settingsOpen
+            sourceComponent: Component {
+                SettingsPage {
+                    id: settingsEditor
+                    Component.onCompleted: draft = Object.assign({}, root.configuration)
+                    anchors.fill: parent
+                    screenNames: Quickshell.screens.map(s => s.name)
+                    defaults: root.baseline
+                    savedDraft: root.configuration
+                    commandSourceComponent: Component {
+                        CommandProcess {}
+                    }
+                    liveVisualizer: backend
+                    livePlayer: root.player
+                    liveIsPlaying: root.player?.isPlaying ?? false
+                    diagnosticsRunner: root.runDiagnostics
+                    errorMessage: root.settingsError
+                    onApply: draft => {
+                        root.saveSettings(Configuration.overrides(root.baseline, draft));
+                    }
+                    onReset: {
+                        root.saveSettings({});
+                        draft = Object.assign({}, root.baseline);
+                    }
+                    onClose: root.settingsOpen = false
+                }
             }
-            liveVisualizer: backend
-            livePlayer: root.player
-            liveIsPlaying: root.player?.isPlaying ?? false
-            diagnosticsRunner: root.runDiagnostics
-            errorMessage: root.settingsError
-            onApply: draft => {
-                root.saveSettings(Configuration.overrides(root.baseline, draft));
-            }
-            onReset: {
-                root.saveSettings({});
-                draft = Object.assign({}, root.baseline);
-            }
-            onClose: root.settingsOpen = false
         }
     }
 }
