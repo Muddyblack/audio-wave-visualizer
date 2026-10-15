@@ -11,7 +11,9 @@ Column {
     property var contributorList: []
     property var client: null
     property bool canRefresh: false
-    readonly property string currentVersion: Project.currentVersion
+    // In Plasma the running package says its own version (metadata.json); the
+    // generated module only serves the hosts that have no Plasmoid object.
+    readonly property string currentVersion: (typeof Plasmoid !== "undefined" && Plasmoid.metaData && Plasmoid.metaData.version) ? Plasmoid.metaData.version : Project.currentVersion
     property string latestVersion: ""
     property string releaseCheckState: "Not checked"
     readonly property string versionStatus: latestVersion ? Project.releaseStatus(currentVersion, latestVersion) : releaseCheckState
