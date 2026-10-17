@@ -4,3 +4,11 @@ PySide6-Essentials>=6.8
 # same windows/audio_capture.py path is developed and tested on both.
 SoundCard>=0.4.4
 numpy>=1.26
+# Now playing (title, artist, cover, controls) from Windows' media sessions,
+# what MPRIS is on Linux. Optional off Windows: media_session.py then reports
+# no player and the overlay just shows the bars.
+winrt-runtime>=3.2; sys_platform == "win32"
+winrt-Windows.Foundation>=3.2; sys_platform == "win32"
+winrt-Windows.Foundation.Collections>=3.2; sys_platform == "win32"
+winrt-Windows.Media.Control>=3.2; sys_platform == "win32"
+winrt-Windows.Storage.Streams>=3.2; sys_platform == "win32"

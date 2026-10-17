@@ -18,6 +18,11 @@ import numpy as np
 FFT_SIZE = 2048
 MAX_RANGE = 1000.0
 SAMPLERATE = 48000
+# How long to wait before reopening a device that failed or vanished (no
+# speakers at login, a USB DAC unplugged), and how often to look for a new
+# default output (headphones plugged in) while capturing.
+RETRY_SECONDS = 2.0
+DEVICE_CHECK_SECONDS = 2.0
 
 
 def runtime_dir() -> Path:
@@ -29,9 +34,22 @@ def runtime_dir() -> Path:
 
 
 def _publish(path: Path, text: str) -> None:
-    tmp = path.with_suffix(path.suffix + ".tmp")
+    # Per writer, so two writers (a second copy started by autostart) never
+    # rename each other's half-written file away.
+    tmp = path.with_suffix(f"{path.suffix}.{os.getpid()}-{threading.get_ident()}.tmp")
     tmp.write_text(text, encoding="utf-8")
-    os.replace(tmp, path)
+    # Windows refuses to replace a file another process has open without
+    # FILE_SHARE_DELETE, which neither QSettings (the QML reader, polling at
+    # the frame rate) nor Python's open() asks for. The reader holds it for
+    # well under a millisecond; if it is still busy, drop this write — the
+    # next frame follows within one frame interval.
+    for attempt in range(5):
+        try:
+            os.replace(tmp, path)
+            return
+        except PermissionError:
+            time.sleep(0.001 * (attempt + 1))
+    tmp.unlink(missing_ok=True)
 
 
 def _write_status(run: Path, line: str) -> None:
@@ -49,6 +67,24 @@ def _loopback_microphone():
     except (IndexError, RuntimeError):
         # Linux: PulseAudio already exposes the monitor source as a microphone.
         return soundcard.default_microphone()
+
+
+class NoOutputDevice(RuntimeError):
+    """Windows has no output at all: nothing plays, so nothing can be captured.
+
+    No speakers or headphones, or a remote desktop session whose client does
+    not bring the sound back ("Remote Audio" only exists when it does).
+    """
+
+
+def _default_output_id() -> str | None:
+    """The current default output device's id, or None when there is none."""
+    try:
+        import soundcard
+
+        return str(soundcard.default_speaker().id)
+    except Exception:  # noqa: BLE001 — WASAPI raises RuntimeError(0x80070490) with no device
+        return None
 
 
 def _band_edges(bars: int, low: int, high: int) -> np.ndarray:
@@ -81,12 +117,37 @@ class _Feed(threading.Thread):
         self._stop_event.set()
 
     def run(self) -> None:
-        try:
-            self._capture()
-        except Exception as error:  # noqa: BLE001 — surfaced to the widget, not raised into Qt
-            _write_status(self.run_dir, "error capture %s" % type(error).__name__)
+        # Never give up: a machine with no output device at startup, or one
+        # that loses it mid-playback, should start drawing again as soon as a
+        # device is back, not stay blank until the app is restarted.
+        while not self._stop_event.is_set():
+            try:
+                self._capture()
+            except NoOutputDevice:
+                _write_status(self.run_dir, "error no-output")
+                self._idle()
+            except Exception as error:  # noqa: BLE001 — surfaced to the widget, not raised into Qt
+                _write_status(self.run_dir, "error capture %s" % type(error).__name__)
+                self._idle()
+        _write_status(self.run_dir, "ok stopped")
+
+    def _idle(self) -> None:
+        """Wait to retry, keeping silent frames fresh meanwhile.
+
+        VisualizerCore only trusts status.ini while frame.ini is fresh, so
+        without these the widget would never show why it is not moving.
+        """
+        deadline = time.monotonic() + RETRY_SECONDS
+        while not self._stop_event.is_set() and time.monotonic() < deadline:
+            self._publish_frame(np.zeros(self.bars))
+            self._stop_event.wait(min(0.5, RETRY_SECONDS))
 
     def _capture(self) -> None:
+        """Capture until stopped or the default output changes, then return."""
+        device = _default_output_id()
+        if device is None:
+            raise NoOutputDevice
+        next_check = time.monotonic() + DEVICE_CHECK_SECONDS
         window = np.hanning(FFT_SIZE).astype(np.float32)
         ring = np.zeros(FFT_SIZE, dtype=np.float32)
         edges = _band_edges(self.bars, self.low, self.high)
@@ -131,7 +192,13 @@ class _Feed(threading.Thread):
                 )
                 self._publish_frame(smoothed)
 
-        _write_status(self.run_dir, "ok stopped")
+                # Loopback is bound to one endpoint; WASAPI keeps it open
+                # silently after the default moves elsewhere.
+                if time.monotonic() >= next_check:
+                    next_check = time.monotonic() + DEVICE_CHECK_SECONDS
+                    if _default_output_id() != device:
+                        _write_status(self.run_dir, "probing loopback")
+                        return
 
     def _publish_frame(self, values: np.ndarray) -> None:
         frame = ";".join(str(int(v)) for v in values)

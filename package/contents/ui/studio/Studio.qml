@@ -313,7 +313,8 @@ Rectangle {
         onActivated: searchInput.forceActiveFocus()
     }
     Shortcut {
-        sequence: StandardKey.Undo
+        // Plural: on Windows Undo is two keys (Ctrl+Z, Alt+Backspace).
+        sequences: [StandardKey.Undo]
         enabled: studioRoot.canDiscard
         onActivated: studioRoot.undo()
     }
