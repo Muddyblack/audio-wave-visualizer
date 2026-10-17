@@ -54,11 +54,13 @@ jobs:
               - 'windows/**'
               - '.github/workflows/windows.yml'
               - '.github/workflows/release.yml'
-              # The overlay hosts this shared render tree and its settings
-              # parser, so a change there can break the Windows build alone.
+              # The overlay hosts this shared render tree, its settings
+              # parser and settings window, so a change there can break the
+              # Windows build alone.
               - 'package/contents/**'
               - 'package/icon.png'
               - 'hyprland/Configuration.js'
+              - 'hyprland/SettingsPage.qml'
 
   test:
     needs: changes
