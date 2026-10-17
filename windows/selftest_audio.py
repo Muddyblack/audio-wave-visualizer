@@ -4,9 +4,10 @@ import configparser
 import io
 import sys
 import tempfile
+import time
 import unittest
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import Mock, patch
 
 import numpy as np
 
@@ -19,6 +20,22 @@ class AudioTests(unittest.TestCase):
         self.addCleanup(self.directory.cleanup)
         self.addCleanup(capture.stop)
         self.run_dir = Path(self.directory.name)
+        # A fixed default device, so no test touches the real audio stack.
+        device = patch.object(capture, "_default_output_id", return_value="speaker")
+        device.start()
+        self.addCleanup(device.stop)
+        retry = patch.object(capture, "RETRY_SECONDS", 0.01)
+        retry.start()
+        self.addCleanup(retry.stop)
+
+    def wait_for_status(self, expected, timeout=5):
+        deadline = time.monotonic() + timeout
+        status = self.run_dir / "status"
+        while time.monotonic() < deadline:
+            if status.is_file() and status.read_text().strip() == expected:
+                return
+            time.sleep(0.01)
+        self.fail(f"status never became {expected!r}")
 
     def read_frame(self, bars):
         parser = configparser.ConfigParser()
@@ -29,7 +46,7 @@ class AudioTests(unittest.TestCase):
         values = [int(value) for value in frame["v"].strip('"').split(";")]
         self.assertEqual(len(values), bars)
         self.assertTrue(all(0 <= value <= capture.MAX_RANGE for value in values))
-        self.assertFalse((self.run_dir / "frame.ini.tmp").exists())
+        self.assertEqual(list(self.run_dir.glob("*.tmp")), [])
         return values
 
     def run_capture(self, signal, bars=24, framerate=60):
@@ -78,12 +95,81 @@ class AudioTests(unittest.TestCase):
     def test_capture_failure_is_reported_and_shutdown_is_safe(self):
         with patch.object(capture, "_loopback_microphone", side_effect=RuntimeError):
             capture.start({}, self.run_dir)
+            self.wait_for_status("error capture RuntimeError")
+            feed = capture._feed
+            capture.stop()
+            self.assertFalse(feed.is_alive(), "capture thread did not stop")
+        self.assertEqual((self.run_dir / "status").read_text().strip(), "ok stopped")
+
+    def test_no_output_device_is_reported_with_fresh_silent_frames(self):
+        # Windows with no output (RDP without sound): say so, and keep a fresh
+        # frame so the widget trusts status.ini and shows why.
+        with patch.object(capture, "_default_output_id", return_value=None):
+            capture.start({}, self.run_dir)
+            self.wait_for_status("error no-output")
+            self.wait_for_frame()
+            capture.stop()
+        self.assertEqual(self.read_frame(24), [0] * 24)
+
+    def wait_for_frame(self, timeout=5):
+        deadline = time.monotonic() + timeout
+        while not (self.run_dir / "frame.ini").is_file():
+            if time.monotonic() > deadline:
+                self.fail("no frame published")
+            time.sleep(0.01)
+
+    def test_capture_recovers_once_a_device_appears(self):
+        # No output device at startup (WASAPI's 0x80070490), then one shows up.
+        class Recorder:
+            def __enter__(self):
+                return self
+
+            def __exit__(self, *args):
+                pass
+
+            def record(self, block):
+                capture._feed.stop()
+                return np.ones((block, 2))
+
+        microphone = Mock()
+        microphone.recorder.return_value = Recorder()
+        with patch.object(
+            capture,
+            "_loopback_microphone",
+            side_effect=[RuntimeError, RuntimeError, microphone],
+        ) as opened:
+            capture.start({}, self.run_dir)
+            capture._feed.join(timeout=5)
+            self.assertEqual(opened.call_count, 3)
+        self.read_frame(24)
+
+    def test_default_output_change_reopens_capture(self):
+        devices = iter(["speakers", "headphones", "headphones"])
+        opened = []
+
+        class Recorder:
+            def __enter__(self):
+                opened.append(True)
+                return self
+
+            def __exit__(self, *args):
+                pass
+
+            def record(self, block):
+                if len(opened) == 2:
+                    capture._feed.stop()
+                return np.zeros((block, 2))
+
+        with (
+            patch.object(capture, "_default_output_id", lambda: next(devices)),
+            patch.object(capture, "DEVICE_CHECK_SECONDS", 0),
+            patch.object(capture, "_loopback_microphone") as microphone,
+        ):
+            microphone.return_value.recorder.side_effect = lambda **_: Recorder()
+            capture.start({}, self.run_dir)
             capture._feed.join(timeout=5)
             self.assertFalse(capture._feed.is_alive())
-            capture.stop()
-        self.assertEqual(
-            (self.run_dir / "status").read_text().strip(), "error capture RuntimeError"
-        )
+        self.assertEqual(len(opened), 2)
 
     def test_unchanged_frames_are_throttled_and_refreshed(self):
         feed = capture._Feed(self.run_dir, {})
