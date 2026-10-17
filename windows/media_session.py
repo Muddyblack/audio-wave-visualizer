@@ -185,7 +185,7 @@ class MediaSessions(QObject):
         # RPC_E_WRONG_THREAD (0x8001010e) and a fatal-exception dump.
         try:
             asyncio.run_coroutine_threadsafe(self._shutdown(), self._loop).result(2)
-        except Exception:  # noqa: BLE001 — quitting anyway
+        except Exception:  # noqa: BLE001, S110 — quitting anyway
             pass
         self._loop.call_soon_threadsafe(self._loop.stop)
         self._loop = None

@@ -252,7 +252,7 @@ class Placement:
 
     def _finish_adjusting(self) -> None:
         if self.adjusting:
-            self.store.setValue("geometry", self.view.geometry())
+            self.remember()
         self.adjusting = False
 
     def _reachable(self, geometry: QRect) -> QRect:
@@ -316,6 +316,10 @@ class Placement:
         self.view.requestActivate()
         self.changed()
 
+    def remember(self) -> None:
+        """Keep the current geometry as the hand-placed one."""
+        self.store.setValue("geometry", self.view.geometry())
+
     def reset(self) -> None:
         """Back to the settings' placement, dropping the hand-placed one."""
         self.adjusting = False
@@ -328,12 +332,13 @@ class Placement:
 
 
 class OverlayEvents(QObject):
-    """Right-click menu on the overlay, and ways out of Move/resize."""
+    """Right-click menu, middle-button drag, and ways out of Move/resize."""
 
     def __init__(self, menu: QMenu, placement: Placement):
         super().__init__()
         self.menu = menu
         self.placement = placement
+        self._grab: QPoint | None = None
 
     def eventFilter(self, watched, event) -> bool:
         kind = event.type()
@@ -342,6 +347,27 @@ class OverlayEvents(QObject):
             and event.button() == Qt.MouseButton.RightButton
         ):
             self.menu.popup(QCursor.pos())
+            return True
+        # Hold the middle button to drag the overlay anywhere — the quick way,
+        # without going through Move / resize. Left clicks stay with the card
+        # (seek, play/pause).
+        if (
+            kind == QEvent.Type.MouseButtonPress
+            and event.button() == Qt.MouseButton.MiddleButton
+        ):
+            self._grab = event.globalPosition().toPoint() - watched.position()
+            return True
+        if kind == QEvent.Type.MouseMove and self._grab is not None:
+            watched.setPosition(event.globalPosition().toPoint() - self._grab)
+            return True
+        if (
+            kind == QEvent.Type.MouseButtonRelease
+            and event.button() == Qt.MouseButton.MiddleButton
+            and self._grab is not None
+        ):
+            self._grab = None
+            if not self.placement.adjusting:
+                self.placement.remember()
             return True
         if not self.placement.adjusting:
             return False

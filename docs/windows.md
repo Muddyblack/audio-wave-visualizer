@@ -99,7 +99,8 @@ in its `hypr` mode, so its Placement section (size, anchor, vertical
 position, monitor, behind/above windows) positions the overlay via
 `Overlay.qml`'s `widgetRect`, the Hyprland panel's own geometry.
 *Move / resize…* overrides that by hand (`%APPDATA%\audio-visualizer\window.ini`)
-until *Reset position*.
+until *Reset position*; so does dragging the overlay with the middle mouse
+button held, the quick way to move it (left clicks stay with the card).
 
 **Now playing**: `media_session.py` polls Windows' media sessions
 (`GlobalSystemMediaTransportControlsSessionManager`, via the `winrt-*`
