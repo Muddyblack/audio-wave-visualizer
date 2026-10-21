@@ -50,6 +50,9 @@ Item {
     readonly property size artSize: Qt.size(Math.max(1, artImg.implicitWidth), Math.max(1, artImg.implicitHeight))
     readonly property bool software: GraphicsInfo.api === GraphicsInfo.Software || GpuDebug.noLayers
     readonly property bool coverReady: artImg.status === Image.Ready
+    // Wide or tall artwork (video thumbnails) is shown whole over a dimmed
+    // copy of itself; cropping it to a square cuts off band and song names.
+    readonly property bool letterbox: coverReady && Math.abs(Math.log(artSize.width / artSize.height)) > Math.log(1.2)
     readonly property bool disc: shape === "vinyl" || shape === "cd"
     readonly property real cornerRadius: shape === "sharp" ? 2 : shape === "squircle" ? width * 0.3 : (shape === "circle" || disc) ? width / 2 : roundedRadius
     // Radius for the progress ring drawn 4 px outside (HTML `.artwrap .rg`).
@@ -322,6 +325,24 @@ Item {
                 asynchronous: true
                 cache: true
             }
+            // Opacity, not visible: this wrapper is hidden, so toggling a
+            // child's visibility would not refresh the layer texture.
+            Rectangle {
+                anchors.fill: parent
+                opacity: root.letterbox ? 1 : 0
+                color: Qt.rgba(0, 0, 0, 0.55)
+            }
+            Image {
+                anchors.fill: parent
+                opacity: root.letterbox ? 1 : 0
+                source: root.letterbox ? root.artUrl : ""
+                fillMode: Image.PreserveAspectFit
+                sourceSize: artImg.sourceSize
+                smooth: true
+                mipmap: true
+                asynchronous: true
+                cache: true
+            }
         }
 
         // Cover shape. Discs show the cover as a round label (vinyl, 38 %) or
@@ -359,6 +380,7 @@ Item {
                 imageSize: root.artSize
                 rasterScale: root.rasterScale
                 radius: root.cornerRadius
+                letterbox: root.letterbox
                 grayed: root.grayed
             }
         }

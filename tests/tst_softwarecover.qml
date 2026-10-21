@@ -47,4 +47,24 @@ TestCase {
         wait(40);
         compare(painter.getContext("2d").getImageData(40, 40, 1, 1).data[3], 0);
     }
+    function test_letterboxShowsWholeWideCover() {
+        cover.rasterScale = 1;
+        cover.grayed = false;
+        cover.letterbox = false;
+        cover.source = Qt.resolvedUrl('fixtures/cover-red-blue.ppm');
+        tryVerify(() => painter.isImageLoaded(cover.source));
+        wait(40);
+        // Cropped, the 2:1 cover's red half reaches the top of the square.
+        verify(grabImage(cover).red(20, 12) > 240);
+        const count = paints.count;
+        cover.letterbox = true;
+        tryVerify(() => paints.count > count);
+        wait(40);
+        const picture = grabImage(cover);
+        // Whole image in the middle band, a dimmed copy above and below it.
+        verify(picture.red(20, 40) > 240);
+        verify(picture.red(20, 12) > 60 && picture.red(20, 12) < 160);
+        cover.letterbox = false;
+        cover.source = '';
+    }
 }

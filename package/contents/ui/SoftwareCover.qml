@@ -8,6 +8,8 @@ Item {
     property size imageSize: Qt.size(1, 1)
     property real radius: 10
     property bool grayed: false
+    // Fit the whole image over a dimmed cropped copy instead of cropping it.
+    property bool letterbox: false
     property bool ready: false
     property real rasterScale: Math.max(1, Screen.devicePixelRatio)
 
@@ -56,6 +58,9 @@ Item {
             function onGrayedChanged() {
                 painter.requestPaint();
             }
+            function onLetterboxChanged() {
+                painter.requestPaint();
+            }
         }
         onPaint: {
             const ctx = getContext("2d");
@@ -70,8 +75,14 @@ Item {
             ctx.closePath();
             ctx.clip();
             const iw = Math.max(1, cover.imageSize.width), ih = Math.max(1, cover.imageSize.height);
-            const fit = Math.max(w / iw, h / ih);
-            ctx.drawImage(cover.source, (w - iw * fit) / 2, (h - ih * fit) / 2, iw * fit, ih * fit);
+            const fill = Math.max(w / iw, h / ih);
+            ctx.drawImage(cover.source, (w - iw * fill) / 2, (h - ih * fill) / 2, iw * fill, ih * fill);
+            if (cover.letterbox) {
+                ctx.fillStyle = "rgba(0,0,0,0.55)";
+                ctx.fillRect(0, 0, w, h);
+                const fit = Math.min(w / iw, h / ih);
+                ctx.drawImage(cover.source, (w - iw * fit) / 2, (h - ih * fit) / 2, iw * fit, ih * fit);
+            }
             if (cover.grayed) {
                 ctx.globalCompositeOperation = "source-atop";
                 ctx.fillStyle = "rgba(0,0,0,0.25)";
