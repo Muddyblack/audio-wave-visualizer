@@ -1,9 +1,11 @@
 # Windows support
 
-Status: **working, but never run on real Windows.** `windows/app.py` hosts the
-same render tree the Plasma widget and Hyprland panel draw, and
-`windows/audio_capture.py` replaces cava with WASAPI loopback capture, so the
-bars react to whatever is playing. Building, packaging and CI (PyInstaller,
+Status: **working; first run on a Windows 11 VM.** `windows/app.py` hosts the
+same render tree the Plasma widget and Hyprland panel draw,
+`windows/audio_capture.py` replaces cava with WASAPI loopback capture,
+`windows/media_session.py` replaces MPRIS with Windows' media sessions (title,
+artist, cover, play/pause/next/previous, seeking), and the tray's
+*Settings…* opens the shared studio. Building, packaging and CI (PyInstaller,
 the Inno installer, `windows.yml`/`release.yml`, Scoop/WinGet manifests)
 are covered by the Windows workflow described below.
 
@@ -11,11 +13,37 @@ What has actually been verified, and where:
 
 | | verified | how |
 |---|---|---|
-| render tree loads outside Quickshell/Plasma | yes | `--selftest`, zero QML warnings, Linux + Windows in CI |
-| synthetic capture → FFT → `frame.ini`, silence and shutdown | automated | `windows/selftest_audio.py`, source and packaged executable |
+| render tree and settings studio load outside Quickshell/Plasma | yes | `--selftest` opens both, zero QML warnings, Linux + Windows in CI |
+| synthetic capture → FFT → `frame.ini`, silence, shutdown, device loss | automated | `windows/selftest_audio.py`, source and packaged executable |
+| `frame.ini` → QML reader on Windows | yes, Windows 11 VM | injected frames; see "Windows-only bugs found" |
 | capture → `frame.ini` → bars move | yes, **on Linux** | `soundcard` against a PulseAudio monitor |
-| bottom-of-Z-order pin, tray, DPI scaling | **no** | needs a real machine — CI runners have no desktop |
-| WASAPI loopback specifically | **no** | CI runners have no audio device |
+| now playing from a media session (Chrome) | yes, Windows 11 VM | title, artist, cover, length, live position, controls |
+| bottom-of-Z-order pin, tray, move/resize | partly, Windows 11 VM | by hand; fixes after the first round not yet re-checked |
+| DPI scaling, multi-monitor | **no** | — |
+| WASAPI loopback specifically | **no** | the VM had no sound device; CI runners have none either |
+
+### Windows-only bugs found on first run
+
+- **Bars could never move.** VisualizerCore builds its readers' locations as
+  `"file://" + path`; `C:\Users\...` made that `file://C:\...`, which Qt reads
+  as `//c/frame.ini`. `app.py::qml_directory` passes `/C:/Users/...` instead,
+  so the shared QML stays as it is.
+- **Bars froze at random.** Windows refuses `os.replace` onto a file another
+  process has open without `FILE_SHARE_DELETE` — and the QML reader opens
+  `frame.ini` at the frame rate. `_publish` retries briefly, then drops that
+  one frame; writers also use per-process temp names.
+- **No output device at startup ended capture for good** (and a new default
+  device, e.g. headphones, was never followed). The capture thread now
+  retries every 2 s and reopens when the default output changes. With no
+  output at all — typical over RDP when the client does not bring sound back,
+  since "Remote Audio" only exists then — there is genuinely nothing to
+  capture; the status is `error no-output` and the widget says so, instead of
+  silently drawing a flat line.
+- **Settings froze for ~45 s on every open** (a VM without 3D: Qt compiles
+  the studio's preview shaders on the CPU). Each window now keeps a pipeline
+  cache in `%LOCALAPPDATA%\audio-visualizer\*.pipelines`: the first open still
+  compiles, later ones take ~2 s. While open, the animated previews cost ~2.5
+  cores on that VM's software renderer.
 
 So the remaining risk is concentrated in Windows-only behaviour, not in the
 visualizer or the capture maths. See "Testing on real Windows" below.
@@ -62,10 +90,29 @@ Hyprland host:
   rather than the merged plain JS configuration object. Same reason the
   Hyprland shell has one.
 
-There is **no settings UI yet** — the tray's *Settings…* is still disabled.
-Settings are read from `%APPDATA%\audio-visualizer\settings.json` if it
-exists, using the same key names as everywhere else; porting
-`studio/Studio.qml` is the next task.
+**Settings**: the tray's (or right-click menu's) *Settings…* opens
+`hyprland/SettingsPage.qml` — the shared studio with Apply/Reset/Close, plain
+QtQuick — in a QML `Window`, exactly as the Hyprland shell does. Apply writes
+`%APPDATA%\audio-visualizer\settings.json` (same key names as everywhere
+else); `app.py` restarts capture when an audio option changed. The studio runs
+in its `hypr` mode, so its Placement section (size, anchor, vertical
+position, monitor, behind/above windows) positions the overlay via
+`Overlay.qml`'s `widgetRect`, the Hyprland panel's own geometry.
+*Move / resize…* overrides that by hand (`%APPDATA%\audio-visualizer\window.ini`)
+until *Reset position*; so does dragging the overlay with the middle mouse
+button held, the quick way to move it (left clicks stay with the card).
+
+**Now playing**: `media_session.py` polls Windows' media sessions
+(`GlobalSystemMediaTransportControlsSessionManager`, via the `winrt-*`
+packages — the API behind the volume flyout's media controls) and exposes the
+chosen one shaped like Quickshell's `MprisPlayer`, so `VisualizerView` takes
+it as it takes a player on Hyprland. It follows the playing session, pins one
+via the player switcher, extrapolates position between the players' sparse
+timeline updates and seeks by assigning `position`. Covers are written to
+`%LOCALAPPDATA%\audio-visualizer\cover-<hash>.*`. Not ported yet: anything
+that goes through `commandSourceComponent` on Linux — lyrics, favicon and
+extra-metadata lookups (`media_metadata.py` uses `fcntl` and D-Bus), and the
+diagnostics button.
 
 ### Why this was harder than the ai-usage-widget Windows port
 
