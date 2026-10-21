@@ -16,5 +16,5 @@ AudioVisualizerShell {
     settings: ({
             alwaysVisible: true
         })
-    desktopLayer: true // false: above application windows for easy testing.
+    desktopLayer: false // true: behind windows, but Hyprland re-blurs the whole monitor on every frame.
 }

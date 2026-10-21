@@ -30,7 +30,7 @@ Three separable pieces, roughly in build order:
    plus a system tray icon for show/hide/settings/quit. This is the actual
    feature; everything else is distribution.
 2. **Package-manager listings** — Scoop and WinGet manifests, generated from
-   a built release the same way `ai-usage-widget/windows/package-manifests.py`
+   a built release the same way `tidesi/windows/package-manifests.py`
    does. Mechanical once (1) produces a signed-or-not installer and a portable
    ZIP.
 3. **Microsoft Store** — needs MSIX packaging and a Partner Center publisher
