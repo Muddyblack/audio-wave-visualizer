@@ -1,7 +1,6 @@
 import QtQuick
 import "Theme.js" as Theme
 import "Schema.js" as Schema
-import "../text"
 
 // Section (HTML `.sec`): uppercase title, then a rounded card of rows.
 Column {
@@ -25,7 +24,7 @@ Column {
         text: sectionRoot.sectionData.title.toUpperCase()
         color: Theme.sectionTitle
         font.family: Theme.fontFamily
-        font.pixelSize: SystemText.px(11)
+        font.pixelSize: 11
         font.weight: Font.DemiBold
         font.letterSpacing: 1.2
     }

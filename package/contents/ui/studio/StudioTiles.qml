@@ -1,6 +1,5 @@
 import QtQuick
 import "Theme.js" as Theme
-import "../text"
 
 // Tile grid (HTML `.tiles` / `.tile`): live preview area, label, selected
 // state with accent border and 3 px ring, 1 px hover lift.
@@ -82,7 +81,7 @@ Flow {
                     text: tile.option.label
                     color: tile.pressed ? Theme.text : Theme.muted
                     font.family: Theme.fontFamily
-                    font.pixelSize: SystemText.px(11)
+                    font.pixelSize: 11
                     elide: Text.ElideRight
                 }
             }

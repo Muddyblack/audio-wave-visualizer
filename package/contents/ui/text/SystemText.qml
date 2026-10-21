@@ -18,7 +18,8 @@ QtObject {
     // `limit` caps the result for text that sits in fixed-height chrome (pill,
     // panel progress row) so a large system font cannot outgrow the card.
     function px(size, limit) {
-        const scaled = Math.max(1, Math.round(size * factor));
+        // Small labels stay readable once the card is scaled to the widget.
+        const scaled = Math.max(follow ? 10 : 1, Math.round(size * factor));
         return limit > 0 ? Math.min(scaled, Math.max(size, limit)) : scaled;
     }
 }

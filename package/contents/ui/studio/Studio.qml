@@ -3,7 +3,6 @@ import QtQuick.Controls.Basic as Controls
 import ".." as Shared
 import "Theme.js" as Theme
 import "Schema.js" as Schema
-import "../text"
 
 // The shared settings studio for Plasma and Hyprland,
 // styled after the HTML studio. Hosts own the draft: every change is emitted
@@ -396,7 +395,7 @@ Rectangle {
                         anchors.verticalCenter: parent.verticalCenter
                         color: Theme.text
                         font.family: Theme.fontFamily
-                        font.pixelSize: SystemText.px(12)
+                        font.pixelSize: 12
                         clip: true
                         onTextEdited: studioRoot.query = text
                         Keys.onEscapePressed: studioRoot.query = ""
@@ -423,7 +422,7 @@ Rectangle {
                             anchors.centerIn: parent
                             text: "/"
                             color: Theme.dim
-                            font.pixelSize: SystemText.px(10)
+                            font.pixelSize: 10
                         }
                     }
                 }
@@ -535,7 +534,7 @@ Rectangle {
                                         text: tab.modelData.label
                                         color: tab.selected || tabArea.containsMouse ? Theme.text : Theme.muted
                                         font.family: Theme.fontFamily
-                                        font.pixelSize: SystemText.px(12)
+                                        font.pixelSize: 12
                                     }
                                 }
                                 Rectangle {
@@ -685,7 +684,7 @@ Rectangle {
                             text: studioRoot.dependencyWarning
                             color: Theme.text
                             font.family: Theme.fontFamily
-                            font.pixelSize: SystemText.px(12)
+                            font.pixelSize: 12
                             wrapMode: Text.WordWrap
                         }
                     }
@@ -711,7 +710,7 @@ Rectangle {
                         wrapMode: Text.WordWrap
                         color: Theme.dim
                         font.family: Theme.fontFamily
-                        font.pixelSize: SystemText.px(12)
+                        font.pixelSize: 12
                     }
                 }
             }

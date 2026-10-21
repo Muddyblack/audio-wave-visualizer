@@ -3,7 +3,6 @@ import QtQuick.Controls.Basic as Controls
 import ".."
 import "Theme.js" as Theme
 import "../../code/Layouts.js" as LayoutSizes
-import "../text"
 
 // A look tile (HTML `.pp`): a still, scaled widget over its backdrop.
 Item {
@@ -108,7 +107,7 @@ Item {
                 textFormat: Text.PlainText
                 color: tile.active ? Theme.text : Theme.muted
                 font.family: Theme.fontFamily
-                font.pixelSize: SystemText.px(11)
+                font.pixelSize: 11
                 elide: Text.ElideRight
             }
             Text {
@@ -116,7 +115,7 @@ Item {
                 visible: tile.active
                 text: "✓"
                 color: Theme.brand
-                font.pixelSize: SystemText.px(11)
+                font.pixelSize: 11
             }
         }
     }
@@ -142,7 +141,7 @@ Item {
         contentItem: Text {
             text: parent.text
             color: tile.favorite ? Theme.brand : "white"
-            font.pixelSize: SystemText.px(17)
+            font.pixelSize: 17
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
@@ -166,7 +165,7 @@ Item {
         contentItem: Text {
             text: parent.text
             color: "white"
-            font.pixelSize: SystemText.px(15)
+            font.pixelSize: 15
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }
@@ -197,7 +196,7 @@ Item {
             anchors.margins: 3
             color: Theme.text
             font.family: Theme.fontFamily
-            font.pixelSize: SystemText.px(11)
+            font.pixelSize: 11
             clip: true
             selectByMouse: true
             Accessible.name: "Preset name"
@@ -217,7 +216,7 @@ Item {
             anchors.centerIn: parent
             text: "×"
             color: "#ffffff"
-            font.pixelSize: SystemText.px(12)
+            font.pixelSize: 12
         }
         MouseArea {
             anchors.fill: parent

@@ -1,6 +1,5 @@
 import QtQuick
 import "Theme.js" as Theme
-import "../text"
 
 // Tinted platform note (HTML `.note`).
 Rectangle {
@@ -22,7 +21,7 @@ Rectangle {
         Text {
             text: "◇"
             color: Theme.noteText
-            font.pixelSize: SystemText.px(14)
+            font.pixelSize: 14
         }
         Text {
             id: body
@@ -32,7 +31,7 @@ Rectangle {
             text: (note.title !== "" ? "<b><font color=\"#ffffff\">" + note.title + "</font></b> — " : "") + note.text
             color: Theme.noteText
             font.family: Theme.fontFamily
-            font.pixelSize: SystemText.px(11)
+            font.pixelSize: 11
             lineHeight: 1.25
         }
     }

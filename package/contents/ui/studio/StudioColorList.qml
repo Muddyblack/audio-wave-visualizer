@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Dialogs
 import "../../code/WaveMath.js" as WaveMath
-import "../text"
 
 // An editable colour range of any length: a live gradient strip, one chip per
 // colour (click to change, × to remove) and a + chip that appends a colour.
@@ -104,7 +103,7 @@ Column {
                         anchors.centerIn: parent
                         text: "×"
                         color: "#e9efe4"
-                        font.pixelSize: SystemText.px(11)
+                        font.pixelSize: 11
                     }
                     MouseArea {
                         anchors.fill: parent
@@ -127,7 +126,7 @@ Column {
                 anchors.centerIn: parent
                 text: "+"
                 color: "#e9efe4"
-                font.pixelSize: SystemText.px(16)
+                font.pixelSize: 16
             }
             MouseArea {
                 anchors.fill: parent
