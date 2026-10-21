@@ -46,6 +46,7 @@ TestCase {
 
     function init() {
         frame.fitContents = true;
+        frame.fill = false;
         frame.contentRotation = 0;
     }
     function test_sidewaysContentAndInput_data() {
@@ -130,6 +131,36 @@ TestCase {
         compare(frame.width, data.w);
         compare(frame.height, data.h);
         fuzzyCompare(frame.fitScale, Math.min(data.w / 360, data.h / 104), 0.0001);
+    }
+
+    function test_fillCoversHost_data() {
+        return [
+            {
+                tag: "wide-host",
+                w: 720,
+                h: 104
+            },
+            {
+                tag: "tall-host",
+                w: 360,
+                h: 300
+            }
+        ];
+    }
+    function test_fillCoversHost(data) {
+        frame.designSize = Qt.size(360, 104);
+        frame.fill = true;
+        frame.width = data.w;
+        frame.height = data.h;
+        wait(0);
+        const canvas = findChild(frame, "fittedCanvas");
+        fuzzyCompare(frame.fitScale, Math.min(data.w / 360, data.h / 104), 0.0001);
+        const start = canvas.mapToItem(frame, 0, 0);
+        const end = canvas.mapToItem(frame, canvas.width, canvas.height);
+        fuzzyCompare(start.x, 0, 0.01);
+        fuzzyCompare(start.y, 0, 0.01);
+        fuzzyCompare(end.x, data.w, 0.01);
+        fuzzyCompare(end.y, data.h, 0.01);
     }
 
     function test_canvasRasterizesAtFittedScale() {

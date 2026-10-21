@@ -236,6 +236,7 @@ PlasmoidItem {
         contentRotation: root.inPanel ? panelPlacement.contentRotation : 0
         readonly property var cardConfiguration: root.inPanel ? panelPlacement.configuration : root.effectiveConfiguration
         fitContents: !["lyrics", "visualizer"].includes(LayoutSizes.mode(cardConfiguration))
+        fill: !root.inPanel
         designSize: {
             const dimensions = LayoutSizes.size(cardConfiguration);
             return Qt.size(dimensions[0], dimensions[1]);

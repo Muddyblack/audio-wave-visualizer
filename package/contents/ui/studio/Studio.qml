@@ -449,6 +449,17 @@ Rectangle {
                     onClicked: studioRoot.discard()
                 }
                 StudioButton {
+                    id: resetAll
+                    // Hyprland's footer already has its own Reset.
+                    visible: studioRoot.env === "kde"
+                    text: "Reset"
+                    tooltip: "Restore every setting to its default. Apply to keep it; Discard undoes it. Saved presets are kept."
+                    areaName: "resetToDefaults"
+                    onClicked: studioRoot.edited(Object.assign({}, studioRoot.defaults, {
+                        userPresets: studioRoot.draft.userPresets ?? ""
+                    }))
+                }
+                StudioButton {
                     id: surprise
                     text: "Surprise me"
                     onClicked: {
