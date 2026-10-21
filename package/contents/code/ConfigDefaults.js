@@ -103,6 +103,7 @@ var values = {
   "ambientGlowIntensity": 0.7,
   "ambientGlowMode": "cover",
   "artShape": "rounded",
+  "artFormat": "square",
   "artScale": 100,
   "artBorder": "subtle",
   "artGlow": false,

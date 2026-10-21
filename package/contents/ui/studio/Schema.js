@@ -236,6 +236,7 @@ var SECTIONS = [
         { k: "showArtThumb", type: "switch", label: "Show artwork", desc: "Falls back to the player’s icon when a track has no cover.", disabled: function (s) { return layoutValue(s) === "compact"; } },
         { k: "artShape", type: "tiles", full: true, label: "Shape", desc: "Vinyl and CD spin while music plays.", tw: 84,
           opts: [["sharp", "Sharp"], ["rounded", "Rounded"], ["squircle", "Squircle"], ["circle", "Circle"], ["vinyl", "Vinyl"], ["cd", "CD"]].map(function (o) { return { v: o[0], label: o[1], pv: "shape" }; }) },
+        { k: "artFormat", type: "seg", full: true, label: "Format", desc: "Square always crops the art. Auto keeps square art cropped, switches the cover to 16:9 for wide art, and fits tall art whole with blurred edges. The two whole options fit the full image in the square: over a dimmed copy, or filled with its blurred edges. Wide 16:9 makes the cover a widescreen box (not for circle, vinyl or CD).", opts: [["square", "Square"], ["auto", "Auto"], ["squareWhole", "Whole, dimmed"], ["squareEdges", "Whole, edges"], ["wide", "Wide 16:9"]] },
         { k: "artScale", type: "range", label: "Size", desc: "Capped by the layout height.", min: 60, max: 130, step: 5, fmt: "percent", when: notPill },
         { k: "artBorder", type: "seg", label: "Border", opts: [["none", "None"], ["subtle", "Subtle"], ["accent", "Accent"]] }
     ]),

@@ -48,10 +48,10 @@ Item {
                 visible: root.view.configuration.showArtThumb && (!root.view.artIsBackground || root.view.configuration.artBgKeepThumb)
                 Layout.fillHeight: true
                 Layout.maximumHeight: root.artLimit
-                Layout.preferredWidth: visible ? Math.min(artBox.height, root.artLimit) : 0
-                Layout.maximumWidth: root.artLimit
+                Layout.preferredWidth: visible ? Math.min(artBox.height, root.artLimit) * artBox.ratio : 0
+                Layout.maximumWidth: root.artLimit * artBox.ratio
                 Layout.alignment: Qt.AlignHCenter
-                width: Math.min(height, root.artLimit)
+                width: Math.min(height, root.artLimit) * ratio
                 artUrl: root.view.configuration.showMpris ? root.view.artUrl : ""
                 desktopEntry: root.view.desktopEntry
                 fallbackIcon: root.view.fallbackIcon

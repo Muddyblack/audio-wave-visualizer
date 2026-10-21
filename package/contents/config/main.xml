@@ -304,6 +304,9 @@
         <entry name="artShape" type="String">
             <default>rounded</default>
         </entry>
+        <entry name="artFormat" type="String">
+            <default>square</default>
+        </entry>
         <entry name="artScale" type="Int">
             <default>100</default>
         </entry>
