@@ -64,6 +64,13 @@ TestCase {
         // Whole image in the middle band, a dimmed copy above and below it.
         verify(picture.red(20, 40) > 240);
         verify(picture.red(20, 12) > 60 && picture.red(20, 12) < 160);
+        // Edges variant: the edge row is stretched and darkened by a quarter.
+        cover.edges = true;
+        wait(60);
+        const stretched = grabImage(cover);
+        verify(stretched.red(20, 40) > 240);
+        verify(stretched.red(20, 12) > 150 && stretched.red(20, 12) < 235);
+        cover.edges = false;
         cover.letterbox = false;
         cover.source = '';
     }

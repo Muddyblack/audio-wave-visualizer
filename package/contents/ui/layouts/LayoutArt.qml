@@ -13,8 +13,8 @@ Item {
     readonly property real artSize: Math.max(0, Math.round(size - (ringMode ? ringShrink : 0)))
 
     visible: shown
-    implicitWidth: shown ? artSize : 0
-    implicitHeight: implicitWidth
+    implicitWidth: shown ? Math.round(artSize * artView.ratio) : 0
+    implicitHeight: shown ? artSize : 0
 
     ArtView {
         id: artView

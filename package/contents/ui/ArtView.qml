@@ -50,9 +50,21 @@ Item {
     readonly property size artSize: Qt.size(Math.max(1, artImg.implicitWidth), Math.max(1, artImg.implicitHeight))
     readonly property bool software: GraphicsInfo.api === GraphicsInfo.Software || GpuDebug.noLayers
     readonly property bool coverReady: artImg.status === Image.Ready
-    // Wide or tall artwork (video thumbnails) is shown whole over a dimmed
-    // copy of itself; cropping it to a square cuts off band and song names.
-    readonly property bool letterbox: coverReady && Math.abs(Math.log(artSize.width / artSize.height)) > Math.log(1.2)
+    readonly property string format: cfg.artFormat ?? "square"
+    // The art's own shape, from a small probe so it never depends on the cover
+    // box (artImg is sized from the box, which would make ratio a loop).
+    readonly property real aspect: probe.status === Image.Ready && probe.implicitHeight > 0 ? probe.implicitWidth / probe.implicitHeight : 1
+    readonly property bool wideArt: aspect > 1.2
+    readonly property bool nonSquare: Math.abs(Math.log(aspect)) > Math.log(1.2)
+    // Width over height of the cover box; layouts size the slot with it. Wide
+    // is always 16:9; Auto switches to 16:9 only for wide art. Circles and
+    // discs stay square.
+    readonly property real ratio: (format === "wide" || (format === "auto" && wideArt)) && shape !== "circle" && !disc ? 16 / 9 : 1
+    // "Whole, dimmed" shows non-square art whole over a darkened copy of itself;
+    // "Whole, edges" fills the bands with its stretched, blurred edge pixels.
+    // Auto uses edges only where the box stays square (tall art, circles).
+    readonly property bool edges: format === "squareEdges" || format === "auto"
+    readonly property bool letterbox: coverReady && nonSquare && !disc && (format === "squareWhole" || format === "squareEdges" || (format === "auto" && ratio === 1))
     readonly property bool disc: shape === "vinyl" || shape === "cd"
     readonly property real cornerRadius: shape === "sharp" ? 2 : shape === "squircle" ? width * 0.3 : (shape === "circle" || disc) ? width / 2 : roundedRadius
     // Radius for the progress ring drawn 4 px outside (HTML `.artwrap .rg`).
@@ -76,6 +88,23 @@ Item {
             tiltDelay.stop();
             tilted = false;
         }
+    }
+    // Natural pixel size for the edge slices (sourceSize unset reads it back).
+    Image {
+        id: naturalArt
+        visible: false
+        source: root.letterbox && root.edges ? root.artUrl : ""
+        asynchronous: true
+        cache: true
+    }
+    Image {
+        id: probe
+        visible: false
+        source: root.artUrl
+        sourceSize: Qt.size(64, 64)
+        fillMode: Image.PreserveAspectFit
+        asynchronous: true
+        cache: true
     }
     HoverHandler {
         id: artHover
@@ -316,6 +345,7 @@ Item {
             Image {
                 id: artImg
                 anchors.fill: parent
+                opacity: root.letterbox && root.edges ? 0 : 1
                 source: root.artUrl
                 fillMode: Image.PreserveAspectCrop
                 // Keep at least 2x samples for small covers and respect HiDPI screens.
@@ -325,23 +355,128 @@ Item {
                 asynchronous: true
                 cache: true
             }
-            // Opacity, not visible: this wrapper is hidden, so toggling a
-            // child's visibility would not refresh the layer texture.
+            // Dimmed-copy variant: the whole image over a darkened crop of itself.
             Rectangle {
                 anchors.fill: parent
-                opacity: root.letterbox ? 1 : 0
+                opacity: root.letterbox && !root.edges ? 1 : 0
                 color: Qt.rgba(0, 0, 0, 0.55)
             }
             Image {
                 anchors.fill: parent
-                opacity: root.letterbox ? 1 : 0
-                source: root.letterbox ? root.artUrl : ""
+                opacity: root.letterbox && !root.edges ? 1 : 0
+                source: root.letterbox && !root.edges ? root.artUrl : ""
                 fillMode: Image.PreserveAspectFit
                 sourceSize: artImg.sourceSize
                 smooth: true
                 mipmap: true
                 asynchronous: true
                 cache: true
+            }
+            // Edge variant: the image fitted whole, with its edge rows or
+            // columns stretched, blurred and darkened over the empty bands (the
+            // same approach as the Terminal Slide Show canvas renderer).
+            // Opacity, not visible: this wrapper is hidden, so toggling a
+            // child's visibility would not refresh the layer texture.
+            Item {
+                id: fitBox
+                anchors.fill: parent
+                opacity: root.letterbox && root.edges ? 1 : 0
+                readonly property real fit: Math.min(width / root.artSize.width, height / root.artSize.height)
+                readonly property real fw: root.artSize.width * fit
+                readonly property real fh: root.artSize.height * fit
+                readonly property real fx: (width - fw) / 2
+                readonly property real fy: (height - fh) / 2
+
+                Rectangle {
+                    anchors.fill: parent
+                    color: Qt.rgba(0, 0, 0, 0.25)
+                }
+                Image {
+                    x: fitBox.fx
+                    y: fitBox.fy
+                    width: fitBox.fw
+                    height: fitBox.fh
+                    source: root.letterbox && root.edges ? root.artUrl : ""
+                    fillMode: Image.Stretch
+                    sourceSize: artImg.sourceSize
+                    smooth: true
+                    mipmap: true
+                    asynchronous: true
+                    cache: true
+                }
+            }
+        }
+
+        // "Whole, edges" bands, Terminal Slide Show's createBlurredBackground():
+        // the 1 px edge columns stretched over the full-height left and right
+        // bands, the edge rows over the top and bottom bands, then blur(20px).
+        // They live outside artImgCrop and blur in their own pass; a
+        // layer.effect inside that hidden layer never renders.
+        Item {
+            id: edgeBands
+            anchors.fill: parent
+            visible: false
+            layer.enabled: root.letterbox && root.edges && !root.software
+            layer.textureSize: Qt.size(Math.min(2048, Math.ceil(width * root.sampleScale)), Math.min(2048, Math.ceil(height * root.sampleScale)))
+            Repeater {
+                // x, y, w, h: the band; v: a row stretched vertically (top,
+                // bottom) rather than a column stretched sideways; far: the
+                // band lies after the image (bottom, right).
+                model: [
+                    {
+                        "x": fitBox.fx,
+                        "y": 0,
+                        "w": fitBox.fw,
+                        "h": fitBox.fy,
+                        "v": true,
+                        "far": false
+                    },
+                    {
+                        "x": fitBox.fx,
+                        "y": fitBox.fy + fitBox.fh,
+                        "w": fitBox.fw,
+                        "h": fitBox.height - (fitBox.fy + fitBox.fh),
+                        "v": true,
+                        "far": true
+                    },
+                    {
+                        "x": 0,
+                        "y": 0,
+                        "w": fitBox.fx,
+                        "h": fitBox.height,
+                        "v": false,
+                        "far": false
+                    },
+                    {
+                        "x": fitBox.fx + fitBox.fw,
+                        "y": 0,
+                        "w": fitBox.width - (fitBox.fx + fitBox.fw),
+                        "h": fitBox.height,
+                        "v": false,
+                        "far": true
+                    }
+                ]
+                delegate: Item {
+                    required property var modelData
+                    x: modelData.x
+                    y: modelData.y
+                    width: Math.max(0, modelData.w)
+                    height: Math.max(0, modelData.h)
+                    visible: width > 0.5 && height > 0.5
+                    Image {
+                        // drawImage(image, sx, sy, sw, sh, ...) with a 1 px
+                        // slice: the first or last row (or column) of the
+                        // source, stretched over the whole band.
+                        anchors.fill: parent
+                        readonly property size full: naturalArt.sourceSize
+                        sourceClipRect: modelData.v ? Qt.rect(0, modelData.far ? full.height - 1 : 0, full.width, 1) : Qt.rect(modelData.far ? full.width - 1 : 0, 0, 1, full.height)
+                        source: root.letterbox && root.edges && full.width > 0 ? root.artUrl : ""
+                        fillMode: Image.Stretch
+                        smooth: true
+                        asynchronous: true
+                        cache: true
+                    }
+                }
             }
         }
 
@@ -354,6 +489,21 @@ Item {
             visible: false
             layer.enabled: true
             layer.textureSize: Qt.size(Math.min(2048, Math.ceil(width * root.sampleScale)), Math.min(2048, Math.ceil(height * root.sampleScale)))
+        }
+
+        MultiEffect {
+            anchors.fill: parent
+            visible: root.letterbox && root.edges && !root.software
+            source: edgeBands
+            // No padding: the blur stays inside the cover and the mask lines up.
+            autoPaddingEnabled: false
+            blurEnabled: true
+            blur: 1
+            blurMax: 20
+            maskEnabled: true
+            maskSource: artMask
+            saturation: root.grayed ? -1 : 0
+            brightness: root.grayed ? -0.25 : 0
         }
 
         MultiEffect {
@@ -381,6 +531,8 @@ Item {
                 rasterScale: root.rasterScale
                 radius: root.cornerRadius
                 letterbox: root.letterbox
+                edges: root.edges
+                naturalSize: naturalArt.sourceSize
                 grayed: root.grayed
             }
         }

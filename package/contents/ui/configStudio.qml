@@ -226,6 +226,8 @@ Kirigami.Page {
     property string cfg_ambientGlowModeDefault
     property string cfg_artShape
     property string cfg_artShapeDefault
+    property string cfg_artFormat
+    property string cfg_artFormatDefault
     property int cfg_artScale
     property int cfg_artScaleDefault
     property string cfg_artBorder
