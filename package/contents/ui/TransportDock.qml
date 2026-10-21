@@ -220,8 +220,8 @@ Item {
             VectorIcon {
                 id: prevIcon
                 anchors.centerIn: parent
-                width: 12
-                height: 12
+                width: 16
+                height: 16
                 opacity: prevArea.containsMouse ? 1.0 : 0.78
                 designSize: 12
                 path: "M10 1.5 L1.5 6 L10 10.5 Z"
@@ -273,7 +273,7 @@ Item {
             VectorIcon {
                 id: playIcon
                 anchors.centerIn: parent
-                width: playBtn.accent ? 10 : 12
+                width: playBtn.accent ? 14 : 16
                 height: width
                 opacity: playBtn.accent ? 1 : (playArea.containsMouse ? 1.0 : 0.86)
                 designSize: 12
@@ -310,8 +310,8 @@ Item {
             VectorIcon {
                 id: nextIcon
                 anchors.centerIn: parent
-                width: 12
-                height: 12
+                width: 16
+                height: 16
                 opacity: nextArea.containsMouse ? 1.0 : 0.78
                 designSize: 12
                 path: "M2 1.5 L10.5 6 L2 10.5 Z"

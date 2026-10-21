@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls as Controls
 import "Theme.js" as Theme
-import "../text"
 
 // HTML `.ghost` (outlined) and `.primary` (brand) buttons.
 Rectangle {
@@ -29,7 +28,7 @@ Rectangle {
         text: control.text
         color: control.primary ? Theme.brandInk : (control.enabled && area.containsMouse) ? Theme.text : Theme.muted
         font.family: Theme.fontFamily
-        font.pixelSize: SystemText.px(11)
+        font.pixelSize: 11
         font.weight: control.primary ? Font.DemiBold : Font.Normal
     }
     Canvas {

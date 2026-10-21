@@ -1,6 +1,5 @@
 import QtQuick
 import "Theme.js" as Theme
-import "../text"
 
 // 168 px slider with accent fill, 15 px thumb and a value pill (HTML `.range`).
 Row {
@@ -90,7 +89,7 @@ Row {
             text: control.display
             color: Theme.outputText
             font.family: Theme.fontFamily
-            font.pixelSize: SystemText.px(11)
+            font.pixelSize: 11
             font.features: {
                 "tnum": 1
             }

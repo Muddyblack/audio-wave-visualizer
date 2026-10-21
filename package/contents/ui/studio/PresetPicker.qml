@@ -1,7 +1,6 @@
 import QtQuick
 import "Theme.js" as Theme
 import "Schema.js" as Schema
-import "../text"
 
 Column {
     id: picker
@@ -24,7 +23,7 @@ Column {
         wrapMode: Text.WordWrap
         color: Theme.muted
         font.family: Theme.fontFamily
-        font.pixelSize: SystemText.px(12)
+        font.pixelSize: 12
     }
     Flow {
         width: parent.width
@@ -74,7 +73,7 @@ Column {
                 text: "Apply today’s look automatically"
                 color: Theme.text
                 font.family: Theme.fontFamily
-                font.pixelSize: SystemText.px(12)
+                font.pixelSize: 12
             }
         }
         Text {
@@ -83,7 +82,7 @@ Column {
             color: Theme.muted
             wrapMode: Text.WordWrap
             font.family: Theme.fontFamily
-            font.pixelSize: SystemText.px(11)
+            font.pixelSize: 11
         }
     }
     Loader {
@@ -101,6 +100,6 @@ Column {
         text: "Star a built-in or saved look to find it here."
         color: Theme.muted
         wrapMode: Text.WordWrap
-        font.pixelSize: SystemText.px(12)
+        font.pixelSize: 12
     }
 }

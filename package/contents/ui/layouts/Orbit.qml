@@ -10,7 +10,9 @@ Item {
     required property var view
     readonly property var cfg: view.configuration
     readonly property bool bg: cfg.showBg
-    readonly property real box: Math.max(0, width - (bg ? 60 : 28))
+    // The ring stays square in a taller or wider host; the design height
+    // leaves (height - width) for the texts, progress and dock below it.
+    readonly property real box: Math.max(0, Math.min(width, height - (Layouts.size(cfg)[1] - Layouts.size(cfg)[0])) - (bg ? 60 : 28))
     readonly property real coverSize: Math.round(Math.min(box * 0.56, box * 0.38 * (cfg.artScale ?? 100) / 100))
     implicitWidth: Layouts.size(cfg)[0]
     implicitHeight: Layouts.size(cfg)[1]

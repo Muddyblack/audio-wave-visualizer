@@ -14,7 +14,11 @@ Item {
     // cover shrinks by the ring's 6 px, and without a cover style 0 is used.
     readonly property bool ringMode: !view.configuration.customProgressBar && (view.configuration.progressBarStyle ?? 0) === 10
     // The HTML's scaled(72, available height); unchanged at the default 100 %.
-    readonly property real artLimit: Math.min(ringMode ? Math.min(72, height - (view.configuration.showBg ? 4 : 0) - (view.hasPlayer ? 30 : 0)) : 72, 72 * (view.configuration.artScale ?? 100) / 100) - (ringMode ? 6 : 0)
+    // A widget taller than the design (the desktop card grows along the spare
+    // axis) enlarges cover, wave and text instead of leaving empty bands. 1 at
+    // the design height.
+    readonly property real grow: view.configuration.showMpris ? Math.max(1, Math.min(height / 104, 1.8)) : 1
+    readonly property real artLimit: Math.min(ringMode ? Math.min(72 * grow, height - (view.configuration.showBg ? 4 : 0) - (view.hasPlayer ? 30 : 0)) : 72 * grow, 72 * grow * (view.configuration.artScale ?? 100) / 100) - (ringMode ? 6 : 0)
 
     RowLayout {
         anchors.fill: parent
@@ -101,7 +105,7 @@ Item {
             WaveArea {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-                Layout.maximumHeight: 44
+                Layout.maximumHeight: 44 * root.grow
                 configuration: root.view.configuration
                 visualizer: root.view.visualizer
                 waveColor: root.view.waveColor
@@ -152,6 +156,7 @@ Item {
 
             LayoutTexts {
                 Layout.fillWidth: true
+                titleFactor: root.grow
                 view: root.view
             }
         }
