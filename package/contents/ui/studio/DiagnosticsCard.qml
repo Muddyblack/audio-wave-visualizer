@@ -1,5 +1,6 @@
 import QtQuick
 import "Theme.js" as Theme
+import "../text"
 
 // Audio status and "Run diagnostics" (HTML `.status` / `.check`), fed by the
 // host running contents/code/doctor.sh.
@@ -60,7 +61,7 @@ Column {
                 text: "Audio capture"
                 color: Theme.text
                 font.family: Theme.fontFamily
-                font.pixelSize: 12
+                font.pixelSize: SystemText.px(12)
                 font.weight: Font.Medium
             }
             Text {
@@ -68,7 +69,7 @@ Column {
                 text: (card.inputNames[card.studio.draft.inputMethod] ?? "Auto-detect") + " · " + card.effectiveRate + " Hz · " + (card.studio.draft.numBars ?? 24) + " bars"
                 color: Theme.muted
                 font.family: Theme.fontFamily
-                font.pixelSize: 11
+                font.pixelSize: SystemText.px(11)
                 elide: Text.ElideRight
             }
         }
@@ -108,7 +109,7 @@ Column {
                     anchors.centerIn: parent
                     text: check.modelData[1] ? "✓" : "!"
                     color: check.modelData[1] ? Theme.ok : Theme.warn
-                    font.pixelSize: 10
+                    font.pixelSize: SystemText.px(10)
                 }
             }
             Text {
@@ -117,7 +118,7 @@ Column {
                 text: check.modelData[0]
                 color: check.modelData[1] ? Theme.text : Theme.muted
                 font.family: Theme.fontFamily
-                font.pixelSize: 12
+                font.pixelSize: SystemText.px(12)
             }
             Text {
                 anchors.right: parent.right
@@ -126,7 +127,7 @@ Column {
                 text: check.modelData[2]
                 color: Theme.dim
                 font.family: "monospace"
-                font.pixelSize: 10
+                font.pixelSize: SystemText.px(10)
                 elide: Text.ElideLeft
             }
         }

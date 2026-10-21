@@ -3,6 +3,7 @@ import QtQuick
 import QtQuick.Controls.Basic as Controls
 import "../../code/Layouts.js" as Layouts
 import ".." as Shared
+import "../text"
 
 // A reading surface: the whole synced lyric, with playback following the verse.
 FocusScope {
@@ -75,7 +76,7 @@ FocusScope {
         textFormat: Text.PlainText
         elide: Text.ElideRight
         font.family: root.fontFamily
-        font.pixelSize: 13
+        font.pixelSize: SystemText.px(13)
         font.weight: Font.Medium
         horizontalAlignment: root.alignment
         color: root.view.textColor
@@ -134,7 +135,7 @@ FocusScope {
                 wrapMode: Text.Wrap
                 horizontalAlignment: root.alignment
                 font.family: root.fontFamily
-                font.pixelSize: root.textSize
+                font.pixelSize: SystemText.px(root.textSize)
                 font.weight: parent.index === lines.currentIndex ? (root.cfg.lyricsCurrentWeight ?? Font.DemiBold) : (root.cfg.lyricsFontWeight ?? Font.Normal)
                 font.italic: root.cfg.lyricsItalic ?? false
                 font.letterSpacing: root.cfg.lyricsLetterSpacing ?? 0
@@ -175,7 +176,7 @@ FocusScope {
                 wrapMode: Text.Wrap
                 horizontalAlignment: root.alignment
                 font.family: root.fontFamily
-                font.pixelSize: Math.max(12, root.textSize * 0.65)
+                font.pixelSize: SystemText.px(Math.max(12, root.textSize * 0.65))
                 color: root.view.textColor
                 opacity: 0.7
                 onImplicitHeightChanged: reposition.restart()
@@ -264,7 +265,7 @@ FocusScope {
         wrapMode: Text.Wrap
         horizontalAlignment: Text.AlignHCenter
         font.family: root.fontFamily
-        font.pixelSize: 15
+        font.pixelSize: SystemText.px(15)
         renderType: Text.CurveRendering ?? Text.QtRendering
         color: root.view.textColor
         opacity: 0.75
@@ -282,7 +283,7 @@ FocusScope {
         wrapMode: Text.Wrap
         horizontalAlignment: Text.AlignHCenter
         font.family: root.fontFamily
-        font.pixelSize: 12
+        font.pixelSize: SystemText.px(12)
         color: root.view.textColor
     }
 }

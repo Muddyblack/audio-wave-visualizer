@@ -1,6 +1,7 @@
 import QtQuick
 import "Theme.js" as Theme
 import "Schema.js" as Schema
+import "../text"
 
 // Toggle chips with ✓ (HTML `.chips`); the value is a list of keys.
 Flow {
@@ -31,7 +32,7 @@ Flow {
                 text: (chip.pressed ? "<font color=\"" + Theme.brand + "\">✓ </font>" : "") + chip.modelData[1]
                 color: chip.pressed ? Theme.text : Theme.muted
                 font.family: Theme.fontFamily
-                font.pixelSize: 11
+                font.pixelSize: SystemText.px(11)
             }
             MouseArea {
                 anchors.fill: parent

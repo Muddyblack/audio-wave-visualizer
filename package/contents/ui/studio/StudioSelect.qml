@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Basic as Controls
 import "Theme.js" as Theme
+import "../text"
 
 // Dropdown (HTML `select.sel`): sunk field, 8 px radius, 170 px minimum.
 Controls.ComboBox {
@@ -17,7 +18,7 @@ Controls.ComboBox {
     implicitWidth: Math.max(170, contentItem.implicitWidth + 40)
     implicitHeight: 32
     font.family: Theme.fontFamily
-    font.pixelSize: 12
+    font.pixelSize: SystemText.px(12)
     onActivated: index => control.chosen(options[index][0])
 
     background: Rectangle {
@@ -40,7 +41,7 @@ Controls.ComboBox {
         anchors.verticalCenter: parent.verticalCenter
         text: "▾"
         color: Theme.muted
-        font.pixelSize: 11
+        font.pixelSize: SystemText.px(11)
     }
     delegate: Controls.ItemDelegate {
         id: item

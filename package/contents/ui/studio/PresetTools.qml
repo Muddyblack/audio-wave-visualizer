@@ -1,6 +1,7 @@
 import QtQuick
 import "Schema.js" as Schema
 import "Theme.js" as Theme
+import "../text"
 
 Item {
     id: tools
@@ -27,7 +28,7 @@ Item {
             text: "Keep my colours"
             color: Theme.muted
             font.family: Theme.fontFamily
-            font.pixelSize: 11
+            font.pixelSize: SystemText.px(11)
         }
     }
 }

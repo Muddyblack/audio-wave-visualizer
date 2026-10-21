@@ -228,7 +228,7 @@ var SECTIONS = [
         { k: "showAlbum", type: "switch", label: "Album in the top line" }
     ], function (s) { return s.layoutMode === "poster"; }),
     tab("layout", "Track text", [
-        { k: "titleSize", when: notPill, type: "range", label: "Text size", desc: "Artist and album follow the title.", min: 9, max: 16, step: 1, fmt: "px" },
+        { k: "titleSize", when: notPill, type: "range", label: "Text size", desc: "Artist and album follow the title.", min: 9, max: 32, step: 1, fmt: "px" },
         { k: "textAlign", when: notPill, type: "seg", label: "Alignment", opts: [["left", "Left"], ["center", "Centre"], ["right", "Right"]] },
         { k: "marquee", type: "switch", label: "Scroll long titles", desc: "Scroll overflowing titles, including the panel pill. Disabled by Reduced motion." }
     ], function (s) { return s.layoutMode !== "pillicon"; }),
@@ -385,6 +385,7 @@ var SECTIONS = [
         { k: "scrollVolume", type: "switch", label: "Scroll to change volume", desc: "Adjusts the system output volume, not the player’s own." }
     ]),
     tab("behavior", "Comfort & power", [
+        { k: "followSystemFont", type: "switch", label: "Follow system font size", desc: "Scale text with Appearance > Fonts. Off keeps the original sizes." },
         { k: "reducedMotion", type: "switch", label: "Reduced motion", desc: "No ripples, sweeps, spins or scrolling text; the wave still reacts." },
         { k: "batterySaver", type: "switch", label: "Battery saver", desc: "On battery: 20 Hz and no glow." },
         { k: "simpleRender", type: "switch", label: "Simple rendering", desc: "Lightweight Canvas path — also the automatic fallback if shaders fail." }

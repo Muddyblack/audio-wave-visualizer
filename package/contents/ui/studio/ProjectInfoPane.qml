@@ -3,6 +3,7 @@ import ".." as Shared
 import "Theme.js" as Theme
 import "ProjectInfo.js" as Project
 import "ProjectInfoRequests.js" as InfoRequests
+import "../text"
 
 Column {
     id: info
@@ -95,7 +96,7 @@ Column {
                 wrapMode: Text.WordWrap
                 color: Theme.text
                 font.family: Theme.fontFamily
-                font.pixelSize: 18
+                font.pixelSize: SystemText.px(18)
                 font.weight: Font.DemiBold
             }
             Row {
@@ -110,7 +111,7 @@ Column {
                         anchors.centerIn: parent
                         text: "M"
                         color: Theme.brand
-                        font.pixelSize: 12
+                        font.pixelSize: SystemText.px(12)
                         visible: !avatar.ready
                     }
                     Shared.SoftwareCover {
@@ -138,7 +139,7 @@ Column {
         wrapMode: Text.WordWrap
         color: Theme.muted
         font.family: Theme.fontFamily
-        font.pixelSize: 12
+        font.pixelSize: SystemText.px(12)
     }
     Rectangle {
         objectName: "projectVersion"
@@ -157,7 +158,7 @@ Column {
                 text: "Installed version · " + info.currentVersion
                 color: Theme.text
                 font.family: Theme.fontFamily
-                font.pixelSize: 12
+                font.pixelSize: SystemText.px(12)
                 font.weight: Font.DemiBold
             }
             Text {
@@ -165,7 +166,7 @@ Column {
                 text: "Latest stable release · " + (info.latestVersion || "—")
                 color: Theme.muted
                 font.family: Theme.fontFamily
-                font.pixelSize: 12
+                font.pixelSize: SystemText.px(12)
             }
             Text {
                 objectName: "versionStatusLabel"
@@ -174,7 +175,7 @@ Column {
                 wrapMode: Text.WordWrap
                 color: text === "Update available" ? Theme.brand : Theme.muted
                 font.family: Theme.fontFamily
-                font.pixelSize: 12
+                font.pixelSize: SystemText.px(12)
             }
             Flow {
                 width: parent.width
@@ -222,7 +223,7 @@ Column {
                     text: info.counts[parent.modelData.id] || "—"
                     color: Theme.text
                     font.family: Theme.fontFamily
-                    font.pixelSize: 21
+                    font.pixelSize: SystemText.px(21)
                     font.weight: Font.DemiBold
                 }
                 Text {
@@ -232,7 +233,7 @@ Column {
                     text: parent.modelData.label + " ↗"
                     color: Theme.muted
                     font.family: Theme.fontFamily
-                    font.pixelSize: 11
+                    font.pixelSize: SystemText.px(11)
                     elide: Text.ElideRight
                 }
                 MouseArea {
@@ -262,14 +263,14 @@ Column {
                 text: "License · " + Project.license
                 color: Theme.text
                 font.family: Theme.fontFamily
-                font.pixelSize: 12
+                font.pixelSize: SystemText.px(12)
                 font.weight: Font.DemiBold
             }
             Text {
                 text: Project.licenseId + " · From the bundled LICENSE file"
                 color: Theme.muted
                 font.family: Theme.fontFamily
-                font.pixelSize: 10
+                font.pixelSize: SystemText.px(10)
             }
         }
     }
@@ -285,7 +286,7 @@ Column {
                 text: "Contributors"
                 color: Theme.text
                 font.family: Theme.fontFamily
-                font.pixelSize: 14
+                font.pixelSize: SystemText.px(14)
                 font.weight: Font.DemiBold
             }
             StudioButton {
@@ -321,7 +322,7 @@ Column {
                             anchors.centerIn: parent
                             text: contributorCard.modelData.login[0].toUpperCase()
                             color: Theme.brand
-                            font.pixelSize: 13
+                            font.pixelSize: SystemText.px(13)
                             visible: !contributorAvatar.ready
                         }
                         Shared.SoftwareCover {
@@ -344,14 +345,14 @@ Column {
                             elide: Text.ElideRight
                             color: Theme.text
                             font.family: Theme.fontFamily
-                            font.pixelSize: 12
+                            font.pixelSize: SystemText.px(12)
                             font.weight: Font.DemiBold
                         }
                         Text {
                             text: contributorCard.modelData.commits + (contributorCard.modelData.commits === 1 ? " commit" : " commits")
                             color: Theme.muted
                             font.family: Theme.fontFamily
-                            font.pixelSize: 10
+                            font.pixelSize: SystemText.px(10)
                         }
                     }
                     MouseArea {
@@ -373,7 +374,7 @@ Column {
             text: "Support the project"
             color: Theme.text
             font.family: Theme.fontFamily
-            font.pixelSize: 14
+            font.pixelSize: SystemText.px(14)
             font.weight: Font.DemiBold
         }
         Flow {
@@ -410,7 +411,7 @@ Column {
                         elide: Text.ElideRight
                         color: Theme.text
                         font.family: Theme.fontFamily
-                        font.pixelSize: 12
+                        font.pixelSize: SystemText.px(12)
                         font.weight: Font.DemiBold
                     }
                     MouseArea {

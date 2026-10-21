@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Effects
 import "debug"
+import "text"
 
 // Cover artwork. Without a `view` it draws the original rounded thumbnail; the
 // layouts pass the view so the artwork options

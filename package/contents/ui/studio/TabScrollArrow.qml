@@ -1,5 +1,6 @@
 import QtQuick
 import "Theme.js" as Theme
+import "../text"
 
 // Visible edge control for tab rows that extend beyond a narrow settings panel.
 Rectangle {
@@ -20,7 +21,7 @@ Rectangle {
         anchors.centerIn: parent
         text: root.forward ? "›" : "‹"
         color: Theme.text
-        font.pixelSize: 22
+        font.pixelSize: SystemText.px(22)
     }
     MouseArea {
         objectName: root.areaName

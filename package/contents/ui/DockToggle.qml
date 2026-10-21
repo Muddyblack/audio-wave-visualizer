@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls.Basic as Controls
+import "text"
 
 // A 10 px MPRIS toggle (shuffle/repeat) drawn from the HTML's 24-unit SVG icon:
 // .45 opacity when off, accent colour when on.
@@ -53,7 +54,7 @@ Item {
         text: toggle.badge
         visible: text !== ""
         color: toggle.accentColor
-        font.pixelSize: 8
+        font.pixelSize: SystemText.px(8)
         font.bold: true
     }
 

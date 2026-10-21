@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import ".."
+import "../text"
 
 // Panel pill (HTML `.L-pill`): [cover 20][EQ][Title · Artist][controls], 30 px
 // high, width following the content up to pillMaxWidth. The underline progress
@@ -118,7 +119,7 @@ Item {
                     Layout.minimumWidth: 0
                     text: root.content === "artist-title" && root.withArtist ? root.view.artist : root.titleText
                     color: root.view.textColor
-                    font.pixelSize: 12
+                    font.pixelSize: SystemText.px(12, 18)
                     font.weight: Font.DemiBold
                     font.italic: root.view.trackUnknown
                     elide: root.scrollText ? Text.ElideNone : Text.ElideRight
@@ -129,7 +130,7 @@ Item {
                     text: root.content === "artist-title" ? "—" : "·"
                     color: root.view.textColor
                     opacity: 0.35
-                    font.pixelSize: 12
+                    font.pixelSize: SystemText.px(12, 18)
                 }
                 Text {
                     renderType: Text.CurveRendering ?? Text.QtRendering
@@ -141,7 +142,7 @@ Item {
                     text: root.content === "artist-title" ? root.titleText : root.view.artist
                     color: root.view.textColor
                     opacity: 0.6
-                    font.pixelSize: 12
+                    font.pixelSize: SystemText.px(12, 18)
                     elide: root.scrollText ? Text.ElideNone : Text.ElideRight
                 }
             }

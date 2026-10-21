@@ -4,6 +4,7 @@ import QtQuick.Effects
 import "../code/ColourStyle.js" as ColourStyle
 import "../code/ProgressDraw.js" as ProgressDraw
 import "debug"
+import "text"
 
 Item {
     id: root
@@ -502,7 +503,7 @@ Item {
         text: positionClock.elapsedText
         color: root.textColor
         opacity: 0.50
-        font.pixelSize: 8
+        font.pixelSize: SystemText.px(8)
     }
 
     Text {
@@ -515,7 +516,7 @@ Item {
         text: root.totalLabel
         color: root.textColor
         opacity: 0.50
-        font.pixelSize: 8
+        font.pixelSize: SystemText.px(8)
     }
 
     // Style 9 — Time only: "1:31 / 3:58", always shown, centred with centred text.
@@ -534,14 +535,14 @@ Item {
                 objectName: "timeOnlyElapsed"
                 text: positionClock.elapsedText
                 color: root.textColor
-                font.pixelSize: 9
+                font.pixelSize: SystemText.px(9)
             }
             Text {
                 renderType: Text.CurveRendering ?? Text.QtRendering
                 text: " /"
                 color: root.textColor
                 opacity: 0.6
-                font.pixelSize: 9
+                font.pixelSize: SystemText.px(9)
             }
         }
         Text {
@@ -549,7 +550,7 @@ Item {
             objectName: "timeOnlyTotal"
             text: root.totalLabel
             color: root.textColor
-            font.pixelSize: 9
+            font.pixelSize: SystemText.px(9)
         }
     }
 

@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Basic as Controls
 import QtQuick.Layouts
+import "text"
 
 ColumnLayout {
     id: root
@@ -19,7 +20,7 @@ ColumnLayout {
         text: qsTr("Online information is off. Enable it in Settings → Track info for catalog details and credits.")
         textFormat: Text.PlainText
         wrapMode: Text.Wrap
-        font.pixelSize: 11
+        font.pixelSize: SystemText.px(11)
         color: "#bac4d2"
     }
     TrackDetails {

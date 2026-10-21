@@ -1,6 +1,7 @@
 import QtQuick
 import "Theme.js" as Theme
 import "Schema.js" as Schema
+import "../text"
 
 // One settings row (HTML `.row`): label and description left, control right;
 // full-width controls and narrow rows stack the control underneath.
@@ -54,7 +55,7 @@ Item {
                 text: row.rowData.label || ""
                 color: Theme.text
                 font.family: Theme.fontFamily
-                font.pixelSize: 12
+                font.pixelSize: SystemText.px(12)
                 font.weight: Font.Medium
                 wrapMode: Text.WordWrap
             }
@@ -64,7 +65,7 @@ Item {
                 text: row.rowData.desc || ""
                 color: Theme.muted
                 font.family: Theme.fontFamily
-                font.pixelSize: 11
+                font.pixelSize: SystemText.px(11)
                 lineHeight: 1.2
                 wrapMode: Text.WordWrap
             }

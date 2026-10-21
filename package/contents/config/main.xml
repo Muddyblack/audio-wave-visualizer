@@ -493,6 +493,9 @@
         <entry name="gpuDebug" type="String">
             <default></default>
         </entry>
+        <entry name="followSystemFont" type="Bool">
+            <default>true</default>
+        </entry>
         <entry name="reducedMotion" type="Bool">
             <default>false</default>
         </entry>

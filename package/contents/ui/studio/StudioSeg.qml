@@ -1,5 +1,6 @@
 import QtQuick
 import "Theme.js" as Theme
+import "../text"
 
 // Segmented choice (HTML `.seg`): sunk group, the pressed segment raised.
 Rectangle {
@@ -43,7 +44,7 @@ Rectangle {
                     text: segment.modelData[1]
                     color: segment.pressed ? Theme.segPressedText : Theme.muted
                     font.family: Theme.fontFamily
-                    font.pixelSize: 11
+                    font.pixelSize: SystemText.px(11)
                 }
                 MouseArea {
                     id: segmentArea

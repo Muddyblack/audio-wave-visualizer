@@ -6,6 +6,7 @@ import "../code/Layouts.js" as LayoutSizes
 import "../code/AudioFormat.js" as AudioFormat
 import "../code/ColourStyle.js" as ColourStyle
 import "../code/MediaSource.js" as MediaSource
+import "text"
 
 Item {
     id: root
@@ -713,7 +714,7 @@ Item {
         contentItem: Text {
             text: parent.text
             color: root.textColor
-            font.pixelSize: 14
+            font.pixelSize: SystemText.px(14)
             horizontalAlignment: Text.AlignHCenter
             verticalAlignment: Text.AlignVCenter
         }

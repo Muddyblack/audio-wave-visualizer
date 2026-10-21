@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Basic as Controls
 import "../code/TrackInfo.js" as TrackInfo
+import "text"
 
 Item {
     id: root
@@ -190,7 +191,7 @@ Item {
                         text: root.view.displayTrack
                         textFormat: Text.PlainText
                         color: root.foreground
-                        font.pixelSize: root.back ? 12 : 14
+                        font.pixelSize: SystemText.px(root.back ? 12 : 14)
                         font.bold: true
                         elide: Text.ElideRight
                     }
@@ -200,7 +201,7 @@ Item {
                         text: root.detailArtist
                         textFormat: Text.PlainText
                         color: root.muted
-                        font.pixelSize: 11
+                        font.pixelSize: SystemText.px(11)
                         elide: Text.ElideRight
                     }
                 }
@@ -222,7 +223,7 @@ Item {
                             Text {
                                 text: section.modelData.title.toUpperCase()
                                 color: root.muted
-                                font.pixelSize: 9
+                                font.pixelSize: SystemText.px(9)
                                 font.letterSpacing: 1
                                 font.bold: true
                             }
@@ -246,14 +247,14 @@ Item {
                                     textFormat: Text.PlainText
                                     wrapMode: Text.Wrap
                                     color: root.muted
-                                    font.pixelSize: 11
+                                    font.pixelSize: SystemText.px(11)
                                 }
                                 Text {
                                     Layout.fillWidth: true
                                     text: row.modelData[1]
                                     textFormat: Text.PlainText
                                     color: root.foreground
-                                    font.pixelSize: 11
+                                    font.pixelSize: SystemText.px(11)
                                     wrapMode: Text.Wrap
                                     maximumLineCount: root.mode === "tooltip" ? 2 : 20
                                     elide: Text.ElideRight
@@ -269,7 +270,7 @@ Item {
                 text: lookup.result.summary || ""
                 textFormat: Text.PlainText
                 color: root.muted
-                font.pixelSize: 11
+                font.pixelSize: SystemText.px(11)
                 wrapMode: Text.Wrap
                 maximumLineCount: root.mode === "tooltip" ? 3 : 100
                 elide: Text.ElideRight
@@ -281,7 +282,7 @@ Item {
                 textFormat: Text.PlainText
                 color: root.foreground
                 font.italic: true
-                font.pixelSize: 11
+                font.pixelSize: SystemText.px(11)
                 wrapMode: Text.Wrap
             }
             Text {
@@ -290,7 +291,7 @@ Item {
                 text: root.notice
                 textFormat: Text.PlainText
                 color: root.muted
-                font.pixelSize: 10
+                font.pixelSize: SystemText.px(10)
                 wrapMode: Text.Wrap
             }
             Controls.ComboBox {
@@ -313,7 +314,7 @@ Item {
                 text: [lookup.result.recordingUrl ? '<a href="' + root.linkAttribute(lookup.result.recordingUrl) + '">Recording · MusicBrainz</a>' : '', lookup.result.albumUrl ? '<a href="' + root.linkAttribute(lookup.result.albumUrl) + '">Album · MusicBrainz</a>' : '', lookup.result.catalogUrl ? '<a href="' + root.linkAttribute(lookup.result.catalogUrl) + '">Apple Music</a>' : '', root.showSummary && lookup.result.artistUrl ? '<a href="' + root.linkAttribute(lookup.result.artistUrl) + '">Wikipedia · CC BY-SA</a>' : ''].filter(Boolean).join("  ·  ")
                 textFormat: Text.RichText
                 linkColor: root.back ? root.view.waveColor : "#b7d5ff"
-                font.pixelSize: 10
+                font.pixelSize: SystemText.px(10)
                 wrapMode: Text.Wrap
                 onLinkActivated: link => Qt.openUrlExternally(link)
             }

@@ -1,6 +1,7 @@
 import QtQuick
 import "Theme.js" as Theme
 import "Schema.js" as Schema
+import "../text"
 
 // Saved looks: grid, name field with Save,
 // Copy as JSON and Import JSON. Placement keys are never saved.
@@ -64,7 +65,7 @@ Column {
         text: "No saved looks yet."
         color: Theme.dim
         font.family: Theme.fontFamily
-        font.pixelSize: 11
+        font.pixelSize: SystemText.px(11)
     }
 
     Flow {
@@ -87,7 +88,7 @@ Column {
                 verticalAlignment: TextInput.AlignVCenter
                 color: Theme.text
                 font.family: Theme.fontFamily
-                font.pixelSize: 12
+                font.pixelSize: SystemText.px(12)
                 clip: true
                 onAccepted: saved.save()
             }
@@ -137,7 +138,7 @@ Column {
             anchors.margins: 8
             color: Theme.text
             font.family: "monospace"
-            font.pixelSize: 11
+            font.pixelSize: SystemText.px(11)
             wrapMode: TextEdit.WrapAnywhere
             clip: true
         }
@@ -165,7 +166,7 @@ Column {
         text: saved.message
         color: Theme.muted
         font.family: Theme.fontFamily
-        font.pixelSize: 11
+        font.pixelSize: SystemText.px(11)
     }
     Text {
         visible: !saved.favoritesOnly
@@ -174,7 +175,7 @@ Column {
         wrapMode: Text.WordWrap
         color: Theme.muted
         font.family: Theme.fontFamily
-        font.pixelSize: 12
+        font.pixelSize: SystemText.px(12)
     }
     StudioButton {
         visible: !saved.favoritesOnly

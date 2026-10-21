@@ -171,6 +171,7 @@ var values = {
   "hoverLift": false,
   "scrollVolume": true,
   "gpuDebug": "",
+  "followSystemFont": true,
   "reducedMotion": false,
   "batterySaver": false,
   "simpleRender": false,

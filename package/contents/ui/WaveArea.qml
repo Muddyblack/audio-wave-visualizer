@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls as QQC
+import "text"
 
 // Backend status and both renderers share the same area in every layout.
 Waveform {
@@ -76,7 +77,7 @@ Waveform {
         visible: [19, 20].includes(root.visualizerType) && !root.stereoSamples.length && !root.backendFailed
         text: root.visualizer?.stereoStatus || "Stereo PCM unavailable"
         color: root.textColor
-        font.pixelSize: 10
+        font.pixelSize: SystemText.px(10)
         width: parent.width
         horizontalAlignment: Text.AlignHCenter
         wrapMode: Text.Wrap
@@ -94,7 +95,7 @@ Waveform {
             width: parent.width
             horizontalAlignment: Text.AlignHCenter
             elide: Text.ElideRight
-            font.pixelSize: 10
+            font.pixelSize: SystemText.px(10)
             color: root.textColor
             opacity: 0.8
             text: root.visualizer?.backendMessage ?? ""
@@ -107,7 +108,7 @@ Waveform {
             // Monospace only when the line is literally a
             // command to type.
             font.family: root.visualizer?.backendCode === "no-cava" ? "monospace" : root.defaultFontFamily
-            font.pixelSize: 9
+            font.pixelSize: SystemText.px(9)
             color: root.textColor
             opacity: 0.55
             text: root.visualizer?.backendAction ?? ""

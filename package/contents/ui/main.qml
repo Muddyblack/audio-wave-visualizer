@@ -10,6 +10,7 @@ import "studio" as Studio
 import "../code/Layouts.js" as LayoutSizes
 import "../code/PresentationSettings.js" as Presentations
 import "debug"
+import "text"
 
 PlasmoidItem {
     id: root
@@ -20,8 +21,13 @@ PlasmoidItem {
 
     // Diagnostics only: see debug/GpuDebug.qml.
     readonly property string gpuDebug: plasmoid.configuration.gpuDebug ?? ""
+    readonly property bool followSystemFont: plasmoid.configuration.followSystemFont ?? true
     onGpuDebugChanged: GpuDebug.apply(gpuDebug)
-    Component.onCompleted: GpuDebug.apply(gpuDebug)
+    onFollowSystemFontChanged: SystemText.follow = followSystemFont
+    Component.onCompleted: {
+        GpuDebug.apply(gpuDebug);
+        SystemText.follow = followSystemFont;
+    }
     Studio.DailyLookController {
         configuration: root.effectiveConfiguration
         onApply: next => {

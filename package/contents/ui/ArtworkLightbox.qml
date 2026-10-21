@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import QtQuick.Controls.Basic as Controls
+import "text"
 
 // A separate transient window lets even a small panel icon show a useful cover.
 Window {
@@ -49,7 +50,7 @@ Window {
                     textFormat: Text.PlainText
                     text: lightbox.view.displayTrack
                     color: "#eff0f1"
-                    font.pixelSize: 16
+                    font.pixelSize: SystemText.px(16)
                     font.bold: true
                     horizontalAlignment: Text.AlignHCenter
                     maximumLineCount: 2
@@ -61,7 +62,7 @@ Window {
                     textFormat: Text.PlainText
                     text: lightbox.view.artist
                     color: "#aeb7bc"
-                    font.pixelSize: 13
+                    font.pixelSize: SystemText.px(13)
                     horizontalAlignment: Text.AlignHCenter
                     elide: Text.ElideRight
                 }

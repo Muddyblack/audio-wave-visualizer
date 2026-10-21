@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Controls.Basic as Controls
 import QtQuick.Layouts
+import "text"
 
 ColumnLayout {
     id: root
@@ -33,7 +34,7 @@ ColumnLayout {
         Layout.fillWidth: true
         visible: root.expanded
         color: "#aeb7bc"
-        font.pixelSize: 11
+        font.pixelSize: SystemText.px(11)
         wrapMode: Text.Wrap
         text: root.view.samplePlayback ? qsTr("Queue unavailable in preview") : lookup.status === "loading" ? qsTr("Loading queue…") : lookup.status === "unsupported" ? qsTr("This player does not share its queue") : lookup.status === "unknown" ? qsTr("Current track is outside the shared queue") : lookup.status === "error" ? qsTr("Queue unavailable. Check that the player is running and busctl is installed.") : lookup.status === "ready" ? ((lookup.result.tracks ?? []).length ? qsTr("Player playlist order • shuffle may differ") : qsTr("No upcoming tracks")) : ""
     }
@@ -58,7 +59,7 @@ ColumnLayout {
                     textFormat: Text.PlainText
                     elide: Text.ElideRight
                     color: "#eef0ec"
-                    font.pixelSize: 12
+                    font.pixelSize: SystemText.px(12)
                 }
                 Text {
                     width: parent.width
@@ -67,7 +68,7 @@ ColumnLayout {
                     textFormat: Text.PlainText
                     elide: Text.ElideRight
                     color: "#aeb7bc"
-                    font.pixelSize: 10
+                    font.pixelSize: SystemText.px(10)
                 }
             }
         }
@@ -76,6 +77,6 @@ ColumnLayout {
         visible: root.expanded && (lookup.result.total ?? 0) > 50
         text: qsTr("Showing the next 50 tracks")
         color: "#aeb7bc"
-        font.pixelSize: 10
+        font.pixelSize: SystemText.px(10)
     }
 }
