@@ -228,7 +228,7 @@ var SECTIONS = [
         { k: "showAlbum", type: "switch", label: "Album in the top line" }
     ], function (s) { return s.layoutMode === "poster"; }),
     tab("layout", "Track text", [
-        { k: "titleSize", when: notPill, type: "range", label: "Text size", desc: "Artist and album follow the title.", min: 9, max: 16, step: 1, fmt: "px" },
+        { k: "titleSize", when: notPill, type: "range", label: "Text size", desc: "Artist and album follow the title.", min: 9, max: 32, step: 1, fmt: "px" },
         { k: "textAlign", when: notPill, type: "seg", label: "Alignment", opts: [["left", "Left"], ["center", "Centre"], ["right", "Right"]] },
         { k: "marquee", type: "switch", label: "Scroll long titles", desc: "Scroll overflowing titles, including the panel pill. Disabled by Reduced motion." }
     ], function (s) { return s.layoutMode !== "pillicon"; }),

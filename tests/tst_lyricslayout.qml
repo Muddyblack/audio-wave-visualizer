@@ -120,7 +120,8 @@ TestCase {
         waitForRendering(subject);
         const first = findChild(subject, "lyricsVerse_0");
         verify(first !== null);
-        compare(first.font.pixelSize, 30);
+        // Sizes follow the system font relative to Plasma's 10pt default.
+        compare(first.font.pixelSize, Math.round(30 * Qt.application.font.pointSize / 10));
         compare(first.font.weight, 700);
         compare(first.font.italic, true);
         compare(first.horizontalAlignment, Text.AlignRight);

@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import "text"
 
 Flow {
     id: root
@@ -21,7 +22,7 @@ Flow {
                 text: parent.modelData
                 textFormat: Text.PlainText
                 color: root.textColor
-                font.pixelSize: 9
+                font.pixelSize: SystemText.px(9)
             }
         }
     }

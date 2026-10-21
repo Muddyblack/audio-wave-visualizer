@@ -4,6 +4,7 @@ import ".."
 import "Theme.js" as Theme
 import "Schema.js" as Schema
 import "../../code/Layouts.js" as LayoutSizes
+import "../text"
 
 // The live preview (HTML `.stage`): wallpaper, state and zoom chips, the real
 // widget with the draft settings and synthetic audio; pills sit in a panel.
@@ -129,7 +130,7 @@ Rectangle {
         rightPadding: 2
         color: "#8a9187"
         font.family: Theme.fontFamily
-        font.pixelSize: 10
+        font.pixelSize: SystemText.px(10)
         font.letterSpacing: 0.5
     }
     component ChipButton: Rectangle {
@@ -147,7 +148,7 @@ Rectangle {
             text: chipButton.label
             color: chipButton.pressed ? "#ffffff" : "#aab1a7"
             font.family: Theme.fontFamily
-            font.pixelSize: 11
+            font.pixelSize: SystemText.px(11)
         }
         MouseArea {
             anchors.fill: parent
@@ -286,7 +287,7 @@ Rectangle {
                 text: pane.cardSize[0] + " × " + pane.cardSize[1] + " px · " + pane.zoomScale.toFixed(2) + "×"
                 color: "#b0e6ebe3"
                 font.family: "monospace"
-                font.pixelSize: 10
+                font.pixelSize: SystemText.px(10)
             }
         }
         Chip {

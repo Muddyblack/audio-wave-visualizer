@@ -4,6 +4,7 @@ import QtQuick.Dialogs
 import ".."
 import "Theme.js" as Theme
 import "../../code/CustomStyles.js" as CustomStyles
+import "../text"
 
 Column {
     id: root
@@ -66,7 +67,7 @@ Column {
             text: root.kindLabel + (root.selected ? " · " + CustomStyles.nameForUrl(root.selected) : "")
             color: Theme.text
             font.family: Theme.fontFamily
-            font.pixelSize: 12
+            font.pixelSize: SystemText.px(12)
             elide: Text.ElideRight
         }
         StudioButton {
@@ -87,7 +88,7 @@ Column {
             text: "QML styles run code with the host’s permissions. Import only files you trust. Keep the file and its assets in a permanent folder; importing remembers their location."
             color: Theme.muted
             font.family: Theme.fontFamily
-            font.pixelSize: 11
+            font.pixelSize: SystemText.px(11)
             wrapMode: Text.WordWrap
         }
         StudioSelect {
@@ -121,7 +122,7 @@ Column {
             visible: root.selected !== ""
             text: root.selected
             color: Theme.dim
-            font.pixelSize: 10
+            font.pixelSize: SystemText.px(10)
             wrapMode: Text.WrapAnywhere
         }
         Loader {
@@ -176,7 +177,7 @@ Column {
             visible: text !== ""
             text: root.message || (root.buttons ? (preview.item as TransportDock)?.customError : root.progressBar ? (preview.item as ProgressBar)?.customError : (preview.item as WaveArea)?.customError) || ""
             color: Theme.muted
-            font.pixelSize: 11
+            font.pixelSize: SystemText.px(11)
             wrapMode: Text.WordWrap
         }
     }

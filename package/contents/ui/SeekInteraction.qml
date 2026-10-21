@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls.Basic as Controls
+import "text"
 
 // Shared interaction surface for every built-in linear progress style.
 Item {
@@ -147,7 +148,7 @@ Item {
             textFormat: Text.PlainText
             text: root.hoverText
             color: root.textColor
-            font.pixelSize: 10
+            font.pixelSize: SystemText.px(10)
             elide: Text.ElideRight
             horizontalAlignment: Text.AlignHCenter
         }
@@ -164,7 +165,7 @@ Item {
             anchors.centerIn: parent
             text: root.jumpDirection > 0 ? "+10s  ››" : "‹‹  −10s"
             color: root.textColor
-            font.pixelSize: 9
+            font.pixelSize: SystemText.px(9)
         }
     }
     Rectangle {
@@ -273,7 +274,7 @@ Item {
                 anchors.centerIn: parent
                 text: parent.index ? "B" : "A"
                 color: "#14151c"
-                font.pixelSize: 8
+                font.pixelSize: SystemText.px(8)
             }
             MouseArea {
                 anchors.fill: parent

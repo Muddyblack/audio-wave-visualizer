@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Controls as QQC
+import "text"
 
 Text {
     id: root
@@ -28,7 +29,7 @@ Text {
     opacity: idle && !secondary ? 0.55 : secondary ? 0.75 : (trackUnknown ? 0.75 : 1)
     font.bold: !secondary && !idle
     font.italic: secondary ? (artist === "" && sourceHint !== "") : trackUnknown
-    font.pixelSize: Math.round((secondary ? titleSize * 0.82 : titleSize) * sizeFactor)
+    font.pixelSize: SystemText.px(Math.round((secondary ? titleSize * 0.82 : titleSize) * sizeFactor))
     // Curve glyphs stay sharp when the desktop host scales the card.
     renderType: Text.CurveRendering ?? Text.QtRendering
     textFormat: Text.PlainText

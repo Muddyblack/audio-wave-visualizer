@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import "../../code/Layouts.js" as Layouts
+import "../text"
 
 // Typographic card: the wave as a faded texture behind an accent meta line, a
 // large title, and a [progress][clock][dock] footer. No cover.
@@ -59,7 +60,7 @@ Item {
                     Layout.fillWidth: !root.centered
                     Layout.maximumWidth: area.width - 11
                     text: [root.view.artist !== "" ? root.view.artist : root.view.sourceHint, (root.cfg.showAlbum ?? false) ? root.view.album : ""].filter(Boolean).join(" · ").toUpperCase() || " "
-                    font.pixelSize: 8
+                    font.pixelSize: SystemText.px(8)
                     font.letterSpacing: 1.6
                     font.italic: root.view.artist === "" && root.view.sourceHint !== ""
                     color: root.view.textColor
@@ -72,7 +73,7 @@ Item {
                 Layout.fillWidth: true
                 text: root.view.idleMessage ? qsTr("Nothing playing") : root.view.trackUnknown ? qsTr("No track metadata") : (root.view.displayTrack || " ")
                 horizontalAlignment: root.centered ? Text.AlignHCenter : Text.AlignLeft
-                font.pixelSize: Math.round(root.ts * 2.1)
+                font.pixelSize: SystemText.px(Math.round(root.ts * 2.1))
                 font.weight: root.view.trackUnknown || root.view.idleMessage ? Font.Normal : Font.ExtraBold
                 font.italic: root.view.trackUnknown
                 font.letterSpacing: -0.02 * Math.round(root.ts * 2.1)
@@ -101,7 +102,7 @@ Item {
                     text: progress.elapsedText
                     font.family: "monospace"
                     font.weight: Font.DemiBold
-                    font.pixelSize: Math.round(root.ts * 1.25)
+                    font.pixelSize: SystemText.px(Math.round(root.ts * 1.25))
                     font.letterSpacing: -0.02 * Math.round(root.ts * 1.25)
                     font.features: {
                         "tnum": 1

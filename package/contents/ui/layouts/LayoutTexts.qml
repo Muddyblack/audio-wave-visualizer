@@ -2,6 +2,7 @@ import QtQuick
 import QtQuick.Layouts
 import ".."
 import "../debug"
+import "../text"
 
 // Player chip, title, artist, album and lyric line at the configured size and
 // alignment. Layouts scale them like the HTML (for example Stacked uses title
@@ -85,7 +86,7 @@ ColumnLayout {
             Layout.minimumWidth: 0
             text: root.view.sourceName.toUpperCase()
             color: root.view.textColor
-            font.pixelSize: root.sourceSize
+            font.pixelSize: SystemText.px(root.sourceSize)
             font.letterSpacing: 1.3
             elide: Text.ElideRight
         }
@@ -101,7 +102,7 @@ ColumnLayout {
                 anchors.centerIn: parent
                 text: root.view.playerCount + " ▾"
                 color: root.view.textColor
-                font.pixelSize: root.sourceSize
+                font.pixelSize: SystemText.px(root.sourceSize)
                 font.letterSpacing: 0.5
             }
             MouseArea {
@@ -186,7 +187,7 @@ ColumnLayout {
         horizontalAlignment: root.alignment
         color: root.view.textColor
         opacity: 0.4
-        font.pixelSize: Math.max(1, Math.round(root.ts * root.albumSize))
+        font.pixelSize: SystemText.px(Math.max(1, Math.round(root.ts * root.albumSize)))
         elide: Text.ElideRight
     }
 
@@ -207,7 +208,7 @@ ColumnLayout {
         font.family: root.cfg.lyricsFontFamily || root.view.defaultFontFamily
         renderType: Text.CurveRendering ?? Text.QtRendering
         textFormat: Text.PlainText
-        font.pixelSize: Math.max(10, Math.min(24, root.cfg.lyricsInlineFontSize ?? Math.round(root.ts * root.lyricSize)))
+        font.pixelSize: SystemText.px(Math.max(10, Math.min(24, root.cfg.lyricsInlineFontSize ?? Math.round(root.ts * root.lyricSize))))
         elide: Text.ElideRight
     }
     Text {
@@ -220,6 +221,6 @@ ColumnLayout {
         color: root.view.textColor
         opacity: 0.75
         font.family: root.cfg.lyricsFontFamily || root.view.defaultFontFamily
-        font.pixelSize: 10
+        font.pixelSize: SystemText.px(10)
     }
 }
