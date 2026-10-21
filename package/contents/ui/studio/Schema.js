@@ -385,6 +385,7 @@ var SECTIONS = [
         { k: "scrollVolume", type: "switch", label: "Scroll to change volume", desc: "Adjusts the system output volume, not the player’s own." }
     ]),
     tab("behavior", "Comfort & power", [
+        { k: "followSystemFont", type: "switch", label: "Follow system font size", desc: "Scale text with Appearance > Fonts. Off keeps the original sizes." },
         { k: "reducedMotion", type: "switch", label: "Reduced motion", desc: "No ripples, sweeps, spins or scrolling text; the wave still reacts." },
         { k: "batterySaver", type: "switch", label: "Battery saver", desc: "On battery: 20 Hz and no glow." },
         { k: "simpleRender", type: "switch", label: "Simple rendering", desc: "Lightweight Canvas path — also the automatic fallback if shaders fail." }

@@ -4,6 +4,7 @@ import org.kde.kirigami as Kirigami
 import org.kde.plasma.private.mpris as Mpris
 import "studio" as Studio
 import "debug"
+import "text"
 import "../code/PresentationSettings.js" as Presentations
 import "../code/SyncWidgets.js" as SyncWidgets
 import "studio/Schema.js" as Schema
@@ -349,6 +350,8 @@ Kirigami.Page {
     property bool cfg_hoverLiftDefault
     property bool cfg_scrollVolume
     property bool cfg_scrollVolumeDefault
+    property bool cfg_followSystemFont
+    property bool cfg_followSystemFontDefault
     property string cfg_gpuDebug
     property string cfg_gpuDebugDefault
     property bool cfg_reducedMotion
@@ -419,6 +422,7 @@ Kirigami.Page {
 
     Component.onCompleted: {
         GpuDebug.apply(cfg_gpuDebug ?? "");
+        SystemText.follow = cfg_followSystemFont;
         // Enumerate outside a binding: Qt can evaluate unrelated getters while
         // listing QObject properties, including draft and defaults themselves.
         configKeys = Object.keys(root).filter(key => key.startsWith("cfg_") && key.endsWith("Default")).map(key => key.slice(4, -7));
@@ -481,6 +485,7 @@ Kirigami.Page {
 
     // Diagnostics only: see debug/GpuDebug.qml.
     onCfg_gpuDebugChanged: GpuDebug.apply(cfg_gpuDebug ?? "")
+    onCfg_followSystemFontChanged: SystemText.follow = cfg_followSystemFont
 
     PlasmaCommandSource {
         id: doctor
