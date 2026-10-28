@@ -1,4 +1,5 @@
 import QtQuick
+import "studio/Translations.js" as Translations
 import QtCore
 import "../code/WaveMath.js" as WaveMath
 
@@ -266,17 +267,17 @@ Item {
 
     readonly property string backendMessage: {
         if (backendCode === "source-unavailable")
-            return typeof i18n === "function" ? i18n("Selected audio source unavailable") : "Selected audio source unavailable";
+            return typeof i18n === "function" ? i18n("Selected audio source unavailable") : Translations.translate("Selected audio source unavailable");
         if (!backendFailed)
             return "";
         if (backendCode === "no-cava")
-            return typeof i18n === "function" ? i18n("cava is not installed") : "cava is not installed";
+            return typeof i18n === "function" ? i18n("cava is not installed") : Translations.translate("cava is not installed");
         if (backendCode === "no-backend")
-            return typeof i18n === "function" ? i18n("No usable audio input (tried %1)", backendDetail.replace(/,/g, ", ")) : "No usable audio input (tried " + backendDetail.replace(/,/g, ", ") + ")";
+            return typeof i18n === "function" ? i18n("No usable audio input (tried %1)", backendDetail.replace(/,/g, ", ")) : Translations.translate("No usable audio input (tried %1)", backendDetail.replace(/,/g, ", "));
         // Windows only (windows/audio_capture.py): nothing plays, so nothing to capture.
         if (backendCode === "no-output")
-            return typeof i18n === "function" ? i18n("No audio output device") : "No audio output device";
-        return typeof i18n === "function" ? i18n("Audio capture stopped") : "Audio capture stopped";
+            return typeof i18n === "function" ? i18n("No audio output device") : Translations.translate("No audio output device");
+        return typeof i18n === "function" ? i18n("Audio capture stopped") : Translations.translate("Audio capture stopped");
     }
 
     // The install command for whatever package manager feeder.sh found. Naming
@@ -299,37 +300,37 @@ Item {
         case "emerge":
             return "sudo emerge media-sound/cava";
         case "nix-env":
-            return "add pkgs.cava to your configuration";
+            return Translations.translate("add pkgs.cava to your configuration");
         default:
-            return "install the 'cava' package";
+            return Translations.translate("install the 'cava' package");
         }
     }
 
     // Second line under the headline: short enough for a 44px tall waveform.
     readonly property string backendAction: {
         if (backendCode === "source-unavailable")
-            return typeof i18n === "function" ? i18n("Start the application or choose a source in Audio settings") : "Start the application or choose a source in Audio settings";
+            return typeof i18n === "function" ? i18n("Start the application or choose a source in Audio settings") : Translations.translate("Start the application or choose a source in Audio settings");
         if (!backendFailed)
             return "";
         if (backendCode === "no-cava")
             return installCommand;
         if (backendCode === "no-backend")
-            return typeof i18n === "function" ? i18n("is PipeWire or PulseAudio running?") : "is PipeWire or PulseAudio running?";
+            return typeof i18n === "function" ? i18n("is PipeWire or PulseAudio running?") : Translations.translate("is PipeWire or PulseAudio running?");
         if (backendCode === "no-output")
-            return typeof i18n === "function" ? i18n("connect speakers, or enable sound in your remote desktop client") : "connect speakers, or enable sound in your remote desktop client";
-        return "see " + vis.resolvedRunDir + "/cava.log";
+            return typeof i18n === "function" ? i18n("connect speakers, or enable sound in your remote desktop client") : Translations.translate("connect speakers, or enable sound in your remote desktop client");
+        return Translations.translate("see %1", vis.resolvedRunDir + "/cava.log");
     }
 
     readonly property string backendHint: {
         if (!backendFailed)
             return "";
         if (backendCode === "no-cava")
-            return installCommand + "\n" + (typeof i18n === "function" ? i18n("The widget picks it up within 30 seconds — no restart needed, unless your package manager only changes PATH for new sessions.") : "The widget picks it up within 30 seconds — no restart needed, unless your package manager only changes PATH for new sessions.");
+            return installCommand + "\n" + (typeof i18n === "function" ? i18n("The widget picks it up within 30 seconds — no restart needed, unless your package manager only changes PATH for new sessions.") : Translations.translate("The widget picks it up within 30 seconds — no restart needed, unless your package manager only changes PATH for new sessions."));
         if (backendCode === "no-backend")
-            return typeof i18n === "function" ? i18n("cava could not capture from any backend. Check that PipeWire or PulseAudio is running, or pin one under Audio Input in the widget settings.") : "cava could not capture from any backend. Check that PipeWire or PulseAudio is running, or pin one under Audio Input in the widget settings.";
+            return typeof i18n === "function" ? i18n("cava could not capture from any backend. Check that PipeWire or PulseAudio is running, or pin one under Audio Input in the widget settings.") : Translations.translate("cava could not capture from any backend. Check that PipeWire or PulseAudio is running, or pin one under Audio Input in the widget settings.");
         if (backendCode === "no-output")
-            return typeof i18n === "function" ? i18n("Windows has no audio output, so nothing is playing that could be visualized. Connect speakers or headphones, enable sound in your remote desktop client, or install a virtual audio device. Picked up within seconds — no restart needed.") : "Windows has no audio output, so nothing is playing that could be visualized. Connect speakers or headphones, enable sound in your remote desktop client, or install a virtual audio device. Picked up within seconds — no restart needed.";
-        return typeof i18n === "function" ? i18n("cava keeps exiting — see %1", vis.resolvedRunDir + "/cava.log") : "cava keeps exiting — see " + vis.resolvedRunDir + "/cava.log";
+            return typeof i18n === "function" ? i18n("Windows has no audio output, so nothing is playing that could be visualized. Connect speakers or headphones, enable sound in your remote desktop client, or install a virtual audio device. Picked up within seconds — no restart needed.") : Translations.translate("Windows has no audio output, so nothing is playing that could be visualized. Connect speakers or headphones, enable sound in your remote desktop client, or install a virtual audio device. Picked up within seconds — no restart needed.");
+        return typeof i18n === "function" ? i18n("cava keeps exiting — see %1", vis.resolvedRunDir + "/cava.log") : Translations.translate("cava keeps exiting — see %1", vis.resolvedRunDir + "/cava.log");
     }
 
     CommandSource {
