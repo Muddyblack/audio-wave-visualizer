@@ -216,7 +216,7 @@ Bileşen masaüstünüzde görünür. **Ayarlar** için sağ tıklayın; durdurm
 
 ### Windows (çalışır; gerçek Windows üzerinde henüz sınanmadı)
 
-PySide6 tabanlı bir katman uygulaması aynı görselleştiriciyi görüntüler; cava yerine WASAPI döngü yakalama kullanır. Nasıl çalıştırıldığı, `make run-windows` komutu ve hangi özelliklerin doğrulanıp doğrulanmadığı için [docs/windows.md](docs/windows.md) belgesine bakın. Windows sürümünde henüz ayar arayüzü yoktur. Pencerenin sürekli altta kalma davranışı yalnızca teorik olarak değerlendirilmiş, gerçek bir Windows bilgisayarında denenmemiştir. Microsoft Store dağıtımı planlanmaktadır; henüz oluşturulmamıştır.
+PySide6 tabanlı bir katman uygulaması aynı görselleştiriciyi görüntüler; cava yerine WASAPI döngü yakalama kullanır. Nasıl çalıştırıldığı, `make run-windows` komutu ve hangi özelliklerin doğrulanıp doğrulanmadığı için [docs/windows.tr.md](docs/windows.tr.md) belgesine bakın. Windows sürümünde henüz ayar arayüzü yoktur. Pencerenin sürekli altta kalma davranışı yalnızca teorik olarak değerlendirilmiş, gerçek bir Windows bilgisayarında denenmemiştir. Microsoft Store dağıtımı planlanmaktadır; henüz oluşturulmamıştır.
 
 ## Nasıl çalışır?
 
