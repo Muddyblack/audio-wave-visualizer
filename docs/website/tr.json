@@ -695,5 +695,7 @@
   "Türkçe arayüze geç": "Türkçe arayüze geç",
   "Behind windows": "Pencerelerin arkasında",
   "Light": "Açık",
-  "Plasma Audio Visualizer — Looks & Studio": "Plasma Audio Visualizer — Görünümler ve Stüdyo"
+  "Plasma Audio Visualizer — Looks & Studio": "Plasma Audio Visualizer — Görünümler ve Stüdyo",
+  "Apply saves local overrides. Reset returns to your configured defaults.": "Uygula, yerel geçersiz kılmaları kaydeder. Sıfırla, yapılandırılmış varsayılanlara döner.",
+  "Audio Visualizer Settings": "Ses Görselleştirici Ayarları"
 }
