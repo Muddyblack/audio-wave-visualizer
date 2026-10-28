@@ -13,7 +13,7 @@
   <a href="https://www.opendesktop.org/p/2359422/">
     <img src="https://img.shields.io/badge/KDE_Store-İndir-1d99f3?style=for-the-badge&logo=kde&logoColor=white" alt="KDE Store'dan indir" />
   </a>
-  <a href="docs/gallery.md">
+  <a href="docs/gallery.tr.md">
     <img src="https://img.shields.io/badge/Önayar_Galerisi-28_Tümünü_Gör-7928ca?style=for-the-badge" alt="Tüm önayarları gör" />
   </a>
 </p>
@@ -71,7 +71,7 @@ Parça bilgileri; seçilen alanları Parça, Katkıda Bulunanlar, Yayın ve Oyna
 
 ## Galeri
 
-Bunlar örnek oynatma ile gerçek QML bileşeninden alınmış görüntülerdir. Galeride [28 önayarın tamamı](docs/gallery.md) bulunur.
+Bunlar örnek oynatma ile gerçek QML bileşeninden alınmış görüntülerdir. Galeride [28 önayarın tamamı](docs/gallery.tr.md) bulunur.
 
 <details open>
   <summary><b>Kartlar</b></summary>
@@ -131,7 +131,7 @@ Açılır kartın sağ alt köşesindeki raptiye düğmesini kullanarak pencerey
 
 Cam ve sıvı efektli açılır pencerelerde **Kartın arkasını bulanıklaştır** seçeneği **Kart / açılır pencere → Görünüm → Kart** altında bulunur. Plasma, tema çerçevesi ve gölgesi gizlenirken KWin'e yuvarlatılmış bir maske sağlar. Gerçek bulanıklık gücünü KWin'in Bulanıklık efekti belirler; duvar kâğıdı kaydırıcısı yalnızca önizlemeyi ayarlar. Yeni açılır pencere tasarımlarında bu özellik varsayılan olarak açıktır; kaydedilmiş seçimler korunur. Bu özellik Plasma'nın dahili SVG arka plan öğesini kullanır; öğe bulunamazsa kenarlıksız bir yedek kullanılır. Bir kabuk yardımcı aracı, oturumun çalışma dizininde her bileşen için tek bir küçük maske dosyası tutar ve yalnızca geometri değiştiğinde günceller. C++ eklentisi, derleme veya ek paket gerekmez.
 
-Ayar stüdyosu hem Plasma hem de Quickshell ayarlarına yerleşik olarak dahildir. Tarayıcı sürümü, kurulum yapmadan aynı görünümleri keşfetmenizi sağlar. [Önayar paylaşımının nasıl çalıştığını](docs/sharing-presets.md) öğrenin.
+Ayar stüdyosu hem Plasma hem de Quickshell ayarlarına yerleşik olarak dahildir. Tarayıcı sürümü, kurulum yapmadan aynı görünümleri keşfetmenizi sağlar. [Önayar paylaşımının nasıl çalıştığını](docs/sharing-presets.tr.md) öğrenin.
 
 ## Gereksinimler
 
@@ -144,7 +144,7 @@ Ayar stüdyosu hem Plasma hem de Quickshell ayarlarına yerleşik olarak dahildi
 
 ## Kurulum
 
-Tüm kurulum seçenekleri ve yapılandırma ayrıntıları için [kurulum kılavuzuna](docs/installation.md) bakın.
+Tüm kurulum seçenekleri ve yapılandırma ayrıntıları için [kurulum kılavuzuna](docs/installation.tr.md) bakın.
 
 ### KDE Plasma
 
@@ -212,7 +212,7 @@ Bu depo kopyasında şu komutu çalıştırın:
 make view-hyprland
 ```
 
-Bileşen masaüstünüzde görünür. **Ayarlar** için sağ tıklayın; durdurmak için terminalde **Ctrl+C** tuşlarına basın. Başlatıcı Caelestia ile birlikte de çalışır. Oturum açılışında başlatma, ekran konumu, NixOS ve bileşen gizliyken ayarlara erişim için [kurulum kılavuzuna](docs/installation.md#hyprland--quickshell) bakın.
+Bileşen masaüstünüzde görünür. **Ayarlar** için sağ tıklayın; durdurmak için terminalde **Ctrl+C** tuşlarına basın. Başlatıcı Caelestia ile birlikte de çalışır. Oturum açılışında başlatma, ekran konumu, NixOS ve bileşen gizliyken ayarlara erişim için [kurulum kılavuzuna](docs/installation.tr.md#hyprland--quickshell) bakın.
 
 ### Windows (çalışır; gerçek Windows üzerinde henüz sınanmadı)
 
@@ -220,7 +220,7 @@ PySide6 tabanlı bir katman uygulaması aynı görselleştiriciyi görüntüler;
 
 ## Nasıl çalışır?
 
-Mimari ve veri akışının ayrıntılı açıklaması için [Mimari Belgeleri](docs/workflow.md) sayfasına bakın.
+Mimari ve veri akışının ayrıntılı açıklaması için [Mimari Belgeleri](docs/workflow.tr.md) sayfasına bakın.
 
 Kısaca: küçük bir kabuk yardımcı aracı (`feeder.sh`), arka planda `cava` çalıştırır ve değişen her kareyi `$XDG_RUNTIME_DIR/audio-wave-widget/` dizinine yazar. QML tarafı bu veriyi yapılandırılan kare hızında aynı süreç içinde okur; birkaç saniye sessizlikten sonra hızı 2 FPS'ye düşürür ve bileşen gizliyken yoklamayı durdurur.
 
@@ -236,11 +236,11 @@ Python lint ve biçimlendirme denetimleri için `make lint-python`; biçimlendir
 
 ## Yardım ve proje belgeleri
 
-- [Kurulum, yapılandırma ve sorun giderme](docs/installation.md)
-- [Tüm önayarların galerisi](docs/gallery.md)
-- [Şarkı sözleri ve karaoke](docs/lyrics.md)
-- [Özel görselleştiriciler](docs/custom-visualizers.md)
-- [Mimari ve geliştirme iş akışı](docs/workflow.md)
+- [Kurulum, yapılandırma ve sorun giderme](docs/installation.tr.md)
+- [Tüm önayarların galerisi](docs/gallery.tr.md)
+- [Şarkı sözleri ve karaoke](docs/lyrics.tr.md)
+- [Özel görselleştiriciler](docs/custom-visualizers.tr.md)
+- [Mimari ve geliştirme iş akışı](docs/workflow.tr.md)
 
 ## Destek
 
