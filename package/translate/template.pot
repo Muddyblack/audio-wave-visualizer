@@ -3,10 +3,10 @@
 # passed to KDE's i18n() function at render time and must be maintained here.
 msgid ""
 msgstr ""
-"Project-Id-Version: Plasma Audio Visualizer 3.1.7\\n"
-"Report-Msgid-Bugs-To: https://github.com/Muddyblack/audio-wave-visualizer/issues\\n"
-"Content-Type: text/plain; charset=UTF-8\\n"
-"Content-Transfer-Encoding: 8bit\\n"
+"Project-Id-Version: Plasma Audio Visualizer 3.1.7\n"
+"Report-Msgid-Bugs-To: https://github.com/Muddyblack/audio-wave-visualizer/issues\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 
 msgid "General"
 msgstr ""
