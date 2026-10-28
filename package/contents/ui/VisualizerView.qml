@@ -125,27 +125,27 @@ Item {
     readonly property var lyricLines: samplePlayback && lyricsEnabled ? [
         {
             time: 0,
-            text: typeof i18n === "function" ? i18n("The light falls softly on the water") : "The light falls softly on the water"
+            text: typeof i18n === "function" ? i18n("The light falls softly on the water") : Translations.translate("The light falls softly on the water")
         },
         {
             time: 8,
-            text: typeof i18n === "function" ? i18n("And the city fades to blue") : "And the city fades to blue"
+            text: typeof i18n === "function" ? i18n("And the city fades to blue") : Translations.translate("And the city fades to blue")
         },
         {
             time: 16,
-            text: typeof i18n === "function" ? i18n("Let the evening drift away") : "Let the evening drift away"
+            text: typeof i18n === "function" ? i18n("Let the evening drift away") : Translations.translate("Let the evening drift away")
         },
         {
             time: 24,
-            text: typeof i18n === "function" ? i18n("There is nothing left to hurry") : "There is nothing left to hurry"
+            text: typeof i18n === "function" ? i18n("There is nothing left to hurry") : Translations.translate("There is nothing left to hurry")
         },
         {
             time: 32,
-            text: typeof i18n === "function" ? i18n("Just a little room to stay") : "Just a little room to stay"
+            text: typeof i18n === "function" ? i18n("Just a little room to stay") : Translations.translate("Just a little room to stay")
         },
         {
             time: 40,
-            text: typeof i18n === "function" ? i18n("With the rhythm of the rain") : "With the rhythm of the rain"
+            text: typeof i18n === "function" ? i18n("With the rhythm of the rain") : Translations.translate("With the rhythm of the rain")
         }
     ] : lyricsLoader.item?.lines ?? []
     readonly property real lyricPosition: lyricsLoader.item?.positionSeconds ?? 0
