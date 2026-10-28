@@ -1990,3 +1990,18 @@ msgstr ""
 
 msgid "see %1"
 msgstr ""
+
+msgid "Applied “%1”"
+msgstr ""
+
+msgid "Applied “%1” · kept your colours"
+msgstr ""
+
+msgid "Saved “%1”"
+msgstr ""
+
+msgid "One look all day. Save it to keep it."
+msgstr ""
+
+msgid "kept your colours"
+msgstr ""
