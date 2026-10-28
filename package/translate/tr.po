@@ -1630,3 +1630,24 @@ msgstr "Yakalama"
 
 msgid "About the project"
 msgstr "Proje Hakkında"
+
+msgid "All categories"
+msgstr "Tüm Kategoriler"
+
+msgid "Glass and Liquid blur the desktop wallpaper when it is available, with tint and highlights above it. Text and artwork stay sharp. Wallpaper blur requires GPU rendering; panels and hosts without a wallpaper source keep the translucent tint."
+msgstr "Cam ve Sıvı stilleri, kullanılabiliyorsa masaüstü duvar kâğıdını bulanıklaştırır; ton ve parlaklık vurguları bunun üzerine uygulanır. Metin ve kapak görseli keskin kalır. Duvar kâğıdı bulanıklığı GPU ile görüntüleme gerektirir; duvar kâğıdı kaynağı olmayan paneller ve ortamlar yarı saydam tonu korur."
+
+msgid "Glass and Liquid are drawn by the widget. Add a blur layer rule for the audio-wave-visualizer namespace to blur behind them — on a Bottom-layer surface this re-blurs the whole monitor on every frame, so keep the frame rate low."
+msgstr "Cam ve Sıvı efektleri bileşen tarafından çizilir. Arkalarını bulanıklaştırmak için audio-wave-visualizer ad alanına bir bulanıklık katmanı kuralı ekleyin. Alt katmandaki bir yüzeyde her karede tüm monitör yeniden bulanıklaşacağından kare hızını düşük tutun."
+
+msgid "In a panel the widget shows this pill; clicking it opens the full card as a popup."
+msgstr "Bileşen panelde bu hap biçimli görünümü gösterir; tıklamak tam kartı açılır pencere olarak açar."
+
+msgid "Add hyprland/PanelPill.qml to a Quickshell bar, or use run.sh --waybar for a Waybar custom module."
+msgstr "hyprland/PanelPill.qml dosyasını bir Quickshell çubuğuna ekleyin veya Waybar özel modülü için run.sh --waybar komutunu kullanın."
+
+msgid "Plasma places desktop widgets by dragging them in edit mode, and panel widgets inside the panel, so there is nothing to set here."
+msgstr "Plasma’da masaüstü bileşenleri düzenleme kipinde sürüklenerek, panel bileşenleri ise panel içinde konumlandırılır. Bu nedenle burada ayarlanacak bir şey yoktur."
+
+msgid "Where the desktop widget sits on your screens."
+msgstr "Masaüstü bileşeninin ekranlarınızdaki konumu."
