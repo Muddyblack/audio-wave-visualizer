@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import "../studio/Translations.js" as Translations
 import QtQuick.Controls.Basic as Controls
 import "../../code/Layouts.js" as Layouts
 import ".." as Shared
@@ -195,9 +196,9 @@ FocusScope {
         Controls.ToolButton {
             objectName: "lyricsOffsetMinus"
             text: "−"
-            Accessible.name: qsTr("Delay lyrics by 100 milliseconds")
+            Accessible.name: (typeof i18n === "function" ? i18n("Delay lyrics by 100 milliseconds") : Translations.translate("Delay lyrics by 100 milliseconds"))
             Controls.ToolTip.visible: hovered
-            Controls.ToolTip.text: qsTr("Delay lyrics 100 ms (−)")
+            Controls.ToolTip.text: (typeof i18n === "function" ? i18n("Delay lyrics 100 ms (−)") : Translations.translate("Delay lyrics 100 ms (−)"))
             onClicked: {
                 root.nudge(-1);
                 root.forceActiveFocus();
@@ -206,9 +207,9 @@ FocusScope {
         Controls.ToolButton {
             objectName: "lyricsOffsetReset"
             text: ((root.cfg.lyricsOffset ?? 0) >= 0 ? "+" : "") + Math.round((root.cfg.lyricsOffset ?? 0) * 1000) + " ms"
-            Accessible.name: qsTr("Reset lyrics timing offset")
+            Accessible.name: (typeof i18n === "function" ? i18n("Reset lyrics timing offset") : Translations.translate("Reset lyrics timing offset"))
             Controls.ToolTip.visible: hovered
-            Controls.ToolTip.text: qsTr("Reset timing; positive values show lyrics earlier")
+            Controls.ToolTip.text: (typeof i18n === "function" ? i18n("Reset timing; positive values show lyrics earlier") : Translations.translate("Reset timing; positive values show lyrics earlier"))
             onClicked: {
                 root.setOffset(0);
                 root.forceActiveFocus();
@@ -217,9 +218,9 @@ FocusScope {
         Controls.ToolButton {
             objectName: "lyricsOffsetPlus"
             text: "+"
-            Accessible.name: qsTr("Advance lyrics by 100 milliseconds")
+            Accessible.name: (typeof i18n === "function" ? i18n("Advance lyrics by 100 milliseconds") : Translations.translate("Advance lyrics by 100 milliseconds"))
             Controls.ToolTip.visible: hovered
-            Controls.ToolTip.text: qsTr("Advance lyrics 100 ms (+)")
+            Controls.ToolTip.text: (typeof i18n === "function" ? i18n("Advance lyrics 100 ms (+)") : Translations.translate("Advance lyrics 100 ms (+)"))
             onClicked: {
                 root.nudge(1);
                 root.forceActiveFocus();
@@ -233,7 +234,7 @@ FocusScope {
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottomMargin: timingControls.height + 8
-        text: qsTr("Follow current line")
+        text: (typeof i18n === "function" ? i18n("Follow current line") : Translations.translate("Follow current line"))
         onClicked: {
             root.following = true;
             root.followCurrent();
@@ -250,15 +251,15 @@ FocusScope {
                 return root.view.lyricNotice;
             switch (root.view.lyricStatus) {
             case "idle":
-                return qsTr("Play a song to see its lyrics");
+                return (typeof i18n === "function" ? i18n("Play a song to see its lyrics") : Translations.translate("Play a song to see its lyrics"));
             case "metadata":
-                return qsTr("Waiting for the song title and artist…");
+                return (typeof i18n === "function" ? i18n("Waiting for the song title and artist…") : Translations.translate("Waiting for the song title and artist…"));
             case "loading":
-                return qsTr("Finding lyrics…");
+                return (typeof i18n === "function" ? i18n("Finding lyrics…") : Translations.translate("Finding lyrics…"));
             case "error":
-                return qsTr("Couldn't load lyrics");
+                return (typeof i18n === "function" ? i18n("Couldn't load lyrics") : Translations.translate("Couldn't load lyrics"));
             default:
-                return qsTr("No synced lyrics available for this song");
+                return (typeof i18n === "function" ? i18n("No synced lyrics available for this song") : Translations.translate("No synced lyrics available for this song"));
             }
         }
         textFormat: Text.PlainText
