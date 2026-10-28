@@ -1960,3 +1960,9 @@ msgstr ""
 
 msgid "No synced lyrics available for this song"
 msgstr ""
+
+msgid "Start music in any player"
+msgstr ""
+
+msgid "No media"
+msgstr ""
