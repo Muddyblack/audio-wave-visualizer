@@ -1540,3 +1540,93 @@ msgstr "%1 GitHub’da Aç"
 
 msgid "Support on %1"
 msgstr "%1 üzerinden destek ol"
+
+msgid "Looks"
+msgstr "Görünümler"
+
+msgid "Orbit around the cover"
+msgstr "Kapak Çevresinde Yörünge"
+
+msgid "Progress bar"
+msgstr "İlerleme Çubuğu"
+
+msgid "Panel buttons"
+msgstr "Panel Düğmeleri"
+
+msgid "Playback buttons"
+msgstr "Oynatma Düğmeleri"
+
+msgid "Button colours"
+msgstr "Düğme Renkleri"
+
+msgid "Arrangement"
+msgstr "Yerleşim"
+
+msgid "Track text"
+msgstr "Parça Metni"
+
+msgid "Effects"
+msgstr "Efektler"
+
+msgid "When there is no cover"
+msgstr "Kapak Görseli Olmadığında"
+
+msgid "On the card"
+msgstr "Kart Üzerinde"
+
+msgid "Typography"
+msgstr "Tipografi"
+
+msgid "Highlight and contrast"
+msgstr "Vurgu ve Karşıtlık"
+
+msgid "Reading layout"
+msgstr "Okuma Düzeni"
+
+msgid "Following playback"
+msgstr "Oynatmayı İzleme"
+
+msgid "On hover"
+msgstr "Üzerine Gelindiğinde"
+
+msgid "Background"
+msgstr "Arka Plan"
+
+msgid "Glass colour"
+msgstr "Cam Rengi"
+
+msgid "Liquid glass"
+msgstr "Sıvı Cam"
+
+msgid "Depth & finish"
+msgstr "Derinlik ve Yüzey"
+
+msgid "Colour mode & visualizer light"
+msgstr "Renk Kipi ve Görselleştirici Işığı"
+
+msgid "Progress colour"
+msgstr "İlerleme Rengi"
+
+msgid "Panel placement"
+msgstr "Panel Yerleşimi"
+
+msgid "When nothing plays"
+msgstr "Hiçbir Şey Çalmadığında"
+
+msgid "When paused"
+msgstr "Duraklatıldığında"
+
+msgid "Interaction"
+msgstr "Etkileşim"
+
+msgid "Comfort & power"
+msgstr "Konfor ve Güç"
+
+msgid "Connection"
+msgstr "Bağlantı"
+
+msgid "Capture"
+msgstr "Yakalama"
+
+msgid "About the project"
+msgstr "Proje Hakkında"
