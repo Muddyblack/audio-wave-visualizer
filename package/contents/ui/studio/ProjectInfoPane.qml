@@ -83,7 +83,7 @@ Column {
             sourceSize.width: 128
             sourceSize.height: 128
             fillMode: Image.PreserveAspectFit
-            Accessible.name: "Plasma Audio Visualizer project icon"
+            Accessible.name: (typeof i18n === "function" ? i18n("Plasma Audio Visualizer project icon") : "Plasma Audio Visualizer project icon")
         }
         Column {
             width: parent.width - 78
@@ -125,7 +125,7 @@ Column {
                 }
                 StudioButton {
                     anchors.verticalCenter: parent.verticalCenter
-                    text: "By " + Project.author + " ↗"
+                    text: (typeof i18n === "function" ? i18n("By %1 ↗", Project.author) : "By " + Project.author + " ↗")
                     compact: true
                     onClicked: Qt.openUrlExternally(Project.profile)
                 }
@@ -134,7 +134,7 @@ Column {
     }
     Text {
         width: parent.width
-        text: "An open-source music visualizer for Plasma and Hyprland. Explore the project, get updates, or help improve it."
+        text: (typeof i18n === "function" ? i18n("An open-source music visualizer for Plasma and Hyprland. Explore the project, get updates, or help improve it.") : "An open-source music visualizer for Plasma and Hyprland. Explore the project, get updates, or help improve it.")
         wrapMode: Text.WordWrap
         color: Theme.muted
         font.family: Theme.fontFamily
@@ -154,7 +154,7 @@ Column {
             width: parent.width - 26
             spacing: 8
             Text {
-                text: "Installed version · " + info.currentVersion
+                text: (typeof i18n === "function" ? i18n("Installed version · %1", info.currentVersion) : "Installed version · " + info.currentVersion)
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
@@ -162,7 +162,7 @@ Column {
             }
             Text {
                 objectName: "latestVersionLabel"
-                text: "Latest stable release · " + (info.latestVersion || "—")
+                text: (typeof i18n === "function" ? i18n("Latest stable release · %1", info.latestVersion || "—") : "Latest stable release · " + (info.latestVersion || "—"))
                 color: Theme.muted
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
@@ -185,7 +185,7 @@ Column {
                     onClicked: Qt.openUrlExternally(Project.releasesPage)
                 }
                 StudioButton {
-                    text: "Check again"
+                    text: (typeof i18n === "function" ? i18n("Check again") : "Check again")
                     compact: true
                     enabled: info.onlineEnabled && info.canRefresh
                     onClicked: info.client.refresh()
@@ -259,7 +259,7 @@ Column {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 3
             Text {
-                text: "License · " + Project.license
+                text: (typeof i18n === "function" ? i18n("License · %1", Project.license) : "License · " + Project.license)
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
@@ -282,7 +282,7 @@ Column {
             width: parent.width
             spacing: 10
             Text {
-                text: "Contributors"
+                text: (typeof i18n === "function" ? i18n("Contributors") : "Contributors")
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: 14
@@ -290,7 +290,7 @@ Column {
             }
             StudioButton {
                 anchors.verticalCenter: parent.verticalCenter
-                text: "See all on GitHub ↗"
+                text: (typeof i18n === "function" ? i18n("See all on GitHub ↗") : "See all on GitHub ↗")
                 compact: true
                 onClicked: Qt.openUrlExternally(Project.contributorsPage)
             }
@@ -359,7 +359,7 @@ Column {
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        Accessible.name: "Open " + contributorCard.modelData.login + " on GitHub"
+                        Accessible.name: (typeof i18n === "function" ? i18n("Open %1 on GitHub", contributorCard.modelData.login) : "Open " + contributorCard.modelData.login + " on GitHub")
                         onClicked: Qt.openUrlExternally(contributorCard.modelData.profile)
                     }
                 }
@@ -370,7 +370,7 @@ Column {
         width: parent.width
         spacing: 8
         Text {
-            text: "Support the project"
+            text: (typeof i18n === "function" ? i18n("Support the project") : "Support the project")
             color: Theme.text
             font.family: Theme.fontFamily
             font.pixelSize: 14
@@ -418,7 +418,7 @@ Column {
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        Accessible.name: "Support on " + parent.modelData.label
+                        Accessible.name: (typeof i18n === "function" ? i18n("Support on %1", parent.modelData.label) : "Support on " + parent.modelData.label)
                         onClicked: Qt.openUrlExternally(parent.modelData.url)
                     }
                 }
@@ -429,12 +429,12 @@ Column {
         width: parent.width
         spacing: 8
         StudioButton {
-            text: "View source on GitHub ↗"
+            text: (typeof i18n === "function" ? i18n("View source on GitHub ↗") : "View source on GitHub ↗")
             compact: true
             onClicked: Qt.openUrlExternally(Project.repository)
         }
         StudioButton {
-            text: "Report an issue ↗"
+            text: (typeof i18n === "function" ? i18n("Report an issue ↗") : "Report an issue ↗")
             compact: true
             onClicked: Qt.openUrlExternally(Project.repository + "/issues")
         }
