@@ -1843,3 +1843,120 @@ msgstr ""
 
 msgid "Audio Visualizer Settings"
 msgstr ""
+
+msgid "Direct YouTube stream"
+msgstr ""
+
+msgid "Player published no title"
+msgstr ""
+
+msgid "Writers"
+msgstr ""
+
+msgid "Album tracks"
+msgstr ""
+
+msgid "Disc"
+msgstr ""
+
+msgid "Released"
+msgstr ""
+
+msgid "Type"
+msgstr ""
+
+msgid "Album"
+msgstr ""
+
+msgid "Track"
+msgstr ""
+
+msgid "Source"
+msgstr ""
+
+msgid "Playback"
+msgstr ""
+
+msgid "Choose a recording…"
+msgstr ""
+
+msgid "Retry lookup"
+msgstr ""
+
+msgid "Up Next"
+msgstr ""
+
+msgid "Toggle upcoming tracks"
+msgstr ""
+
+msgid "Queue unavailable in preview"
+msgstr ""
+
+msgid "Loading queue…"
+msgstr ""
+
+msgid "This player does not share its queue"
+msgstr ""
+
+msgid "Current track is outside the shared queue"
+msgstr ""
+
+msgid "Queue unavailable. Check that the player is running and busctl is installed."
+msgstr ""
+
+msgid "Player playlist order • shuffle may differ"
+msgstr ""
+
+msgid "No upcoming tracks"
+msgstr ""
+
+msgid "Unknown track"
+msgstr ""
+
+msgid "Showing the next 50 tracks"
+msgstr ""
+
+msgid "No track metadata"
+msgstr ""
+
+msgid "Close artwork"
+msgstr ""
+
+msgid "Song details & credits"
+msgstr ""
+
+msgid "Online information is off. Enable it in Settings → Track info for catalog details and credits."
+msgstr ""
+
+msgid "Delay lyrics by 100 milliseconds"
+msgstr ""
+
+msgid "Delay lyrics 100 ms (−)"
+msgstr ""
+
+msgid "Reset lyrics timing offset"
+msgstr ""
+
+msgid "Reset timing; positive values show lyrics earlier"
+msgstr ""
+
+msgid "Advance lyrics by 100 milliseconds"
+msgstr ""
+
+msgid "Advance lyrics 100 ms (+)"
+msgstr ""
+
+msgid "Play a song to see its lyrics"
+msgstr ""
+
+msgid "Waiting for the song title and artist…"
+msgstr ""
+
+msgid "Finding lyrics…"
+msgstr ""
+
+msgid "Couldn't load lyrics"
+msgstr ""
+
+msgid "No synced lyrics available for this song"
+msgstr ""
