@@ -74,6 +74,8 @@
             program = toString (pkgs.writeShellScript "pack" ''
               set -euo pipefail
               here="$PWD"
+              export PATH=${pkgs.gettext}/bin:"$PATH"
+              sh "$here/package/translate/build.sh"
               ver="$(grep -oE '"Version":[[:space:]]*"[^"]+"' "$here/package/metadata.json" | head -1 | sed -E 's/.*"([^"]+)"$/\1/')"
               name="$(basename "$here")"
               out="$here/$name-$ver.plasmoid"
@@ -118,6 +120,7 @@
               kdePackages.plasma-sdk
               pre-commit
               zip
+              gettext
               # tests/test_feeder.py also streams frames through the awks
               # Debian/Ubuntu (mawk) and BSD-style systems (nawk) ship.
               mawk
