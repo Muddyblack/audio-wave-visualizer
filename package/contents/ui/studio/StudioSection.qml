@@ -21,7 +21,12 @@ Column {
 
     Text {
         visible: !sectionRoot.librarySection
-        text: (typeof i18n === "function" ? i18n(sectionRoot.sectionData.title) : sectionRoot.sectionData.title).toUpperCase()
+        text: {
+            const source = sectionRoot.sectionData.title;
+            const translated = typeof i18n === "function" ? i18n(source) : source;
+            const heading = translated !== source ? translated.replace(/i/g, "İ").replace(/ı/g, "I") : translated;
+            return heading.toUpperCase();
+        }
         color: Theme.sectionTitle
         font.family: Theme.fontFamily
         font.pixelSize: 11
