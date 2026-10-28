@@ -16,19 +16,7 @@ const queryAll = (s, r = document) => [...r.querySelectorAll(s)];
     const templateKeys = Object.keys(messages).filter(key => /%\d+/.test(key)).sort((a, b) => b.length - a.length);
     for (const key of templateKeys) {
       const parts = key.split(/(%\d+)/g);
-      const pattern = parts.map(part => /^%\d+$/.test(part) ? '(.+?)' : part.replace(/[.*+?^$()|[\]\\]/g, '\\  function translateText(node) {
-    if (!node || !node.parentElement || node.parentElement.closest(ignored)) return;
-    const current = node.nodeValue;
-    const state = textState.get(node);
-    let source = state && current === state.rendered ? state.source : current.trim();
-    if (!source) return;
-    const leading = current.match(/^\s*/)?.[0] || '';
-    const trailing = current.match(/\s*$/)?.[0] || '';
-    const translated = locale === 'tr' ? (messages[source] || source) : source;
-    const rendered = leading + translated + trailing;
-    textState.set(node, { source, rendered });
-    if (current !== rendered) node.nodeValue = rendered;
-  }')).join('');
+      const pattern = parts.map(part => /^%\d+$/.test(part) ? '(.+?)' : part.replace(/[.*+?^$()|[\]\\]/g, '\\$&')).join('');
       const re = new RegExp(pattern, 'g');
       result = result.replace(re, (...args) => {
         let translated = messages[key];
