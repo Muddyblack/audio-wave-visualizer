@@ -84,7 +84,7 @@ Column {
         spacing: 8
         Text {
             width: parent.width
-            text: "QML styles run code with the host’s permissions. Import only files you trust. Keep the file and its assets in a permanent folder; importing remembers their location."
+            text: (typeof i18n === "function" ? i18n("QML styles run code with the host’s permissions. Import only files you trust. Keep the file and its assets in a permanent folder; importing remembers their location.") : "QML styles run code with the host’s permissions. Import only files you trust. Keep the file and its assets in a permanent folder; importing remembers their location.")
             color: Theme.muted
             font.family: Theme.fontFamily
             font.pixelSize: 11
@@ -101,16 +101,16 @@ Column {
             width: parent.width
             spacing: 8
             StudioButton {
-                text: "Import QML…"
+                text: (typeof i18n === "function" ? i18n("Import QML…") : "Import QML…")
                 areaName: root.buttons ? "importCustomButtons" : root.progressBar ? "importCustomProgressBar" : "importCustomVisualizer"
                 onClicked: fileDialog.open()
             }
             StudioButton {
-                text: "Try example"
+                text: (typeof i18n === "function" ? i18n("Try example") : "Try example")
                 onClicked: root.importFile(Qt.resolvedUrl(root.buttons ? "../../examples/MinimalButtons.qml" : root.progressBar ? "../../examples/GradientProgress.qml" : "../../examples/PulseBars.qml"))
             }
             StudioButton {
-                text: "Remove"
+                text: (typeof i18n === "function" ? i18n("Remove") : "Remove")
                 areaName: root.buttons ? "removeCustomButtons" : root.progressBar ? "removeCustomProgressBar" : "removeCustomVisualizer"
                 enabled: root.selected !== ""
                 onClicked: root.removeSelected()
