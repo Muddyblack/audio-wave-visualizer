@@ -1,4 +1,5 @@
 import QtQuick
+import "Translations.js" as Translations
 import ".." as Shared
 import "Theme.js" as Theme
 import "ProjectInfo.js" as Project
@@ -83,7 +84,7 @@ Column {
             sourceSize.width: 128
             sourceSize.height: 128
             fillMode: Image.PreserveAspectFit
-            Accessible.name: (typeof i18n === "function" ? i18n("Plasma Audio Visualizer project icon") : "Plasma Audio Visualizer project icon")
+            Accessible.name: (typeof i18n === "function" ? i18n("Plasma Audio Visualizer project icon") : Translations.translate("Plasma Audio Visualizer project icon"))
         }
         Column {
             width: parent.width - 78
@@ -125,7 +126,7 @@ Column {
                 }
                 StudioButton {
                     anchors.verticalCenter: parent.verticalCenter
-                    text: (typeof i18n === "function" ? i18n("By %1 ↗", Project.author) : "By " + Project.author + " ↗")
+                    text: (typeof i18n === "function" ? i18n("By %1 ↗", Project.author) : Translations.translate("By %1 ↗", Project.author))
                     compact: true
                     onClicked: Qt.openUrlExternally(Project.profile)
                 }
@@ -134,7 +135,7 @@ Column {
     }
     Text {
         width: parent.width
-        text: (typeof i18n === "function" ? i18n("An open-source music visualizer for Plasma and Hyprland. Explore the project, get updates, or help improve it.") : "An open-source music visualizer for Plasma and Hyprland. Explore the project, get updates, or help improve it.")
+        text: (typeof i18n === "function" ? i18n("An open-source music visualizer for Plasma and Hyprland. Explore the project, get updates, or help improve it.") : Translations.translate("An open-source music visualizer for Plasma and Hyprland. Explore the project, get updates, or help improve it."))
         wrapMode: Text.WordWrap
         color: Theme.muted
         font.family: Theme.fontFamily
@@ -154,7 +155,7 @@ Column {
             width: parent.width - 26
             spacing: 8
             Text {
-                text: (typeof i18n === "function" ? i18n("Installed version · %1", info.currentVersion) : "Installed version · " + info.currentVersion)
+                text: (typeof i18n === "function" ? i18n("Installed version · %1", info.currentVersion) : Translations.translate("Installed version · %1", info.currentVersion))
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
@@ -162,7 +163,7 @@ Column {
             }
             Text {
                 objectName: "latestVersionLabel"
-                text: (typeof i18n === "function" ? i18n("Latest stable release · %1", info.latestVersion || "—") : "Latest stable release · " + (info.latestVersion || "—"))
+                text: (typeof i18n === "function" ? i18n("Latest stable release · %1", info.latestVersion || "—") : Translations.translate("Latest stable release · %1", info.latestVersion || "—"))
                 color: Theme.muted
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
@@ -185,7 +186,7 @@ Column {
                     onClicked: Qt.openUrlExternally(Project.releasesPage)
                 }
                 StudioButton {
-                    text: (typeof i18n === "function" ? i18n("Check again") : "Check again")
+                    text: (typeof i18n === "function" ? i18n("Check again") : Translations.translate("Check again"))
                     compact: true
                     enabled: info.onlineEnabled && info.canRefresh
                     onClicked: info.client.refresh()
@@ -259,7 +260,7 @@ Column {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 3
             Text {
-                text: (typeof i18n === "function" ? i18n("License · %1", Project.license) : "License · " + Project.license)
+                text: (typeof i18n === "function" ? i18n("License · %1", Project.license) : Translations.translate("License · %1", Project.license))
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
@@ -282,7 +283,7 @@ Column {
             width: parent.width
             spacing: 10
             Text {
-                text: (typeof i18n === "function" ? i18n("Contributors") : "Contributors")
+                text: (typeof i18n === "function" ? i18n("Contributors") : Translations.translate("Contributors"))
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: 14
