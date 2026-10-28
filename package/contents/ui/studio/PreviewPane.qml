@@ -189,7 +189,7 @@ Rectangle {
         spacing: 8
         Chip {
             ChipLabel {
-                text: "WALLPAPER"
+                text: (typeof i18n === "function" ? i18n("WALLPAPER") : "WALLPAPER")
             }
             Repeater {
                 model: Schema.BACKDROPS
@@ -238,7 +238,7 @@ Rectangle {
         Chip {
             visible: !pane.compact && !pane.liveMode
             ChipLabel {
-                text: "STATE"
+                text: (typeof i18n === "function" ? i18n("STATE") : "STATE")
             }
             Repeater {
                 model: Schema.STATES
@@ -291,7 +291,7 @@ Rectangle {
         }
         Chip {
             ChipLabel {
-                text: "ACCENT"
+                text: (typeof i18n === "function" ? i18n("ACCENT") : "ACCENT")
             }
             Repeater {
                 model: ["#3daee9", "#a855f7", "#ff6fb0", "#f5b26b", "#34d399"]
