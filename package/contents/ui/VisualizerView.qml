@@ -298,9 +298,9 @@ Item {
         let name = urlParts ? urlParts[2] : s.split("?")[0];
         try {
             name = decodeURIComponent(name);
-        } catch (e) {
-            // malformed %-escape: keep the raw form
-        }
+        } catch (e)
+        // malformed %-escape: keep the raw form
+        {}
         name = (name.split("/").filter(part => part !== "").pop() || "").replace(/\.[a-z0-9]{1,5}$/i, "").replace(/[_+]+/g, " ").trim();
         // A filename carries information; a generic stream endpoint does not.
         return /^(videoplayback|playback|stream|index|master|manifest|playlist)$/i.test(name) ? "" : name;

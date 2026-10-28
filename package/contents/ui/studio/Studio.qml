@@ -70,7 +70,7 @@ Rectangle {
                 const choices = JSON.parse(data["stdout"] || "[]");
                 if (choices.length)
                     studioRoot.discoveredSources = choices;
-            } catch (error) { /* Keep the saved selection during discovery failures. */ }
+            } catch (error) /* Keep the saved selection during discovery failures. */ {}
         }
     }
     Timer {

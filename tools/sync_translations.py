@@ -39,7 +39,9 @@ def _unquote(chunk):
 
 
 def _quote(text):
-    return '"' + text.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n") + '"'
+    return (
+        '"' + text.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n") + '"'
+    )
 
 
 def read_po(path):
@@ -73,10 +75,12 @@ def read_po(path):
 
 
 def render_pot(entries):
-    version = json.loads((REPO / "package/metadata.json").read_text(encoding="utf-8"))["KPlugin"]["Version"]
+    version = json.loads((REPO / "package/metadata.json").read_text(encoding="utf-8"))[
+        "KPlugin"
+    ]["Version"]
     blocks = [POT_HEADER.replace("{version}", version)]
     for msgid, _ in entries:
-        blocks.append(f"msgid {_quote(msgid)}\nmsgstr \"\"\n")
+        blocks.append(f'msgid {_quote(msgid)}\nmsgstr ""\n')
     return "\n".join(blocks)
 
 
@@ -103,10 +107,17 @@ def main():
         POT: render_pot(entries),
         JS: render_js(entries, JS.read_text(encoding="utf-8")),
     }
-    stale = [path for path, text in outputs.items() if path.read_text(encoding="utf-8") != text]
+    stale = [
+        path
+        for path, text in outputs.items()
+        if path.read_text(encoding="utf-8") != text
+    ]
     if check:
         for path in stale:
-            print(f"stale: {path.relative_to(REPO)} (run tools/sync_translations.py)", file=sys.stderr)
+            print(
+                f"stale: {path.relative_to(REPO)} (run tools/sync_translations.py)",
+                file=sys.stderr,
+            )
         sys.exit(1 if stale else 0)
     for path in stale:
         path.write_text(outputs[path], encoding="utf-8")

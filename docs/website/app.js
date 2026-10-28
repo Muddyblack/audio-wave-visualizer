@@ -1,112 +1,12 @@
 'use strict';
 const $ = (s, r = document) => r.querySelector(s);
-const queryAll = (s, r = document) => [...r.querySelectorAll(s)];
-
-/* ─── browser-language localization ─────────────────────────────── */
-(function initWebLocalization() {
-  const toggle = document.getElementById('languageToggle');
-  let locale = (navigator.languages || [navigator.language || 'en']).some(l => /^tr(?:-|$)/i.test(l)) ? 'tr' : 'en';
-  let messages = {};
-  const textState = new WeakMap();
-  const attrState = new WeakMap();
-  const ignored = 'SCRIPT,STYLE,CODE,PRE,NOSCRIPT';
-  let templateMatchers = null;
-  let phraseKeys = null;
-  function translateValue(source) {
-    if (messages[source]) return messages[source];
-    if (!templateMatchers) {
-      templateMatchers = Object.keys(messages).filter(key => /%\d+/.test(key)).sort((a, b) => b.length - a.length).map(key => {
-        const parts = key.split(/(%\d+)/g);
-        const pattern = parts.map(part => /^%\d+$/.test(part) ? '(.+?)' : part.replace(/[.*+?^$()|[\]\\]/g, '\\$&')).join('');
-        return { key, regex: new RegExp(pattern, 'g') };
-      });
-      phraseKeys = Object.keys(messages).filter(key => key.length >= 10 && !/%\d+/.test(key)).sort((a, b) => b.length - a.length);
-    }
-    let result = source;
-    for (const item of templateMatchers) {
-      item.regex.lastIndex = 0;
-      result = result.replace(item.regex, (...args) => {
-        let translated = messages[item.key];
-        const captures = args.slice(1, -2);
-        captures.forEach((value, index) => { translated = translated.replace('%' + (index + 1), value); });
-        return translated;
-      });
-    }
-    for (const key of phraseKeys) {
-      if (result.includes(key)) result = result.split(key).join(messages[key]);
-    }
-    return result;
-  }
-  function translateText(node) {
-    if (!node || !node.parentElement || node.parentElement.closest(ignored)) return;
-    const current = node.nodeValue;
-    const state = textState.get(node);
-    let source = state && current === state.rendered ? state.source : current.trim();
-    if (!source) return;
-    const leading = current.match(/^\s*/)?.[0] || '';
-    const trailing = current.match(/\s*$/)?.[0] || '';
-    const translated = locale === 'tr' ? translateValue(source) : source;
-    const rendered = leading + translated + trailing;
-    textState.set(node, { source, rendered });
-    if (current !== rendered) node.nodeValue = rendered;
-  }
-  function translateAttributes(el) {
-    if (!el || el.matches(ignored)) return;
-    for (const name of ['title', 'aria-label', 'placeholder']) {
-      if (!el.hasAttribute(name)) continue;
-      const current = el.getAttribute(name);
-      let states = attrState.get(el);
-      if (!states) { states = {}; attrState.set(el, states); }
-      const previous = states[name];
-      const source = previous && current === previous.rendered ? previous.source : current;
-      const translated = locale === 'tr' ? translateValue(source) : source;
-      states[name] = { source, rendered: translated };
-      if (current !== translated) el.setAttribute(name, translated);
-    }
-  }
-  function localizeTree(root) {
-    if (!root) return;
-    if (root.nodeType === Node.TEXT_NODE) { translateText(root); return; }
-    if (root.nodeType !== Node.ELEMENT_NODE && root !== document.body) return;
-    if (root.nodeType === Node.ELEMENT_NODE) translateAttributes(root);
-    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-    while (walker.nextNode()) translateText(walker.currentNode);
-    if (root.querySelectorAll) root.querySelectorAll('*').forEach(translateAttributes);
-  }
-  function applyLocale() {
-    document.documentElement.lang = locale;
-    if (toggle) {
-      toggle.textContent = locale === 'tr' ? 'English' : 'Türkçe';
-      toggle.setAttribute('aria-label', locale === 'tr' ? 'Switch language to English' : 'Dili Türkçe yap');
-      toggle.setAttribute('title', locale === 'tr' ? 'Switch to English' : 'Türkçe arayüze geç');
-    }
-    localizeTree(document.head);
-    localizeTree(document.body);
-  }
-  fetch(new URL('tr.json', document.currentScript.src), { cache: 'no-cache' })
-    .then(response => { if (!response.ok) throw new Error('Translation catalog unavailable'); return response.json(); })
-    .then(catalog => {
-      messages = catalog;
-      applyLocale();
-      const observer = new MutationObserver(records => {
-        for (const record of records) {
-          if (record.type === 'characterData') translateText(record.target);
-          else if (record.type === 'attributes') translateAttributes(record.target);
-          else record.addedNodes.forEach(node => localizeTree(node));
-        }
-      });
-      observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['title', 'aria-label', 'placeholder'] });
-      if (toggle) toggle.addEventListener('click', () => { locale = locale === 'tr' ? 'en' : 'tr'; applyLocale(); });
-    })
-    .catch(error => console.warn('Web localization could not be loaded:', error));
-})();
-
-queryAll('[data-project-version]').forEach(el => { el.textContent = 'v' + ProjectManifest.version; });
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+$$('[data-project-version]').forEach(el => { el.textContent = 'v' + ProjectManifest.version; });
 
 /* ─── page tab switcher ─── */
 (function() {
-  const pages = queryAll('main div[data-page]');
-  const navLinks = queryAll('nav.jump a[data-page]');
+  const pages = $$('main div[data-page]');
+  const navLinks = $$('nav.jump a[data-page]');
   function showPage(id) {
     if (id !== 'studio') stopLiveAudio();
     pages.forEach(p => { p.hidden = p.dataset.page !== id; });
@@ -118,7 +18,7 @@ queryAll('[data-project-version]').forEach(el => { el.textContent = 'v' + Projec
     requestAnimationFrame(() => { fitStage(); fitPresets(); fitHero(); });
   }
   window.showPage = showPage;
-  queryAll('a[data-page]').forEach(a => {
+  $$('a[data-page]').forEach(a => {
     a.addEventListener('click', e => { e.preventDefault(); showPage(a.dataset.page); });
   });
 })();
@@ -536,8 +436,8 @@ let registry = [];
 const memo = new Map();
 function mount(container, html, cfg) {
   container.innerHTML = html;
-  queryAll('.w', container).forEach(el => { el._studioState = cfg.getS; el._studioStatus = cfg.getStatus; });
-  queryAll('canvas[data-c]', container).forEach((el, i) => registry.push({ el, kind: el.dataset.c, ...cfg, key: `${cfg.key}:${el.dataset.c}:${i}` }));
+  $$('.w', container).forEach(el => { el._studioState = cfg.getS; el._studioStatus = cfg.getStatus; });
+  $$('canvas[data-c]', container).forEach((el, i) => registry.push({ el, kind: el.dataset.c, ...cfg, key: `${cfg.key}:${el.dataset.c}:${i}` }));
 }
 function prepCanvas(e) {
   const c = e.el, w = c.clientWidth, h = c.clientHeight;
@@ -657,7 +557,7 @@ function frame(now) {
   }
   const tr = TRACKS[P.track], prog = String(P.pos / tr.len), txt = fmtTime(P.pos), rem = '-' + fmtTime(tr.len - P.pos), ly = lyricAt(tr);
   const bass = P.playing && stageStatus !== 'idle' ? bands(t).bass : 0;
-  queryAll('.w').forEach(el => {
+  $$('.w').forEach(el => {
     el.style.setProperty('--p', prog);
     if (!el._studioState) return;
     const state = el._studioState();
@@ -669,12 +569,12 @@ function frame(now) {
       if (colon !== -1) el.style.setProperty(declaration.slice(0, colon), declaration.slice(colon + 1));
     }
   });
-  queryAll('.w.bass').forEach(el => el.style.setProperty('--bass', bass.toFixed(3)));
-  queryAll('.w [data-el]').forEach(el => { if (el.textContent !== txt) el.textContent = txt; });
-  queryAll('.w [data-rem]').forEach(el => { if (el.textContent !== rem) el.textContent = rem; });
-  queryAll('.w [data-ly]').forEach(el => { if (el.textContent !== ly) el.textContent = ly; });
+  $$('.w.bass').forEach(el => el.style.setProperty('--bass', bass.toFixed(3)));
+  $$('.w [data-el]').forEach(el => { if (el.textContent !== txt) el.textContent = txt; });
+  $$('.w [data-rem]').forEach(el => { if (el.textContent !== rem) el.textContent = rem; });
+  $$('.w [data-ly]').forEach(el => { if (el.textContent !== ly) el.textContent = ly; });
   const lyi = lyricIndexAt(tr);
-  queryAll('.w .lyr-line').forEach(el => {
+  $$('.w .lyr-line').forEach(el => {
     const i = +el.dataset.i;
     el.classList.toggle('now', i === lyi);
     el.classList.toggle('past', i < lyi);
@@ -754,15 +654,15 @@ refreshAudioInputs();
 navigator.mediaDevices?.addEventListener?.('devicechange', refreshAudioInputs);
 window.addEventListener('pagehide', () => stopLiveAudio());
 $('#statusSel').onchange = e => { stageStatus = e.target.value; P.playing = !['paused', 'idle'].includes(stageStatus); renderPlayers(); };
-queryAll('#zoomPicker button').forEach(b => b.onclick = () => {
-  zoom = b.dataset.z; queryAll('#zoomPicker button').forEach(x => x.setAttribute('aria-pressed', x === b)); fitStage();
+$$('#zoomPicker button').forEach(b => b.onclick = () => {
+  zoom = b.dataset.z; $$('#zoomPicker button').forEach(x => x.setAttribute('aria-pressed', x === b)); fitStage();
 });
 $('#bdPicker').innerHTML = '<span class="lbl">Wallpaper</span>' + StudioCatalog.wallpapers.map(w => `<button class="bdsw" data-bd="${w.id}" title="${esc(w.label)}" aria-label="${esc(w.label)} wallpaper" aria-pressed="${w.id === backdrop}"><span class="bd bd-${w.id}" aria-hidden="true"></span></button>`).join('');
 $('#bdPicker').addEventListener('click', e => {
   const b = e.target.closest('[data-bd]'); if (!b) return;
   backdrop = b.dataset.bd;
   $('#stageBd').className = `bd bd-${backdrop}`;
-  queryAll('#bdPicker [data-bd]').forEach(x => x.setAttribute('aria-pressed', x === b));
+  $$('#bdPicker [data-bd]').forEach(x => x.setAttribute('aria-pressed', x === b));
 });
 
 
@@ -809,8 +709,8 @@ document.addEventListener('pointerdown', e => {
   const setP = ev => {
     const p = Math.max(0, Math.min(1, (ev.clientX - r.left) / r.width));
     P.pos = p * TRACKS[P.track].len;
-    queryAll('.w').forEach(el => el.style.setProperty('--p', String(p)));
-    queryAll('.w [data-el]').forEach(el => el.textContent = fmtTime(P.pos));
+    $$('.w').forEach(el => el.style.setProperty('--p', String(p)));
+    $$('.w [data-el]').forEach(el => el.textContent = fmtTime(P.pos));
   };
   setP(e);
   const move = ev => setP(ev);
@@ -822,7 +722,7 @@ document.addEventListener('wheel', e => {
   const w = e.target.closest('.w'); if (!w || !S.scrollVolume) return;
   e.preventDefault();
   P.volume = Math.max(0, Math.min(1, P.volume + (e.deltaY < 0 ? .05 : -.05)));
-  queryAll('.w [data-vol] i').forEach(el => el.style.setProperty('--v', String(P.volume)));
+  $$('.w [data-vol] i').forEach(el => el.style.setProperty('--v', String(P.volume)));
 }, { passive: false });
 
 document.addEventListener('pointermove', e => {
@@ -837,7 +737,7 @@ const FILTERS = Schema.FILTERS;
 $('#filters').innerHTML = FILTERS.map(([k, l]) => `<button data-f="${k}" aria-pressed="${k === presetFilter}">${l}</button>`).join('');
 $('#filters').addEventListener('click', e => {
   const b = e.target.closest('[data-f]'); if (!b) return;
-  presetFilter = b.dataset.f; queryAll('[data-f]').forEach(x => x.setAttribute('aria-pressed', x === b)); renderPresets();
+  presetFilter = b.dataset.f; $$('[data-f]').forEach(x => x.setAttribute('aria-pressed', x === b)); renderPresets();
 });
 const presetState = p => ({ ...DEFAULTS, ...p.s });
 function presetScene(p, ps, status) {
@@ -850,7 +750,7 @@ function renderPresets() {
   $('#presets').innerHTML = list.map(p => `<article class="pcard ${activePreset === p.id ? 'active' : ''}" data-preset="${p.id}">
     <div class="pv" title="Apply ${p.name}"><span class="bd bd-${p.bd}"></span><div class="fit"><div class="fi"></div></div></div>
     <div class="meta"><div><h3>${p.name}</h3><p>${p.note}</p><div class="tags">${(p.tags || []).map(([t, k]) => `<span class="new ${k || ''}">${k === 'exist' || k === 'hypr' ? t : 'New · ' + t}</span>`).join('')}</div></div><button class="use">${activePreset === p.id ? 'Applied' : 'Use'}</button></div></article>`).join('');
-  queryAll('.pcard').forEach(card => {
+  $$('.pcard').forEach(card => {
     const p = PRESETS.find(x => x.id === card.dataset.preset), ps = presetState(p);
     const fi = $('.fi', card);
     const getStatus = () => (stageStatus === 'paused' ? 'paused' : 'normal');
@@ -861,7 +761,7 @@ function renderPresets() {
   fitPresets();
 }
 function fitPresets() {
-  queryAll('.pcard').forEach(card => {
+  $$('.pcard').forEach(card => {
     const [W, H] = card._size || [360, 104];
     const pv = $('.pv', card), fi = $('.fi', card), fit = $('.fit', card);
     if (!pv.clientWidth || !pv.clientHeight) return;
@@ -1033,13 +933,13 @@ function renderPresetPicker(el) {
     $('[data-preset-category]', el).value = pickFilter;
     $('[data-keep]', el).checked = keepColors;
     $('[data-daily-note]', el).hidden = pickFilter !== 'daily';
-    $('[data-daily-note]', el).textContent = dailyPreset().note.replace('%1', dailyPreset().noteValue) + '. One look all day. Save it to keep it.';
+    $('[data-daily-note]', el).textContent = dailyPreset().note + '. One look all day. Save it to keep it.';
     $('[data-save-daily]', el).hidden = pickFilter !== 'daily';
     $('[data-save-daily]', el).disabled = loadUser().some(p => p.id === dailyPreset().id);
     $('[data-auto-row]', el).hidden = pickFilter !== 'daily';
     $('[data-auto-note]', el).hidden = pickFilter !== 'daily';
     $('[data-auto-daily]', el).checked = !!S.autoDailyLook;
-    queryAll('[data-pid]', grid).forEach(t => t.setAttribute('aria-pressed', t.dataset.pid === activePreset && !presetDirty));
+    $$('[data-pid]', grid).forEach(t => t.setAttribute('aria-pressed', t.dataset.pid === activePreset && !presetDirty));
   };
 }
 
@@ -1089,7 +989,7 @@ function renderUserPresets(el) {
     $('[data-keep]', el).checked = keepColors;
     const L = list(), want = JSON.stringify(L) + ':' + playerRev + ':' + JSON.stringify(favoriteIds());
     if (builtFor !== want) { builtFor = want; fillGrid(grid, L, 'mine-', u => `${favoriteButton(u)}<button class="del" data-del="${u.id}" aria-label="Delete ${esc(u.name)}">×</button>`); }
-    queryAll('[data-pid]', grid).forEach(t => t.setAttribute('aria-pressed', t.dataset.pid === activePreset && !presetDirty));
+    $$('[data-pid]', grid).forEach(t => t.setAttribute('aria-pressed', t.dataset.pid === activePreset && !presetDirty));
   };
 }
 
@@ -1110,7 +1010,7 @@ function renderAnchor(el) {
   const spots = [];
   for (const v of [.08, .5, .92]) for (const h of ['left', 'center', 'right']) spots.push([h, v]);
   el.innerHTML = `<div class="monitor"><div class="anch">${spots.map(([h, v], i) => `<button data-i="${i}" aria-label="${h} ${v}"><span></span></button>`).join('')}</div></div>`;
-  const btns = queryAll('button', el);
+  const btns = $$('button', el);
   btns.forEach(b => b.onclick = () => { const [h, v] = spots[b.dataset.i]; update({ hAnchor: h, verticalPosition: v }); });
   return s => btns.forEach(b => { const [h, v] = spots[b.dataset.i]; b.setAttribute('aria-pressed', s.hAnchor === h && Math.abs(s.verticalPosition - v) < .21); });
 }
@@ -1143,12 +1043,12 @@ function buildRow(r) {
     sync = s => { const v = get(s); if (document.activeElement !== inp) inp.value = v; out.textContent = fmt ? fmt(v) : v; inp.style.setProperty('--f', (v - r.min) / (r.max - r.min) * 100 + '%'); };
   } else if (r.type === 'seg') {
     el.innerHTML = head + `<div class="rc"><div class="seg" role="group" aria-label="${r.label}">${r.opts.map(([v, l, n], i) => `<button data-i="${i}">${l}${n ? '<span class="new">New</span>' : ''}</button>`).join('')}</div></div>`;
-    const btns = queryAll('button', el);
+    const btns = $$('button', el);
     btns.forEach(b => b.onclick = () => update(set(r.opts[b.dataset.i][0])));
     sync = s => btns.forEach(b => b.setAttribute('aria-pressed', r.opts[b.dataset.i][0] === get(s)));
   } else if (r.type === 'chips') {
     el.innerHTML = head + `<div class="chips">${r.opts.map(([v, l]) => `<button data-v="${v}">${l}</button>`).join('')}</div>`;
-    const btns = queryAll('button', el);
+    const btns = $$('button', el);
     btns.forEach(b => b.onclick = () => {
       const cur = Schema.fields(get(S)), v = b.dataset.v;
       const next = cur.includes(v) ? cur.filter(x => x !== v) : r.opts.map(o => o[0]).filter(x => cur.includes(x) || x === v);
@@ -1163,7 +1063,7 @@ function buildRow(r) {
   } else if (r.type === 'color') {
     const sws = r.swatches || SWATCHES;
     el.innerHTML = head + `<div class="rc swatches">${sws.map(c => `<button class="sw" data-c="${c}" style="background:${c}" aria-label="${c}"></button>`).join('')}<label class="swc" title="Pick any colour"><input type="color" aria-label="${r.label}"></label></div>`;
-    const btns = queryAll('.sw', el), inp = $('input', el);
+    const btns = $$('.sw', el), inp = $('input', el);
     btns.forEach(b => b.onclick = () => update(set(b.dataset.c)));
     inp.oninput = () => update(set(inp.value));
     sync = s => { const v = String(get(s) || '').toLowerCase(); btns.forEach(b => b.setAttribute('aria-pressed', b.dataset.c === v)); if (document.activeElement !== inp) inp.value = v; };
@@ -1185,9 +1085,9 @@ function buildRow(r) {
       return { v, label, pvHtml, isNew: o.isNew };
     });
     el.innerHTML = head + `<div class="tiles" style="--tw:${r.tw || 112}px">${opts.map((o, i) => `<button class="tile" data-i="${i}"><span class="tpv">${o.pvHtml}</span><span class="tl">${o.label}${o.isNew ? '<span class="new">New</span>' : ''}</span></button>`).join('')}</div>`;
-    const btns = queryAll('.tile', el);
+    const btns = $$('.tile', el);
     btns.forEach(b => b.onclick = e => { if (!e.target.closest('[data-act]')) update(set(opts[b.dataset.i].v)); });
-    queryAll('canvas[data-c]', el).forEach(c => {
+    $$('canvas[data-c]', el).forEach(c => {
       if (c.dataset.c === 'material') {
         const paint = () => { const cv = prepCanvas({el:c}); if (cv) MaterialPreview.draw(cv.ctx, cv.w, cv.h, c.dataset.material); };
         const observer = new ResizeObserver(paint); observer.observe(c);
@@ -1202,7 +1102,7 @@ function buildRow(r) {
     });
     sync = s => {
       btns.forEach(b => b.setAttribute('aria-pressed', opts[b.dataset.i].v === get(s)));
-      queryAll('.dockpv', el).forEach(dp => { const html = dockHTML({ ...s, dockStyle: dp.dataset.v }, true); if (dp.innerHTML !== html) dp.innerHTML = html; });
+      $$('.dockpv', el).forEach(dp => { const html = dockHTML({ ...s, dockStyle: dp.dataset.v }, true); if (dp.innerHTML !== html) dp.innerHTML = html; });
     };
   } else if (r.type === 'presets') {
     sync = renderPresetPicker(el);
@@ -1244,7 +1144,7 @@ function renderSettings() {
 }
 
 function syncSettings() {
-  queryAll('[data-acc]').forEach(b => b.setAttribute('aria-pressed', !S.useSystemAccent && !S.accentFromArt && b.dataset.acc === S.customColor));
+  $$('[data-acc]').forEach(b => b.setAttribute('aria-pressed', !S.useSystemAccent && !S.accentFromArt && b.dataset.acc === S.customColor));
   const q = query.trim().toLowerCase(), state = nativeState(S);
   for (const row of rows) {
     row.el.hidden = !Schema.rowVisible(row.r, {}, state, env, q);
@@ -1252,17 +1152,17 @@ function syncSettings() {
     if (!row.el.hidden) row.sync(S);
   }
   let any = false;
-  queryAll('.sec', $('#pbody')).forEach(sec => {
+  $$('.sec', $('#pbody')).forEach(sec => {
     const inTab = q ? true : sec.dataset.tab === activeTab;
-    const visRows = queryAll('.row', sec).filter(r => !r.hidden);
+    const visRows = $$('.row', sec).filter(r => !r.hidden);
     sec.hidden = !inTab || !visRows.length || (sec._sec.when && !sec._sec.when(nativeState(S), env));
-    queryAll('.row', sec).forEach(r => r.classList.remove('first'));
+    $$('.row', sec).forEach(r => r.classList.remove('first'));
     if (visRows[0]) visRows[0].classList.add('first');
     if (!sec.hidden) any = true;
   });
   $('.empty-search').hidden = any;
   const group = Schema.tabGroup(activeTab);
-  queryAll('#tabs [data-tab]').forEach(b => b.setAttribute('aria-selected', !q && b.dataset.tab === group));
+  $$('#tabs [data-tab]').forEach(b => b.setAttribute('aria-selected', !q && b.dataset.tab === group));
   const sub = $('#subtabs');
   sub.hidden = !!q || !['presets', 'appearance'].includes(group);
   const choices = group === 'presets' ? Schema.PRESET_VIEWS : StudioCatalog.tabs.filter(t => Schema.APPEARANCE_TABS.includes(t.id)).map(t => [t.id, t.label, t.icon]);
@@ -1331,7 +1231,7 @@ async function loadProjectCounts() {
       const count = ProjectInfo.count(await response.text());
       if (!count) return;
       projectCounts[key] = count;
-      queryAll(`[data-count="${key}"]`).forEach(node => {
+      $$(`[data-count="${key}"]`).forEach(node => {
         node.textContent = count;
         node.setAttribute('aria-label', `${count} ${key === 'stars' ? 'stars' : 'downloads'}`);
       });
@@ -1369,7 +1269,7 @@ function toast(msg) { const t = $('#toast'); t.textContent = msg; t.classList.ad
 function update(patch) {
   Object.assign(S, patch);
   presetDirty = true;
-  if (activePreset) { queryAll('.pcard.active').forEach(c => c.classList.remove('active')); queryAll('.pcard .use').forEach(b => b.textContent = 'Use'); }
+  if (activePreset) { $$('.pcard.active').forEach(c => c.classList.remove('active')); $$('.pcard .use').forEach(b => b.textContent = 'Use'); }
   onChange();
 }
 function onChange() {
