@@ -220,7 +220,7 @@ Windows sürümü, aynı görselleştirici arayüzünü kullanır; ses yakalamad
 
 ## Nasıl çalışır?
 
-Mimari ve veri akışının ayrıntılı açıklaması için [Mimari Belgeleri](docs/workflow.tr.md ve [GPU bellek sorunlarını ayıklama](docs/gpu-memory-debugging.tr.md)) sayfasına bakın.
+Mimari ve veri akışının ayrıntılı açıklaması için [Mimari belgelerine](docs/workflow.tr.md), bellek artışı sorunları için [GPU bellek sorunlarını ayıklama kılavuzuna](docs/gpu-memory-debugging.tr.md) bakın.
 
 Kısaca: küçük bir kabuk yardımcı aracı (`feeder.sh`), arka planda `cava` çalıştırır ve değişen her kareyi `$XDG_RUNTIME_DIR/audio-wave-widget/` dizinine yazar. QML tarafı bu veriyi yapılandırılan kare hızında aynı süreç içinde okur; birkaç saniye sessizlikten sonra hızı 2 FPS'ye düşürür ve bileşen gizliyken yoklamayı durdurur.
 
