@@ -3,7 +3,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Effects
 import "debug"
 import "../code/MediaSource.js" as MediaSource
-import "studio/Translations.js" as Translations
+import "studio/I18n.js" as I18n
 
 // Playback controls. Shuffle/repeat use the MPRIS player properties.
 Item {
@@ -194,7 +194,7 @@ Item {
             Layout.preferredHeight: 22
             areaName: "shuffleArea"
             available: root.canShuffle
-            label: !root.canShuffle ? (typeof i18n === "function" ? i18n("Shuffle unavailable for this player") : Translations.translate("Shuffle unavailable for this player")) : root.shuffleOn ? (typeof i18n === "function" ? i18n("Shuffle on") : Translations.translate("Shuffle on")) : (typeof i18n === "function" ? i18n("Shuffle off") : Translations.translate("Shuffle off"))
+            label: !root.canShuffle ? I18n.i18n("Shuffle unavailable for this player") : root.shuffleOn ? I18n.i18n("Shuffle on") : I18n.i18n("Shuffle off")
             active: root.shuffleOn
             controlColor: root.controlColor
             accentColor: root.accentColor
@@ -336,7 +336,7 @@ Item {
             Layout.preferredHeight: 22
             areaName: "repeatArea"
             available: root.canLoop
-            label: !root.canLoop ? (typeof i18n === "function" ? i18n("Repeat unavailable for this player") : Translations.translate("Repeat unavailable for this player")) : root.loopTrack ? (typeof i18n === "function" ? i18n("Repeat track") : Translations.translate("Repeat track")) : root.loopOn ? (typeof i18n === "function" ? i18n("Repeat playlist") : Translations.translate("Repeat playlist")) : (typeof i18n === "function" ? i18n("Repeat off") : Translations.translate("Repeat off"))
+            label: !root.canLoop ? I18n.i18n("Repeat unavailable for this player") : root.loopTrack ? I18n.i18n("Repeat track") : root.loopOn ? I18n.i18n("Repeat playlist") : I18n.i18n("Repeat off")
             badge: root.loopTrack ? "1" : ""
             active: root.loopOn
             controlColor: root.controlColor

@@ -1,7 +1,7 @@
 import QtQuick
 import QtQuick.Controls as QQC
 import "text"
-import "studio/Translations.js" as Translations
+import "studio/I18n.js" as I18n
 
 // Backend status and both renderers share the same area in every layout.
 Waveform {
@@ -76,7 +76,7 @@ Waveform {
     Text {
         anchors.centerIn: parent
         visible: [19, 20].includes(root.visualizerType) && !root.stereoSamples.length && !root.backendFailed
-        text: (typeof i18n === "function" ? i18n(root.visualizer?.stereoStatus || "Stereo PCM unavailable") : Translations.translate(root.visualizer?.stereoStatus || "Stereo PCM unavailable"))
+        text: I18n.i18n(root.visualizer?.stereoStatus || "Stereo PCM unavailable")
         color: root.textColor
         font.pixelSize: SystemText.px(10)
         width: parent.width

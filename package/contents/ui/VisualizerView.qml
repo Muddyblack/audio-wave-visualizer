@@ -1,6 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
-import "studio/Translations.js" as Translations
+import "studio/I18n.js" as I18n
 import QtQuick.Controls.Basic as Controls
 import "layouts" as Layouts
 import "../code/Layouts.js" as LayoutSizes
@@ -125,27 +125,27 @@ Item {
     readonly property var lyricLines: samplePlayback && lyricsEnabled ? [
         {
             time: 0,
-            text: typeof i18n === "function" ? i18n("The light falls softly on the water") : Translations.translate("The light falls softly on the water")
+            text: I18n.i18n("The light falls softly on the water")
         },
         {
             time: 8,
-            text: typeof i18n === "function" ? i18n("And the city fades to blue") : Translations.translate("And the city fades to blue")
+            text: I18n.i18n("And the city fades to blue")
         },
         {
             time: 16,
-            text: typeof i18n === "function" ? i18n("Let the evening drift away") : Translations.translate("Let the evening drift away")
+            text: I18n.i18n("Let the evening drift away")
         },
         {
             time: 24,
-            text: typeof i18n === "function" ? i18n("There is nothing left to hurry") : Translations.translate("There is nothing left to hurry")
+            text: I18n.i18n("There is nothing left to hurry")
         },
         {
             time: 32,
-            text: typeof i18n === "function" ? i18n("Just a little room to stay") : Translations.translate("Just a little room to stay")
+            text: I18n.i18n("Just a little room to stay")
         },
         {
             time: 40,
-            text: typeof i18n === "function" ? i18n("With the rhythm of the rain") : Translations.translate("With the rhythm of the rain")
+            text: I18n.i18n("With the rhythm of the rain")
         }
     ] : lyricsLoader.item?.lines ?? []
     readonly property real lyricPosition: lyricsLoader.item?.positionSeconds ?? 0
@@ -313,10 +313,10 @@ Item {
         const host = (s.match(/^[a-z][a-z0-9+.-]*:\/\/([^/?#]*)/i) || ["", ""])[1].toLowerCase();
         // googlevideo params survive even when the host got chopped off
         if (host.endsWith("googlevideo.com") || /(^|&)(itag|clen|gir|lmt|fvip|ratebypass|sparams)=/i.test(s))
-            return (typeof i18n === "function" ? i18n("Direct YouTube stream") : Translations.translate("Direct YouTube stream"));
+            return I18n.i18n("Direct YouTube stream");
         if (host !== "")
             return host.replace(/^www\./, "");
-        return (typeof i18n === "function" ? i18n("Player published no title") : Translations.translate("Player published no title"));
+        return I18n.i18n("Player published no title");
     }
 
     property string artUrl: ""
@@ -706,7 +706,7 @@ Item {
         visible: root.flipEnabled && (root.flipped || (root.configuration.flipInfoButton ?? true)) && root.shouldShow && !root.zoomOpen
         focusPolicy: Qt.StrongFocus
         text: root.flipped ? "×" : "i"
-        Accessible.name: root.flipped ? (typeof i18n === "function" ? i18n("Return to playback controls") : Translations.translate("Return to playback controls")) : (typeof i18n === "function" ? i18n("Show track details") : Translations.translate("Show track details"))
+        Accessible.name: root.flipped ? I18n.i18n("Return to playback controls") : I18n.i18n("Show track details")
         Controls.ToolTip.visible: hovered
         Controls.ToolTip.text: Accessible.name
         Controls.ToolTip.delay: 500

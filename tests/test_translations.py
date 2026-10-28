@@ -1,5 +1,4 @@
-#!/usr/bin/env python3
-"""Turkish catalog checks: syntax, coverage of UI strings and the QML fallback."""
+"""Turkish catalog checks: template freshness, coverage, placeholders and compilation."""
 
 import re
 import shutil
@@ -9,12 +8,14 @@ import tempfile
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[1]
-sys.path.insert(0, str(REPO / "tools"))
-import sync_translations  # noqa: E402
-
-UI = REPO / "package/contents/ui"
-STUDIO = UI / "studio"
-LITERAL = r'"((?:[^"\\]|\\.)*)"'
+TRANSLATE = REPO / "package/translate"
+SOURCES = [
+    path
+    for root in (REPO / "package/contents", REPO / "hyprland")
+    for path in sorted(root.rglob("*"))
+    if path.suffix in (".qml", ".js") and "locale" not in path.parts
+]
+STRING = r'"((?:[^"\\\n]|\\.)*)"'
 
 
 def unescape(text):
@@ -23,16 +24,80 @@ def unescape(text):
     )
 
 
-catalog = dict(sync_translations.read_po(sync_translations.PO))
+def read_po(path):
+    """msgid -> msgstr for every entry; continuation lines are joined."""
+    entries = {}
+    msgid = msgstr = None
+    field = None
+
+    def flush():
+        if msgid:
+            entries[msgid] = msgstr or ""
+
+    for line in path.read_text(encoding="utf-8").split("\n"):
+        if line.startswith("msgid "):
+            flush()
+            msgid, msgstr, field = unescape(line[7:-1]), None, "id"
+        elif line.startswith("msgstr "):
+            msgstr, field = unescape(line[8:-1]), "str"
+        elif line.startswith('"') and field == "id":
+            msgid += unescape(line[1:-1])
+        elif line.startswith('"') and field == "str":
+            msgstr += unescape(line[1:-1])
+        elif not line.strip():
+            flush()
+            msgid = None
+            field = None
+    flush()
+    return {key: value for key, value in entries.items() if key}
+
+
+def literals(pattern, text):
+    return [
+        unescape(match.group(1))
+        for match in re.finditer(pattern + r"\(\s*" + STRING, text)
+    ]
+
+
+sys.path.insert(0, str(TRANSLATE))
+import catalog as generated
+
+catalog = read_po(TRANSLATE / "tr.po")
 failures = []
 
-# 1. template.pot and Translations.js are generated from tr.po.
-if subprocess.run(
-    [sys.executable, str(REPO / "tools/sync_translations.py"), "--check"]
-).returncode:
-    failures.append(
-        "template.pot or Translations.js is stale; run tools/sync_translations.py"
-    )
+# 0. The run-time catalog matches tr.po.
+runtime = REPO / "package/contents/ui/studio/TranslationCatalog.js"
+if runtime.read_text(encoding="utf-8") != generated.render(
+    generated.read_entries(TRANSLATE / "tr.po")
+):
+    failures.append("TranslationCatalog.js is stale; run package/translate/Messages.sh")
+
+# 1. template.pot is what Messages.sh extracts from the current sources.
+if shutil.which("xgettext"):
+    with tempfile.TemporaryDirectory() as directory:
+        fresh = Path(directory) / "template.pot"
+        subprocess.run(
+            [
+                "xgettext",
+                "--language=JavaScript",
+                "--from-code=UTF-8",
+                "-k",
+                "--keyword=i18n",
+                "--keyword=N_",
+                "--output=" + str(fresh),
+                *map(str, SOURCES),
+            ],
+            check=True,
+        )
+        expected = set(read_po(fresh))
+        current = set(read_po(TRANSLATE / "template.pot"))
+        if expected != current:
+            failures.append(
+                "template.pot is stale; run package/translate/Messages.sh "
+                f"(missing {len(expected - current)}, extra {len(current - expected)})"
+            )
+else:
+    print("SKIP: xgettext is not on PATH; template freshness not checked")
 
 # 2. Every entry is translated and keeps its %N placeholders.
 for msgid, msgstr in catalog.items():
@@ -43,44 +108,53 @@ for msgid, msgstr in catalog.items():
     ):
         failures.append(f"placeholder mismatch: {msgid!r} -> {msgstr!r}")
 
-# 3. Every literal passed to i18n() or Translations.translate() is in the catalog.
-for path in sorted(UI.rglob("*.qml")) + sorted(UI.rglob("*.js")):
+# 3. Every string the code marks for translation is in the catalog.
+for path in SOURCES:
     text = path.read_text(encoding="utf-8")
-    for match in re.finditer(
-        r"(?:\bi18n|Translations\.translate)\(\s*" + LITERAL, text
-    ):
-        msgid = unescape(match.group(1))
+    for msgid in literals(r"(?:\bi18n|\bN_)", text):
         if msgid and msgid not in catalog:
-            line = text.count("\n", 0, match.start()) + 1
-            failures.append(f"{path.relative_to(REPO)}:{line}: not in tr.po: {msgid!r}")
+            line = text.count("\n", 0, text.find(msgid)) + 1
+            failures.append(
+                f"{path.relative_to(REPO)}: not in tr.po: {msgid!r} (line ~{line})"
+            )
 
-# 4. Schema data that the studio passes to i18n() at render time: labels,
-#    descriptions, section titles, option labels and style names.
-schema = (STUDIO / "Schema.js").read_text(encoding="utf-8") + (
-    STUDIO / "StudioCatalog.js"
-).read_text(encoding="utf-8")
-data = set()
-for match in re.finditer(r'\b"?(?:label|desc|title)"?\s*:\s*' + LITERAL, schema):
-    data.add(unescape(match.group(1)))
-for match in re.finditer(
-    r'\[\s*(?:"[^"]*"|-?[\d.]+|true|false)\s*,\s*' + LITERAL + r"\s*\]", schema
-):
-    data.add(unescape(match.group(1)))
-for name in ("VIZ", "PBS", "ORBITS", "STATES", "FILTERS"):
-    block = re.search(r"var " + name + r" = \[(.*?)\];", schema, re.S)
-    if not block:
-        failures.append(f"Schema.js: {name} not found")
-        continue
-    data.update(
-        unescape(s)
-        for s in re.findall(LITERAL, block.group(1))
-        if re.search(r"[A-Z]", s[:1]) or " " in s
+# 4. Studio data labels are marked, so they can be translated when drawn.
+for name in ("Schema.js", "StudioCatalog.js"):
+    text = (REPO / "package/contents/ui/studio" / name).read_text(encoding="utf-8")
+    for match in re.finditer(r"\b(?:label|desc|title|kde|hypr)\s*:\s*" + STRING, text):
+        if match.group(1):
+            failures.append(
+                f"{name}: unmarked display text {unescape(match.group(1))!r}"
+            )
+
+# 4b. Every catalog label shown in the studio is also marked in Schema.js.
+catalog_text = (REPO / "package/contents/ui/studio/StudioCatalog.js").read_text(
+    encoding="utf-8"
+)
+marked = set(
+    literals(
+        r"\bN_",
+        (REPO / "package/contents/ui/studio/Schema.js").read_text(encoding="utf-8"),
     )
-for msgid in sorted(data):
-    if msgid and msgid not in catalog:
-        failures.append(f"Schema data not in tr.po: {msgid!r}")
+)
+for match in re.finditer(r'"label":\s*' + STRING, catalog_text):
+    label = unescape(match.group(1))
+    if label not in marked:
+        failures.append(
+            f"StudioCatalog.js label not marked in Schema.js CATALOG_TEXT: {label!r}"
+        )
 
-# 5. The catalog compiles, under the name Plasma looks for.
+# 5. The old translation layer is gone.
+for path in [*SOURCES, REPO / "tests/run.py", REPO / "test_install.sh"]:
+    text = path.read_text(encoding="utf-8")
+    if re.search(
+        r"Translations\.js|isTurkish|sync_translations|Translations\.translate", text
+    ):
+        failures.append(
+            f"{path.relative_to(REPO)}: refers to the removed translation layer"
+        )
+
+# 6. The catalog compiles under the name Plasma looks for.
 if shutil.which("msgfmt"):
     with tempfile.TemporaryDirectory() as directory:
         package = Path(directory)
@@ -88,14 +162,15 @@ if shutil.which("msgfmt"):
             '{"KPlugin": {"Id": "org.example.test"}}\n'
         )
         result = subprocess.run(
-            ["sh", str(REPO / "package/translate/build.sh"), str(package)],
+            ["sh", str(TRANSLATE / "build.sh"), str(package)],
             capture_output=True,
             text=True,
+            check=False,
         )
-        catalog_file = (
+        compiled = (
             package / "contents/locale/tr/LC_MESSAGES/plasma_applet_org.example.test.mo"
         )
-        if result.returncode or not catalog_file.is_file():
+        if result.returncode or not compiled.is_file():
             failures.append("build.sh failed: " + result.stderr.strip())
 else:
     print("SKIP: msgfmt is not on PATH; catalog compilation not checked")
@@ -103,4 +178,4 @@ else:
 if failures:
     print("\n".join("FAIL: " + failure for failure in failures))
     sys.exit(1)
-print(f"PASS: Turkish catalog ({len(catalog)} messages) covers the studio and compiles")
+print(f"PASS: Turkish catalog ({len(catalog)} messages) covers the widget and compiles")

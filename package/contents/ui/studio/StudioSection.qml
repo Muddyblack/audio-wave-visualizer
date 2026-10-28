@@ -1,5 +1,5 @@
 import QtQuick
-import "Translations.js" as Translations
+import "I18n.js" as I18n
 import "Theme.js" as Theme
 import "Schema.js" as Schema
 
@@ -24,7 +24,7 @@ Column {
         visible: !sectionRoot.librarySection
         text: {
             const source = sectionRoot.sectionData.title;
-            const translated = typeof i18n === "function" ? i18n(source) : Translations.translate(source);
+            const translated = I18n.i18n(source);
             const heading = translated !== source ? translated.replace(/i/g, "İ").replace(/ı/g, "I") : translated;
             return heading.toUpperCase();
         }

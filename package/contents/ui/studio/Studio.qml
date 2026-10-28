@@ -3,7 +3,7 @@ import QtQuick.Controls.Basic as Controls
 import ".." as Shared
 import "Theme.js" as Theme
 import "Schema.js" as Schema
-import "Translations.js" as Translations
+import "I18n.js" as I18n
 
 // The shared settings studio for Plasma and Hyprland,
 // styled after the HTML studio. Hosts own the draft: every change is emitted
@@ -30,14 +30,14 @@ Rectangle {
             return "";
         const missing = [];
         if (/^python3: missing$/m.test(dependencyReport))
-            missing.push(typeof i18n === "function" ? i18n("Python 3") : Translations.translate("Python 3"));
+            missing.push(I18n.i18n("Python 3"));
         if (/^busctl: missing$/m.test(dependencyReport))
-            missing.push(typeof i18n === "function" ? i18n("busctl") : Translations.translate("busctl"));
+            missing.push(I18n.i18n("busctl"));
         if (!missing.length)
             return "";
-        const install = /^distro: (nixos|nix)$/m.test(dependencyReport) ? (typeof i18n === "function" ? i18n("On NixOS, add pkgs.python3 and pkgs.systemd to environment.systemPackages, rebuild, then sign out and in.") : Translations.translate("On NixOS, add pkgs.python3 and pkgs.systemd to environment.systemPackages, rebuild, then sign out and in.")) : (typeof i18n === "function" ? i18n("Install the missing tools with your distribution’s package manager, then restart Plasma.") : Translations.translate("Install the missing tools with your distribution’s package manager, then restart Plasma."));
-        const tools = missing.length > 1 ? (typeof i18n === "function" ? i18n("%1 and %2", missing[0], missing[1]) : Translations.translate("%1 and %2", missing[0], missing[1])) : missing.join(" and ");
-        return typeof i18n === "function" ? i18n("Browser site names and media details need %1. %2", tools, install) : Translations.translate("Browser site names and media details need %1. %2", tools, install);
+        const install = /^distro: (nixos|nix)$/m.test(dependencyReport) ? I18n.i18n("On NixOS, add pkgs.python3 and pkgs.systemd to environment.systemPackages, rebuild, then sign out and in.") : I18n.i18n("Install the missing tools with your distribution’s package manager, then restart Plasma.");
+        const tools = missing.length > 1 ? I18n.i18n("%1 and %2", missing[0], missing[1]) : missing.join(" and ");
+        return I18n.i18n("Browser site names and media details need %1. %2", tools, install);
     }
     Shared.CommandSource {
         id: dependencyCheck
@@ -60,7 +60,7 @@ Rectangle {
         }
     }
     property var discoveredSources: [["auto", "Default output monitor"]]
-    readonly property var audioSourceOptions: discoveredSources.some(o => o[0] === (draft.inputSource || "auto")) ? discoveredSources : discoveredSources.concat([[draft.inputSource, typeof i18n === "function" ? i18n("Unavailable: %1", draft.inputSource) : Translations.translate("Unavailable: %1", draft.inputSource)]])
+    readonly property var audioSourceOptions: discoveredSources.some(o => o[0] === (draft.inputSource || "auto")) ? discoveredSources : discoveredSources.concat([[draft.inputSource, I18n.i18n("Unavailable: %1", draft.inputSource)]])
     Shared.CommandSource {
         id: sourceDiscovery
         sourceComponent: studioRoot.commandSourceComponent
@@ -70,7 +70,7 @@ Rectangle {
                 const choices = JSON.parse(data["stdout"] || "[]");
                 if (choices.length)
                     studioRoot.discoveredSources = choices;
-            } catch (error) /* Keep the saved selection during discovery failures. */ {}
+            } catch (error) {}
         }
     }
     Timer {
@@ -207,7 +207,7 @@ Rectangle {
     function translateText(text) {
         if (!text)
             return "";
-        return typeof i18n === "function" ? i18n(text) : Translations.translate(text);
+        return I18n.i18n(text);
     }
     // English source strings; StudioRow translates label and desc when drawing.
     function rowDefinition(row) {
@@ -413,7 +413,7 @@ Rectangle {
                         anchors.fill: searchInput
                         verticalAlignment: Text.AlignVCenter
                         visible: searchInput.text === ""
-                        text: (typeof i18n === "function" ? i18n("Search settings…") : Translations.translate("Search settings…"))
+                        text: I18n.i18n("Search settings…")
                         color: Theme.dim
                         font: searchInput.font
                     }
@@ -451,8 +451,8 @@ Rectangle {
                 StudioButton {
                     id: discardBtn
                     enabled: studioRoot.canDiscard
-                    text: (typeof i18n === "function" ? i18n("Discard") : Translations.translate("Discard"))
-                    tooltip: (typeof i18n === "function" ? i18n("Discard unapplied changes") : Translations.translate("Discard unapplied changes"))
+                    text: I18n.i18n("Discard")
+                    tooltip: I18n.i18n("Discard unapplied changes")
                     areaName: "discardSettings"
                     onClicked: studioRoot.discard()
                 }
@@ -460,8 +460,8 @@ Rectangle {
                     id: resetAll
                     // Hyprland's footer already has its own Reset.
                     visible: studioRoot.env === "kde"
-                    text: (typeof i18n === "function" ? i18n("Reset") : Translations.translate("Reset"))
-                    tooltip: (typeof i18n === "function" ? i18n("Restore every setting to its default. Apply to keep it; Discard undoes it. Saved presets are kept.") : Translations.translate("Restore every setting to its default. Apply to keep it; Discard undoes it. Saved presets are kept."))
+                    text: I18n.i18n("Reset")
+                    tooltip: I18n.i18n("Restore every setting to its default. Apply to keep it; Discard undoes it. Saved presets are kept.")
                     areaName: "resetToDefaults"
                     onClicked: studioRoot.edited(Object.assign({}, studioRoot.defaults, {
                         userPresets: studioRoot.draft.userPresets ?? ""
@@ -469,7 +469,7 @@ Rectangle {
                 }
                 StudioButton {
                     id: surprise
-                    text: (typeof i18n === "function" ? i18n("Surprise me") : Translations.translate("Surprise me"))
+                    text: I18n.i18n("Surprise me")
                     onClicked: {
                         const next = Schema.surprise(studioRoot.defaults, studioRoot.draft);
                         if (studioRoot.presentationTarget === "panel")
@@ -540,7 +540,7 @@ Rectangle {
                                     }
                                     Text {
                                         anchors.verticalCenter: parent.verticalCenter
-                                        text: (typeof i18n === "function" ? i18n(tab.modelData.label) : Translations.translate(tab.modelData.label))
+                                        text: I18n.i18n(tab.modelData.label)
                                         color: tab.selected || tabArea.containsMouse ? Theme.text : Theme.muted
                                         font.family: Theme.fontFamily
                                         font.pixelSize: 12
@@ -622,7 +622,7 @@ Rectangle {
                             model: studioRoot.appearanceTabs
                             StudioButton {
                                 required property var modelData
-                                text: (typeof i18n === "function" ? i18n(modelData.label) : Translations.translate(modelData.label))
+                                text: I18n.i18n(modelData.label)
                                 icon: modelData.icon
                                 compact: true
                                 primary: studioRoot.currentTab === modelData.id
@@ -715,7 +715,7 @@ Rectangle {
                         visible: studioRoot.ready && !studioRoot.anyResults
                         topPadding: 30
                         horizontalAlignment: Text.AlignHCenter
-                        text: studioRoot.query.trim() !== "" ? (typeof i18n === "function" ? i18n("No settings match that search.") : Translations.translate("No settings match that search.")) : (typeof i18n === "function" ? i18n("No settings are available for this design.") : Translations.translate("No settings are available for this design."))
+                        text: studioRoot.query.trim() !== "" ? I18n.i18n("No settings match that search.") : I18n.i18n("No settings are available for this design.")
                         wrapMode: Text.WordWrap
                         color: Theme.dim
                         font.family: Theme.fontFamily

@@ -1,6 +1,7 @@
 pragma ComponentBehavior: Bound
 import QtQuick
 import QtCore
+import "studio/I18n.js" as I18n
 
 // Each owner has a lease. Hiding, destruction or a host crash stops capture
 // within three seconds, including hosts without command cancellation support.
@@ -23,7 +24,7 @@ Item {
     }
     property var samples: []
     property var previous: []
-    property string status: active ? "Waiting for stereo output" : ""
+    property string status: active ? I18n.i18n("Waiting for stereo output") : ""
     property string _id: "stereo-" + Date.now() + "-" + Math.floor(Math.random() * 1000000)
     readonly property string base: runtimeDirectory ? runtimeDirectory + "/" + _id : ""
     property real _last: 0
@@ -115,7 +116,7 @@ Item {
             settings.sync();
             root.accept(settings.value("v", ""), Number(settings.value("t", 0)));
             if (!root.samples.length && !root.status)
-                root.status = "Waiting for stereo output";
+                root.status = I18n.i18n("Waiting for stereo output");
         }
     }
 }

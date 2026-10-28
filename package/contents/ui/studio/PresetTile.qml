@@ -1,5 +1,5 @@
 import QtQuick
-import "Translations.js" as Translations
+import "I18n.js" as I18n
 import QtQuick.Controls.Basic as Controls
 import ".."
 import "Theme.js" as Theme
@@ -104,7 +104,7 @@ Item {
             spacing: 4
             Text {
                 width: parent.width - check.width - 4
-                text: !tile.renamable ? (typeof i18n === "function" ? (tile.name.indexOf("Today’s look · ") === 0 ? i18n("Today’s look · %1", tile.name.substring("Today’s look · ".length)) : i18n(tile.name)) : (tile.name.indexOf("Today’s look · ") === 0 ? Translations.translate("Today’s look · %1", tile.name.substring("Today’s look · ".length)) : Translations.translate(tile.name))) : tile.name
+                text: !tile.renamable ? (tile.name.indexOf("Today’s look · ") === 0 ? I18n.i18n("Today’s look · %1", tile.name.substring("Today’s look · ".length)) : I18n.i18n(tile.name)) : tile.name
                 textFormat: Text.PlainText
                 color: tile.active ? Theme.text : Theme.muted
                 font.family: Theme.fontFamily
@@ -136,7 +136,7 @@ Item {
         width: 24
         height: 24
         text: tile.favorite ? "★" : "☆"
-        Accessible.name: tile.favorite ? (typeof i18n === "function" ? i18n("Remove from favourites") : Translations.translate("Remove from favourites")) : (typeof i18n === "function" ? i18n("Add to favourites") : Translations.translate("Add to favourites"))
+        Accessible.name: tile.favorite ? I18n.i18n("Remove from favourites") : I18n.i18n("Add to favourites")
         Controls.ToolTip.visible: hovered
         Controls.ToolTip.text: Accessible.name
         contentItem: Text {
@@ -160,9 +160,9 @@ Item {
         width: 24
         height: 24
         text: "✎"
-        Accessible.name: (typeof i18n === "function" ? i18n("Rename preset") : Translations.translate("Rename preset"))
+        Accessible.name: I18n.i18n("Rename preset")
         Controls.ToolTip.visible: hovered
-        Controls.ToolTip.text: (typeof i18n === "function" ? i18n("Rename preset") : Translations.translate("Rename preset"))
+        Controls.ToolTip.text: I18n.i18n("Rename preset")
         contentItem: Text {
             text: parent.text
             color: "white"
@@ -200,7 +200,7 @@ Item {
             font.pixelSize: 11
             clip: true
             selectByMouse: true
-            Accessible.name: (typeof i18n === "function" ? i18n("Preset name") : Translations.translate("Preset name"))
+            Accessible.name: I18n.i18n("Preset name")
             onAccepted: tile.finishRename()
             Keys.onEscapePressed: tile.renaming = false
         }

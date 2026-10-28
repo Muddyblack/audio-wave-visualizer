@@ -1,5 +1,5 @@
 import QtQuick
-import "Translations.js" as Translations
+import "I18n.js" as I18n
 import "Theme.js" as Theme
 
 // Segmented choice (HTML `.seg`): sunk group, the pressed segment raised.
@@ -41,7 +41,7 @@ Rectangle {
                 Text {
                     id: segmentLabel
                     anchors.centerIn: parent
-                    text: (typeof i18n === "function" ? i18n(segment.modelData[1]) : Translations.translate(segment.modelData[1]))
+                    text: I18n.i18n(segment.modelData[1])
                     color: segment.pressed ? Theme.segPressedText : Theme.muted
                     font.family: Theme.fontFamily
                     font.pixelSize: 11

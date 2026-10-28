@@ -11,7 +11,7 @@ import "../code/Layouts.js" as LayoutSizes
 import "../code/PresentationSettings.js" as Presentations
 import "debug"
 import "text"
-import "studio/Translations.js" as Translations
+import "studio/I18n.js" as I18n
 
 PlasmoidItem {
     id: root
@@ -26,6 +26,7 @@ PlasmoidItem {
     onGpuDebugChanged: GpuDebug.apply(gpuDebug)
     onFollowSystemFontChanged: SystemText.follow = followSystemFont
     Component.onCompleted: {
+        I18n.useKde(i18n);
         GpuDebug.apply(gpuDebug);
         SystemText.follow = followSystemFont;
     }
@@ -153,7 +154,7 @@ PlasmoidItem {
                 opacity: popupState.keepOpen || popupHover.hovered || activeFocus ? 1 : 0
                 checkable: true
                 checked: popupState.keepOpen
-                Accessible.name: checked ? (typeof i18n === "function" ? i18n("Unpin and close popup") : Translations.translate("Unpin and close popup")) : (typeof i18n === "function" ? i18n("Keep popup open") : Translations.translate("Keep popup open"))
+                Accessible.name: checked ? I18n.i18n("Unpin and close popup") : I18n.i18n("Keep popup open")
                 Controls.ToolTip.visible: hovered
                 Controls.ToolTip.text: Accessible.name
                 onClicked: popupState.togglePin()

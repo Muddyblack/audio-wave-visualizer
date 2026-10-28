@@ -1,5 +1,5 @@
 import QtQuick
-import "Translations.js" as Translations
+import "I18n.js" as I18n
 import "Theme.js" as Theme
 
 // Tile grid (HTML `.tiles` / `.tile`): live preview area, label, selected
@@ -79,7 +79,7 @@ Flow {
                     x: 9
                     y: 62
                     width: parent.width - 18
-                    text: (typeof i18n === "function" ? i18n(tile.option.label) : Translations.translate(tile.option.label))
+                    text: I18n.i18n(tile.option.label)
                     color: tile.pressed ? Theme.text : Theme.muted
                     font.family: Theme.fontFamily
                     font.pixelSize: 11

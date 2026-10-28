@@ -1,5 +1,5 @@
 import QtQuick
-import "studio/Translations.js" as Translations
+import "studio/I18n.js" as I18n
 import org.kde.plasma.core as PlasmaCore
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.private.mpris as Mpris
@@ -424,6 +424,7 @@ Kirigami.Page {
     }
 
     Component.onCompleted: {
+        I18n.useKde(i18n);
         GpuDebug.apply(cfg_gpuDebug ?? "");
         SystemText.follow = cfg_followSystemFont;
         // Enumerate outside a binding: Qt can evaluate unrelated getters while
@@ -527,7 +528,7 @@ Kirigami.Page {
         property string status: ""
         onNewData: (source, data) => {
             const count = parseInt(String(data["stdout"] || "").trim());
-            status = data["exit code"] === 0 && !isNaN(count) ? (count === 0 ? (typeof i18n === "function" ? i18n("No other widgets found") : Translations.translate("No other widgets found")) : count === 1 ? (typeof i18n === "function" ? i18n("Copied to 1 other widget") : Translations.translate("Copied to 1 other widget")) : (typeof i18n === "function" ? i18n("Copied to %1 other widgets", count) : Translations.translate("Copied to %1 other widgets", count))) : (typeof i18n === "function" ? i18n("Could not reach Plasma") : Translations.translate("Could not reach Plasma"));
+            status = data["exit code"] === 0 && !isNaN(count) ? (count === 0 ? I18n.i18n("No other widgets found") : count === 1 ? I18n.i18n("Copied to 1 other widget") : I18n.i18n("Copied to %1 other widgets", count)) : I18n.i18n("Could not reach Plasma");
             disconnectSource(source);
             statusReset.restart();
         }
@@ -558,15 +559,15 @@ Kirigami.Page {
             Studio.StudioButton {
                 objectName: "syncAppearance"
                 compact: true
-                text: root.editingPopup ? (typeof i18n === "function" ? i18n("Use pill look") : Translations.translate("Use pill look")) : (typeof i18n === "function" ? i18n("Use popup look") : Translations.translate("Use popup look"))
-                tooltip: (typeof i18n === "function" ? i18n("Copy the other design into this one: colours, artwork, visualizer and progress styles. The pill enables the copied effects. Each view keeps its layout and playback controls. Apply saves; Discard undoes.") : Translations.translate("Copy the other design into this one: colours, artwork, visualizer and progress styles. The pill enables the copied effects. Each view keeps its layout and playback controls. Apply saves; Discard undoes."))
+                text: root.editingPopup ? I18n.i18n("Use pill look") : I18n.i18n("Use popup look")
+                tooltip: I18n.i18n("Copy the other design into this one: colours, artwork, visualizer and progress styles. The pill enables the copied effects. Each view keeps its layout and playback controls. Apply saves; Discard undoes.")
                 onClicked: root.assign(Presentations.syncAppearance(root.draft, root.editingPopup ? "panel" : "popup"))
             }
             Studio.StudioButton {
                 objectName: "syncAllWidgets"
                 compact: true
-                text: syncAll.status || (typeof i18n === "function" ? i18n("Copy to all widgets") : Translations.translate("Copy to all widgets"))
-                tooltip: (typeof i18n === "function" ? i18n("Copy these settings, including both panel designs, to every other copy of this widget, such as one per monitor. Each keeps its own monitor and position. Apply here first; the others change immediately and cannot be undone.") : Translations.translate("Copy these settings, including both panel designs, to every other copy of this widget, such as one per monitor. Each keeps its own monitor and position. Apply here first; the others change immediately and cannot be undone."))
+                text: syncAll.status || I18n.i18n("Copy to all widgets")
+                tooltip: I18n.i18n("Copy these settings, including both panel designs, to every other copy of this widget, such as one per monitor. Each keeps its own monitor and position. Apply here first; the others change immediately and cannot be undone.")
                 onClicked: root.copyToAllWidgets()
             }
         }

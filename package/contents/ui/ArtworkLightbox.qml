@@ -1,5 +1,5 @@
 import QtQuick
-import "studio/Translations.js" as Translations
+import "studio/I18n.js" as I18n
 import QtQuick.Layouts
 import QtQuick.Controls.Basic as Controls
 import "text"
@@ -85,7 +85,7 @@ Window {
             anchors.top: parent.top
             anchors.right: parent.right
             text: "×"
-            Accessible.name: (typeof i18n === "function" ? i18n("Close artwork") : Translations.translate("Close artwork"))
+            Accessible.name: I18n.i18n("Close artwork")
             onClicked: lightbox.view.zoomOpen = false
         }
     }

@@ -1,5 +1,5 @@
 import QtQuick
-import "Translations.js" as Translations
+import "I18n.js" as I18n
 import "Schema.js" as Schema
 import "Theme.js" as Theme
 
@@ -13,7 +13,7 @@ Item {
         width: Math.min(170, tools.width)
         options: Schema.FILTERS.map(p => [p[0], p[0] === "all" ? "All categories" : p[1]])
         value: tools.studio.presetFilter
-        Accessible.name: (typeof i18n === "function" ? i18n("Preset category") : Translations.translate("Preset category"))
+        Accessible.name: I18n.i18n("Preset category")
         onChosen: value => tools.studio.presetFilter = value
     }
     Row {
@@ -25,7 +25,7 @@ Item {
             onToggled: checked => tools.studio.keepColors = checked
         }
         Text {
-            text: (typeof i18n === "function" ? i18n("Keep my colours") : Translations.translate("Keep my colours"))
+            text: I18n.i18n("Keep my colours")
             color: Theme.muted
             font.family: Theme.fontFamily
             font.pixelSize: 11

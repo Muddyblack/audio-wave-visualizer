@@ -1,5 +1,5 @@
 import QtQuick
-import "Translations.js" as Translations
+import "I18n.js" as I18n
 import "Theme.js" as Theme
 import "Schema.js" as Schema
 
@@ -52,7 +52,7 @@ Item {
             spacing: 2
             Text {
                 width: parent.width
-                text: (typeof i18n === "function" ? i18n(row.rowData.label || "") : Translations.translate(row.rowData.label || ""))
+                text: I18n.i18n(row.rowData.label || "")
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
@@ -62,7 +62,7 @@ Item {
             Text {
                 width: parent.width
                 visible: !!row.rowData.desc
-                text: (typeof i18n === "function" ? i18n(row.rowData.desc || "") : Translations.translate(row.rowData.desc || ""))
+                text: I18n.i18n(row.rowData.desc || "")
                 color: Theme.muted
                 font.family: Theme.fontFamily
                 font.pixelSize: 11
@@ -126,7 +126,7 @@ Item {
             to: row.rowData.max
             stepSize: row.rowData.step
             value: Number(row.value)
-            display: Schema.format(row.rowData.fmt, Number(row.value), (pattern, value) => typeof i18n === "function" ? i18n(pattern, value) : Translations.translate(pattern, value))
+            display: Schema.format(row.rowData.fmt, Number(row.value), (pattern, value) => I18n.i18n(pattern, value))
             onMoved: value => row.commit(value)
         }
     }
@@ -195,8 +195,8 @@ Item {
     Component {
         id: noteComponent
         StudioNote {
-            title: row.studio.env === "kde" ? (typeof i18n === "function" ? i18n("On Plasma") : Translations.translate("On Plasma")) : (typeof i18n === "function" ? i18n("On Hyprland") : Translations.translate("On Hyprland"))
-            text: (typeof i18n === "function" ? i18n(Schema.NOTES[row.rowData.note][row.studio.env] || "") : Translations.translate(Schema.NOTES[row.rowData.note][row.studio.env] || ""))
+            title: row.studio.env === "kde" ? I18n.i18n("On Plasma") : I18n.i18n("On Hyprland")
+            text: I18n.i18n(Schema.NOTES[row.rowData.note][row.studio.env] || "")
         }
     }
     Component {

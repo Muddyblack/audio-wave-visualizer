@@ -1,6 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
-import "Translations.js" as Translations
+import "I18n.js" as I18n
 import QtQuick.Dialogs
 import ".."
 import "Theme.js" as Theme
@@ -64,7 +64,7 @@ Column {
             anchors.right: expandButton.left
             anchors.rightMargin: 10
             anchors.verticalCenter: parent.verticalCenter
-            text: (typeof i18n === "function" ? i18n(root.kindLabel) : Translations.translate(root.kindLabel)) + (root.selected ? " · " + CustomStyles.nameForUrl(root.selected) : "")
+            text: I18n.i18n(root.kindLabel) + (root.selected ? " · " + CustomStyles.nameForUrl(root.selected) : "")
             color: Theme.text
             font.family: Theme.fontFamily
             font.pixelSize: 12
@@ -74,7 +74,7 @@ Column {
             id: expandButton
             anchors.right: parent.right
             compact: true
-            text: root.expanded ? (typeof i18n === "function" ? i18n("Hide") : Translations.translate("Hide")) : (typeof i18n === "function" ? i18n("Manage…") : Translations.translate("Manage…"))
+            text: root.expanded ? I18n.i18n("Hide") : I18n.i18n("Manage…")
             areaName: "expand_" + root.selectionKey
             onClicked: root.expanded = !root.expanded
         }
@@ -85,7 +85,7 @@ Column {
         spacing: 8
         Text {
             width: parent.width
-            text: (typeof i18n === "function" ? i18n("QML styles run code with the host’s permissions. Import only files you trust. Keep the file and its assets in a permanent folder; importing remembers their location.") : Translations.translate("QML styles run code with the host’s permissions. Import only files you trust. Keep the file and its assets in a permanent folder; importing remembers their location."))
+            text: I18n.i18n("QML styles run code with the host’s permissions. Import only files you trust. Keep the file and its assets in a permanent folder; importing remembers their location.")
             color: Theme.muted
             font.family: Theme.fontFamily
             font.pixelSize: 11
@@ -102,16 +102,16 @@ Column {
             width: parent.width
             spacing: 8
             StudioButton {
-                text: (typeof i18n === "function" ? i18n("Import QML…") : Translations.translate("Import QML…"))
+                text: I18n.i18n("Import QML…")
                 areaName: root.buttons ? "importCustomButtons" : root.progressBar ? "importCustomProgressBar" : "importCustomVisualizer"
                 onClicked: fileDialog.open()
             }
             StudioButton {
-                text: (typeof i18n === "function" ? i18n("Try example") : Translations.translate("Try example"))
+                text: I18n.i18n("Try example")
                 onClicked: root.importFile(Qt.resolvedUrl(root.buttons ? "../../examples/MinimalButtons.qml" : root.progressBar ? "../../examples/GradientProgress.qml" : "../../examples/PulseBars.qml"))
             }
             StudioButton {
-                text: (typeof i18n === "function" ? i18n("Remove") : Translations.translate("Remove"))
+                text: I18n.i18n("Remove")
                 areaName: root.buttons ? "removeCustomButtons" : root.progressBar ? "removeCustomProgressBar" : "removeCustomVisualizer"
                 enabled: root.selected !== ""
                 onClicked: root.removeSelected()
@@ -183,7 +183,7 @@ Column {
     }
     FileDialog {
         id: fileDialog
-        title: root.buttons ? (typeof i18n === "function" ? i18n("Import trusted QML buttons") : Translations.translate("Import trusted QML buttons")) : root.progressBar ? (typeof i18n === "function" ? i18n("Import trusted QML progress bar") : Translations.translate("Import trusted QML progress bar")) : (typeof i18n === "function" ? i18n("Import trusted QML visualizer") : Translations.translate("Import trusted QML visualizer"))
+        title: root.buttons ? I18n.i18n("Import trusted QML buttons") : root.progressBar ? I18n.i18n("Import trusted QML progress bar") : I18n.i18n("Import trusted QML visualizer")
         fileMode: FileDialog.OpenFile
         nameFilters: ["QML styles (*.qml)"]
         onAccepted: root.importFile(selectedFile)

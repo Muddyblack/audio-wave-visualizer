@@ -1,5 +1,5 @@
 import QtQuick
-import "Translations.js" as Translations
+import "I18n.js" as I18n
 import "Theme.js" as Theme
 
 // Audio status and "Run diagnostics" (HTML `.status` / `.check`), fed by the
@@ -21,8 +21,8 @@ Column {
 
     function tr(text, value) {
         if (value === undefined)
-            return typeof i18n === "function" ? i18n(text) : Translations.translate(text);
-        return typeof i18n === "function" ? i18n(text, value) : Translations.translate(text, value);
+            return I18n.i18n(text);
+        return I18n.i18n(text, value);
     }
     function field(text, pattern) {
         const match = text.match(pattern);
@@ -63,7 +63,7 @@ Column {
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width - 22 - runButton.width - 12
             Text {
-                text: (typeof i18n === "function" ? i18n("Audio capture") : Translations.translate("Audio capture"))
+                text: I18n.i18n("Audio capture")
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: 12

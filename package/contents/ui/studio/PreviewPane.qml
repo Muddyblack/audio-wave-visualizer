@@ -1,5 +1,5 @@
 import QtQuick
-import "Translations.js" as Translations
+import "I18n.js" as I18n
 import QtQuick.Controls.Basic as Controls
 import ".."
 import "Theme.js" as Theme
@@ -48,7 +48,7 @@ Rectangle {
         hasAudio: pane.stateName !== "paused" && pane.stateName !== "idle"
         backendFailed: pane.stateName === "backend"
         backendCode: backendFailed ? "no-cava" : ""
-        backendMessage: backendFailed ? (typeof i18n === "function" ? i18n("cava is not installed") : Translations.translate("cava is not installed")) : ""
+        backendMessage: backendFailed ? I18n.i18n("cava is not installed") : ""
         backendAction: backendFailed ? "sudo pacman -S cava" : ""
     }
     SamplePlayer {
@@ -145,7 +145,7 @@ Rectangle {
         Text {
             id: buttonLabel
             anchors.centerIn: parent
-            text: (typeof i18n === "function" ? i18n(chipButton.label) : Translations.translate(chipButton.label))
+            text: I18n.i18n(chipButton.label)
             color: chipButton.pressed ? "#ffffff" : "#aab1a7"
             font.family: Theme.fontFamily
             font.pixelSize: 11
@@ -164,7 +164,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.margins: 4
         height: 28
-        text: pane.optionsExpanded ? (typeof i18n === "function" ? i18n("Hide preview options") : Translations.translate("Hide preview options")) : (typeof i18n === "function" ? i18n("Preview options") : Translations.translate("Preview options"))
+        text: pane.optionsExpanded ? I18n.i18n("Hide preview options") : I18n.i18n("Preview options")
         onClicked: pane.optionsExpanded = !pane.optionsExpanded
     }
     StudioButton {
@@ -176,7 +176,7 @@ Rectangle {
         height: 28
         compact: true
         primary: pane.liveMode
-        text: pane.liveMode ? (typeof i18n === "function" ? i18n("Live audio · On") : Translations.translate("Live audio · On")) : (typeof i18n === "function" ? i18n("Use live audio") : Translations.translate("Use live audio"))
+        text: pane.liveMode ? I18n.i18n("Live audio · On") : I18n.i18n("Use live audio")
         areaName: "livePreviewButton"
         onClicked: pane.studio.livePreview = !pane.studio.livePreview
     }
@@ -190,16 +190,16 @@ Rectangle {
         spacing: 8
         Chip {
             ChipLabel {
-                text: (typeof i18n === "function" ? i18n("WALLPAPER") : Translations.translate("WALLPAPER"))
+                text: I18n.i18n("WALLPAPER")
             }
             Repeater {
                 model: Schema.BACKDROPS
                 Item {
                     id: backdropButton
                     objectName: "wallpaper_" + modelData[0]
-                    Accessible.name: (typeof i18n === "function" ? i18n(modelData[1]) : Translations.translate(modelData[1]))
+                    Accessible.name: I18n.i18n(modelData[1])
                     Controls.ToolTip.visible: wallpaperArea.containsMouse
-                    Controls.ToolTip.text: (typeof i18n === "function" ? i18n(modelData[1]) : Translations.translate(modelData[1]))
+                    Controls.ToolTip.text: I18n.i18n(modelData[1])
                     Controls.ToolTip.delay: 400
                     required property var modelData
                     width: 30
@@ -232,21 +232,21 @@ Rectangle {
             visible: pane.compact && !pane.liveMode
             width: 180
             height: 30
-            model: Schema.STATES.map(state => (typeof i18n === "function" ? i18n(state[1]) : Translations.translate(state[1])))
+            model: Schema.STATES.map(state => I18n.i18n(state[1]))
             currentIndex: Schema.STATES.findIndex(state => state[0] === pane.stateName)
             onActivated: pane.stateName = Schema.STATES[currentIndex][0]
         }
         Chip {
             visible: !pane.compact && !pane.liveMode
             ChipLabel {
-                text: (typeof i18n === "function" ? i18n("STATE") : Translations.translate("STATE"))
+                text: I18n.i18n("STATE")
             }
             Repeater {
                 model: Schema.STATES
                 ChipButton {
                     required property var modelData
                     anchors.verticalCenter: parent.verticalCenter
-                    label: modelData[1]
+                    label: I18n.i18n(modelData[1])
                     pressed: pane.stateName === modelData[0]
                     onClicked: pane.stateName = modelData[0]
                 }
@@ -268,7 +268,7 @@ Rectangle {
                 ChipButton {
                     required property var modelData
                     anchors.verticalCenter: parent.verticalCenter
-                    label: modelData[1]
+                    label: I18n.i18n(modelData[1])
                     pressed: pane.zoom === modelData[0]
                     onClicked: pane.zoom = modelData[0]
                 }
@@ -292,7 +292,7 @@ Rectangle {
         }
         Chip {
             ChipLabel {
-                text: (typeof i18n === "function" ? i18n("ACCENT") : Translations.translate("ACCENT"))
+                text: I18n.i18n("ACCENT")
             }
             Repeater {
                 model: ["#3daee9", "#a855f7", "#ff6fb0", "#f5b26b", "#34d399"]
