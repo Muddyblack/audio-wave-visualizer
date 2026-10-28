@@ -117,7 +117,7 @@ Bunlar örnek oynatma ile gerçek QML bileşeninden alınmış görüntülerdir.
 
 ## Kendin özelleştir
 
-Birçok görselleştirici arasından seçim yapın, düzeni ve renkleri değiştirin, şarkı sözleri ekleyin ve değişiklikleri anında önizleyin. Kendi önayarlarınızı kaydedebilir, bileşen ile [tarayıcı stüdyosu](https://muddyblack.github.io/audio-wave-visualizer/) arasında JSON olarak paylaşabilirsiniz.
+Birçok görselleştirici arasından seçim yapın, düzeni ve renkleri değiştirin, şarkı sözleri ekleyin ve değişiklikleri anında önizleyin. Kendi önayarlarınızı kaydedebilir, bileşen ile [tarayıcı stüdyosu](https://muddyblack.github.io/audio-wave-visualizer/) arasında JSON olarak paylaşabilirsiniz. Tarayıcı stüdyosu tarayıcının dil tercihi Türkçeyse otomatik olarak Türkçe açılır; üstteki dil düğmesiyle İngilizceye geçebilirsiniz. Plasma KDE'nin sistem dilini, Quickshell ise Qt sistem yerel ayarını kullanır.
 
 <p align="center">
   <img src="docs/readme/studio_with_preview.png" width="780" alt="Önayar kartları ve canlı bileşen önizlemesi bulunan ayar stüdyosu">
