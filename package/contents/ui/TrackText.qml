@@ -1,4 +1,5 @@
 import QtQuick
+import "studio/Translations.js" as Translations
 import QtQuick.Controls as QQC
 import "text"
 
@@ -25,7 +26,7 @@ Text {
     // The "Nothing playing" message: regular weight at .55.
     property bool idle: false
 
-    text: secondary ? (artist !== "" ? artist : sourceHint) : (trackUnknown ? qsTr("No track metadata") : displayTrack)
+    text: secondary ? (artist !== "" ? artist : sourceHint) : (trackUnknown ? (typeof i18n === "function" ? i18n("No track metadata") : Translations.translate("No track metadata")) : displayTrack)
     opacity: idle && !secondary ? 0.55 : secondary ? 0.75 : (trackUnknown ? 0.75 : 1)
     font.bold: !secondary && !idle
     font.italic: secondary ? (artist === "" && sourceHint !== "") : trackUnknown
