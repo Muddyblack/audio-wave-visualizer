@@ -1801,3 +1801,18 @@ msgstr "cava hiçbir arka uçtan ses yakalayamadı. PipeWire veya PulseAudio'nun
 
 msgid "Windows has no audio output, so nothing is playing that could be visualized. Connect speakers or headphones, enable sound in your remote desktop client, or install a virtual audio device. Picked up within seconds — no restart needed."
 msgstr "Windows'ta ses çıkışı yok; bu nedenle görselleştirilecek bir ses çalınmıyor. Hoparlör veya kulaklık bağlayın, uzak masaüstü istemcinizde sesi etkinleştirin ya da sanal bir ses aygıtı kurun. Değişiklik birkaç saniye içinde algılanır; yeniden başlatmanız gerekmez."
+
+msgid "cava is not installed"
+msgstr "cava kurulu değil."
+
+msgid "is PipeWire or PulseAudio running?"
+msgstr "PipeWire veya PulseAudio çalışıyor mu?"
+
+msgid "connect speakers, or enable sound in your remote desktop client"
+msgstr "Hoparlör bağlayın veya uzak masaüstü istemcinizde sesi etkinleştirin."
+
+msgid "The widget picks it up within 30 seconds — no restart needed, unless your package manager only changes PATH for new sessions."
+msgstr "Widget değişikliği 30 saniye içinde algılar; paket yöneticiniz PATH değişikliğini yalnızca yeni oturumlarda uyguluyorsa yeniden oturum açmanız gerekebilir."
+
+msgid "cava keeps exiting — see %1"
+msgstr "cava sürekli kapanıyor — %1 dosyasına bakın."
