@@ -204,17 +204,17 @@ Rectangle {
     function rowDefinition(row) {
         if (env === "kde" && presentationTarget === "popup" && row.k === "glassBlur")
             return Object.assign({}, row, {
-                label: "Preview wallpaper blur",
-                desc: "Adjusts wallpaper blur in this preview. Actual popup blur strength is set in KDE System Settings → Desktop Effects → Blur."
+                label: (typeof i18n === "function" ? i18n("Preview wallpaper blur") : "Preview wallpaper blur"),
+                desc: (typeof i18n === "function" ? i18n("Adjusts wallpaper blur in this preview. Actual popup blur strength is set in KDE System Settings → Desktop Effects → Blur.") : "Adjusts wallpaper blur in this preview. Actual popup blur strength is set in KDE System Settings → Desktop Effects → Blur.")
             });
         if (env === "kde" && presentationTarget === "popup" && row.k === "compositorGlass")
             return Object.assign({}, row, {
-                label: "Blur behind card",
-                desc: "Blur application windows behind the rounded card. Requires KWin’s Blur effect."
+                label: (typeof i18n === "function" ? i18n("Blur behind card") : "Blur behind card"),
+                desc: (typeof i18n === "function" ? i18n("Blur application windows behind the rounded card. Requires KWin’s Blur effect.") : "Blur application windows behind the rounded card. Requires KWin’s Blur effect.")
             });
         if (row.k === "pillClick" && env === "kde")
             return Object.assign({}, row, {
-                label: "Click action",
+                label: (typeof i18n === "function" ? i18n("Click action") : "Click action"),
                 opts: [["popup", "Nothing"], ["toggle", "Play / pause"]]
             });
         if (row.k === "pillEq" && draft.layoutMode === "pillicon")
@@ -404,7 +404,7 @@ Rectangle {
                         anchors.fill: searchInput
                         verticalAlignment: Text.AlignVCenter
                         visible: searchInput.text === ""
-                        text: "Search settings…"
+                        text: (typeof i18n === "function" ? i18n("Search settings…") : "Search settings…")
                         color: Theme.dim
                         font: searchInput.font
                     }
@@ -443,7 +443,7 @@ Rectangle {
                     id: discardBtn
                     enabled: studioRoot.canDiscard
                     text: (typeof i18n === "function" ? i18n("Discard") : "Discard")
-                    tooltip: "Discard unapplied changes (Verwerfen)"
+                    tooltip: (typeof i18n === "function" ? i18n("Discard unapplied changes") : "Discard unapplied changes")
                     areaName: "discardSettings"
                     onClicked: studioRoot.discard()
                 }
@@ -451,8 +451,8 @@ Rectangle {
                     id: resetAll
                     // Hyprland's footer already has its own Reset.
                     visible: studioRoot.env === "kde"
-                    text: "Reset"
-                    tooltip: "Restore every setting to its default. Apply to keep it; Discard undoes it. Saved presets are kept."
+                    text: (typeof i18n === "function" ? i18n("Reset") : "Reset")
+                    tooltip: (typeof i18n === "function" ? i18n("Restore every setting to its default. Apply to keep it; Discard undoes it. Saved presets are kept.") : "Restore every setting to its default. Apply to keep it; Discard undoes it. Saved presets are kept.")
                     areaName: "resetToDefaults"
                     onClicked: studioRoot.edited(Object.assign({}, studioRoot.defaults, {
                         userPresets: studioRoot.draft.userPresets ?? ""
@@ -460,7 +460,7 @@ Rectangle {
                 }
                 StudioButton {
                     id: surprise
-                    text: "Surprise me"
+                    text: (typeof i18n === "function" ? i18n("Surprise me") : "Surprise me")
                     onClicked: {
                         const next = Schema.surprise(studioRoot.defaults, studioRoot.draft);
                         if (studioRoot.presentationTarget === "panel")
@@ -531,7 +531,7 @@ Rectangle {
                                     }
                                     Text {
                                         anchors.verticalCenter: parent.verticalCenter
-                                        text: tab.modelData.label
+                                        text: (typeof i18n === "function" ? i18n(tab.modelData.label) : tab.modelData.label)
                                         color: tab.selected || tabArea.containsMouse ? Theme.text : Theme.muted
                                         font.family: Theme.fontFamily
                                         font.pixelSize: 12
@@ -613,7 +613,7 @@ Rectangle {
                             model: studioRoot.appearanceTabs
                             StudioButton {
                                 required property var modelData
-                                text: modelData.label
+                                text: (typeof i18n === "function" ? i18n(modelData.label) : modelData.label)
                                 icon: modelData.icon
                                 compact: true
                                 primary: studioRoot.currentTab === modelData.id
@@ -706,7 +706,7 @@ Rectangle {
                         visible: studioRoot.ready && !studioRoot.anyResults
                         topPadding: 30
                         horizontalAlignment: Text.AlignHCenter
-                        text: studioRoot.query.trim() !== "" ? "No settings match that search." : "No settings are available for this design."
+                        text: studioRoot.query.trim() !== "" ? (typeof i18n === "function" ? i18n("No settings match that search.") : "No settings match that search.") : (typeof i18n === "function" ? i18n("No settings are available for this design.") : "No settings are available for this design.")
                         wrapMode: Text.WordWrap
                         color: Theme.dim
                         font.family: Theme.fontFamily
