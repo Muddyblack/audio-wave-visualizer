@@ -1,0 +1,1536 @@
+# Translation template for Plasma Audio Visualizer.
+# This template includes strings from the shared settings schema, which are
+# passed to KDE's i18n() function at render time and must be maintained here.
+msgid ""
+msgstr ""
+"Project-Id-Version: Plasma Audio Visualizer 3.1.7\\n"
+"Report-Msgid-Bugs-To: https://github.com/Muddyblack/audio-wave-visualizer/issues\\n"
+"Content-Type: text/plain; charset=UTF-8\\n"
+"Content-Transfer-Encoding: 8bit\\n"
+
+msgid "General"
+msgstr ""
+
+msgid "Search settings…"
+msgstr ""
+
+msgid "Discard"
+msgstr ""
+
+msgid "Discard unapplied changes"
+msgstr ""
+
+msgid "Reset"
+msgstr ""
+
+msgid "Restore every setting to its default. Apply to keep it; Discard undoes it. Saved presets are kept."
+msgstr ""
+
+msgid "Surprise me"
+msgstr ""
+
+msgid "No settings match that search."
+msgstr ""
+
+msgid "No settings are available for this design."
+msgstr ""
+
+msgid "Presets"
+msgstr ""
+
+msgid "My presets"
+msgstr ""
+
+msgid "Visualizer"
+msgstr ""
+
+msgid "Progress"
+msgstr ""
+
+msgid "Buttons"
+msgstr ""
+
+msgid "Layout"
+msgstr ""
+
+msgid "Artwork"
+msgstr ""
+
+msgid "Track info"
+msgstr ""
+
+msgid "Lyrics"
+msgstr ""
+
+msgid "Card"
+msgstr ""
+
+msgid "Colours"
+msgstr ""
+
+msgid "Behaviour"
+msgstr ""
+
+msgid "Audio"
+msgstr ""
+
+msgid "Info"
+msgstr ""
+
+msgid "Appearance"
+msgstr ""
+
+msgid "All"
+msgstr ""
+
+msgid "Favourites"
+msgstr ""
+
+msgid "Today’s look"
+msgstr ""
+
+msgid "Saved looks"
+msgstr ""
+
+msgid "Start from a look"
+msgstr ""
+
+msgid "Search settings"
+msgstr ""
+
+msgid "On Plasma"
+msgstr ""
+
+msgid "On Hyprland"
+msgstr ""
+
+msgid "Preview wallpaper blur"
+msgstr ""
+
+msgid "Adjusts wallpaper blur in this preview. Actual popup blur strength is set in KDE System Settings → Desktop Effects → Blur."
+msgstr ""
+
+msgid "Blur behind card"
+msgstr ""
+
+msgid "Blur application windows behind the rounded card. Requires KWin’s Blur effect."
+msgstr ""
+
+msgid "Click action"
+msgstr ""
+
+msgid "The same look all day; changes tomorrow. Save it to keep it."
+msgstr ""
+
+msgid "Saved to My presets"
+msgstr ""
+
+msgid "Save today’s look"
+msgstr ""
+
+msgid "Apply today’s look automatically"
+msgstr ""
+
+msgid "After you apply settings, changes the look once per day on startup or while running. Manual changes stay until tomorrow. Audio settings and placement are kept."
+msgstr ""
+
+msgid "Star a built-in or saved look to find it here."
+msgstr ""
+
+msgid "Keep my colours"
+msgstr ""
+
+msgid "Preset category"
+msgstr ""
+
+msgid "Rename preset"
+msgstr ""
+
+msgid "No"
+msgstr ""
+
+msgid "None"
+msgstr ""
+
+msgid "Off"
+msgstr ""
+
+msgid "On"
+msgstr ""
+
+msgid "Automatic"
+msgstr ""
+
+msgid "Auto"
+msgstr ""
+
+msgid "Custom"
+msgstr ""
+
+msgid "Style"
+msgstr ""
+
+msgid "Direction"
+msgstr ""
+
+msgid "Size"
+msgstr ""
+
+msgid "Width"
+msgstr ""
+
+msgid "Height"
+msgstr ""
+
+msgid "Position"
+msgstr ""
+
+msgid "Alignment"
+msgstr ""
+
+msgid "Text"
+msgstr ""
+
+msgid "Font"
+msgstr ""
+
+msgid "Font size"
+msgstr ""
+
+msgid "Colour"
+msgstr ""
+
+msgid "Colour mode"
+msgstr ""
+
+msgid "Background colour"
+msgstr ""
+
+msgid "Accent colour"
+msgstr ""
+
+msgid "Text colour"
+msgstr ""
+
+msgid "Custom colour"
+msgstr ""
+
+msgid "Gradient"
+msgstr ""
+
+msgid "Gradient fill"
+msgstr ""
+
+msgid "Glow"
+msgstr ""
+
+msgid "Glow colour"
+msgstr ""
+
+msgid "Line weight"
+msgstr ""
+
+msgid "Vertical offset"
+msgstr ""
+
+msgid "Sensitivity"
+msgstr ""
+
+msgid "Frame rate"
+msgstr ""
+
+msgid "Audio input"
+msgstr ""
+
+msgid "Capture source"
+msgstr ""
+
+msgid "Auto-detect"
+msgstr ""
+
+msgid "Battery saver"
+msgstr ""
+
+msgid "Reduced motion"
+msgstr ""
+
+msgid "Show artwork"
+msgstr ""
+
+msgid "Show a card"
+msgstr ""
+
+msgid "Cover"
+msgstr ""
+
+msgid "Cover ring"
+msgstr ""
+
+msgid "Cover thumbnail"
+msgstr ""
+
+msgid "Album name"
+msgstr ""
+
+msgid "Artist summary"
+msgstr ""
+
+msgid "Song title and artist"
+msgstr ""
+
+msgid "Track number"
+msgstr ""
+
+msgid "Release date"
+msgstr ""
+
+msgid "Genre"
+msgstr ""
+
+msgid "Length"
+msgstr ""
+
+msgid "Audio format"
+msgstr ""
+
+msgid "Player"
+msgstr ""
+
+msgid "Playing"
+msgstr ""
+
+msgid "Paused"
+msgstr ""
+
+msgid "Nothing playing"
+msgstr ""
+
+msgid "No metadata"
+msgstr ""
+
+msgid "Preview"
+msgstr ""
+
+msgid "Apply"
+msgstr ""
+
+msgid "Save"
+msgstr ""
+
+msgid "Cancel"
+msgstr ""
+
+msgid "Reset to defaults"
+msgstr ""
+
+msgid "Install the missing tools with your distribution’s package manager, then restart Plasma."
+msgstr ""
+
+msgid "Python 3"
+msgstr ""
+
+msgid "busctl"
+msgstr ""
+
+msgid "Search"
+msgstr ""
+
+msgid "Nothing"
+msgstr ""
+
+msgid "Classic"
+msgstr ""
+
+msgid "Mirrored"
+msgstr ""
+
+msgid "Inline"
+msgstr ""
+
+msgid "Stacked"
+msgstr ""
+
+msgid "Poster"
+msgstr ""
+
+msgid "Slim strip"
+msgstr ""
+
+msgid "Panel pill"
+msgstr ""
+
+msgid "Panel icon"
+msgstr ""
+
+msgid "Visualizer only"
+msgstr ""
+
+msgid "Lyrics only"
+msgstr ""
+
+msgid "Wallpaper blur"
+msgstr ""
+
+msgid "Open popup"
+msgstr ""
+
+msgid "Play / pause"
+msgstr ""
+
+msgid "Previous & next"
+msgstr ""
+
+msgid "Shuffle & repeat"
+msgstr ""
+
+msgid "Show on hover only"
+msgstr ""
+
+msgid "Maximum width"
+msgstr ""
+
+msgid "Maximum text width"
+msgstr ""
+
+msgid "Details"
+msgstr ""
+
+msgid "All details"
+msgstr ""
+
+msgid "Essentials"
+msgstr ""
+
+msgid "Credits"
+msgstr ""
+
+msgid "Release"
+msgstr ""
+
+msgid "Song"
+msgstr ""
+
+msgid "Country"
+msgstr ""
+
+msgid "Composer"
+msgstr ""
+
+msgid "Lyricist"
+msgstr ""
+
+msgid "Producers"
+msgstr ""
+
+msgid "Performers"
+msgstr ""
+
+msgid "Arrangers"
+msgstr ""
+
+msgid "Album artist"
+msgstr ""
+
+msgid "Album & year"
+msgstr ""
+
+msgid "Disc number"
+msgstr ""
+
+msgid "Label"
+msgstr ""
+
+msgid "Comment"
+msgstr ""
+
+msgid "BPM"
+msgstr ""
+
+msgid "ISRC"
+msgstr ""
+
+msgid "The cover is the centre point and the visualizer circles it. Colour mode, glow and bloom below still apply."
+msgstr ""
+
+msgid "One click sets everything. Fine-tune in the other tabs afterwards — your placement is never touched."
+msgstr ""
+
+msgid "Save the current settings under a name, or share a look as a small JSON snippet."
+msgstr ""
+
+msgid "Restore every setting to its default."
+msgstr ""
+
+msgid "The same look all day"
+msgstr ""
+
+msgid "Accent"
+msgstr ""
+
+msgid "Adaptive colour"
+msgstr ""
+
+msgid "Album in the top line"
+msgstr ""
+
+msgid "Album track count"
+msgstr ""
+
+msgid "Ambient desktop glow"
+msgstr ""
+
+msgid "Ambient idle wave"
+msgstr ""
+
+msgid "Artist and album follow the title."
+msgstr ""
+
+msgid "Artist — Title"
+msgstr ""
+
+msgid "Audio-reactive progress"
+msgstr ""
+
+msgid "Auto-detect tries PipeWire, then PulseAudio, then ALSA."
+msgstr ""
+
+msgid "Bare icons"
+msgstr ""
+
+msgid "Bass pulse"
+msgstr ""
+
+msgid "Bass weight"
+msgstr ""
+
+msgid "Bloom"
+msgstr ""
+
+msgid "Border"
+msgstr ""
+
+msgid "Bottom"
+msgstr ""
+
+msgid "Bouncing"
+msgstr ""
+
+msgid "Card line size"
+msgstr ""
+
+msgid "Card opacity"
+msgstr ""
+
+msgid "Card padding"
+msgstr ""
+
+msgid "Card scale"
+msgstr ""
+
+msgid "Card size"
+msgstr ""
+
+msgid "Centre"
+msgstr ""
+
+msgid "Chapter marks"
+msgstr ""
+
+msgid "Choose a set in one click, or customize the fields below. Missing information stays hidden. These choices survive Surprise me and daily looks."
+msgstr ""
+
+msgid "Choose the shape around your playback controls."
+msgstr ""
+
+msgid "Click anywhere on it in the widget to seek."
+msgstr ""
+
+msgid "Colour glow"
+msgstr ""
+
+msgid "Colour mode shares the visualizer’s palette, gradient or rainbow. Automatic keeps the original controls-based colours."
+msgstr ""
+
+msgid "Colours drift slowly with the bass / treble balance."
+msgstr ""
+
+msgid "Compositor glass"
+msgstr ""
+
+msgid "Corner radius"
+msgstr ""
+
+msgid "Cover darkness"
+msgstr ""
+
+msgid "Cover tilt on hover"
+msgstr ""
+
+msgid "Current line colour"
+msgstr ""
+
+msgid "Current line position"
+msgstr ""
+
+msgid "Current line weight"
+msgstr ""
+
+msgid "Custom background"
+msgstr ""
+
+msgid "Custom button styles"
+msgstr ""
+
+msgid "Custom glass colour"
+msgstr ""
+
+msgid "Custom icon colour"
+msgstr ""
+
+msgid "Custom progress bars"
+msgstr ""
+
+msgid "Custom progress colour"
+msgstr ""
+
+msgid "Custom text colour"
+msgstr ""
+
+msgid "Custom visualizers"
+msgstr ""
+
+msgid "Desktop"
+msgstr ""
+
+msgid "Detail"
+msgstr ""
+
+msgid "Dim the widget"
+msgstr ""
+
+msgid "Display"
+msgstr ""
+
+msgid "Edge highlight"
+msgstr ""
+
+msgid "Edge colour"
+msgstr ""
+
+msgid "Elapsed time set big beside the progress line."
+msgstr ""
+
+msgid "Fade the visualizer"
+msgstr ""
+
+msgid "Film grain"
+msgstr ""
+
+msgid "Fit panel"
+msgstr ""
+
+msgid "Fixed"
+msgstr ""
+
+msgid "Flip card"
+msgstr ""
+
+msgid "Follow current line"
+msgstr ""
+
+msgid "Follow system font size"
+msgstr ""
+
+msgid "Frequency spacing"
+msgstr ""
+
+msgid "Friendly idle message"
+msgstr ""
+
+msgid "From cover"
+msgstr ""
+
+msgid "Frost"
+msgstr ""
+
+msgid "Glass"
+msgstr ""
+
+msgid "Glass tint"
+msgstr ""
+
+msgid "Greyscale while paused"
+msgstr ""
+
+msgid "Hang from top"
+msgstr ""
+
+msgid "Hero wave"
+msgstr ""
+
+msgid "High cutoff"
+msgstr ""
+
+msgid "Higher glides gently; lower snaps to every beat."
+msgstr ""
+
+msgid "Highlight colour"
+msgstr ""
+
+msgid "Hover"
+msgstr ""
+
+msgid "Icon colour"
+msgstr ""
+
+msgid "Initials"
+msgstr ""
+
+msgid "Italic"
+msgstr ""
+
+msgid "Kana"
+msgstr ""
+
+msgid "Keep sharp thumbnail"
+msgstr ""
+
+msgid "Keep visible"
+msgstr ""
+
+msgid "Layer"
+msgstr ""
+
+msgid "Left"
+msgstr ""
+
+msgid "Letter spacing"
+msgstr ""
+
+msgid "Lift on hover"
+msgstr ""
+
+msgid "Light follows pointer"
+msgstr ""
+
+msgid "Line on card"
+msgstr ""
+
+msgid "Liquid"
+msgstr ""
+
+msgid "Logarithmic"
+msgstr ""
+
+msgid "Long title"
+msgstr ""
+
+msgid "Low cutoff"
+msgstr ""
+
+msgid "Material"
+msgstr ""
+
+msgid "Mel (resampled)"
+msgstr ""
+
+msgid "Mini visualizer"
+msgstr ""
+
+msgid "Monospace"
+msgstr ""
+
+msgid "Motion"
+msgstr ""
+
+msgid "Monitor"
+msgstr ""
+
+msgid "No art"
+msgstr ""
+
+msgid "Online track information"
+msgstr ""
+
+msgid "Open card"
+msgstr ""
+
+msgid "Open player"
+msgstr ""
+
+msgid "Outline"
+msgstr ""
+
+msgid "Palette"
+msgstr ""
+
+msgid "Panel"
+msgstr ""
+
+msgid "Past lines"
+msgstr ""
+
+msgid "Pause when covered"
+msgstr ""
+
+msgid "Pill / icon"
+msgstr ""
+
+msgid "Player icon"
+msgstr ""
+
+msgid "Player name"
+msgstr ""
+
+msgid "Player switcher"
+msgstr ""
+
+msgid "Preferred height"
+msgstr ""
+
+msgid "Preferred width"
+msgstr ""
+
+msgid "Previews react to your colour, line and bloom settings."
+msgstr ""
+
+msgid "Progress bar & cover ring"
+msgstr ""
+
+msgid "Reading language"
+msgstr ""
+
+msgid "Reflection"
+msgstr ""
+
+msgid "Refraction"
+msgstr ""
+
+msgid "Release type"
+msgstr ""
+
+msgid "Ribbon curvature"
+msgstr ""
+
+msgid "Ribbon fullness"
+msgstr ""
+
+msgid "Ring style"
+msgstr ""
+
+msgid "Rotate left"
+msgstr ""
+
+msgid "Rotate right"
+msgstr ""
+
+msgid "Rounded"
+msgstr ""
+
+msgid "Sans serif"
+msgstr ""
+
+msgid "Screen position"
+msgstr ""
+
+msgid "Scroll long titles"
+msgstr ""
+
+msgid "Scroll to change volume"
+msgstr ""
+
+msgid "Seek gestures"
+msgstr ""
+
+msgid "Seek preview"
+msgstr ""
+
+msgid "Shadow"
+msgstr ""
+
+msgid "Shape"
+msgstr ""
+
+msgid "Sharp"
+msgstr ""
+
+msgid "Show buttons on hover only"
+msgstr ""
+
+msgid "Show flip info button"
+msgstr ""
+
+msgid "Show large"
+msgstr ""
+
+msgid "Show scrollbar"
+msgstr ""
+
+msgid "Silence release"
+msgstr ""
+
+msgid "Simple rendering"
+msgstr ""
+
+msgid "Smoothing"
+msgstr ""
+
+msgid "Soft"
+msgstr ""
+
+msgid "Soft light around the visualizer."
+msgstr ""
+
+msgid "Solid"
+msgstr ""
+
+msgid "Space between verses"
+msgstr ""
+
+msgid "Square"
+msgstr ""
+
+msgid "Squircle"
+msgstr ""
+
+msgid "Static"
+msgstr ""
+
+msgid "Status"
+msgstr ""
+
+msgid "Styled bar"
+msgstr ""
+
+msgid "Subtle"
+msgstr ""
+
+msgid "Synced lyrics line"
+msgstr ""
+
+msgid "System"
+msgstr ""
+
+msgid "Text edge"
+msgstr ""
+
+msgid "Text size"
+msgstr ""
+
+msgid "Text weight"
+msgstr ""
+
+msgid "Texture strength"
+msgstr ""
+
+msgid "Time labels"
+msgstr ""
+
+msgid "Timing offset (seconds)"
+msgstr ""
+
+msgid "Tint"
+msgstr ""
+
+msgid "Tint colour"
+msgstr ""
+
+msgid "Title"
+msgstr ""
+
+msgid "Title lines"
+msgstr ""
+
+msgid "Top"
+msgstr ""
+
+msgid "Treble weight"
+msgstr ""
+
+msgid "Underline"
+msgstr ""
+
+msgid "Upcoming lines"
+msgstr ""
+
+msgid "Upright"
+msgstr ""
+
+msgid "Version"
+msgstr ""
+
+msgid "Vertical position"
+msgstr ""
+
+msgid "Vinyl"
+msgstr ""
+
+msgid "What to show"
+msgstr ""
+
+msgid "Wheel seek step"
+msgstr ""
+
+msgid "Wrapped line height"
+msgstr ""
+
+msgid "Your colour range"
+msgstr ""
+
+msgid "Your glow range"
+msgstr ""
+
+msgid "How far the ring extends from the cover."
+msgstr ""
+
+msgid "Slow rotation"
+msgstr ""
+
+msgid "Cover breathes with the bass"
+msgstr ""
+
+msgid "Import a trusted QML style and use it in the waveform area. Orbit and lyrics-only layouts use their own visuals."
+msgstr ""
+
+msgid "Move the visualizer up (negative) or down (positive). Zero restores its original position; edges stay inside the visualizer area."
+msgstr ""
+
+msgid "Bars rise from the bottom today — or let them hang from the top edge."
+msgstr ""
+
+msgid "How far the mids bend the ribbon."
+msgstr ""
+
+msgid "How thick the bass makes it."
+msgstr ""
+
+msgid "Stroke width of lines and dot size."
+msgstr ""
+
+msgid "Fill waves and liquid shapes, or soften Peak Bars with transparency."
+msgstr ""
+
+msgid "Import a trusted QML progress bar with playback timing and seeking."
+msgstr ""
+
+msgid "Target time, jump delta and a ghost playhead."
+msgstr ""
+
+msgid "Wheel seeks; double-click the outer thirds to jump 10 seconds."
+msgstr ""
+
+msgid "Seconds per notch; 0 disables wheel seeking."
+msgstr ""
+
+msgid "Bass swells the track and playhead; reduced motion disables pulses."
+msgstr ""
+
+msgid "Uses player chapter metadata or local embedded chapters and cue files."
+msgstr ""
+
+msgid "Add playback controls directly to the panel pill."
+msgstr ""
+
+msgid "Reveal playback buttons while the pointer is over the pill. Keeps the pill's width steady."
+msgstr ""
+
+msgid "Import a trusted QML style for the playback controls."
+msgstr ""
+
+msgid "Hide the playback buttons until the pointer is over the card. Works with any style."
+msgstr ""
+
+msgid "For players that support them."
+msgstr ""
+
+msgid "Colour mode follows the visualizer. System adapts to light cards."
+msgstr ""
+
+msgid "Applies to pill styles. Tinted uses your accent when set to Automatic."
+msgstr ""
+
+msgid "Visualizer only fills a transparent widget with the selected effect. Lyrics only shows a scrollable verse with the current line highlighted. Uses online lyrics from LRCLIB."
+msgstr ""
+
+msgid "Mini visualizer follows the music using your selected visualizer style. Choose Static for still bars."
+msgstr ""
+
+msgid "Hover closes when you leave the pill and card. Click toggles it. Both lets a click pin the hovered card; click again to close."
+msgstr ""
+
+msgid "Let long titles wrap onto a second line."
+msgstr ""
+
+msgid "Visualizer behind the title"
+msgstr ""
+
+msgid "A soft texture under the text; style and direction follow the Visualizer tab."
+msgstr ""
+
+msgid "Scroll overflowing titles, including the panel pill. Disabled by Reduced motion."
+msgstr ""
+
+msgid "Falls back to the player’s icon when a track has no cover."
+msgstr ""
+
+msgid "Vinyl and CD spin while music plays."
+msgstr ""
+
+msgid "Square always crops the art. Auto keeps square art cropped, switches the cover to 16:9 for wide art, and fits tall art whole with blurred edges. The two whole options fit the full image in the square: over a dimmed copy, or filled with its blurred edges. Wide 16:9 makes the cover a widescreen box (not for circle, vinyl or CD)."
+msgstr ""
+
+msgid "Capped by the layout height."
+msgstr ""
+
+msgid "A shadow tinted with the cover’s own colour."
+msgstr ""
+
+msgid "A gentle tilt after hovering the cover. Click targets stay fixed; reduced motion disables it."
+msgstr ""
+
+msgid "A faint mirror image under the cover."
+msgstr ""
+
+msgid "Try the “No metadata” state."
+msgstr ""
+
+msgid "A quiet third line with album and year."
+msgstr ""
+
+msgid "Where the music is coming from."
+msgstr ""
+
+msgid "Pick which of several running players the widget follows."
+msgstr ""
+
+msgid "Online lookup (LRCLIB). Sends title, artist, album and length. For a full verse, choose the Lyrics only layout."
+msgstr ""
+
+msgid "Local sidecars and ID3 lyrics first, then LRCLIB. The online lookup sends the song title, artist, album and length. Card backgrounds are in the Card tab."
+msgstr ""
+
+msgid "Automatic detects Japanese kana. Select Japanese or Chinese for Han-only text. Requires Python pykakasi / pypinyin."
+msgstr ""
+
+msgid "Positive values show lyrics earlier; negative values delay them. Applies to both lyrics displays."
+msgstr ""
+
+msgid "Spacing within a verse that wraps across multiple lines."
+msgstr ""
+
+msgid "Extra contrast on busy wallpapers."
+msgstr ""
+
+msgid "Desktop hosts can override the preferred size by resizing the widget."
+msgstr ""
+
+msgid "Keep verses easy to read on a wide card."
+msgstr ""
+
+msgid "Scrolling pauses following so you can read ahead. Use the button on the card to resume."
+msgstr ""
+
+msgid "Off by default. Sends song title, artist, album and length to MusicBrainz, and artist name to English Wikipedia when details open. Adds recording credits when available. Results are cached for 24 hours."
+msgstr ""
+
+msgid "Off by default. If MusicBrainz cannot match the song, send its title and artist to Apple’s public catalog. Requires online track information."
+msgstr ""
+
+msgid "Tooltip is a compact preview near the pointer; drawer is a wider panel below the widget. Flip opens after hovering over the cover or song title for a moment. Playback buttons and seeking never trigger it. Leave the card, press Escape or use × to return."
+msgstr ""
+
+msgid "Keep a click target alongside cover and title hover. The return button remains available while flipped."
+msgstr ""
+
+msgid "Off: the widget floats directly on the wallpaper (current default)."
+msgstr ""
+
+msgid "Requests the Plasma translucent background; Hyprland needs the supplied layer blur rule."
+msgstr ""
+
+msgid "Choose how frosted the glass looks. 0% turns blur off; text and artwork stay sharp."
+msgstr ""
+
+msgid "0 keeps the art crisp."
+msgstr ""
+
+msgid "Keeps text readable on bright covers."
+msgstr ""
+
+msgid "Only the card fades; text and wave stay solid."
+msgstr ""
+
+msgid "Bends the sampled wallpaper with a subtle colour fringe."
+msgstr ""
+
+msgid "A soft specular highlight tracks the mouse."
+msgstr ""
+
+msgid "A thin line of light along the top edge."
+msgstr ""
+
+msgid "Stops gradients from banding."
+msgstr ""
+
+msgid "The edge glows in the accent colour on every kick."
+msgstr ""
+
+msgid "Project a soft, sound-reactive ambient glow onto the wallpaper or panel edges."
+msgstr ""
+
+msgid "Drives the wave, progress and play button. System follows your desktop accent."
+msgstr ""
+
+msgid "Used by the visualizer. Choose Colour mode for progress and controls below to share its palette or animated rainbow."
+msgstr ""
+
+msgid "Any number of colours, blended left to right. Click a colour to change it, × removes it, + adds one. The glow takes the middle of the range."
+msgstr ""
+
+msgid "Curated palettes with bounded hues, so they never turn muddy."
+msgstr ""
+
+msgid "Same uses the middle of your colour range. Custom gives the glow a range of its own, which it drifts slowly through."
+msgstr ""
+
+msgid "Any number of colours. Click one to change it, × removes it, + adds one."
+msgstr ""
+
+msgid "How far the glow spreads."
+msgstr ""
+
+msgid "Dark text and icons on the Solid material."
+msgstr ""
+
+msgid "Automatic shows the full card when it fits and your pill or icon design otherwise. Card or Pill / icon forces one at any panel size."
+msgstr ""
+
+msgid "Fit grows the card to fill the panel's thickness. Fixed uses the scale below."
+msgstr ""
+
+msgid "Scales the card in the panel; the panel must have room for it."
+msgstr ""
+
+msgid "Automatic follows the panel edge. Upright uses an icon in narrow side panels."
+msgstr ""
+
+msgid "Off hides the widget until a player appears. Try the “Nothing playing” state."
+msgstr ""
+
+msgid "A slow, quiet movement instead of a flat line."
+msgstr ""
+
+msgid "Adjusts the system output volume, not the player’s own."
+msgstr ""
+
+msgid "Scale text with Appearance > Fonts. Off keeps the original sizes."
+msgstr ""
+
+msgid "No ripples, sweeps, spins or scrolling text; the wave still reacts."
+msgstr ""
+
+msgid "On battery: 20 Hz and no glow."
+msgstr ""
+
+msgid "Lightweight Canvas path — also the automatic fallback if shaders fail."
+msgstr ""
+
+msgid "Stops drawing while a window hides the widget — saves real power."
+msgstr ""
+
+msgid "360 × 104 follows the chosen layout."
+msgstr ""
+
+msgid "Live devices and applications. Start playback to list a stream. Explicit sources override the backend; unavailable sources never fall back."
+msgstr ""
+
+msgid "Must exceed low cutoff; invalid ranges use 50–10000 Hz."
+msgstr ""
+
+msgid "Time constant for fading into silence or the idle ambient wave."
+msgstr ""
+
+msgid "More bars look finer, fewer look bolder."
+msgstr ""
+
+msgid "Raise it if quiet music barely moves the wave."
+msgstr ""
+
+msgid "Lower saves power. 30 Hz already looks smooth."
+msgstr ""
+
+msgid "Playback & artist summary"
+msgstr ""
+
+msgid "Rise from bottom"
+msgstr ""
+
+msgid "1:31 · 3:58"
+msgstr ""
+
+msgid "1:31 · -2:27"
+msgstr ""
+
+msgid "Previous · Play · Next"
+msgstr ""
+
+msgid "None (visualizer only)"
+msgstr ""
+
+msgid "Romaji / Pinyin"
+msgstr ""
+
+msgid "Whole, dimmed"
+msgstr ""
+
+msgid "Whole, edges"
+msgstr ""
+
+msgid "Wide 16:9"
+msgstr ""
+
+msgid "Same as colours"
+msgstr ""
+
+msgid "Custom range"
+msgstr ""
+
+msgid "Lifted"
+msgstr ""
+
+msgid "Atmosphere"
+msgstr ""
+
+msgid "Clear"
+msgstr ""
+
+msgid "Smoke"
+msgstr ""
+
+msgid "Cover colour"
+msgstr ""
+
+msgid "Rainbow"
+msgstr ""
+
+msgid "PipeWire"
+msgstr ""
+
+msgid "PulseAudio"
+msgstr ""
+
+msgid "ALSA (snd_aloop)"
+msgstr ""
+
+msgid "Songwriters"
+msgstr ""
+
+msgid "Edition date"
+msgstr ""
+
+msgid "Title · Artist"
+msgstr ""
+
+msgid "A daily variation of %1"
+msgstr ""
+
+msgid "Reach"
+msgstr ""
+
+msgid "Glass pill"
+msgstr ""
+
+msgid "Soft pill"
+msgstr ""
+
+msgid "Outline pill"
+msgstr ""
+
+msgid "Tinted pill"
+msgstr ""
+
+msgid "Accent play"
+msgstr ""
+
+msgid "pill"
+msgstr ""
+
+msgid "Click"
+msgstr ""
+
+msgid "Large clock"
+msgstr ""
+
+msgid "Format"
+msgstr ""
+
+msgid "Placeholder"
+msgstr ""
+
+msgid "Clicking the cover"
+msgstr ""
+
+msgid "Lyrics display"
+msgstr ""
+
+msgid "Pronunciation subtitle"
+msgstr ""
+
+msgid "Apple catalog fallback"
+msgstr ""
+
+msgid "card"
+msgstr ""
+
+msgid "Cover blur"
+msgstr ""
+
+msgid "Music-reactive hue"
+msgstr ""
+
+msgid "Adapt to light cards"
+msgstr ""
+
+msgid "place"
+msgstr ""
+
+msgid "soft"
+msgstr ""
+
+msgid "cava missing"
+msgstr ""
+
+msgid "Orbit"
+msgstr ""
+
+msgid "Both"
+msgstr ""
+
+msgid "Right"
+msgstr ""
+
+msgid "Circle"
+msgstr ""
+
+msgid "CD"
+msgstr ""
+
+msgid "Japanese"
+msgstr ""
+
+msgid "Chinese"
+msgstr ""
+
+msgid "Serif"
+msgstr ""
+
+msgid "Tooltip"
+msgstr ""
+
+msgid "Drawer"
+msgstr ""
+
+msgid "Customize"
+msgstr ""
+
+msgid "liquid"
+msgstr ""
+
+msgid "desktop"
+msgstr ""
+
+msgid "glass"
+msgstr ""
+
+msgid "adaptive"
+msgstr ""
+
+msgid "Import QML…"
+msgstr ""
+
+msgid "Try example"
+msgstr ""
+
+msgid "Remove"
+msgstr ""
+
+msgid "QML styles run code with the host’s permissions. Import only files you trust. Keep the file and its assets in a permanent folder; importing remembers their location."
+msgstr ""
+
+msgid "Audio capture"
+msgstr ""
+
+msgid "WALLPAPER"
+msgstr ""
+
+msgid "STATE"
+msgstr ""
+
+msgid "ACCENT"
+msgstr ""
+
+msgid "No saved looks yet."
+msgstr ""
+
+msgid "My look"
+msgstr ""
+
+msgid "Copy as JSON"
+msgstr ""
+
+msgid "Import JSON"
+msgstr ""
+
+msgid "Import"
+msgstr ""
+
+msgid "Saved looks and favorites are shared by all widgets on this device and saved immediately. To share a look with someone else, select it, then Copy as JSON. Custom QML files are not included."
+msgstr ""
+
+msgid "How to contribute a preset ↗"
+msgstr ""
+
+msgid "Preset name"
+msgstr ""
+
+msgid "Plasma Audio Visualizer project icon"
+msgstr ""
+
+msgid "By %1 ↗"
+msgstr ""
+
+msgid "An open-source music visualizer for Plasma and Hyprland. Explore the project, get updates, or help improve it."
+msgstr ""
+
+msgid "Installed version · %1"
+msgstr ""
+
+msgid "Latest stable release · %1"
+msgstr ""
+
+msgid "Check again"
+msgstr ""
+
+msgid "License · %1"
+msgstr ""
+
+msgid "Contributors"
+msgstr ""
+
+msgid "See all on GitHub ↗"
+msgstr ""
+
+msgid "Support the project"
+msgstr ""
+
+msgid "View source on GitHub ↗"
+msgstr ""
+
+msgid "Report an issue ↗"
+msgstr ""
+
+msgid "Open %1 on GitHub"
+msgstr ""
+
+msgid "Support on %1"
+msgstr ""
