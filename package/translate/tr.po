@@ -1987,3 +1987,12 @@ msgstr "Diğer tasarımın renklerini, kapak görselini, görselleştiricisini v
 
 msgid "Copy these settings, including both panel designs, to every other copy of this widget, such as one per monitor. Each keeps its own monitor and position. Apply here first; the others change immediately and cannot be undone."
 msgstr "Bu ayarları, her iki panel tasarımı da dâhil olmak üzere widget'ın diğer kopyalarına (örneğin her monitördeki kopyaya) uygular. Her kopya kendi monitörünü ve konumunu korur. Önce burada Uygula'ya basın; diğer kopyalar hemen değişir ve bu işlem geri alınamaz."
+
+msgid "add pkgs.cava to your configuration"
+msgstr "Yapılandırmanıza pkgs.cava ekleyin"
+
+msgid "install the 'cava' package"
+msgstr "'cava' paketini kurun"
+
+msgid "see %1"
+msgstr "%1 konumuna bakın"
