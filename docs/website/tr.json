@@ -97,7 +97,7 @@
   "Player": "Oynatıcı",
   "Playing": "Çalıyor",
   "Paused": "Duraklatıldı",
-  "Nothing playing": "Çalan bir şey yok",
+  "Nothing playing": "Hiçbir şey çalmıyor",
   "No metadata": "Üst veri yok",
   "Preview": "Önizleme",
   "Apply": "Uygula",
@@ -736,5 +736,7 @@
   "Waiting for the song title and artist…": "Şarkı adı ve sanatçı bekleniyor…",
   "Finding lyrics…": "Şarkı sözleri aranıyor…",
   "Couldn't load lyrics": "Şarkı sözleri yüklenemedi",
-  "No synced lyrics available for this song": "Bu parça için eşzamanlanmış şarkı sözü bulunamadı"
+  "No synced lyrics available for this song": "Bu parça için eşzamanlanmış şarkı sözü bulunamadı",
+  "Start music in any player": "Herhangi bir oynatıcıda müzik başlatın",
+  "No media": "Medya yok"
 }
