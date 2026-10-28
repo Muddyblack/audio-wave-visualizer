@@ -1,4 +1,5 @@
 import QtQuick
+import "studio/Translations.js" as Translations
 import QtQuick.Controls.Basic as Controls
 import QtQuick.Layouts
 import "text"
@@ -11,8 +12,8 @@ ColumnLayout {
     spacing: 8
     Controls.Button {
         Layout.fillWidth: true
-        text: (root.expanded ? "▾  " : "▸  ") + qsTr("Up Next")
-        Accessible.name: qsTr("Toggle upcoming tracks")
+        text: (root.expanded ? "▾  " : "▸  ") + (typeof i18n === "function" ? i18n("Up Next") : Translations.translate("Up Next"))
+        Accessible.name: (typeof i18n === "function" ? i18n("Toggle upcoming tracks") : Translations.translate("Toggle upcoming tracks"))
         onClicked: root.expanded = !root.expanded
     }
     MediaLookup {
@@ -36,7 +37,7 @@ ColumnLayout {
         color: "#aeb7bc"
         font.pixelSize: SystemText.px(11)
         wrapMode: Text.Wrap
-        text: root.view.samplePlayback ? qsTr("Queue unavailable in preview") : lookup.status === "loading" ? qsTr("Loading queue…") : lookup.status === "unsupported" ? qsTr("This player does not share its queue") : lookup.status === "unknown" ? qsTr("Current track is outside the shared queue") : lookup.status === "error" ? qsTr("Queue unavailable. Check that the player is running and busctl is installed.") : lookup.status === "ready" ? ((lookup.result.tracks ?? []).length ? qsTr("Player playlist order • shuffle may differ") : qsTr("No upcoming tracks")) : ""
+        text: root.view.samplePlayback ? (typeof i18n === "function" ? i18n("Queue unavailable in preview") : Translations.translate("Queue unavailable in preview")) : lookup.status === "loading" ? (typeof i18n === "function" ? i18n("Loading queue…") : Translations.translate("Loading queue…")) : lookup.status === "unsupported" ? (typeof i18n === "function" ? i18n("This player does not share its queue") : Translations.translate("This player does not share its queue")) : lookup.status === "unknown" ? (typeof i18n === "function" ? i18n("Current track is outside the shared queue") : Translations.translate("Current track is outside the shared queue")) : lookup.status === "error" ? (typeof i18n === "function" ? i18n("Queue unavailable. Check that the player is running and busctl is installed.") : Translations.translate("Queue unavailable. Check that the player is running and busctl is installed.")) : lookup.status === "ready" ? ((lookup.result.tracks ?? []).length ? (typeof i18n === "function" ? i18n("Player playlist order • shuffle may differ") : Translations.translate("Player playlist order • shuffle may differ")) : (typeof i18n === "function" ? i18n("No upcoming tracks") : Translations.translate("No upcoming tracks"))) : ""
     }
     ListView {
         Layout.fillWidth: true
@@ -55,7 +56,7 @@ ColumnLayout {
                 width: parent.width - 12
                 Text {
                     width: parent.width
-                    text: (entry.index + 1) + ".  " + (entry.modelData["xesam:title"] || qsTr("Unknown track"))
+                    text: (entry.index + 1) + ".  " + (entry.modelData["xesam:title"] || (typeof i18n === "function" ? i18n("Unknown track") : Translations.translate("Unknown track")))
                     textFormat: Text.PlainText
                     elide: Text.ElideRight
                     color: "#eef0ec"
@@ -75,7 +76,7 @@ ColumnLayout {
     }
     Text {
         visible: root.expanded && (lookup.result.total ?? 0) > 50
-        text: qsTr("Showing the next 50 tracks")
+        text: (typeof i18n === "function" ? i18n("Showing the next 50 tracks") : Translations.translate("Showing the next 50 tracks"))
         color: "#aeb7bc"
         font.pixelSize: SystemText.px(10)
     }
