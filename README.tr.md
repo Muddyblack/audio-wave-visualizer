@@ -13,7 +13,7 @@
   <a href="https://www.opendesktop.org/p/2359422/">
     <img src="https://img.shields.io/badge/KDE_Store-İndir-1d99f3?style=for-the-badge&logo=kde&logoColor=white" alt="KDE Store'dan indir" />
   </a>
-  <a href="docs/gallery.md">
+  <a href="docs/gallery.tr.md">
     <img src="https://img.shields.io/badge/Önayar_Galerisi-28_Tümünü_Gör-7928ca?style=for-the-badge" alt="Tüm önayarları gör" />
   </a>
 </p>
@@ -71,7 +71,7 @@ Parça bilgileri; seçilen alanları Parça, Katkıda Bulunanlar, Yayın ve Oyna
 
 ## Galeri
 
-Bunlar örnek oynatma ile gerçek QML bileşeninden alınmış görüntülerdir. Galeride [28 önayarın tamamı](docs/gallery.md) bulunur.
+Bunlar örnek oynatma ile gerçek QML bileşeninden alınmış görüntülerdir. Galeride [28 önayarın tamamı](docs/gallery.tr.md) bulunur.
 
 <details open>
   <summary><b>Kartlar</b></summary>
@@ -237,7 +237,7 @@ Python lint ve biçimlendirme denetimleri için `make lint-python`; biçimlendir
 ## Yardım ve proje belgeleri
 
 - [Kurulum, yapılandırma ve sorun giderme](docs/installation.tr.md)
-- [Tüm önayarların galerisi](docs/gallery.md)
+- [Tüm önayarların galerisi](docs/gallery.tr.md)
 - [Şarkı sözleri ve karaoke](docs/lyrics.tr.md)
 - [Özel görselleştiriciler](docs/custom-visualizers.tr.md)
 - [Mimari ve geliştirme iş akışı](docs/workflow.tr.md)
