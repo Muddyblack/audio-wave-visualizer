@@ -1723,3 +1723,24 @@ msgstr "Aynalı Minimal"
 
 msgid "Compact"
 msgstr "Kompakt"
+
+msgid "Today’s look · %1"
+msgstr "Günün görünümü · %1"
+
+msgid "First available display"
+msgstr "İlk Kullanılabilir Ekran"
+
+msgid "Every monitor"
+msgstr "Tüm Ekranlar"
+
+msgid "Unavailable: %1"
+msgstr "Kullanılamıyor: %1"
+
+msgid "%1 and %2"
+msgstr "%1 ve %2"
+
+msgid "Browser site names and media details need %1. %2"
+msgstr "Tarayıcıdaki site adları ve ortam ayrıntıları için %1 gerekir. %2"
+
+msgid "On NixOS, add pkgs.python3 and pkgs.systemd to environment.systemPackages, rebuild, then sign out and in."
+msgstr "NixOS’ta pkgs.python3 ve pkgs.systemd paketlerini environment.systemPackages listesine ekleyin, sistemi yeniden derleyin ve oturumu kapatıp yeniden açın."
