@@ -1981,3 +1981,12 @@ msgstr ""
 
 msgid "Copy these settings, including both panel designs, to every other copy of this widget, such as one per monitor. Each keeps its own monitor and position. Apply here first; the others change immediately and cannot be undone."
 msgstr ""
+
+msgid "add pkgs.cava to your configuration"
+msgstr ""
+
+msgid "install the 'cava' package"
+msgstr ""
+
+msgid "see %1"
+msgstr ""
