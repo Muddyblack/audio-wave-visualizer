@@ -469,3 +469,519 @@ msgstr "Tüm ayarları varsayılan değerlerine döndürür."
 
 msgid "The same look all day"
 msgstr "Gün boyunca aynı görünüm"
+
+msgid "Accent"
+msgstr "Vurgu"
+
+msgid "Adaptive colour"
+msgstr "Uyarlanan Renk"
+
+msgid "Album in the top line"
+msgstr "Üst Satırda Albüm"
+
+msgid "Album track count"
+msgstr "Albümdeki Parça Sayısı"
+
+msgid "Ambient desktop glow"
+msgstr "Ortam Işıması"
+
+msgid "Ambient idle wave"
+msgstr "Boşta Ortam Dalgası"
+
+msgid "Artist and album follow the title."
+msgstr "Sanatçı ve albüm bilgileri başlığı izler."
+
+msgid "Artist — Title"
+msgstr "Sanatçı — Başlık"
+
+msgid "Audio-reactive progress"
+msgstr "Sese Tepki Veren İlerleme Çubuğu"
+
+msgid "Auto-detect tries PipeWire, then PulseAudio, then ALSA."
+msgstr "Otomatik algılama önce PipeWire’ı, ardından PulseAudio’yu ve ALSA’yı dener."
+
+msgid "Bare icons"
+msgstr "Yalnızca Simgeler"
+
+msgid "Bass pulse"
+msgstr "Bas Vuruşu"
+
+msgid "Bass weight"
+msgstr "Bas Ağırlığı"
+
+msgid "Bloom"
+msgstr "Işık Yayılımı"
+
+msgid "Border"
+msgstr "Kenarlık"
+
+msgid "Bottom"
+msgstr "Alt"
+
+msgid "Bouncing"
+msgstr "Zıplayan"
+
+msgid "Card line size"
+msgstr "Kart Çizgisi Boyutu"
+
+msgid "Card opacity"
+msgstr "Kart Saydamlığı"
+
+msgid "Card padding"
+msgstr "Kart İç Boşluğu"
+
+msgid "Card scale"
+msgstr "Kart Ölçeği"
+
+msgid "Card size"
+msgstr "Kart Boyutu"
+
+msgid "Centre"
+msgstr "Orta"
+
+msgid "Chapter marks"
+msgstr "Bölüm İşaretleri"
+
+msgid "Choose a set in one click, or customize the fields below. Missing information stays hidden. These choices survive Surprise me and daily looks."
+msgstr "Tek tıklamayla bir bilgi kümesi seçin veya aşağıdaki alanları özelleştirin. Eksik bilgiler gösterilmez. Bu seçimler “Beni şaşırt” ve günlük görünüm değişikliklerinde korunur."
+
+msgid "Choose the shape around your playback controls."
+msgstr "Oynatma denetimlerinin çevresindeki şekli seçin."
+
+msgid "Click anywhere on it in the widget to seek."
+msgstr "Parçada ilgili konuma gitmek için bileşenin herhangi bir yerine tıklayın."
+
+msgid "Colour glow"
+msgstr "Renk Işıması"
+
+msgid "Colour mode shares the visualizer’s palette, gradient or rainbow. Automatic keeps the original controls-based colours."
+msgstr "Renk kipi, görselleştiricinin paletini, gradyanını veya gökkuşağı efektini kullanır. Otomatik, denetimlerin mevcut renklerini korur."
+
+msgid "Colours drift slowly with the bass / treble balance."
+msgstr "Renkler bas/tiz dengesine göre yavaşça değişir."
+
+msgid "Compositor glass"
+msgstr "Birleştirici Cam Efekti"
+
+msgid "Corner radius"
+msgstr "Köşe Yarıçapı"
+
+msgid "Cover darkness"
+msgstr "Kapak Karartması"
+
+msgid "Cover tilt on hover"
+msgstr "Üzerine Gelindiğinde Kapağı Eğ"
+
+msgid "Current line colour"
+msgstr "Geçerli Satırın Rengi"
+
+msgid "Current line position"
+msgstr "Geçerli Satırın Konumu"
+
+msgid "Current line weight"
+msgstr "Geçerli Satırın Kalınlığı"
+
+msgid "Custom background"
+msgstr "Özel Arka Plan"
+
+msgid "Custom button styles"
+msgstr "Özel Düğme Stilleri"
+
+msgid "Custom glass colour"
+msgstr "Özel Cam Rengi"
+
+msgid "Custom icon colour"
+msgstr "Özel Simge Rengi"
+
+msgid "Custom progress bars"
+msgstr "Özel İlerleme Çubukları"
+
+msgid "Custom progress colour"
+msgstr "Özel İlerleme Rengi"
+
+msgid "Custom text colour"
+msgstr "Özel Metin Rengi"
+
+msgid "Custom visualizers"
+msgstr "Özel Görselleştiriciler"
+
+msgid "Desktop"
+msgstr "Masaüstü"
+
+msgid "Detail"
+msgstr "Ayrıntı"
+
+msgid "Dim the widget"
+msgstr "Bileşeni Karart"
+
+msgid "Display"
+msgstr "Görüntüleme"
+
+msgid "Edge highlight"
+msgstr "Kenar Vurgusu"
+
+msgid "Edge colour"
+msgstr "Kenar Rengi"
+
+msgid "Elapsed time set big beside the progress line."
+msgstr "Geçen süre, ilerleme çizgisinin yanında büyük gösterilir."
+
+msgid "Fade the visualizer"
+msgstr "Görselleştiriciyi Soldur"
+
+msgid "Film grain"
+msgstr "Film Greni"
+
+msgid "Fit panel"
+msgstr "Paneli Sığdır"
+
+msgid "Fixed"
+msgstr "Sabit"
+
+msgid "Flip card"
+msgstr "Kartı Çevir"
+
+msgid "Follow current line"
+msgstr "Geçerli Satırı İzle"
+
+msgid "Follow system font size"
+msgstr "Sistem Yazı Tipi Boyutunu İzle"
+
+msgid "Frequency spacing"
+msgstr "Frekans Aralığı"
+
+msgid "Friendly idle message"
+msgstr "Boştayken Gösterilecek Mesaj"
+
+msgid "From cover"
+msgstr "Kapaktan"
+
+msgid "Frost"
+msgstr "Buzlu Cam"
+
+msgid "Glass"
+msgstr "Cam"
+
+msgid "Glass tint"
+msgstr "Cam Tonu"
+
+msgid "Greyscale while paused"
+msgstr "Duraklatıldığında Gri Tonlama"
+
+msgid "Hang from top"
+msgstr "Üstten Sarkıt"
+
+msgid "Hero wave"
+msgstr "Öne Çıkan Dalga"
+
+msgid "High cutoff"
+msgstr "Üst Kesim Frekansı"
+
+msgid "Higher glides gently; lower snaps to every beat."
+msgstr "Yüksek değerler yumuşak geçiş sağlar; düşük değerler her vuruşa kilitlenir."
+
+msgid "Highlight colour"
+msgstr "Vurgu Rengi"
+
+msgid "Hover"
+msgstr "Üzerine Gelme"
+
+msgid "Icon colour"
+msgstr "Simge Rengi"
+
+msgid "Initials"
+msgstr "Baş Harfler"
+
+msgid "Italic"
+msgstr "İtalik"
+
+msgid "Kana"
+msgstr "Kana"
+
+msgid "Keep sharp thumbnail"
+msgstr "Küçük Resmi Keskin Tut"
+
+msgid "Keep visible"
+msgstr "Görünür Tut"
+
+msgid "Layer"
+msgstr "Katman"
+
+msgid "Left"
+msgstr "Sol"
+
+msgid "Letter spacing"
+msgstr "Harf Aralığı"
+
+msgid "Lift on hover"
+msgstr "Üzerine Gelindiğinde Yükselt"
+
+msgid "Light follows pointer"
+msgstr "Işık İmleci İzlesin"
+
+msgid "Line on card"
+msgstr "Kart Üzerindeki Çizgi"
+
+msgid "Liquid"
+msgstr "Sıvı"
+
+msgid "Logarithmic"
+msgstr "Logaritmik"
+
+msgid "Long title"
+msgstr "Uzun Başlık"
+
+msgid "Low cutoff"
+msgstr "Alt Kesim Frekansı"
+
+msgid "Material"
+msgstr "Malzeme"
+
+msgid "Mel (resampled)"
+msgstr "Mel (yeniden örneklenmiş)"
+
+msgid "Mini visualizer"
+msgstr "Mini Görselleştirici"
+
+msgid "Monospace"
+msgstr "Eş Aralıklı"
+
+msgid "Motion"
+msgstr "Hareket"
+
+msgid "Monitor"
+msgstr "Ekran"
+
+msgid "No art"
+msgstr "Kapak Görseli Yok"
+
+msgid "Online track information"
+msgstr "Çevrimiçi Parça Bilgileri"
+
+msgid "Open card"
+msgstr "Kartı Aç"
+
+msgid "Open player"
+msgstr "Oynatıcıyı Aç"
+
+msgid "Outline"
+msgstr "Anahat"
+
+msgid "Palette"
+msgstr "Palet"
+
+msgid "Panel"
+msgstr "Panel"
+
+msgid "Past lines"
+msgstr "Önceki Satırlar"
+
+msgid "Pause when covered"
+msgstr "Üzeri Kapatıldığında Duraklat"
+
+msgid "Pill / icon"
+msgstr "Hap / Simge"
+
+msgid "Player icon"
+msgstr "Oynatıcı Simgesi"
+
+msgid "Player name"
+msgstr "Oynatıcı Adı"
+
+msgid "Player switcher"
+msgstr "Oynatıcı Değiştirici"
+
+msgid "Preferred height"
+msgstr "Tercih Edilen Yükseklik"
+
+msgid "Preferred width"
+msgstr "Tercih Edilen Genişlik"
+
+msgid "Previews react to your colour, line and bloom settings."
+msgstr "Önizlemeler renk, çizgi ve ışık yayılımı ayarlarınıza tepki verir."
+
+msgid "Progress bar & cover ring"
+msgstr "İlerleme Çubuğu ve Kapak Halkası"
+
+msgid "Reading language"
+msgstr "Okuma Dili"
+
+msgid "Reflection"
+msgstr "Yansıma"
+
+msgid "Refraction"
+msgstr "Kırılma"
+
+msgid "Release type"
+msgstr "Yayın Türü"
+
+msgid "Ribbon curvature"
+msgstr "Şerit Eğriliği"
+
+msgid "Ribbon fullness"
+msgstr "Şerit Dolgunluğu"
+
+msgid "Ring style"
+msgstr "Halka Stili"
+
+msgid "Rotate left"
+msgstr "Sola Döndür"
+
+msgid "Rotate right"
+msgstr "Sağa Döndür"
+
+msgid "Rounded"
+msgstr "Yuvarlatılmış"
+
+msgid "Sans serif"
+msgstr "Sans Serif"
+
+msgid "Screen position"
+msgstr "Ekran Konumu"
+
+msgid "Scroll long titles"
+msgstr "Uzun Başlıkları Kaydır"
+
+msgid "Scroll to change volume"
+msgstr "Ses Düzeyini Değiştirmek İçin Kaydır"
+
+msgid "Seek gestures"
+msgstr "Konumlandırma Hareketleri"
+
+msgid "Seek preview"
+msgstr "Konum Önizlemesi"
+
+msgid "Shadow"
+msgstr "Gölge"
+
+msgid "Shape"
+msgstr "Şekil"
+
+msgid "Sharp"
+msgstr "Keskin"
+
+msgid "Show buttons on hover only"
+msgstr "Düğmeleri Yalnızca Üzerine Gelindiğinde Göster"
+
+msgid "Show flip info button"
+msgstr "Bilgi Çevirme Düğmesini Göster"
+
+msgid "Show large"
+msgstr "Büyük Göster"
+
+msgid "Show scrollbar"
+msgstr "Kaydırma Çubuğunu Göster"
+
+msgid "Silence release"
+msgstr "Sessizlikten Çıkış"
+
+msgid "Simple rendering"
+msgstr "Basit Görüntüleme"
+
+msgid "Smoothing"
+msgstr "Yumuşatma"
+
+msgid "Soft"
+msgstr "Yumuşak"
+
+msgid "Soft light around the visualizer."
+msgstr "Görselleştiricinin çevresinde yumuşak bir ışık oluşturur."
+
+msgid "Solid"
+msgstr "Düz"
+
+msgid "Space between verses"
+msgstr "Dizeler Arasındaki Boşluk"
+
+msgid "Square"
+msgstr "Kare"
+
+msgid "Squircle"
+msgstr "Yuvarlatılmış Kare"
+
+msgid "Static"
+msgstr "Sabit"
+
+msgid "Status"
+msgstr "Durum"
+
+msgid "Styled bar"
+msgstr "Biçimlendirilmiş Çubuk"
+
+msgid "Subtle"
+msgstr "Hafif"
+
+msgid "Synced lyrics line"
+msgstr "Eşzamanlanmış Şarkı Sözü Satırı"
+
+msgid "System"
+msgstr "Sistem"
+
+msgid "Text edge"
+msgstr "Metin Kenarlığı"
+
+msgid "Text size"
+msgstr "Metin Boyutu"
+
+msgid "Text weight"
+msgstr "Metin Kalınlığı"
+
+msgid "Texture strength"
+msgstr "Doku Yoğunluğu"
+
+msgid "Time labels"
+msgstr "Zaman Etiketleri"
+
+msgid "Timing offset (seconds)"
+msgstr "Zamanlama Kayması (saniye)"
+
+msgid "Tint"
+msgstr "Ton"
+
+msgid "Tint colour"
+msgstr "Ton Rengi"
+
+msgid "Title"
+msgstr "Başlık"
+
+msgid "Title lines"
+msgstr "Başlık Satırları"
+
+msgid "Top"
+msgstr "Üst"
+
+msgid "Treble weight"
+msgstr "Tiz Ağırlığı"
+
+msgid "Underline"
+msgstr "Altı Çizili"
+
+msgid "Upcoming lines"
+msgstr "Sonraki Satırlar"
+
+msgid "Upright"
+msgstr "Dik"
+
+msgid "Version"
+msgstr "Sürüm"
+
+msgid "Vertical position"
+msgstr "Dikey Konum"
+
+msgid "Vinyl"
+msgstr "Plak"
+
+msgid "What to show"
+msgstr "Gösterilecekler"
+
+msgid "Wheel seek step"
+msgstr "Tekerlekle Atlanan Süre"
+
+msgid "Wrapped line height"
+msgstr "Kaydırılmış Satır Yüksekliği"
+
+msgid "Your colour range"
+msgstr "Renk Aralığınız"
+
+msgid "Your glow range"
+msgstr "Parıltı Aralığınız"
