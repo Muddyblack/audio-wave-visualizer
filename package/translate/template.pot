@@ -1624,3 +1624,153 @@ msgstr ""
 
 msgid "About the project"
 msgstr ""
+
+msgid "All categories"
+msgstr ""
+
+msgid "Glass and Liquid blur the desktop wallpaper when it is available, with tint and highlights above it. Text and artwork stay sharp. Wallpaper blur requires GPU rendering; panels and hosts without a wallpaper source keep the translucent tint."
+msgstr ""
+
+msgid "Glass and Liquid are drawn by the widget. Add a blur layer rule for the audio-wave-visualizer namespace to blur behind them — on a Bottom-layer surface this re-blurs the whole monitor on every frame, so keep the frame rate low."
+msgstr ""
+
+msgid "In a panel the widget shows this pill; clicking it opens the full card as a popup."
+msgstr ""
+
+msgid "Add hyprland/PanelPill.qml to a Quickshell bar, or use run.sh --waybar for a Waybar custom module."
+msgstr ""
+
+msgid "Plasma places desktop widgets by dragging them in edit mode, and panel widgets inside the panel, so there is nothing to set here."
+msgstr ""
+
+msgid "Where the desktop widget sits on your screens."
+msgstr ""
+
+msgid "Glass Classic"
+msgstr ""
+
+msgid "Liquid Glass"
+msgstr ""
+
+msgid "Poster · Hanging bars"
+msgstr ""
+
+msgid "Stalactites"
+msgstr ""
+
+msgid "Halo"
+msgstr ""
+
+msgid "Sunburst"
+msgstr ""
+
+msgid "Dot Halo"
+msgstr ""
+
+msgid "Orbit Icon"
+msgstr ""
+
+msgid "Quiet Glass"
+msgstr ""
+
+msgid "Panel Pill"
+msgstr ""
+
+msgid "Bar Icon"
+msgstr ""
+
+msgid "Ribbon Pill"
+msgstr ""
+
+msgid "Silk Ribbon"
+msgstr ""
+
+msgid "Cover Art"
+msgstr ""
+
+msgid "Album Atmosphere"
+msgstr ""
+
+msgid "Lyrics Card"
+msgstr ""
+
+msgid "CD Player"
+msgstr ""
+
+msgid "Soft Solid"
+msgstr ""
+
+msgid "Neon Night"
+msgstr ""
+
+msgid "Arcade"
+msgstr ""
+
+msgid "Hero Wave"
+msgstr ""
+
+msgid "Slim Strip"
+msgstr ""
+
+msgid "Mirrored Minimal"
+msgstr ""
+
+msgid "Compact"
+msgstr ""
+
+msgid "Today’s look · %1"
+msgstr ""
+
+msgid "First available display"
+msgstr ""
+
+msgid "Every monitor"
+msgstr ""
+
+msgid "Unavailable: %1"
+msgstr ""
+
+msgid "%1 and %2"
+msgstr ""
+
+msgid "Browser site names and media details need %1. %2"
+msgstr ""
+
+msgid "On NixOS, add pkgs.python3 and pkgs.systemd to environment.systemPackages, rebuild, then sign out and in."
+msgstr ""
+
+msgid "Pine lake"
+msgstr ""
+
+msgid "Afterglow"
+msgstr ""
+
+msgid "Midnight marina"
+msgstr ""
+
+msgid "Aurora sound"
+msgstr ""
+
+msgid "Moss & mist"
+msgstr ""
+
+msgid "Silver tide"
+msgstr ""
+
+msgid "aurora"
+msgstr ""
+
+msgid "ember"
+msgstr ""
+
+msgid "ice"
+msgstr ""
+
+msgid "grove"
+msgstr ""
+
+msgid "iris"
+msgstr ""
+
+msgid "coral"
+msgstr ""
