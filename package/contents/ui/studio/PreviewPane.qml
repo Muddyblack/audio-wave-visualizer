@@ -1,4 +1,5 @@
 import QtQuick
+import "Translations.js" as Translations
 import QtQuick.Controls.Basic as Controls
 import ".."
 import "Theme.js" as Theme
@@ -189,7 +190,7 @@ Rectangle {
         spacing: 8
         Chip {
             ChipLabel {
-                text: (typeof i18n === "function" ? i18n("WALLPAPER") : "WALLPAPER")
+                text: (typeof i18n === "function" ? i18n("WALLPAPER") : Translations.translate("WALLPAPER"))
             }
             Repeater {
                 model: Schema.BACKDROPS
@@ -238,7 +239,7 @@ Rectangle {
         Chip {
             visible: !pane.compact && !pane.liveMode
             ChipLabel {
-                text: (typeof i18n === "function" ? i18n("STATE") : "STATE")
+                text: (typeof i18n === "function" ? i18n("STATE") : Translations.translate("STATE"))
             }
             Repeater {
                 model: Schema.STATES
@@ -291,7 +292,7 @@ Rectangle {
         }
         Chip {
             ChipLabel {
-                text: (typeof i18n === "function" ? i18n("ACCENT") : "ACCENT")
+                text: (typeof i18n === "function" ? i18n("ACCENT") : Translations.translate("ACCENT"))
             }
             Repeater {
                 model: ["#3daee9", "#a855f7", "#ff6fb0", "#f5b26b", "#34d399"]
