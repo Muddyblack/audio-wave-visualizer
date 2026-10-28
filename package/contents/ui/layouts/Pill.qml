@@ -1,4 +1,5 @@
 import QtQuick
+import "../studio/Translations.js" as Translations
 import QtQuick.Layouts
 import ".."
 import "../text"
@@ -13,7 +14,7 @@ Item {
     readonly property string eqMode: view.hasPlayer ? (cfg.pillEq ?? "wave") : "off"
     readonly property string controls: view.hasPlayer ? (cfg.pillControls ?? "none") : "none"
     readonly property string content: cfg.pillContent ?? "title-artist"
-    readonly property string titleText: view.displayTrack !== "" ? view.displayTrack : qsTr("No media")
+    readonly property string titleText: view.displayTrack !== "" ? view.displayTrack : (typeof i18n === "function" ? i18n("No media") : Translations.translate("No media"))
     readonly property bool showText: content !== "none"
     readonly property bool withArtist: showText && content !== "title" && view.artist !== ""
     readonly property real maxWidth: cfg.pillMaxWidth ?? 300
