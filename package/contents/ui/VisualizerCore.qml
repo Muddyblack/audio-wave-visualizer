@@ -270,7 +270,7 @@ Item {
         if (!backendFailed)
             return "";
         if (backendCode === "no-cava")
-            return "cava is not installed";
+            return typeof i18n === "function" ? i18n("cava is not installed") : "cava is not installed";
         if (backendCode === "no-backend")
             return typeof i18n === "function" ? i18n("No usable audio input (tried %1)", backendDetail.replace(/,/g, ", ")) : "No usable audio input (tried " + backendDetail.replace(/,/g, ", ") + ")";
         // Windows only (windows/audio_capture.py): nothing plays, so nothing to capture.
@@ -314,9 +314,9 @@ Item {
         if (backendCode === "no-cava")
             return installCommand;
         if (backendCode === "no-backend")
-            return "is PipeWire or PulseAudio running?";
+            return typeof i18n === "function" ? i18n("is PipeWire or PulseAudio running?") : "is PipeWire or PulseAudio running?";
         if (backendCode === "no-output")
-            return "connect speakers, or enable sound in your remote desktop client";
+            return typeof i18n === "function" ? i18n("connect speakers, or enable sound in your remote desktop client") : "connect speakers, or enable sound in your remote desktop client";
         return "see " + vis.resolvedRunDir + "/cava.log";
     }
 
@@ -324,12 +324,12 @@ Item {
         if (!backendFailed)
             return "";
         if (backendCode === "no-cava")
-            return installCommand + "\nThe widget picks it up within 30 seconds — no restart needed, unless your package manager only changes PATH for new sessions.";
+            return installCommand + "\n" + (typeof i18n === "function" ? i18n("The widget picks it up within 30 seconds — no restart needed, unless your package manager only changes PATH for new sessions.") : "The widget picks it up within 30 seconds — no restart needed, unless your package manager only changes PATH for new sessions.");
         if (backendCode === "no-backend")
             return typeof i18n === "function" ? i18n("cava could not capture from any backend. Check that PipeWire or PulseAudio is running, or pin one under Audio Input in the widget settings.") : "cava could not capture from any backend. Check that PipeWire or PulseAudio is running, or pin one under Audio Input in the widget settings.";
         if (backendCode === "no-output")
             return typeof i18n === "function" ? i18n("Windows has no audio output, so nothing is playing that could be visualized. Connect speakers or headphones, enable sound in your remote desktop client, or install a virtual audio device. Picked up within seconds — no restart needed.") : "Windows has no audio output, so nothing is playing that could be visualized. Connect speakers or headphones, enable sound in your remote desktop client, or install a virtual audio device. Picked up within seconds — no restart needed.";
-        return "cava keeps exiting — see " + vis.resolvedRunDir + "/cava.log";
+        return typeof i18n === "function" ? i18n("cava keeps exiting — see %1", vis.resolvedRunDir + "/cava.log") : "cava keeps exiting — see " + vis.resolvedRunDir + "/cava.log";
     }
 
     CommandSource {
