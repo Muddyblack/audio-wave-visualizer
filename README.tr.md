@@ -239,7 +239,7 @@ Python lint ve biçimlendirme denetimleri için `make lint-python`; biçimlendir
 - [Kurulum, yapılandırma ve sorun giderme](docs/installation.tr.md)
 - [Tüm önayarların galerisi](docs/gallery.md)
 - [Şarkı sözleri ve karaoke](docs/lyrics.tr.md)
-- [Özel görselleştiriciler](docs/custom-visualizers.md)
+- [Özel görselleştiriciler](docs/custom-visualizers.tr.md)
 - [Mimari ve geliştirme iş akışı](docs/workflow.tr.md)
 
 ## Destek
