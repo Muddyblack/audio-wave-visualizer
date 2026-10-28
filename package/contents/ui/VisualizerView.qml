@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import "studio/Translations.js" as Translations
 import QtQuick.Controls.Basic as Controls
 import "layouts" as Layouts
 import "../code/Layouts.js" as LayoutSizes
@@ -312,10 +313,10 @@ Item {
         const host = (s.match(/^[a-z][a-z0-9+.-]*:\/\/([^/?#]*)/i) || ["", ""])[1].toLowerCase();
         // googlevideo params survive even when the host got chopped off
         if (host.endsWith("googlevideo.com") || /(^|&)(itag|clen|gir|lmt|fvip|ratebypass|sparams)=/i.test(s))
-            return qsTr("Direct YouTube stream");
+            return (typeof i18n === "function" ? i18n("Direct YouTube stream") : Translations.translate("Direct YouTube stream"));
         if (host !== "")
             return host.replace(/^www\./, "");
-        return qsTr("Player published no title");
+        return (typeof i18n === "function" ? i18n("Player published no title") : Translations.translate("Player published no title"));
     }
 
     property string artUrl: ""
