@@ -10,22 +10,29 @@ const queryAll = (s, r = document) => [...r.querySelectorAll(s)];
   const textState = new WeakMap();
   const attrState = new WeakMap();
   const ignored = 'SCRIPT,STYLE,CODE,PRE,NOSCRIPT';
+  let templateMatchers = null;
+  let phraseKeys = null;
   function translateValue(source) {
     if (messages[source]) return messages[source];
+    if (!templateMatchers) {
+      templateMatchers = Object.keys(messages).filter(key => /%\d+/.test(key)).sort((a, b) => b.length - a.length).map(key => {
+        const parts = key.split(/(%\d+)/g);
+        const pattern = parts.map(part => /^%\d+$/.test(part) ? '(.+?)' : part.replace(/[.*+?^$()|[\]\\]/g, '\\$&')).join('');
+        return { key, regex: new RegExp(pattern, 'g') };
+      });
+      phraseKeys = Object.keys(messages).filter(key => key.length >= 10 && !/%\d+/.test(key)).sort((a, b) => b.length - a.length);
+    }
     let result = source;
-    const templateKeys = Object.keys(messages).filter(key => /%\d+/.test(key)).sort((a, b) => b.length - a.length);
-    for (const key of templateKeys) {
-      const parts = key.split(/(%\d+)/g);
-      const pattern = parts.map(part => /^%\d+$/.test(part) ? '(.+?)' : part.replace(/[.*+?^$()|[\]\\]/g, '\\$&')).join('');
-      const re = new RegExp(pattern, 'g');
-      result = result.replace(re, (...args) => {
-        let translated = messages[key];
+    for (const item of templateMatchers) {
+      item.regex.lastIndex = 0;
+      result = result.replace(item.regex, (...args) => {
+        let translated = messages[item.key];
         const captures = args.slice(1, -2);
         captures.forEach((value, index) => { translated = translated.replace('%' + (index + 1), value); });
         return translated;
       });
     }
-    for (const key of Object.keys(messages).filter(key => key.length >= 10 && !/%\d+/.test(key)).sort((a, b) => b.length - a.length)) {
+    for (const key of phraseKeys) {
       if (result.includes(key)) result = result.split(key).join(messages[key]);
     }
     return result;
@@ -1026,7 +1033,7 @@ function renderPresetPicker(el) {
     $('[data-preset-category]', el).value = pickFilter;
     $('[data-keep]', el).checked = keepColors;
     $('[data-daily-note]', el).hidden = pickFilter !== 'daily';
-    $('[data-daily-note]', el).textContent = dailyPreset().note + '. One look all day. Save it to keep it.';
+    $('[data-daily-note]', el).textContent = dailyPreset().note.replace('%1', dailyPreset().noteValue) + '. One look all day. Save it to keep it.';
     $('[data-save-daily]', el).hidden = pickFilter !== 'daily';
     $('[data-save-daily]', el).disabled = loadUser().some(p => p.id === dailyPreset().id);
     $('[data-auto-row]', el).hidden = pickFilter !== 'daily';
