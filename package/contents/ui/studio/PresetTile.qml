@@ -1,4 +1,5 @@
 import QtQuick
+import "Translations.js" as Translations
 import QtQuick.Controls.Basic as Controls
 import ".."
 import "Theme.js" as Theme
@@ -103,7 +104,7 @@ Item {
             spacing: 4
             Text {
                 width: parent.width - check.width - 4
-                text: !tile.renamable && typeof i18n === "function" ? (tile.name.indexOf("Today’s look · ") === 0 ? i18n("Today’s look · %1", tile.name.substring("Today’s look · ".length)) : i18n(tile.name)) : tile.name
+                text: !tile.renamable ? (typeof i18n === "function" ? (tile.name.indexOf("Today’s look · ") === 0 ? i18n("Today’s look · %1", tile.name.substring("Today’s look · ".length)) : i18n(tile.name)) : (tile.name.indexOf("Today’s look · ") === 0 ? Translations.translate("Today’s look · %1", tile.name.substring("Today’s look · ".length)) : Translations.translate(tile.name))) : tile.name
                 textFormat: Text.PlainText
                 color: tile.active ? Theme.text : Theme.muted
                 font.family: Theme.fontFamily
@@ -159,7 +160,7 @@ Item {
         width: 24
         height: 24
         text: "✎"
-        Accessible.name: (typeof i18n === "function" ? i18n("Rename preset") : "Rename preset")
+        Accessible.name: (typeof i18n === "function" ? i18n("Rename preset") : Translations.translate("Rename preset"))
         Controls.ToolTip.visible: hovered
         Controls.ToolTip.text: (typeof i18n === "function" ? i18n("Rename preset") : "Rename preset")
         contentItem: Text {
@@ -199,7 +200,7 @@ Item {
             font.pixelSize: 11
             clip: true
             selectByMouse: true
-            Accessible.name: (typeof i18n === "function" ? i18n("Preset name") : "Preset name")
+            Accessible.name: (typeof i18n === "function" ? i18n("Preset name") : Translations.translate("Preset name"))
             onAccepted: tile.finishRename()
             Keys.onEscapePressed: tile.renaming = false
         }
