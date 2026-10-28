@@ -29,13 +29,14 @@ Rectangle {
             return "";
         const missing = [];
         if (/^python3: missing$/m.test(dependencyReport))
-            missing.push("Python 3");
+            missing.push(typeof i18n === "function" ? i18n("Python 3") : "Python 3");
         if (/^busctl: missing$/m.test(dependencyReport))
-            missing.push("busctl");
+            missing.push(typeof i18n === "function" ? i18n("busctl") : "busctl");
         if (!missing.length)
             return "";
-        const install = /^distro: (nixos|nix)$/m.test(dependencyReport) ? "On NixOS, add pkgs.python3 and pkgs.systemd to environment.systemPackages, rebuild, then sign out and in." : "Install the missing tools with your distribution's package manager, then restart Plasma.";
-        return "Browser site names and media details need " + missing.join(" and ") + ". " + install;
+        const install = /^distro: (nixos|nix)$/m.test(dependencyReport) ? (typeof i18n === "function" ? i18n("On NixOS, add pkgs.python3 and pkgs.systemd to environment.systemPackages, rebuild, then sign out and in.") : "On NixOS, add pkgs.python3 and pkgs.systemd to environment.systemPackages, rebuild, then sign out and in.") : (typeof i18n === "function" ? i18n("Install the missing tools with your distribution’s package manager, then restart Plasma.") : "Install the missing tools with your distribution’s package manager, then restart Plasma.");
+        const tools = missing.length > 1 && typeof i18n === "function" ? i18n("%1 and %2", missing[0], missing[1]) : missing.join(" and ");
+        return typeof i18n === "function" ? i18n("Browser site names and media details need %1. %2", tools, install) : "Browser site names and media details need " + tools + ". " + install;
     }
     Shared.CommandSource {
         id: dependencyCheck
@@ -58,7 +59,7 @@ Rectangle {
         }
     }
     property var discoveredSources: [["auto", "Default output monitor"]]
-    readonly property var audioSourceOptions: discoveredSources.some(o => o[0] === (draft.inputSource || "auto")) ? discoveredSources : discoveredSources.concat([[draft.inputSource, "Unavailable: " + draft.inputSource]])
+    readonly property var audioSourceOptions: discoveredSources.some(o => o[0] === (draft.inputSource || "auto")) ? discoveredSources : discoveredSources.concat([[draft.inputSource, typeof i18n === "function" ? i18n("Unavailable: %1", draft.inputSource) : "Unavailable: " + draft.inputSource]])
     Shared.CommandSource {
         id: sourceDiscovery
         sourceComponent: studioRoot.commandSourceComponent
