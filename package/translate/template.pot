@@ -1,6 +1,6 @@
 # Translation template for Plasma Audio Visualizer.
-# This template includes strings from the shared settings schema, which are
-# passed to KDE's i18n() function at render time and must be maintained here.
+# Shared settings-schema strings are passed to KDE's i18n() function at render
+# time, so keep this template in sync with package/translate/tr.po.
 msgid ""
 msgstr ""
 "Project-Id-Version: Plasma Audio Visualizer 3.1.7\n"
@@ -1533,4 +1533,94 @@ msgid "Open %1 on GitHub"
 msgstr ""
 
 msgid "Support on %1"
+msgstr ""
+
+msgid "Looks"
+msgstr ""
+
+msgid "Orbit around the cover"
+msgstr ""
+
+msgid "Progress bar"
+msgstr ""
+
+msgid "Panel buttons"
+msgstr ""
+
+msgid "Playback buttons"
+msgstr ""
+
+msgid "Button colours"
+msgstr ""
+
+msgid "Arrangement"
+msgstr ""
+
+msgid "Track text"
+msgstr ""
+
+msgid "Effects"
+msgstr ""
+
+msgid "When there is no cover"
+msgstr ""
+
+msgid "On the card"
+msgstr ""
+
+msgid "Typography"
+msgstr ""
+
+msgid "Highlight and contrast"
+msgstr ""
+
+msgid "Reading layout"
+msgstr ""
+
+msgid "Following playback"
+msgstr ""
+
+msgid "On hover"
+msgstr ""
+
+msgid "Background"
+msgstr ""
+
+msgid "Glass colour"
+msgstr ""
+
+msgid "Liquid glass"
+msgstr ""
+
+msgid "Depth & finish"
+msgstr ""
+
+msgid "Colour mode & visualizer light"
+msgstr ""
+
+msgid "Progress colour"
+msgstr ""
+
+msgid "Panel placement"
+msgstr ""
+
+msgid "When nothing plays"
+msgstr ""
+
+msgid "When paused"
+msgstr ""
+
+msgid "Interaction"
+msgstr ""
+
+msgid "Comfort & power"
+msgstr ""
+
+msgid "Connection"
+msgstr ""
+
+msgid "Capture"
+msgstr ""
+
+msgid "About the project"
 msgstr ""
