@@ -1966,3 +1966,9 @@ msgstr "Şarkı sözleri yüklenemedi"
 
 msgid "No synced lyrics available for this song"
 msgstr "Bu parça için eşzamanlanmış şarkı sözü bulunamadı"
+
+msgid "Start music in any player"
+msgstr "Herhangi bir oynatıcıda müzik başlatın"
+
+msgid "No media"
+msgstr "Medya yok"
