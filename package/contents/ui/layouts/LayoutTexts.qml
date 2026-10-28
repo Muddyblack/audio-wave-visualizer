@@ -1,4 +1,5 @@
 import QtQuick
+import "../studio/Translations.js" as Translations
 import QtQuick.Layouts
 import ".."
 import "../debug"
@@ -142,7 +143,7 @@ ColumnLayout {
             sizeFactor: root.titleFactor
             horizontalAlignment: root.marquee ? Text.AlignLeft : root.alignment
             idle: root.view.idleMessage
-            displayTrack: root.view.idleMessage ? qsTr("Nothing playing") : root.view.displayTrack
+            displayTrack: root.view.idleMessage ? (typeof i18n === "function" ? i18n("Nothing playing") : Translations.translate("Nothing playing")) : root.view.displayTrack
             trackUnknown: root.view.trackUnknown
             rawTrack: root.view.track
             color: root.view.textColor
@@ -170,7 +171,7 @@ ColumnLayout {
         titleSize: root.ts
         sizeFactor: root.artistSize / 0.82
         horizontalAlignment: root.alignment
-        artist: root.view.idleMessage ? qsTr("Start music in any player") : root.view.artist
+        artist: root.view.idleMessage ? (typeof i18n === "function" ? i18n("Start music in any player") : Translations.translate("Start music in any player")) : root.view.artist
         sourceHint: root.view.sourceHint
         color: root.view.textColor
     }
