@@ -1966,3 +1966,18 @@ msgstr ""
 
 msgid "No media"
 msgstr ""
+
+msgid "Use pill look"
+msgstr ""
+
+msgid "Use popup look"
+msgstr ""
+
+msgid "Copy to all widgets"
+msgstr ""
+
+msgid "Copy the other design into this one: colours, artwork, visualizer and progress styles. The pill enables the copied effects. Each view keeps its layout and playback controls. Apply saves; Discard undoes."
+msgstr ""
+
+msgid "Copy these settings, including both panel designs, to every other copy of this widget, such as one per monitor. Each keeps its own monitor and position. Apply here first; the others change immediately and cannot be undone."
+msgstr ""
