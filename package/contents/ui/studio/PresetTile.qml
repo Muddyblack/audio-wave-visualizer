@@ -159,7 +159,7 @@ Item {
         width: 24
         height: 24
         text: "✎"
-        Accessible.name: "Rename preset"
+        Accessible.name: (typeof i18n === "function" ? i18n("Rename preset") : "Rename preset")
         Controls.ToolTip.visible: hovered
         Controls.ToolTip.text: (typeof i18n === "function" ? i18n("Rename preset") : "Rename preset")
         contentItem: Text {
@@ -199,7 +199,7 @@ Item {
             font.pixelSize: 11
             clip: true
             selectByMouse: true
-            Accessible.name: "Preset name"
+            Accessible.name: (typeof i18n === "function" ? i18n("Preset name") : "Preset name")
             onAccepted: tile.finishRename()
             Keys.onEscapePressed: tile.renaming = false
         }
