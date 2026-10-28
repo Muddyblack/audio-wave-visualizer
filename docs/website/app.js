@@ -1,6 +1,78 @@
 'use strict';
 const $ = (s, r = document) => r.querySelector(s);
-const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const $ = (s, r = document) => [...r.querySelectorAll(s)];
+
+/* ─── browser-language localization ─────────────────────────────── */
+(function initWebLocalization() {
+  const toggle = document.getElementById('languageToggle');
+  let locale = (navigator.languages || [navigator.language || 'en']).some(l => /^tr(?:-|$)/i.test(l)) ? 'tr' : 'en';
+  let messages = {};
+  const textState = new WeakMap();
+  const attrState = new WeakMap();
+  const ignored = 'SCRIPT,STYLE,CODE,PRE,NOSCRIPT';
+  function translateText(node) {
+    if (!node || !node.parentElement || node.parentElement.closest(ignored)) return;
+    const current = node.nodeValue;
+    const state = textState.get(node);
+    let source = state && current === state.rendered ? state.source : current.trim();
+    if (!source) return;
+    const leading = current.match(/^\s*/)?.[0] || '';
+    const trailing = current.match(/\s*$/)?.[0] || '';
+    const translated = locale === 'tr' ? (messages[source] || source) : source;
+    const rendered = leading + translated + trailing;
+    textState.set(node, { source, rendered });
+    if (current !== rendered) node.nodeValue = rendered;
+  }
+  function translateAttributes(el) {
+    if (!el || el.matches(ignored)) return;
+    for (const name of ['title', 'aria-label', 'placeholder']) {
+      if (!el.hasAttribute(name)) continue;
+      const current = el.getAttribute(name);
+      let states = attrState.get(el);
+      if (!states) { states = {}; attrState.set(el, states); }
+      const previous = states[name];
+      const source = previous && current === previous.rendered ? previous.source : current;
+      const translated = locale === 'tr' ? (messages[source] || source) : source;
+      states[name] = { source, rendered: translated };
+      if (current !== translated) el.setAttribute(name, translated);
+    }
+  }
+  function localizeTree(root) {
+    if (!root) return;
+    if (root.nodeType === Node.TEXT_NODE) { translateText(root); return; }
+    if (root.nodeType !== Node.ELEMENT_NODE && root !== document.body) return;
+    if (root.nodeType === Node.ELEMENT_NODE) translateAttributes(root);
+    const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+    while (walker.nextNode()) translateText(walker.currentNode);
+    if (root.querySelectorAll) root.querySelectorAll('*').forEach(translateAttributes);
+  }
+  function applyLocale() {
+    document.documentElement.lang = locale;
+    if (toggle) {
+      toggle.textContent = locale === 'tr' ? 'English' : 'Türkçe';
+      toggle.setAttribute('aria-label', locale === 'tr' ? 'Switch language to English' : 'Dili Türkçe yap');
+      toggle.setAttribute('title', locale === 'tr' ? 'Switch to English' : 'Türkçe arayüze geç');
+    }
+    localizeTree(document.body);
+  }
+  fetch(new URL('tr.json', document.currentScript.src), { cache: 'no-cache' })
+    .then(response => { if (!response.ok) throw new Error('Translation catalog unavailable'); return response.json(); })
+    .then(catalog => {
+      messages = catalog;
+      applyLocale();
+      const observer = new MutationObserver(records => {
+        for (const record of records) {
+          if (record.type === 'characterData') translateText(record.target);
+          else if (record.type === 'attributes') translateAttributes(record.target);
+          else record.addedNodes.forEach(node => localizeTree(node));
+        }
+      });
+      observer.observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ['title', 'aria-label', 'placeholder'] });
+      if (toggle) toggle.addEventListener('click', () => { locale = locale === 'tr' ? 'en' : 'tr'; applyLocale(); });
+    })
+    .catch(error => console.warn('Web localization could not be loaded:', error));
+})();
+
 $$('[data-project-version]').forEach(el => { el.textContent = 'v' + ProjectManifest.version; });
 
 /* ─── page tab switcher ─── */
