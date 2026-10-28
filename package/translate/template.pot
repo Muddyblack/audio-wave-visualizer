@@ -1810,3 +1810,21 @@ msgstr ""
 
 msgid "cava keeps exiting — see %1"
 msgstr ""
+
+msgid "The light falls softly on the water"
+msgstr ""
+
+msgid "And the city fades to blue"
+msgstr ""
+
+msgid "Let the evening drift away"
+msgstr ""
+
+msgid "There is nothing left to hurry"
+msgstr ""
+
+msgid "Just a little room to stay"
+msgstr ""
+
+msgid "With the rhythm of the rain"
+msgstr ""
