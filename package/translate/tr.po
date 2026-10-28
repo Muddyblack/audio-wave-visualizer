@@ -1744,3 +1744,39 @@ msgstr "Tarayıcıdaki site adları ve ortam ayrıntıları için %1 gerekir. %2
 
 msgid "On NixOS, add pkgs.python3 and pkgs.systemd to environment.systemPackages, rebuild, then sign out and in."
 msgstr "NixOS’ta pkgs.python3 ve pkgs.systemd paketlerini environment.systemPackages listesine ekleyin, sistemi yeniden derleyin ve oturumu kapatıp yeniden açın."
+
+msgid "Pine lake"
+msgstr "Çam Gölü"
+
+msgid "Afterglow"
+msgstr "Alacakaranlık Işıltısı"
+
+msgid "Midnight marina"
+msgstr "Gece Yarısı Marinası"
+
+msgid "Aurora sound"
+msgstr "Kutup Işıkları Sesi"
+
+msgid "Moss & mist"
+msgstr "Yosun ve Sis"
+
+msgid "Silver tide"
+msgstr "Gümüş Gelgit"
+
+msgid "aurora"
+msgstr "Kutup Işıkları"
+
+msgid "ember"
+msgstr "Kor"
+
+msgid "ice"
+msgstr "Buz"
+
+msgid "grove"
+msgstr "Koruluk"
+
+msgid "iris"
+msgstr "Süsen"
+
+msgid "coral"
+msgstr "Mercan"
