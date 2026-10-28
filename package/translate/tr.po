@@ -985,3 +985,354 @@ msgstr "Renk Aralığınız"
 
 msgid "Your glow range"
 msgstr "Parıltı Aralığınız"
+
+msgid "How far the ring extends from the cover."
+msgstr "Halkanın kapaktan ne kadar uzağa uzanacağını belirler."
+
+msgid "Slow rotation"
+msgstr "Yavaş Dönüş"
+
+msgid "Cover breathes with the bass"
+msgstr "Kapak Basla Birlikte Nefes Alsın"
+
+msgid "Import a trusted QML style and use it in the waveform area. Orbit and lyrics-only layouts use their own visuals."
+msgstr "Güvendiğiniz bir QML stilini içe aktararak dalga biçimi alanında kullanın. Yörünge ve yalnızca şarkı sözleri düzenleri kendi görsellerini kullanır."
+
+msgid "Move the visualizer up (negative) or down (positive). Zero restores its original position; edges stay inside the visualizer area."
+msgstr "Görselleştiriciyi yukarı taşımak için negatif, aşağı taşımak için pozitif değer girin. Sıfır özgün konumuna döndürür; kenarlar görselleştirme alanının dışına çıkmaz."
+
+msgid "Bars rise from the bottom today — or let them hang from the top edge."
+msgstr "Çubuklar alttan yükselsin veya üst kenardan aşağı sarksın."
+
+msgid "How far the mids bend the ribbon."
+msgstr "Orta frekansların şeridi ne kadar bükeceğini belirler."
+
+msgid "How thick the bass makes it."
+msgstr "Bas frekanslarının şeridi ne kadar kalınlaştıracağını belirler."
+
+msgid "Stroke width of lines and dot size."
+msgstr "Çizgilerin kalınlığını ve noktaların boyutunu belirler."
+
+msgid "Fill waves and liquid shapes, or soften Peak Bars with transparency."
+msgstr "Dalgaları ve sıvı biçimlerini doldurur veya Tepe Çubukları’nı saydamlıkla yumuşatır."
+
+msgid "Import a trusted QML progress bar with playback timing and seeking."
+msgstr "Oynatma zamanlaması ve konumlandırma desteği olan güvenilir bir QML ilerleme çubuğunu içe aktarın."
+
+msgid "Target time, jump delta and a ghost playhead."
+msgstr "Hedef süreyi, atlama miktarını ve saydam oynatma imlecini gösterir."
+
+msgid "Wheel seeks; double-click the outer thirds to jump 10 seconds."
+msgstr "Tekerlekle parçada gezinilir; dış üçte birlik alanlara çift tıklayarak 10 saniye atlanır."
+
+msgid "Seconds per notch; 0 disables wheel seeking."
+msgstr "Her tekerlek adımında atlanacak saniye sayısıdır. 0, tekerlekle gezinmeyi kapatır."
+
+msgid "Bass swells the track and playhead; reduced motion disables pulses."
+msgstr "Bas, parça çizgisini ve oynatma imlecini genişletir; hareket azaltıldığında darbeler kapatılır."
+
+msgid "Uses player chapter metadata or local embedded chapters and cue files."
+msgstr "Oynatıcının bölüm üst verilerini veya yerel gömülü bölüm ve cue dosyalarını kullanır."
+
+msgid "Add playback controls directly to the panel pill."
+msgstr "Oynatma denetimlerini doğrudan panel hapına ekler."
+
+msgid "Reveal playback buttons while the pointer is over the pill. Keeps the pill's width steady."
+msgstr "İmleç panel hapının üzerindeyken oynatma düğmelerini gösterir. Hapın genişliği değişmez."
+
+msgid "Import a trusted QML style for the playback controls."
+msgstr "Oynatma denetimleri için güvenilir bir QML stilini içe aktarın."
+
+msgid "Hide the playback buttons until the pointer is over the card. Works with any style."
+msgstr "İmleç kartın üzerine gelene kadar oynatma düğmelerini gizler. Tüm stillerle çalışır."
+
+msgid "For players that support them."
+msgstr "Yalnızca destekleyen oynatıcılarda kullanılabilir."
+
+msgid "Colour mode follows the visualizer. System adapts to light cards."
+msgstr "Renk kipi görselleştiriciyi izler. Sistem seçeneği açık renkli kartlara uyum sağlar."
+
+msgid "Applies to pill styles. Tinted uses your accent when set to Automatic."
+msgstr "Hap stillerine uygulanır. Otomatik seçildiğinde Tonlu seçeneği vurgu renginizi kullanır."
+
+msgid "Visualizer only fills a transparent widget with the selected effect. Lyrics only shows a scrollable verse with the current line highlighted. Uses online lyrics from LRCLIB."
+msgstr "Yalnızca Görselleştirici, saydam bileşeni seçilen efektle doldurur. Yalnızca Şarkı Sözleri, geçerli satırı vurgulanmış kaydırılabilir bir dize gösterir. Çevrimiçi şarkı sözleri için LRCLIB kullanılır."
+
+msgid "Mini visualizer follows the music using your selected visualizer style. Choose Static for still bars."
+msgstr "Mini görselleştirici, seçtiğiniz stili kullanarak müziği izler. Sabit çubuklar için Sabit’i seçin."
+
+msgid "Hover closes when you leave the pill and card. Click toggles it. Both lets a click pin the hovered card; click again to close."
+msgstr "İmleç hapın ve kartın dışına çıkınca üzerine gelme ile açılan pencere kapanır. Tıklama pencereyi açıp kapatır. Her İkisi seçeneği, üzerine gelinen kartı tıklamayla sabitlemenizi sağlar; yeniden tıklamak kapatır."
+
+msgid "Let long titles wrap onto a second line."
+msgstr "Uzun başlıkların ikinci satıra geçmesine izin verir."
+
+msgid "Visualizer behind the title"
+msgstr "Başlığın Arkasında Görselleştirici"
+
+msgid "A soft texture under the text; style and direction follow the Visualizer tab."
+msgstr "Metnin altında yumuşak bir doku oluşturur; stil ve yön, Görselleştirici sekmesini izler."
+
+msgid "Scroll overflowing titles, including the panel pill. Disabled by Reduced motion."
+msgstr "Panel hapı dahil taşan başlıkları kaydırır. Hareketi Azalt etkinse kapatılır."
+
+msgid "Falls back to the player’s icon when a track has no cover."
+msgstr "Parçanın kapak görseli yoksa oynatıcı simgesini kullanır."
+
+msgid "Vinyl and CD spin while music plays."
+msgstr "Müzik çalarken plak ve CD döner."
+
+msgid "Square always crops the art. Auto keeps square art cropped, switches the cover to 16:9 for wide art, and fits tall art whole with blurred edges. The two whole options fit the full image in the square: over a dimmed copy, or filled with its blurred edges. Wide 16:9 makes the cover a widescreen box (not for circle, vinyl or CD)."
+msgstr "Kare seçeneği kapak görselini her zaman kırpar. Otomatik, kare görselleri kırpar; geniş görsellerde kapağı 16:9 yapar, uzun görselleri ise bulanık kenarlarla bütünüyle sığdırır. Bütünüyle sığdıran iki seçenek, görselin tamamını karartılmış bir kopyanın üzerine veya bulanık kenarlarla doldurulmuş bir kareye yerleştirir. Geniş 16:9, kapağı geniş ekran biçiminde gösterir; daire, plak ve CD için kullanılamaz."
+
+msgid "Capped by the layout height."
+msgstr "Düzenin yüksekliğiyle sınırlandırılır."
+
+msgid "A shadow tinted with the cover’s own colour."
+msgstr "Kapağın kendi rengiyle tonlanmış bir gölge oluşturur."
+
+msgid "A gentle tilt after hovering the cover. Click targets stay fixed; reduced motion disables it."
+msgstr "Kapak üzerine gelindiğinde hafifçe eğilir. Tıklama alanları sabit kalır; hareket azaltıldığında bu efekt kapatılır."
+
+msgid "A faint mirror image under the cover."
+msgstr "Kapağın altında hafif bir yansıma gösterir."
+
+msgid "Try the “No metadata” state."
+msgstr "“Üst veri yok” durumunu deneyin."
+
+msgid "A quiet third line with album and year."
+msgstr "Albüm ve yıl bilgilerini gösteren sade bir üçüncü satır."
+
+msgid "Where the music is coming from."
+msgstr "Müziğin hangi kaynaktan geldiğini gösterir."
+
+msgid "Pick which of several running players the widget follows."
+msgstr "Bileşenin birden fazla çalışan oynatıcıdan hangisini izleyeceğini seçin."
+
+msgid "Online lookup (LRCLIB). Sends title, artist, album and length. For a full verse, choose the Lyrics only layout."
+msgstr "Çevrimiçi arama (LRCLIB). Başlığı, sanatçıyı, albümü ve süreyi gönderir. Tam bir dize için Yalnızca Şarkı Sözleri düzenini seçin."
+
+msgid "Local sidecars and ID3 lyrics first, then LRCLIB. The online lookup sends the song title, artist, album and length. Card backgrounds are in the Card tab."
+msgstr "Önce yerel ek dosyalar ve ID3 şarkı sözleri, ardından LRCLIB kullanılır. Çevrimiçi aramada şarkı adı, sanatçı, albüm ve süre gönderilir. Kart arka planları Kart sekmesindedir."
+
+msgid "Automatic detects Japanese kana. Select Japanese or Chinese for Han-only text. Requires Python pykakasi / pypinyin."
+msgstr "Otomatik, Japonca kana karakterlerini algılar. Yalnızca Han karakterleri içeren metinler için Japonca veya Çince’yi seçin. Python pykakasi / pypinyin gerekir."
+
+msgid "Positive values show lyrics earlier; negative values delay them. Applies to both lyrics displays."
+msgstr "Pozitif değerler şarkı sözlerini daha erken, negatif değerler daha geç gösterir. Her iki şarkı sözü görünümüne de uygulanır."
+
+msgid "Spacing within a verse that wraps across multiple lines."
+msgstr "Birden çok satıra yayılan dizenin satırları arasındaki boşluğu ayarlar."
+
+msgid "Extra contrast on busy wallpapers."
+msgstr "Hareketli duvar kâğıtlarında ek karşıtlık sağlar."
+
+msgid "Desktop hosts can override the preferred size by resizing the widget."
+msgstr "Masaüstü ortamlarında bileşeni yeniden boyutlandırarak tercih edilen boyut değiştirilebilir."
+
+msgid "Keep verses easy to read on a wide card."
+msgstr "Geniş kartta dizelerin kolay okunmasını sağlar."
+
+msgid "Scrolling pauses following so you can read ahead. Use the button on the card to resume."
+msgstr "Kaydırma, ilerideki satırları okuyabilmeniz için otomatik izlemeyi duraklatır. Devam etmek için karttaki düğmeyi kullanın."
+
+msgid "Off by default. Sends song title, artist, album and length to MusicBrainz, and artist name to English Wikipedia when details open. Adds recording credits when available. Results are cached for 24 hours."
+msgstr "Varsayılan olarak kapalıdır. Ayrıntılar açıldığında şarkı adı, sanatçı, albüm ve süre MusicBrainz’e; sanatçı adı İngilizce Vikipedi’ye gönderilir. Varsa kayıt künyesi bilgileri eklenir. Sonuçlar 24 saat önbellekte tutulur."
+
+msgid "Off by default. If MusicBrainz cannot match the song, send its title and artist to Apple’s public catalog. Requires online track information."
+msgstr "Varsayılan olarak kapalıdır. MusicBrainz şarkıyı eşleştiremezse şarkı adı ve sanatçı Apple’ın herkese açık kataloğuna gönderilir. Çevrimiçi parça bilgileri gerekir."
+
+msgid "Tooltip is a compact preview near the pointer; drawer is a wider panel below the widget. Flip opens after hovering over the cover or song title for a moment. Playback buttons and seeking never trigger it. Leave the card, press Escape or use × to return."
+msgstr "Araç ipucu, imlecin yanında küçük bir önizleme; çekmece ise bileşenin altında daha geniş bir paneldir. Çevir seçeneği, kapak veya şarkı başlığının üzerinde kısa süre bekleyince açılır. Oynatma düğmeleri ve parçada gezinme bunu tetiklemez. Geri dönmek için karttan ayrılın, Escape tuşuna basın veya × işaretini kullanın."
+
+msgid "Keep a click target alongside cover and title hover. The return button remains available while flipped."
+msgstr "Kapak ve başlığın üzerine gelme davranışına ek olarak tıklanabilir bir alanı korur. Kart çevrildiğinde de geri dönme düğmesi kullanılabilir."
+
+msgid "Off: the widget floats directly on the wallpaper (current default)."
+msgstr "Kapalı: bileşen doğrudan duvar kâğıdının üzerinde görünür (geçerli varsayılan)."
+
+msgid "Requests the Plasma translucent background; Hyprland needs the supplied layer blur rule."
+msgstr "Plasma’nın yarı saydam arka planını ister. Hyprland için sağlanan katman bulanıklığı kuralı gerekir."
+
+msgid "Choose how frosted the glass looks. 0% turns blur off; text and artwork stay sharp."
+msgstr "Camın buzlu görünüm düzeyini seçin. 0, bulanıklığı kapatır; metin ve kapak görseli keskin kalır."
+
+msgid "0 keeps the art crisp."
+msgstr "0, kapak görselini keskin tutar."
+
+msgid "Keeps text readable on bright covers."
+msgstr "Parlak kapaklarda metnin okunaklı kalmasını sağlar."
+
+msgid "Only the card fades; text and wave stay solid."
+msgstr "Yalnızca kart saydamlaşır; metin ve dalga opak kalır."
+
+msgid "Bends the sampled wallpaper with a subtle colour fringe."
+msgstr "Örneklenen duvar kâğıdını hafif renk saçılmasıyla büker."
+
+msgid "A soft specular highlight tracks the mouse."
+msgstr "Yumuşak bir parlak yansıma imleci izler."
+
+msgid "A thin line of light along the top edge."
+msgstr "Üst kenar boyunca ince bir ışık çizgisi oluşturur."
+
+msgid "Stops gradients from banding."
+msgstr "Gradyanlarda bantlaşmayı önler."
+
+msgid "The edge glows in the accent colour on every kick."
+msgstr "Her bas vuruşunda kenar vurgu rengiyle parlar."
+
+msgid "Project a soft, sound-reactive ambient glow onto the wallpaper or panel edges."
+msgstr "Duvar kâğıdına veya panel kenarlarına sese tepki veren yumuşak bir ortam ışığı yansıtır."
+
+msgid "Drives the wave, progress and play button. System follows your desktop accent."
+msgstr "Dalga, ilerleme çubuğu ve oynat düğmesini etkiler. Sistem seçeneği masaüstünün vurgu rengini izler."
+
+msgid "Used by the visualizer. Choose Colour mode for progress and controls below to share its palette or animated rainbow."
+msgstr "Görselleştirici tarafından kullanılır. İlerleme çubuğu ve denetimlerin aynı paleti veya hareketli gökkuşağını kullanması için aşağıda Renk Kipi’ni seçin."
+
+msgid "Any number of colours, blended left to right. Click a colour to change it, × removes it, + adds one. The glow takes the middle of the range."
+msgstr "Soldan sağa harmanlanan istediğiniz sayıda renk kullanabilirsiniz. Rengi değiştirmek için tıklayın, × ile kaldırın, + ile ekleyin. Parıltı aralığın ortasını kullanır."
+
+msgid "Curated palettes with bounded hues, so they never turn muddy."
+msgstr "Renklerin bulanıklaşmasını önleyen, ton aralıkları sınırlandırılmış seçili paletler."
+
+msgid "Same uses the middle of your colour range. Custom gives the glow a range of its own, which it drifts slowly through."
+msgstr "Aynı, renk aralığınızın ortasını kullanır. Özel, parıltıya kendi renk aralığını verir ve parıltı bu aralıkta yavaşça gezinir."
+
+msgid "Any number of colours. Click one to change it, × removes it, + adds one."
+msgstr "İstediğiniz sayıda renk ekleyebilirsiniz. Rengi değiştirmek için tıklayın, × ile kaldırın, + ile ekleyin."
+
+msgid "How far the glow spreads."
+msgstr "Parıltının ne kadar yayılacağını belirler."
+
+msgid "Dark text and icons on the Solid material."
+msgstr "Düz malzeme üzerinde koyu metin ve simgeler kullanır."
+
+msgid "Automatic shows the full card when it fits and your pill or icon design otherwise. Card or Pill / icon forces one at any panel size."
+msgstr "Otomatik, sığdığı zaman tam kartı; aksi durumda hap veya simge tasarımınızı gösterir. Kart ya da Hap / simge, panel boyutundan bağımsız olarak seçilen görünümü kullanır."
+
+msgid "Fit grows the card to fill the panel's thickness. Fixed uses the scale below."
+msgstr "Sığdır, kartı panel kalınlığını dolduracak şekilde büyütür. Sabit, aşağıdaki ölçeği kullanır."
+
+msgid "Scales the card in the panel; the panel must have room for it."
+msgstr "Kartı panel içinde ölçeklendirir; panelde yeterli alan bulunmalıdır."
+
+msgid "Automatic follows the panel edge. Upright uses an icon in narrow side panels."
+msgstr "Otomatik, panel kenarını izler. Dik, dar yan panellerde simge kullanır."
+
+msgid "Off hides the widget until a player appears. Try the “Nothing playing” state."
+msgstr "Kapalı, bir oynatıcı görünene kadar bileşeni gizler. “Çalan bir şey yok” durumunu deneyin."
+
+msgid "A slow, quiet movement instead of a flat line."
+msgstr "Düz çizgi yerine yavaş ve hafif bir hareket oluşturur."
+
+msgid "Adjusts the system output volume, not the player’s own."
+msgstr "Oynatıcının kendi ses düzeyini değil, sistem çıkış ses düzeyini ayarlar."
+
+msgid "Scale text with Appearance > Fonts. Off keeps the original sizes."
+msgstr "Metni Görünüm > Yazı Tipleri ayarına göre ölçeklendirir. Kapalı, özgün boyutları korur."
+
+msgid "No ripples, sweeps, spins or scrolling text; the wave still reacts."
+msgstr "Dalgalanma, tarama, dönme ve kayan metin efektlerini kapatır; dalga sese tepki vermeye devam eder."
+
+msgid "On battery: 20 Hz and no glow."
+msgstr "Pil gücünde: 20 Hz ve parıltı kapalı."
+
+msgid "Lightweight Canvas path — also the automatic fallback if shaders fail."
+msgstr "Hafif Canvas yolu; gölgelendiriciler başarısız olursa otomatik olarak buna dönülür."
+
+msgid "Stops drawing while a window hides the widget — saves real power."
+msgstr "Bir pencere bileşeni gizlediğinde çizimi durdurur ve gerçek anlamda güç tasarrufu sağlar."
+
+msgid "360 × 104 follows the chosen layout."
+msgstr "360 × 104 boyutu seçilen düzene göre ayarlanır."
+
+msgid "Live devices and applications. Start playback to list a stream. Explicit sources override the backend; unavailable sources never fall back."
+msgstr "Etkin aygıtlar ve uygulamalar. Akışı listelemek için oynatmayı başlatın. Açıkça seçilen kaynaklar arka uç seçimini geçersiz kılar; kullanılamayan kaynaklar için başka kaynağa geçilmez."
+
+msgid "Must exceed low cutoff; invalid ranges use 50–10000 Hz."
+msgstr "Alt kesim frekansından büyük olmalıdır; geçersiz aralıklarda 50–10000 Hz kullanılır."
+
+msgid "Time constant for fading into silence or the idle ambient wave."
+msgstr "Sessizliğe geçişin veya boşta ortam dalgasının sönümlenme süresini belirler."
+
+msgid "More bars look finer, fewer look bolder."
+msgstr "Daha fazla çubuk daha ince, daha az çubuk daha kalın görünür."
+
+msgid "Raise it if quiet music barely moves the wave."
+msgstr "Sessiz müzik dalgayı yeterince hareket ettirmiyorsa değeri artırın."
+
+msgid "Lower saves power. 30 Hz already looks smooth."
+msgstr "Düşük değer güç tasarrufu sağlar. 30 Hz zaten akıcı görünür."
+
+msgid "Playback & artist summary"
+msgstr "Oynatma ve Sanatçı Özeti"
+
+msgid "Rise from bottom"
+msgstr "Alttan Yüksel"
+
+msgid "1:31 · 3:58"
+msgstr "1:31 · 3:58"
+
+msgid "1:31 · -2:27"
+msgstr "1:31 · -2:27"
+
+msgid "Previous · Play · Next"
+msgstr "Önceki · Oynat · Sonraki"
+
+msgid "None (visualizer only)"
+msgstr "Yok (yalnızca görselleştirici)"
+
+msgid "Romaji / Pinyin"
+msgstr "Romaji / Pinyin"
+
+msgid "Whole, dimmed"
+msgstr "Tamamı, karartılmış"
+
+msgid "Whole, edges"
+msgstr "Tamamı, bulanık kenarlarla"
+
+msgid "Wide 16:9"
+msgstr "Geniş 16:9"
+
+msgid "Same as colours"
+msgstr "Renklerle Aynı"
+
+msgid "Custom range"
+msgstr "Özel Aralık"
+
+msgid "Lifted"
+msgstr "Yükseltilmiş"
+
+msgid "Atmosphere"
+msgstr "Atmosfer"
+
+msgid "Clear"
+msgstr "Berrak"
+
+msgid "Smoke"
+msgstr "Duman"
+
+msgid "Cover colour"
+msgstr "Kapak Rengi"
+
+msgid "Rainbow"
+msgstr "Gökkuşağı"
+
+msgid "PipeWire"
+msgstr "PipeWire"
+
+msgid "PulseAudio"
+msgstr "PulseAudio"
+
+msgid "ALSA (snd_aloop)"
+msgstr "ALSA (snd_aloop)"
+
+msgid "Songwriters"
+msgstr "Şarkı Yazarları"
+
+msgid "Edition date"
+msgstr "Baskı Tarihi"
+
+msgid "Title · Artist"
+msgstr "Başlık · Sanatçı"
