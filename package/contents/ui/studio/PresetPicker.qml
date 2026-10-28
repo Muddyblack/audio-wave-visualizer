@@ -19,7 +19,7 @@ Column {
     Text {
         width: parent.width
         visible: picker.studio.presetFilter === "daily"
-        text: picker.studio.daily.note + ". The same look all day; changes tomorrow. Save it to keep it."
+        text: (typeof i18n === "function" ? i18n(picker.studio.daily.note) + ". " + i18n("The same look all day; changes tomorrow. Save it to keep it.") : picker.studio.daily.note + ". The same look all day; changes tomorrow. Save it to keep it.")
         wrapMode: Text.WordWrap
         color: Theme.muted
         font.family: Theme.fontFamily
@@ -53,7 +53,7 @@ Column {
     StudioButton {
         visible: picker.studio.presetFilter === "daily"
         readonly property bool saved: picker.studio.userPresetList().some(p => p.id === picker.studio.daily.id)
-        text: saved ? "Saved to My presets" : "Save today’s look"
+        text: saved ? (typeof i18n === "function" ? i18n("Saved to My presets") : "Saved to My presets") : (typeof i18n === "function" ? i18n("Save today’s look") : "Save today’s look")
         enabled: !saved
         onClicked: picker.studio.saveDaily()
     }
@@ -70,7 +70,7 @@ Column {
                     })
             }
             Text {
-                text: "Apply today’s look automatically"
+                text: (typeof i18n === "function" ? i18n("Apply today’s look automatically") : "Apply today’s look automatically")
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
@@ -78,7 +78,7 @@ Column {
         }
         Text {
             width: parent.width
-            text: "After you apply settings, changes the look once per day on startup or while running. Manual changes stay until tomorrow. Audio settings and placement are kept."
+            text: (typeof i18n === "function" ? i18n("After you apply settings, changes the look once per day on startup or while running. Manual changes stay until tomorrow. Audio settings and placement are kept.") : "After you apply settings, changes the look once per day on startup or while running. Manual changes stay until tomorrow. Audio settings and placement are kept.")
             color: Theme.muted
             wrapMode: Text.WordWrap
             font.family: Theme.fontFamily
@@ -97,7 +97,7 @@ Column {
     Text {
         width: parent.width
         visible: picker.favoritesOnly && picker.looks.length === 0 && !picker.studio.userPresetList().some(p => picker.studio.favorites.indexOf(p.id) !== -1)
-        text: "Star a built-in or saved look to find it here."
+        text: (typeof i18n === "function" ? i18n("Star a built-in or saved look to find it here.") : "Star a built-in or saved look to find it here.")
         color: Theme.muted
         wrapMode: Text.WordWrap
         font.pixelSize: 12
