@@ -1,4 +1,5 @@
 import QtQuick
+import "Translations.js" as Translations
 import QtQuick.Controls.Basic as Controls
 import "Theme.js" as Theme
 
@@ -49,7 +50,7 @@ Controls.ComboBox {
         width: control.width
         height: 30
         contentItem: Text {
-            text: (typeof i18n === "function" ? i18n(item.modelData[1]) : item.modelData[1])
+            text: (typeof i18n === "function" ? i18n(item.modelData[1]) : Translations.translate(item.modelData[1]))
             color: item.index === control.currentIndex ? Theme.brand : Theme.text
             font: control.font
             verticalAlignment: Text.AlignVCenter
