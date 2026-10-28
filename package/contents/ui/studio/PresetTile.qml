@@ -103,7 +103,7 @@ Item {
             spacing: 4
             Text {
                 width: parent.width - check.width - 4
-                text: tile.name
+                text: !tile.renamable && typeof i18n === "function" ? i18n(tile.name) : tile.name
                 textFormat: Text.PlainText
                 color: tile.active ? Theme.text : Theme.muted
                 font.family: Theme.fontFamily
