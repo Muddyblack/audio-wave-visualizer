@@ -1972,3 +1972,18 @@ msgstr "Herhangi bir oynatıcıda müzik başlatın"
 
 msgid "No media"
 msgstr "Medya yok"
+
+msgid "Use pill look"
+msgstr "Kapsül görünümünü kullan"
+
+msgid "Use popup look"
+msgstr "Açılır pencere görünümünü kullan"
+
+msgid "Copy to all widgets"
+msgstr "Tüm widget'lara kopyala"
+
+msgid "Copy the other design into this one: colours, artwork, visualizer and progress styles. The pill enables the copied effects. Each view keeps its layout and playback controls. Apply saves; Discard undoes."
+msgstr "Diğer tasarımın renklerini, kapak görselini, görselleştiricisini ve ilerleme stillerini buna kopyalar. Kapsül, kopyalanan efektleri etkinleştirir. Her görünüm kendi düzenini ve oynatma denetimlerini korur. Uygula kaydeder; Değişiklikleri At geri alır."
+
+msgid "Copy these settings, including both panel designs, to every other copy of this widget, such as one per monitor. Each keeps its own monitor and position. Apply here first; the others change immediately and cannot be undone."
+msgstr "Bu ayarları, her iki panel tasarımı da dâhil olmak üzere widget'ın diğer kopyalarına (örneğin her monitördeki kopyaya) uygular. Her kopya kendi monitörünü ve konumunu korur. Önce burada Uygula'ya basın; diğer kopyalar hemen değişir ve bu işlem geri alınamaz."
