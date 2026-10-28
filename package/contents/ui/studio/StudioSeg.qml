@@ -40,7 +40,7 @@ Rectangle {
                 Text {
                     id: segmentLabel
                     anchors.centerIn: parent
-                    text: segment.modelData[1]
+                    text: (typeof i18n === "function" ? i18n(segment.modelData[1]) : segment.modelData[1])
                     color: segment.pressed ? Theme.segPressedText : Theme.muted
                     font.family: Theme.fontFamily
                     font.pixelSize: 11
