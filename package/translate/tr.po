@@ -1780,3 +1780,24 @@ msgstr "Süsen"
 
 msgid "coral"
 msgstr "Mercan"
+
+msgid "Selected audio source unavailable"
+msgstr "Seçilen ses kaynağı kullanılamıyor."
+
+msgid "No usable audio input (tried %1)"
+msgstr "Kullanılabilir ses girişi yok (denenenler: %1)."
+
+msgid "No audio output device"
+msgstr "Ses çıkış aygıtı bulunamadı."
+
+msgid "Audio capture stopped"
+msgstr "Ses yakalama durduruldu."
+
+msgid "Start the application or choose a source in Audio settings"
+msgstr "Uygulamayı başlatın veya Ses ayarlarından bir kaynak seçin."
+
+msgid "cava could not capture from any backend. Check that PipeWire or PulseAudio is running, or pin one under Audio Input in the widget settings."
+msgstr "cava hiçbir arka uçtan ses yakalayamadı. PipeWire veya PulseAudio'nun çalıştığını kontrol edin ya da widget ayarlarında Ses Girişi bölümünden bir arka uç seçin."
+
+msgid "Windows has no audio output, so nothing is playing that could be visualized. Connect speakers or headphones, enable sound in your remote desktop client, or install a virtual audio device. Picked up within seconds — no restart needed."
+msgstr "Windows'ta ses çıkışı yok; bu nedenle görselleştirilecek bir ses çalınmıyor. Hoparlör veya kulaklık bağlayın, uzak masaüstü istemcinizde sesi etkinleştirin ya da sanal bir ses aygıtı kurun. Değişiklik birkaç saniye içinde algılanır; yeniden başlatmanız gerekmez."
