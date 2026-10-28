@@ -220,7 +220,7 @@ PySide6 tabanlı bir katman uygulaması aynı görselleştiriciyi görüntüler;
 
 ## Nasıl çalışır?
 
-Mimari ve veri akışının ayrıntılı açıklaması için [Mimari Belgeleri](docs/workflow.md) sayfasına bakın.
+Mimari ve veri akışının ayrıntılı açıklaması için [Mimari Belgeleri](docs/workflow.tr.md) sayfasına bakın.
 
 Kısaca: küçük bir kabuk yardımcı aracı (`feeder.sh`), arka planda `cava` çalıştırır ve değişen her kareyi `$XDG_RUNTIME_DIR/audio-wave-widget/` dizinine yazar. QML tarafı bu veriyi yapılandırılan kare hızında aynı süreç içinde okur; birkaç saniye sessizlikten sonra hızı 2 FPS'ye düşürür ve bileşen gizliyken yoklamayı durdurur.
 
@@ -240,7 +240,7 @@ Python lint ve biçimlendirme denetimleri için `make lint-python`; biçimlendir
 - [Tüm önayarların galerisi](docs/gallery.md)
 - [Şarkı sözleri ve karaoke](docs/lyrics.tr.md)
 - [Özel görselleştiriciler](docs/custom-visualizers.md)
-- [Mimari ve geliştirme iş akışı](docs/workflow.md)
+- [Mimari ve geliştirme iş akışı](docs/workflow.tr.md)
 
 ## Destek
 
