@@ -1,4 +1,5 @@
 import QtQuick
+import "../studio/Translations.js" as Translations
 import QtQuick.Layouts
 import "../../code/Layouts.js" as Layouts
 import "../text"
@@ -71,7 +72,7 @@ Item {
                 renderType: Text.CurveRendering ?? Text.QtRendering
                 objectName: "posterTitle"
                 Layout.fillWidth: true
-                text: root.view.idleMessage ? qsTr("Nothing playing") : root.view.trackUnknown ? qsTr("No track metadata") : (root.view.displayTrack || " ")
+                text: root.view.idleMessage ? (typeof i18n === "function" ? i18n("Nothing playing") : Translations.translate("Nothing playing")) : root.view.trackUnknown ? (typeof i18n === "function" ? i18n("No track metadata") : Translations.translate("No track metadata")) : (root.view.displayTrack || " ")
                 horizontalAlignment: root.centered ? Text.AlignHCenter : Text.AlignLeft
                 font.pixelSize: SystemText.px(Math.round(root.ts * 2.1))
                 font.weight: root.view.trackUnknown || root.view.idleMessage ? Font.Normal : Font.ExtraBold
