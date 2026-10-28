@@ -662,7 +662,12 @@ var MESSAGES = {
     "Copy these settings, including both panel designs, to every other copy of this widget, such as one per monitor. Each keeps its own monitor and position. Apply here first; the others change immediately and cannot be undone.": "Bu ayarları, her iki panel tasarımı da dâhil olmak üzere widget'ın diğer kopyalarına (örneğin her monitördeki kopyaya) uygular. Her kopya kendi monitörünü ve konumunu korur. Önce burada Uygula'ya basın; diğer kopyalar hemen değişir ve bu işlem geri alınamaz.",
     "add pkgs.cava to your configuration": "Yapılandırmanıza pkgs.cava ekleyin",
     "install the 'cava' package": "'cava' paketini kurun",
-    "see %1": "%1 konumuna bakın"
+    "see %1": "%1 konumuna bakın",
+    "Applied “%1”": "“%1” uygulandı",
+    "Applied “%1” · kept your colours": "“%1” uygulandı · renkleriniz korundu",
+    "Saved “%1”": "“%1” kaydedildi",
+    "One look all day. Save it to keep it.": "Gün boyu tek görünüm. Saklamak için kaydedin.",
+    "kept your colours": "renkleriniz korundu"
 };
 
 function translate(message) {
