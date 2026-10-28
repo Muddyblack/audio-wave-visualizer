@@ -291,7 +291,7 @@ Column {
             }
             StudioButton {
                 anchors.verticalCenter: parent.verticalCenter
-                text: (typeof i18n === "function" ? i18n("See all on GitHub ↗") : "See all on GitHub ↗")
+                text: (typeof i18n === "function" ? i18n("See all on GitHub ↗") : Translations.translate("See all on GitHub ↗"))
                 compact: true
                 onClicked: Qt.openUrlExternally(Project.contributorsPage)
             }
@@ -360,7 +360,7 @@ Column {
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        Accessible.name: (typeof i18n === "function" ? i18n("Open %1 on GitHub", contributorCard.modelData.login) : "Open " + contributorCard.modelData.login + " on GitHub")
+                        Accessible.name: (typeof i18n === "function" ? i18n("Open %1 on GitHub", contributorCard.modelData.login) : Translations.translate("Open %1 on GitHub", contributorCard.modelData.login))
                         onClicked: Qt.openUrlExternally(contributorCard.modelData.profile)
                     }
                 }
@@ -371,7 +371,7 @@ Column {
         width: parent.width
         spacing: 8
         Text {
-            text: (typeof i18n === "function" ? i18n("Support the project") : "Support the project")
+            text: (typeof i18n === "function" ? i18n("Support the project") : Translations.translate("Support the project"))
             color: Theme.text
             font.family: Theme.fontFamily
             font.pixelSize: 14
@@ -419,7 +419,7 @@ Column {
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        Accessible.name: (typeof i18n === "function" ? i18n("Support on %1", parent.modelData.label) : "Support on " + parent.modelData.label)
+                        Accessible.name: (typeof i18n === "function" ? i18n("Support on %1", parent.modelData.label) : Translations.translate("Support on %1", parent.modelData.label))
                         onClicked: Qt.openUrlExternally(parent.modelData.url)
                     }
                 }
@@ -430,12 +430,12 @@ Column {
         width: parent.width
         spacing: 8
         StudioButton {
-            text: (typeof i18n === "function" ? i18n("View source on GitHub ↗") : "View source on GitHub ↗")
+            text: (typeof i18n === "function" ? i18n("View source on GitHub ↗") : Translations.translate("View source on GitHub ↗"))
             compact: true
             onClicked: Qt.openUrlExternally(Project.repository)
         }
         StudioButton {
-            text: (typeof i18n === "function" ? i18n("Report an issue ↗") : "Report an issue ↗")
+            text: (typeof i18n === "function" ? i18n("Report an issue ↗") : Translations.translate("Report an issue ↗"))
             compact: true
             onClicked: Qt.openUrlExternally(Project.repository + "/issues")
         }
