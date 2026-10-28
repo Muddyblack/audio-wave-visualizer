@@ -53,6 +53,7 @@ const $ = (s, r = document) => [...r.querySelectorAll(s)];
       toggle.setAttribute('aria-label', locale === 'tr' ? 'Switch language to English' : 'Dili Türkçe yap');
       toggle.setAttribute('title', locale === 'tr' ? 'Switch to English' : 'Türkçe arayüze geç');
     }
+    localizeTree(document.head);
     localizeTree(document.body);
   }
   fetch(new URL('tr.json', document.currentScript.src), { cache: 'no-cache' })
