@@ -161,7 +161,7 @@ Item {
         text: "✎"
         Accessible.name: "Rename preset"
         Controls.ToolTip.visible: hovered
-        Controls.ToolTip.text: "Rename preset"
+        Controls.ToolTip.text: (typeof i18n === "function" ? i18n("Rename preset") : "Rename preset")
         contentItem: Text {
             text: parent.text
             color: "white"
