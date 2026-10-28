@@ -1,4 +1,5 @@
 import QtQuick
+import "Translations.js" as Translations
 import "Theme.js" as Theme
 
 // Audio status and "Run diagnostics" (HTML `.status` / `.check`), fed by the
@@ -57,7 +58,7 @@ Column {
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width - 22 - runButton.width - 12
             Text {
-                text: (typeof i18n === "function" ? i18n("Audio capture") : "Audio capture")
+                text: (typeof i18n === "function" ? i18n("Audio capture") : Translations.translate("Audio capture"))
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
