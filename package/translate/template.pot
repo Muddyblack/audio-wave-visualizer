@@ -1828,3 +1828,9 @@ msgstr ""
 
 msgid "With the rhythm of the rain"
 msgstr ""
+
+msgid "Behind windows"
+msgstr ""
+
+msgid "Light"
+msgstr ""
