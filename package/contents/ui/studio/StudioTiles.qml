@@ -78,7 +78,7 @@ Flow {
                     x: 9
                     y: 62
                     width: parent.width - 18
-                    text: tile.option.label
+                    text: (typeof i18n === "function" ? i18n(tile.option.label) : tile.option.label)
                     color: tile.pressed ? Theme.text : Theme.muted
                     font.family: Theme.fontFamily
                     font.pixelSize: 11
