@@ -1,0 +1,474 @@
+# Turkish translation for Plasma Audio Visualizer.
+# Copyright (C) 2026 Plasma Audio Visualizer contributors
+# This file is distributed under the same license as the Plasma Audio Visualizer project.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Plasma Audio Visualizer 3.1.7\\n"
+"Report-Msgid-Bugs-To: https://github.com/Muddyblack/audio-wave-visualizer/issues\\n"
+"PO-Revision-Date: 2026-10-28 00:00+0000\\n"
+"Language-Team: Turkish <https://tr.kde.org/localization/>\\n"
+"Language: tr\\n"
+"MIME-Version: 1.0\\n"
+"Content-Type: text/plain; charset=UTF-8\\n"
+"Content-Transfer-Encoding: 8bit\\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\\n"
+
+msgid "General"
+msgstr "Genel"
+
+msgid "Search settings…"
+msgstr "Ayarlarda ara…"
+
+msgid "Discard"
+msgstr "Değişiklikleri At"
+
+msgid "Discard unapplied changes"
+msgstr "Uygulanmamış değişiklikleri at"
+
+msgid "Reset"
+msgstr "Sıfırla"
+
+msgid "Restore every setting to its default. Apply to keep it; Discard undoes it. Saved presets are kept."
+msgstr "Tüm ayarları varsayılan değerlerine döndürür. Değişiklikleri korumak için Uygula’yı seçin; Değişiklikleri At işlemi geri alır. Kaydedilmiş önayarlar korunur."
+
+msgid "Surprise me"
+msgstr "Beni şaşırt"
+
+msgid "No settings match that search."
+msgstr "Aramayla eşleşen ayar yok."
+
+msgid "No settings are available for this design."
+msgstr "Bu tasarım için kullanılabilir ayar yok."
+
+msgid "Presets"
+msgstr "Önayarlar"
+
+msgid "My presets"
+msgstr "Önayarlarım"
+
+msgid "Visualizer"
+msgstr "Ses Görselleştirici"
+
+msgid "Progress"
+msgstr "İlerleme"
+
+msgid "Buttons"
+msgstr "Düğmeler"
+
+msgid "Layout"
+msgstr "Düzen"
+
+msgid "Artwork"
+msgstr "Kapak Görseli"
+
+msgid "Track info"
+msgstr "Parça Bilgileri"
+
+msgid "Lyrics"
+msgstr "Şarkı Sözleri"
+
+msgid "Card"
+msgstr "Kart"
+
+msgid "Colours"
+msgstr "Renkler"
+
+msgid "Behaviour"
+msgstr "Davranış"
+
+msgid "Audio"
+msgstr "Ses"
+
+msgid "Info"
+msgstr "Bilgi"
+
+msgid "Appearance"
+msgstr "Görünüm"
+
+msgid "All"
+msgstr "Tümü"
+
+msgid "Favourites"
+msgstr "Sık Kullanılanlar"
+
+msgid "Today’s look"
+msgstr "Günün görünümü"
+
+msgid "Saved looks"
+msgstr "Kaydedilmiş görünümler"
+
+msgid "Start from a look"
+msgstr "Bir görünümle başla"
+
+msgid "Search settings"
+msgstr "Ayarlarda ara"
+
+msgid "On Plasma"
+msgstr "Plasma’da"
+
+msgid "On Hyprland"
+msgstr "Hyprland’da"
+
+msgid "Preview wallpaper blur"
+msgstr "Duvar kâğıdı bulanıklığını önizle"
+
+msgid "Adjusts wallpaper blur in this preview. Actual popup blur strength is set in KDE System Settings → Desktop Effects → Blur."
+msgstr "Bu önizlemedeki duvar kâğıdı bulanıklığını ayarlar. Açılır pencerenin gerçek bulanıklık düzeyi KDE Sistem Ayarları → Masaüstü Efektleri → Bulanıklık bölümünden ayarlanır."
+
+msgid "Blur behind card"
+msgstr "Kartın arkasını bulanıklaştır"
+
+msgid "Blur application windows behind the rounded card. Requires KWin’s Blur effect."
+msgstr "Yuvarlatılmış kartın arkasındaki uygulama pencerelerini bulanıklaştırır. KWin Bulanıklık efekti gerekir."
+
+msgid "Click action"
+msgstr "Tıklama eylemi"
+
+msgid "The same look all day; changes tomorrow. Save it to keep it."
+msgstr "Gün boyunca aynı görünüm kullanılır; yarın değişir. Saklamak için kaydedin."
+
+msgid "Saved to My presets"
+msgstr "Önayarlarıma kaydedildi"
+
+msgid "Save today’s look"
+msgstr "Bugünün görünümünü kaydet"
+
+msgid "Apply today’s look automatically"
+msgstr "Bugünün görünümünü otomatik uygula"
+
+msgid "After you apply settings, changes the look once per day on startup or while running. Manual changes stay until tomorrow. Audio settings and placement are kept."
+msgstr "Ayarları uyguladıktan sonra, görünümü başlangıçta veya çalışırken günde bir kez değiştirir. Elle yaptığınız değişiklikler yarına kadar korunur. Ses ayarları ve konum değişmez."
+
+msgid "Star a built-in or saved look to find it here."
+msgstr "Burada kolayca bulmak için yerleşik veya kaydedilmiş bir görünümü yıldızla işaretleyin."
+
+msgid "Keep my colours"
+msgstr "Renklerimi koru"
+
+msgid "Preset category"
+msgstr "Önayar kategorisi"
+
+msgid "Rename preset"
+msgstr "Önayarın adını değiştir"
+
+msgid "No"
+msgstr "Hayır"
+
+msgid "None"
+msgstr "Yok"
+
+msgid "Off"
+msgstr "Kapalı"
+
+msgid "On"
+msgstr "Açık"
+
+msgid "Automatic"
+msgstr "Otomatik"
+
+msgid "Auto"
+msgstr "Otomatik"
+
+msgid "Custom"
+msgstr "Özel"
+
+msgid "Style"
+msgstr "Stil"
+
+msgid "Direction"
+msgstr "Yön"
+
+msgid "Size"
+msgstr "Boyut"
+
+msgid "Width"
+msgstr "Genişlik"
+
+msgid "Height"
+msgstr "Yükseklik"
+
+msgid "Position"
+msgstr "Konum"
+
+msgid "Alignment"
+msgstr "Hizalama"
+
+msgid "Text"
+msgstr "Metin"
+
+msgid "Font"
+msgstr "Yazı Tipi"
+
+msgid "Font size"
+msgstr "Yazı Tipi Boyutu"
+
+msgid "Colour"
+msgstr "Renk"
+
+msgid "Colour mode"
+msgstr "Renk Kipi"
+
+msgid "Background colour"
+msgstr "Arka Plan Rengi"
+
+msgid "Accent colour"
+msgstr "Vurgu Rengi"
+
+msgid "Text colour"
+msgstr "Metin Rengi"
+
+msgid "Custom colour"
+msgstr "Özel Renk"
+
+msgid "Gradient"
+msgstr "Gradyan"
+
+msgid "Gradient fill"
+msgstr "Gradyan Dolgusu"
+
+msgid "Glow"
+msgstr "Parıltı"
+
+msgid "Glow colour"
+msgstr "Parıltı Rengi"
+
+msgid "Line weight"
+msgstr "Çizgi Kalınlığı"
+
+msgid "Vertical offset"
+msgstr "Dikey Ofset"
+
+msgid "Sensitivity"
+msgstr "Duyarlılık"
+
+msgid "Frame rate"
+msgstr "Kare Hızı"
+
+msgid "Audio input"
+msgstr "Ses Girişi"
+
+msgid "Capture source"
+msgstr "Yakalama Kaynağı"
+
+msgid "Auto-detect"
+msgstr "Otomatik Algıla"
+
+msgid "Battery saver"
+msgstr "Pil Tasarrufu"
+
+msgid "Reduced motion"
+msgstr "Hareketi Azalt"
+
+msgid "Show artwork"
+msgstr "Kapak Görselini Göster"
+
+msgid "Show a card"
+msgstr "Kart Göster"
+
+msgid "Cover"
+msgstr "Kapak"
+
+msgid "Cover ring"
+msgstr "Kapak Halkası"
+
+msgid "Cover thumbnail"
+msgstr "Kapak Küçük Resmi"
+
+msgid "Album name"
+msgstr "Albüm Adı"
+
+msgid "Artist summary"
+msgstr "Sanatçı Özeti"
+
+msgid "Song title and artist"
+msgstr "Şarkı Adı ve Sanatçı"
+
+msgid "Track number"
+msgstr "Parça Numarası"
+
+msgid "Release date"
+msgstr "Yayın Tarihi"
+
+msgid "Genre"
+msgstr "Tür"
+
+msgid "Length"
+msgstr "Süre"
+
+msgid "Audio format"
+msgstr "Ses Biçimi"
+
+msgid "Player"
+msgstr "Oynatıcı"
+
+msgid "Playing"
+msgstr "Çalıyor"
+
+msgid "Paused"
+msgstr "Duraklatıldı"
+
+msgid "Nothing playing"
+msgstr "Çalan bir şey yok"
+
+msgid "No metadata"
+msgstr "Üst veri yok"
+
+msgid "Preview"
+msgstr "Önizleme"
+
+msgid "Apply"
+msgstr "Uygula"
+
+msgid "Save"
+msgstr "Kaydet"
+
+msgid "Cancel"
+msgstr "İptal"
+
+msgid "Reset to defaults"
+msgstr "Varsayılanlara Sıfırla"
+
+msgid "Install the missing tools with your distribution’s package manager, then restart Plasma."
+msgstr "Eksik araçları dağıtımınızın paket yöneticisiyle kurun, ardından Plasma’yı yeniden başlatın."
+
+msgid "Python 3"
+msgstr "Python 3"
+
+msgid "busctl"
+msgstr "busctl"
+
+msgid "Search"
+msgstr "Ara"
+
+msgid "Nothing"
+msgstr "Hiçbiri"
+
+msgid "Classic"
+msgstr "Klasik"
+
+msgid "Mirrored"
+msgstr "Aynalı"
+
+msgid "Inline"
+msgstr "Satır İçi"
+
+msgid "Stacked"
+msgstr "Üst Üste"
+
+msgid "Poster"
+msgstr "Afiş"
+
+msgid "Slim strip"
+msgstr "İnce Şerit"
+
+msgid "Panel pill"
+msgstr "Panel Hapı"
+
+msgid "Panel icon"
+msgstr "Panel Simgesi"
+
+msgid "Visualizer only"
+msgstr "Yalnızca Görselleştirici"
+
+msgid "Lyrics only"
+msgstr "Yalnızca Şarkı Sözleri"
+
+msgid "Wallpaper blur"
+msgstr "Duvar Kâğıdı Bulanıklığı"
+
+msgid "Open popup"
+msgstr "Açılır Pencereyi Aç"
+
+msgid "Play / pause"
+msgstr "Oynat / Duraklat"
+
+msgid "Previous & next"
+msgstr "Önceki ve Sonraki"
+
+msgid "Shuffle & repeat"
+msgstr "Karıştır ve Yinele"
+
+msgid "Show on hover only"
+msgstr "Yalnızca Üzerine Gelindiğinde Göster"
+
+msgid "Maximum width"
+msgstr "En Fazla Genişlik"
+
+msgid "Maximum text width"
+msgstr "En Fazla Metin Genişliği"
+
+msgid "Track info"
+msgstr "Parça Bilgileri"
+
+msgid "Details"
+msgstr "Ayrıntılar"
+
+msgid "All details"
+msgstr "Tüm Ayrıntılar"
+
+msgid "Essentials"
+msgstr "Temel Bilgiler"
+
+msgid "Credits"
+msgstr "Katkıda Bulunanlar"
+
+msgid "Release"
+msgstr "Yayın"
+
+msgid "Song"
+msgstr "Şarkı"
+
+msgid "Country"
+msgstr "Ülke"
+
+msgid "Composer"
+msgstr "Besteci"
+
+msgid "Lyricist"
+msgstr "Söz Yazarı"
+
+msgid "Producers"
+msgstr "Yapımcılar"
+
+msgid "Performers"
+msgstr "İcracılar"
+
+msgid "Arrangers"
+msgstr "Düzenlemeciler"
+
+msgid "Album artist"
+msgstr "Albüm Sanatçısı"
+
+msgid "Album & year"
+msgstr "Albüm ve Yıl"
+
+msgid "Disc number"
+msgstr "Disk Numarası"
+
+msgid "Label"
+msgstr "Plak Şirketi"
+
+msgid "Comment"
+msgstr "Yorum"
+
+msgid "BPM"
+msgstr "BPM"
+
+msgid "ISRC"
+msgstr "ISRC"
+
+msgid "The cover is the centre point and the visualizer circles it. Colour mode, glow and bloom below still apply."
+msgstr "Kapak merkez noktasıdır ve görselleştirici çevresinde döner. Aşağıdaki renk kipi, parıltı ve ışık yayılımı ayarları geçerliliğini korur."
+
+msgid "One click sets everything. Fine-tune in the other tabs afterwards — your placement is never touched."
+msgstr "Tek tıklamayla tüm ayarlar yapılır. Sonrasında diğer sekmelerden ince ayar yapabilirsiniz; yerleşiminiz değişmez."
+
+msgid "Save the current settings under a name, or share a look as a small JSON snippet."
+msgstr "Geçerli ayarları bir adla kaydedin veya görünümü küçük bir JSON parçası olarak paylaşın."
+
+msgid "Restore every setting to its default."
+msgstr "Tüm ayarları varsayılan değerlerine döndürür."
+
+msgid "The same look all day"
+msgstr "Gün boyunca aynı görünüm"
