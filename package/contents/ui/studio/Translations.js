@@ -659,7 +659,10 @@ var MESSAGES = {
     "Use popup look": "Açılır pencere görünümünü kullan",
     "Copy to all widgets": "Tüm widget'lara kopyala",
     "Copy the other design into this one: colours, artwork, visualizer and progress styles. The pill enables the copied effects. Each view keeps its layout and playback controls. Apply saves; Discard undoes.": "Diğer tasarımın renklerini, kapak görselini, görselleştiricisini ve ilerleme stillerini buna kopyalar. Kapsül, kopyalanan efektleri etkinleştirir. Her görünüm kendi düzenini ve oynatma denetimlerini korur. Uygula kaydeder; Değişiklikleri At geri alır.",
-    "Copy these settings, including both panel designs, to every other copy of this widget, such as one per monitor. Each keeps its own monitor and position. Apply here first; the others change immediately and cannot be undone.": "Bu ayarları, her iki panel tasarımı da dâhil olmak üzere widget'ın diğer kopyalarına (örneğin her monitördeki kopyaya) uygular. Her kopya kendi monitörünü ve konumunu korur. Önce burada Uygula'ya basın; diğer kopyalar hemen değişir ve bu işlem geri alınamaz."
+    "Copy these settings, including both panel designs, to every other copy of this widget, such as one per monitor. Each keeps its own monitor and position. Apply here first; the others change immediately and cannot be undone.": "Bu ayarları, her iki panel tasarımı da dâhil olmak üzere widget'ın diğer kopyalarına (örneğin her monitördeki kopyaya) uygular. Her kopya kendi monitörünü ve konumunu korur. Önce burada Uygula'ya basın; diğer kopyalar hemen değişir ve bu işlem geri alınamaz.",
+    "add pkgs.cava to your configuration": "Yapılandırmanıza pkgs.cava ekleyin",
+    "install the 'cava' package": "'cava' paketini kurun",
+    "see %1": "%1 konumuna bakın"
 };
 
 function translate(message) {
