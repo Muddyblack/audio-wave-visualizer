@@ -59,7 +59,7 @@ const queryAll = (s, r = document) => [...r.querySelectorAll(s)];
       if (!states) { states = {}; attrState.set(el, states); }
       const previous = states[name];
       const source = previous && current === previous.rendered ? previous.source : current;
-      const translated = locale === 'tr' ? (messages[source] || source) : source;
+      const translated = locale === 'tr' ? translateValue(source) : source;
       states[name] = { source, rendered: translated };
       if (current !== translated) el.setAttribute(name, translated);
     }
