@@ -1816,3 +1816,21 @@ msgstr "Widget değişikliği 30 saniye içinde algılar; paket yöneticiniz PAT
 
 msgid "cava keeps exiting — see %1"
 msgstr "cava sürekli kapanıyor — %1 dosyasına bakın."
+
+msgid "The light falls softly on the water"
+msgstr "Işık suyun üzerine usulca düşüyor"
+
+msgid "And the city fades to blue"
+msgstr "Şehir maviye bürünüyor"
+
+msgid "Let the evening drift away"
+msgstr "Akşam usulca akıp gitsin"
+
+msgid "There is nothing left to hurry"
+msgstr "Acele edecek hiçbir şey kalmadı"
+
+msgid "Just a little room to stay"
+msgstr "Kalmak için küçük bir yer yeter"
+
+msgid "With the rhythm of the rain"
+msgstr "Yağmurun ritmiyle"
