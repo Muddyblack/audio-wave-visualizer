@@ -1336,3 +1336,117 @@ msgstr "Baskı Tarihi"
 
 msgid "Title · Artist"
 msgstr "Başlık · Sanatçı"
+
+msgid "A daily variation of %1"
+msgstr "%1 görünümünün günlük bir çeşidi"
+
+msgid "Reach"
+msgstr "Yayılım"
+
+msgid "Glass pill"
+msgstr "Cam Hap"
+
+msgid "Soft pill"
+msgstr "Yumuşak Hap"
+
+msgid "Outline pill"
+msgstr "Çerçeveli Hap"
+
+msgid "Tinted pill"
+msgstr "Tonlu Hap"
+
+msgid "Accent play"
+msgstr "Vurgulu Oynat"
+
+msgid "pill"
+msgstr "hap"
+
+msgid "Click"
+msgstr "Tıklama"
+
+msgid "Large clock"
+msgstr "Büyük Saat"
+
+msgid "Format"
+msgstr "Biçim"
+
+msgid "Placeholder"
+msgstr "Yer Tutucu"
+
+msgid "Clicking the cover"
+msgstr "Kapağa Tıklama"
+
+msgid "Lyrics display"
+msgstr "Şarkı Sözlerinin Görünümü"
+
+msgid "Pronunciation subtitle"
+msgstr "Telaffuz Altyazısı"
+
+msgid "Apple catalog fallback"
+msgstr "Apple Kataloğuna Geri Dönüş"
+
+msgid "card"
+msgstr "kart"
+
+msgid "Cover blur"
+msgstr "Kapak Bulanıklığı"
+
+msgid "Music-reactive hue"
+msgstr "Müziğe Tepki Veren Ton"
+
+msgid "Adapt to light cards"
+msgstr "Açık Renkli Kartlara Uyum Sağla"
+
+msgid "place"
+msgstr "konum"
+
+msgid "soft"
+msgstr "yumuşak"
+
+msgid "cava missing"
+msgstr "cava bulunamadı"
+
+msgid "Orbit"
+msgstr "Yörünge"
+
+msgid "Both"
+msgstr "Her İkisi"
+
+msgid "Right"
+msgstr "Sağ"
+
+msgid "Circle"
+msgstr "Daire"
+
+msgid "CD"
+msgstr "CD"
+
+msgid "Japanese"
+msgstr "Japonca"
+
+msgid "Chinese"
+msgstr "Çince"
+
+msgid "Serif"
+msgstr "Tırnaklı"
+
+msgid "Tooltip"
+msgstr "Araç İpucu"
+
+msgid "Drawer"
+msgstr "Çekmece"
+
+msgid "Customize"
+msgstr "Özelleştir"
+
+msgid "liquid"
+msgstr "sıvı"
+
+msgid "desktop"
+msgstr "masaüstü"
+
+msgid "glass"
+msgstr "cam"
+
+msgid "adaptive"
+msgstr "uyarlanabilir"
