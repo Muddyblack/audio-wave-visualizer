@@ -40,7 +40,7 @@ function dailyLook(day) {
         vizColorMode: "palette", vizPalette: palette, bgRadius: pick([12, 18, 24]),
         glowWave: pick([true, false]), cardShadow: pick(["none", "soft"])
     });
-    return {id: "daily-" + day, name: "Today’s look · " + day, note: "A daily variation of " + base.name,
+    return {id: "daily-" + day, name: "Today’s look · " + day, note: "A daily variation of %1", noteValue: base.name,
         bd: base.bd, cat: ["daily"], s: settings};
 }
 function favoriteIds(text) {
