@@ -1849,3 +1849,120 @@ msgstr "Uygula, yerel geçersiz kılmaları kaydeder. Sıfırla, yapılandırıl
 
 msgid "Audio Visualizer Settings"
 msgstr "Ses Görselleştirici Ayarları"
+
+msgid "Direct YouTube stream"
+msgstr "Doğrudan YouTube akışı"
+
+msgid "Player published no title"
+msgstr "Oynatıcı başlık bilgisi yayımlamadı"
+
+msgid "Writers"
+msgstr "Yazarlar"
+
+msgid "Album tracks"
+msgstr "Albüm parça sayısı"
+
+msgid "Disc"
+msgstr "Disk"
+
+msgid "Released"
+msgstr "Yayın tarihi"
+
+msgid "Type"
+msgstr "Tür"
+
+msgid "Album"
+msgstr "Albüm"
+
+msgid "Track"
+msgstr "Parça"
+
+msgid "Source"
+msgstr "Kaynak"
+
+msgid "Playback"
+msgstr "Oynatma"
+
+msgid "Choose a recording…"
+msgstr "Bir kayıt seçin…"
+
+msgid "Retry lookup"
+msgstr "Aramayı yeniden dene"
+
+msgid "Up Next"
+msgstr "Sıradaki"
+
+msgid "Toggle upcoming tracks"
+msgstr "Sıradaki parçaları göster veya gizle"
+
+msgid "Queue unavailable in preview"
+msgstr "Önizlemede kuyruk kullanılamıyor"
+
+msgid "Loading queue…"
+msgstr "Kuyruk yükleniyor…"
+
+msgid "This player does not share its queue"
+msgstr "Bu oynatıcı kuyruğunu paylaşmıyor"
+
+msgid "Current track is outside the shared queue"
+msgstr "Geçerli parça paylaşılan kuyruğun dışında"
+
+msgid "Queue unavailable. Check that the player is running and busctl is installed."
+msgstr "Kuyruk kullanılamıyor. Oynatıcının çalıştığını ve busctl'in kurulu olduğunu kontrol edin."
+
+msgid "Player playlist order • shuffle may differ"
+msgstr "Oynatıcının çalma listesi sırası • karıştırma farklı olabilir"
+
+msgid "No upcoming tracks"
+msgstr "Sıradaki parça yok"
+
+msgid "Unknown track"
+msgstr "Bilinmeyen parça"
+
+msgid "Showing the next 50 tracks"
+msgstr "Sonraki 50 parça gösteriliyor"
+
+msgid "No track metadata"
+msgstr "Parça üst verisi yok"
+
+msgid "Close artwork"
+msgstr "Kapak görselini kapat"
+
+msgid "Song details & credits"
+msgstr "Şarkı ayrıntıları ve katkılar"
+
+msgid "Online information is off. Enable it in Settings → Track info for catalog details and credits."
+msgstr "Çevrimiçi bilgi kapalı. Katalog ayrıntıları ve katkılar için Ayarlar → Parça bilgileri bölümünden etkinleştirin."
+
+msgid "Delay lyrics by 100 milliseconds"
+msgstr "Şarkı sözlerini 100 milisaniye geciktir"
+
+msgid "Delay lyrics 100 ms (−)"
+msgstr "Şarkı sözlerini 100 ms geciktir (−)"
+
+msgid "Reset lyrics timing offset"
+msgstr "Şarkı sözü zamanlama kaymasını sıfırla"
+
+msgid "Reset timing; positive values show lyrics earlier"
+msgstr "Zamanlamayı sıfırla; pozitif değerler sözleri daha erken gösterir"
+
+msgid "Advance lyrics by 100 milliseconds"
+msgstr "Şarkı sözlerini 100 milisaniye öne al"
+
+msgid "Advance lyrics 100 ms (+)"
+msgstr "Şarkı sözlerini 100 ms öne al (+)"
+
+msgid "Play a song to see its lyrics"
+msgstr "Şarkı sözlerini görmek için bir parça çalın"
+
+msgid "Waiting for the song title and artist…"
+msgstr "Şarkı adı ve sanatçı bekleniyor…"
+
+msgid "Finding lyrics…"
+msgstr "Şarkı sözleri aranıyor…"
+
+msgid "Couldn't load lyrics"
+msgstr "Şarkı sözleri yüklenemedi"
+
+msgid "No synced lyrics available for this song"
+msgstr "Bu parça için eşzamanlanmış şarkı sözü bulunamadı"
