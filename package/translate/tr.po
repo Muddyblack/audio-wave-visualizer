@@ -1651,3 +1651,75 @@ msgstr "Plasma’da masaüstü bileşenleri düzenleme kipinde sürüklenerek, p
 
 msgid "Where the desktop widget sits on your screens."
 msgstr "Masaüstü bileşeninin ekranlarınızdaki konumu."
+
+msgid "Glass Classic"
+msgstr "Klasik Cam"
+
+msgid "Liquid Glass"
+msgstr "Sıvı Cam"
+
+msgid "Poster · Hanging bars"
+msgstr "Afiş · Sarkıt Çubuklar"
+
+msgid "Stalactites"
+msgstr "Sarkıtlar"
+
+msgid "Halo"
+msgstr "Hale"
+
+msgid "Sunburst"
+msgstr "Güneş Işını"
+
+msgid "Dot Halo"
+msgstr "Nokta Halesi"
+
+msgid "Orbit Icon"
+msgstr "Yörünge Simgesi"
+
+msgid "Quiet Glass"
+msgstr "Sade Cam"
+
+msgid "Panel Pill"
+msgstr "Panel Hapı"
+
+msgid "Bar Icon"
+msgstr "Çubuk Simgesi"
+
+msgid "Ribbon Pill"
+msgstr "Şerit Hap"
+
+msgid "Silk Ribbon"
+msgstr "İpek Şerit"
+
+msgid "Cover Art"
+msgstr "Kapak Görseli"
+
+msgid "Album Atmosphere"
+msgstr "Albüm Atmosferi"
+
+msgid "Lyrics Card"
+msgstr "Şarkı Sözü Kartı"
+
+msgid "CD Player"
+msgstr "CD Oynatıcı"
+
+msgid "Soft Solid"
+msgstr "Yumuşak Düz"
+
+msgid "Neon Night"
+msgstr "Neon Gece"
+
+msgid "Arcade"
+msgstr "Atari"
+
+msgid "Hero Wave"
+msgstr "Öne Çıkan Dalga"
+
+msgid "Slim Strip"
+msgstr "İnce Şerit"
+
+msgid "Mirrored Minimal"
+msgstr "Aynalı Minimal"
+
+msgid "Compact"
+msgstr "Kompakt"
