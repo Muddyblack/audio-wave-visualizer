@@ -1,6 +1,6 @@
 .pragma library
 
-// Shared Turkish fallback for environments without KDE's i18n() function.
+// Shared Turkish fallback for hosts without KDE's i18n() function.
 var MESSAGES = {
     "General": "Genel",
     "Search settings…": "Ayarlarda ara…",
@@ -610,10 +610,15 @@ var MESSAGES = {
     "Just a little room to stay": "Kalmak için küçük bir yer yeter",
     "With the rhythm of the rain": "Yağmurun ritmiyle",
     "Behind windows": "Pencerelerin arkasında",
-    "Light": "Açık"
+    "Light": "Açık",
+    "Close": "Kapat",
+    "Apply saves local overrides. Reset returns to your configured defaults.": "Uygula, yerel geçersiz kılmaları kaydeder. Sıfırla, yapılandırılmış varsayılanlara döner.",
+    "Audio Visualizer Settings": "Ses Görselleştirici Ayarları"
 };
 
 function translate(message) {
+    if (typeof Qt === "undefined" || !Qt.locale || !/^tr(?:_|-|$)/i.test(Qt.locale().name))
+        return message;
     var result = MESSAGES[message] || message;
     for (var i = 1; i < arguments.length; i++)
         result = result.split("%" + i).join(String(arguments[i]));
