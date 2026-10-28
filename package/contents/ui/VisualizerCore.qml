@@ -266,17 +266,17 @@ Item {
 
     readonly property string backendMessage: {
         if (backendCode === "source-unavailable")
-            return "Selected audio source unavailable";
+            return typeof i18n === "function" ? i18n("Selected audio source unavailable") : "Selected audio source unavailable";
         if (!backendFailed)
             return "";
         if (backendCode === "no-cava")
             return "cava is not installed";
         if (backendCode === "no-backend")
-            return "No usable audio input (tried " + backendDetail.replace(/,/g, ", ") + ")";
+            return typeof i18n === "function" ? i18n("No usable audio input (tried %1)", backendDetail.replace(/,/g, ", ")) : "No usable audio input (tried " + backendDetail.replace(/,/g, ", ") + ")";
         // Windows only (windows/audio_capture.py): nothing plays, so nothing to capture.
         if (backendCode === "no-output")
-            return "No audio output device";
-        return "Audio capture stopped";
+            return typeof i18n === "function" ? i18n("No audio output device") : "No audio output device";
+        return typeof i18n === "function" ? i18n("Audio capture stopped") : "Audio capture stopped";
     }
 
     // The install command for whatever package manager feeder.sh found. Naming
@@ -308,7 +308,7 @@ Item {
     // Second line under the headline: short enough for a 44px tall waveform.
     readonly property string backendAction: {
         if (backendCode === "source-unavailable")
-            return "Start the application or choose a source in Audio settings";
+            return typeof i18n === "function" ? i18n("Start the application or choose a source in Audio settings") : "Start the application or choose a source in Audio settings";
         if (!backendFailed)
             return "";
         if (backendCode === "no-cava")
@@ -326,9 +326,9 @@ Item {
         if (backendCode === "no-cava")
             return installCommand + "\nThe widget picks it up within 30 seconds — no restart needed, unless your package manager only changes PATH for new sessions.";
         if (backendCode === "no-backend")
-            return "cava could not capture from any backend. Check that PipeWire or PulseAudio is running, or pin one under Audio Input in the widget settings.";
+            return typeof i18n === "function" ? i18n("cava could not capture from any backend. Check that PipeWire or PulseAudio is running, or pin one under Audio Input in the widget settings.") : "cava could not capture from any backend. Check that PipeWire or PulseAudio is running, or pin one under Audio Input in the widget settings.";
         if (backendCode === "no-output")
-            return "Windows has no audio output, so nothing is playing that could be visualized. Connect speakers or headphones, enable sound in your remote desktop client, or install a virtual audio device. Picked up within seconds — no restart needed.";
+            return typeof i18n === "function" ? i18n("Windows has no audio output, so nothing is playing that could be visualized. Connect speakers or headphones, enable sound in your remote desktop client, or install a virtual audio device. Picked up within seconds — no restart needed.") : "Windows has no audio output, so nothing is playing that could be visualized. Connect speakers or headphones, enable sound in your remote desktop client, or install a virtual audio device. Picked up within seconds — no restart needed.";
         return "cava keeps exiting — see " + vis.resolvedRunDir + "/cava.log";
     }
 
