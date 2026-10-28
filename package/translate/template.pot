@@ -1,6 +1,6 @@
 # Translation template for Plasma Audio Visualizer.
 # Shared settings-schema strings are passed to KDE's i18n() function at render
-# time, so keep this template in sync with package/translate/tr.po.
+# time. Generated from tr.po by tools/sync_translations.py; do not edit by hand.
 msgid ""
 msgstr ""
 "Project-Id-Version: Plasma Audio Visualizer 3.1.7\n"
@@ -2004,4 +2004,376 @@ msgid "One look all day. Save it to keep it."
 msgstr ""
 
 msgid "kept your colours"
+msgstr ""
+
+msgid "%1 bars"
+msgstr ""
+
+msgid "%1 s"
+msgstr ""
+
+msgid "1×"
+msgstr ""
+
+msgid "2×"
+msgstr ""
+
+msgid "Fit"
+msgstr ""
+
+msgid "Smooth Wave"
+msgstr ""
+
+msgid "Rounded Bars"
+msgstr ""
+
+msgid "Mirror Bars"
+msgstr ""
+
+msgid "Tech Line"
+msgstr ""
+
+msgid "Floating Dots"
+msgstr ""
+
+msgid "Floating Dots Bold"
+msgstr ""
+
+msgid "Peak Bars"
+msgstr ""
+
+msgid "LED Meter"
+msgstr ""
+
+msgid "Mountain"
+msgstr ""
+
+msgid "Oscilloscope"
+msgstr ""
+
+msgid "Ribbon"
+msgstr ""
+
+msgid "Radial Burst"
+msgstr ""
+
+msgid "Pixel Matrix"
+msgstr ""
+
+msgid "Pulse Orb"
+msgstr ""
+
+msgid "Sparkles"
+msgstr ""
+
+msgid "Neon Terrain"
+msgstr ""
+
+msgid "Audio Tunnel"
+msgstr ""
+
+msgid "Liquid Plasma"
+msgstr ""
+
+msgid "CRT Oscilloscope"
+msgstr ""
+
+msgid "Stereo Lissajous"
+msgstr ""
+
+msgid "Gravity Sparks"
+msgstr ""
+
+msgid "Glassy Sleek"
+msgstr ""
+
+msgid "Ultra Minimal"
+msgstr ""
+
+msgid "Glowing Pulse"
+msgstr ""
+
+msgid "Bold Pill"
+msgstr ""
+
+msgid "Waveform"
+msgstr ""
+
+msgid "Squiggle"
+msgstr ""
+
+msgid "Segmented"
+msgstr ""
+
+msgid "Dotted"
+msgstr ""
+
+msgid "Capsule"
+msgstr ""
+
+msgid "Time only"
+msgstr ""
+
+msgid "Bars"
+msgstr ""
+
+msgid "Wave"
+msgstr ""
+
+msgid "Dots"
+msgstr ""
+
+msgid "Sparks"
+msgstr ""
+
+msgid "Regular"
+msgstr ""
+
+msgid "Medium"
+msgstr ""
+
+msgid "Semibold"
+msgstr ""
+
+msgid "Bold"
+msgstr ""
+
+msgid "Extra bold"
+msgstr ""
+
+msgid "System font"
+msgstr ""
+
+msgid "One"
+msgstr ""
+
+msgid "Two"
+msgstr ""
+
+msgid "Above windows"
+msgstr ""
+
+msgid "Default output monitor"
+msgstr ""
+
+msgid "Built-in buttons"
+msgstr ""
+
+msgid "Built-in progress bar"
+msgstr ""
+
+msgid "Built-in visualizer"
+msgstr ""
+
+msgid "Hide"
+msgstr ""
+
+msgid "Manage…"
+msgstr ""
+
+msgid "Import trusted QML buttons"
+msgstr ""
+
+msgid "Import trusted QML progress bar"
+msgstr ""
+
+msgid "Import trusted QML visualizer"
+msgstr ""
+
+msgid "Preview options"
+msgstr ""
+
+msgid "Hide preview options"
+msgstr ""
+
+msgid "Use live audio"
+msgstr ""
+
+msgid "Live audio · On"
+msgstr ""
+
+msgid "Add to favourites"
+msgstr ""
+
+msgid "Remove from favourites"
+msgstr ""
+
+msgid "Run diagnostics"
+msgstr ""
+
+msgid "Running…"
+msgstr ""
+
+msgid "cava found"
+msgstr ""
+
+msgid "not installed"
+msgstr ""
+
+msgid "Capture backends"
+msgstr ""
+
+msgid "Sound server"
+msgstr ""
+
+msgid "not reachable"
+msgstr ""
+
+msgid "Default output"
+msgstr ""
+
+msgid "Renderer"
+msgstr ""
+
+msgid "canvas (software)"
+msgstr ""
+
+msgid "shader"
+msgstr ""
+
+msgid "unknown"
+msgstr ""
+
+msgid "found"
+msgstr ""
+
+msgid "missing"
+msgstr ""
+
+msgid "%1 (optional)"
+msgstr ""
+
+msgid "Python 3 (metadata and lyrics)"
+msgstr ""
+
+msgid "busctl (MPRIS metadata)"
+msgstr ""
+
+msgid "Not checked"
+msgstr ""
+
+msgid "Checking…"
+msgstr ""
+
+msgid "Checked"
+msgstr ""
+
+msgid "Could not check for updates"
+msgstr ""
+
+msgid "Up to date"
+msgstr ""
+
+msgid "Update available"
+msgstr ""
+
+msgid "Newer than latest release"
+msgstr ""
+
+msgid "Version comparison unavailable"
+msgstr ""
+
+msgid "Get update ↗"
+msgstr ""
+
+msgid "View latest release ↗"
+msgstr ""
+
+msgid "GitHub stars"
+msgstr ""
+
+msgid "GitHub downloads"
+msgstr ""
+
+msgid "OpenDesktop downloads"
+msgstr ""
+
+msgid "%1, open %2"
+msgstr ""
+
+msgid "%1 GitHub avatar"
+msgstr ""
+
+msgid "%1 avatar"
+msgstr ""
+
+msgid "1 commit"
+msgstr ""
+
+msgid "%1 commits"
+msgstr ""
+
+msgid "From the bundled LICENSE file"
+msgstr ""
+
+msgid "Muddyblack GitHub OpenDesktop KDE Store downloads stars support project"
+msgstr ""
+
+msgid "No other widgets found"
+msgstr ""
+
+msgid "Copied to 1 other widget"
+msgstr ""
+
+msgid "Copied to %1 other widgets"
+msgstr ""
+
+msgid "Could not reach Plasma"
+msgstr ""
+
+msgid "Shuffle on"
+msgstr ""
+
+msgid "Shuffle off"
+msgstr ""
+
+msgid "Shuffle unavailable for this player"
+msgstr ""
+
+msgid "Repeat track"
+msgstr ""
+
+msgid "Repeat playlist"
+msgstr ""
+
+msgid "Repeat off"
+msgstr ""
+
+msgid "Repeat unavailable for this player"
+msgstr ""
+
+msgid "Show track details"
+msgstr ""
+
+msgid "Return to playback controls"
+msgstr ""
+
+msgid "Keep popup open"
+msgstr ""
+
+msgid "Unpin and close popup"
+msgstr ""
+
+msgid "Set loop start (A)"
+msgstr ""
+
+msgid "Set loop end (B)"
+msgstr ""
+
+msgid "Enable A–B loop"
+msgstr ""
+
+msgid "Pause A–B loop"
+msgstr ""
+
+msgid "Clear A–B loop"
+msgstr ""
+
+msgid "Chapter %1"
+msgstr ""
+
+msgid "Stereo PCM unavailable"
+msgstr ""
+
+msgid "Waiting for stereo output"
 msgstr ""

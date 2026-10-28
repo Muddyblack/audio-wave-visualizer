@@ -201,22 +201,29 @@ Rectangle {
             if (section.tab === "buttons" && ["dockSrc", "customDockBgColor"].includes(row.id || row.k))
                 return false;
         }
-        return Schema.rowVisible(row, section, draft, env, query.trim().toLowerCase());
+        return Schema.rowVisible(row, section, draft, env, query.trim().toLowerCase(), studioRoot.translateText);
     }
+    // Lets search match the labels the user actually sees, not only English.
+    function translateText(text) {
+        if (!text)
+            return "";
+        return typeof i18n === "function" ? i18n(text) : Translations.translate(text);
+    }
+    // English source strings; StudioRow translates label and desc when drawing.
     function rowDefinition(row) {
         if (env === "kde" && presentationTarget === "popup" && row.k === "glassBlur")
             return Object.assign({}, row, {
-                label: (typeof i18n === "function" ? i18n("Preview wallpaper blur") : Translations.translate("Preview wallpaper blur")),
-                desc: (typeof i18n === "function" ? i18n("Adjusts wallpaper blur in this preview. Actual popup blur strength is set in KDE System Settings → Desktop Effects → Blur.") : Translations.translate("Adjusts wallpaper blur in this preview. Actual popup blur strength is set in KDE System Settings → Desktop Effects → Blur."))
+                label: "Preview wallpaper blur",
+                desc: "Adjusts wallpaper blur in this preview. Actual popup blur strength is set in KDE System Settings → Desktop Effects → Blur."
             });
         if (env === "kde" && presentationTarget === "popup" && row.k === "compositorGlass")
             return Object.assign({}, row, {
-                label: (typeof i18n === "function" ? i18n("Blur behind card") : Translations.translate("Blur behind card")),
-                desc: (typeof i18n === "function" ? i18n("Blur application windows behind the rounded card. Requires KWin’s Blur effect.") : Translations.translate("Blur application windows behind the rounded card. Requires KWin’s Blur effect."))
+                label: "Blur behind card",
+                desc: "Blur application windows behind the rounded card. Requires KWin’s Blur effect."
             });
         if (row.k === "pillClick" && env === "kde")
             return Object.assign({}, row, {
-                label: (typeof i18n === "function" ? i18n("Click action") : Translations.translate("Click action")),
+                label: "Click action",
                 opts: [["popup", "Nothing"], ["toggle", "Play / pause"]]
             });
         if (row.k === "pillEq" && draft.layoutMode === "pillicon")

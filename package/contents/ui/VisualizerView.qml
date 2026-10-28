@@ -706,7 +706,7 @@ Item {
         visible: root.flipEnabled && (root.flipped || (root.configuration.flipInfoButton ?? true)) && root.shouldShow && !root.zoomOpen
         focusPolicy: Qt.StrongFocus
         text: root.flipped ? "×" : "i"
-        Accessible.name: root.flipped ? "Return to playback controls" : "Show track details"
+        Accessible.name: root.flipped ? (typeof i18n === "function" ? i18n("Return to playback controls") : Translations.translate("Return to playback controls")) : (typeof i18n === "function" ? i18n("Show track details") : Translations.translate("Show track details"))
         Controls.ToolTip.visible: hovered
         Controls.ToolTip.text: Accessible.name
         Controls.ToolTip.delay: 500

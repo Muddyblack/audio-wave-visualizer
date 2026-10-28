@@ -48,7 +48,7 @@ Rectangle {
         hasAudio: pane.stateName !== "paused" && pane.stateName !== "idle"
         backendFailed: pane.stateName === "backend"
         backendCode: backendFailed ? "no-cava" : ""
-        backendMessage: backendFailed ? "cava is not installed" : ""
+        backendMessage: backendFailed ? (typeof i18n === "function" ? i18n("cava is not installed") : Translations.translate("cava is not installed")) : ""
         backendAction: backendFailed ? "sudo pacman -S cava" : ""
     }
     SamplePlayer {
@@ -145,7 +145,7 @@ Rectangle {
         Text {
             id: buttonLabel
             anchors.centerIn: parent
-            text: chipButton.label
+            text: (typeof i18n === "function" ? i18n(chipButton.label) : Translations.translate(chipButton.label))
             color: chipButton.pressed ? "#ffffff" : "#aab1a7"
             font.family: Theme.fontFamily
             font.pixelSize: 11
@@ -164,7 +164,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.margins: 4
         height: 28
-        text: pane.optionsExpanded ? "Hide preview options" : "Preview options"
+        text: pane.optionsExpanded ? (typeof i18n === "function" ? i18n("Hide preview options") : Translations.translate("Hide preview options")) : (typeof i18n === "function" ? i18n("Preview options") : Translations.translate("Preview options"))
         onClicked: pane.optionsExpanded = !pane.optionsExpanded
     }
     StudioButton {
@@ -176,7 +176,7 @@ Rectangle {
         height: 28
         compact: true
         primary: pane.liveMode
-        text: pane.liveMode ? "Live audio · On" : "Use live audio"
+        text: pane.liveMode ? (typeof i18n === "function" ? i18n("Live audio · On") : Translations.translate("Live audio · On")) : (typeof i18n === "function" ? i18n("Use live audio") : Translations.translate("Use live audio"))
         areaName: "livePreviewButton"
         onClicked: pane.studio.livePreview = !pane.studio.livePreview
     }
@@ -197,9 +197,9 @@ Rectangle {
                 Item {
                     id: backdropButton
                     objectName: "wallpaper_" + modelData[0]
-                    Accessible.name: modelData[1]
+                    Accessible.name: (typeof i18n === "function" ? i18n(modelData[1]) : Translations.translate(modelData[1]))
                     Controls.ToolTip.visible: wallpaperArea.containsMouse
-                    Controls.ToolTip.text: modelData[1]
+                    Controls.ToolTip.text: (typeof i18n === "function" ? i18n(modelData[1]) : Translations.translate(modelData[1]))
                     Controls.ToolTip.delay: 400
                     required property var modelData
                     width: 30
@@ -232,7 +232,7 @@ Rectangle {
             visible: pane.compact && !pane.liveMode
             width: 180
             height: 30
-            model: Schema.STATES.map(state => state[1])
+            model: Schema.STATES.map(state => (typeof i18n === "function" ? i18n(state[1]) : Translations.translate(state[1])))
             currentIndex: Schema.STATES.findIndex(state => state[0] === pane.stateName)
             onActivated: pane.stateName = Schema.STATES[currentIndex][0]
         }

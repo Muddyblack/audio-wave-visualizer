@@ -121,7 +121,7 @@ Column {
                         source: info.onlineEnabled ? Project.avatar : ""
                         imageSize: Qt.size(128, 128)
                         radius: 12
-                        Accessible.name: Project.author + " GitHub avatar"
+                        Accessible.name: (typeof i18n === "function" ? i18n("%1 GitHub avatar", Project.author) : Translations.translate("%1 GitHub avatar", Project.author))
                     }
                 }
                 StudioButton {
@@ -171,9 +171,9 @@ Column {
             Text {
                 objectName: "versionStatusLabel"
                 width: parent.width
-                text: info.versionStatus
+                text: (typeof i18n === "function" ? i18n(info.versionStatus) : Translations.translate(info.versionStatus))
                 wrapMode: Text.WordWrap
-                color: text === "Update available" ? Theme.brand : Theme.muted
+                color: info.versionStatus === "Update available" ? Theme.brand : Theme.muted
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
             }
@@ -181,7 +181,7 @@ Column {
                 width: parent.width
                 spacing: 8
                 StudioButton {
-                    text: info.versionStatus === "Update available" ? "Get update ↗" : "View latest release ↗"
+                    text: info.versionStatus === "Update available" ? (typeof i18n === "function" ? i18n("Get update ↗") : Translations.translate("Get update ↗")) : (typeof i18n === "function" ? i18n("View latest release ↗") : Translations.translate("View latest release ↗"))
                     compact: true
                     onClicked: Qt.openUrlExternally(Project.releasesPage)
                 }
@@ -230,7 +230,7 @@ Column {
                     x: 12
                     y: 48
                     width: parent.width - 30
-                    text: parent.modelData.label + " ↗"
+                    text: (typeof i18n === "function" ? i18n(parent.modelData.label) : Translations.translate(parent.modelData.label)) + " ↗"
                     color: Theme.muted
                     font.family: Theme.fontFamily
                     font.pixelSize: 11
@@ -241,7 +241,7 @@ Column {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    Accessible.name: parent.modelData.label + ", open " + parent.modelData.href
+                    Accessible.name: (typeof i18n === "function" ? i18n("%1, open %2", (typeof i18n === "function" ? i18n(parent.modelData.label) : Translations.translate(parent.modelData.label)), parent.modelData.href) : Translations.translate("%1, open %2", (typeof i18n === "function" ? i18n(parent.modelData.label) : Translations.translate(parent.modelData.label)), parent.modelData.href))
                     onClicked: Qt.openUrlExternally(parent.modelData.href)
                 }
             }
@@ -267,7 +267,7 @@ Column {
                 font.weight: Font.DemiBold
             }
             Text {
-                text: Project.licenseId + " · From the bundled LICENSE file"
+                text: Project.licenseId + " · " + (typeof i18n === "function" ? i18n("From the bundled LICENSE file") : Translations.translate("From the bundled LICENSE file"))
                 color: Theme.muted
                 font.family: Theme.fontFamily
                 font.pixelSize: 10
@@ -331,7 +331,7 @@ Column {
                             source: info.onlineEnabled ? contributorCard.modelData.avatar : ""
                             imageSize: Qt.size(96, 96)
                             radius: 17
-                            Accessible.name: contributorCard.modelData.login + " avatar"
+                            Accessible.name: (typeof i18n === "function" ? i18n("%1 avatar", contributorCard.modelData.login) : Translations.translate("%1 avatar", contributorCard.modelData.login))
                         }
                     }
                     Column {
@@ -349,7 +349,7 @@ Column {
                             font.weight: Font.DemiBold
                         }
                         Text {
-                            text: contributorCard.modelData.commits + (contributorCard.modelData.commits === 1 ? " commit" : " commits")
+                            text: contributorCard.modelData.commits === 1 ? (typeof i18n === "function" ? i18n("1 commit") : Translations.translate("1 commit")) : (typeof i18n === "function" ? i18n("%1 commits", contributorCard.modelData.commits) : Translations.translate("%1 commits", contributorCard.modelData.commits))
                             color: Theme.muted
                             font.family: Theme.fontFamily
                             font.pixelSize: 10

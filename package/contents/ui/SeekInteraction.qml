@@ -2,6 +2,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Controls.Basic as Controls
 import "text"
+import "studio/Translations.js" as Translations
 
 // Shared interaction surface for every built-in linear progress style.
 Item {
@@ -296,14 +297,14 @@ Item {
     Controls.Menu {
         id: menu
         Controls.MenuItem {
-            text: "Set loop start (A)"
+            text: (typeof i18n === "function" ? i18n("Set loop start (A)") : Translations.translate("Set loop start (A)"))
             onTriggered: {
                 root.clock.clearLoop();
                 root.clock.loopStart = root.fraction;
             }
         }
         Controls.MenuItem {
-            text: "Set loop end (B)"
+            text: (typeof i18n === "function" ? i18n("Set loop end (B)") : Translations.translate("Set loop end (B)"))
             enabled: root.clock.loopStart >= 0 && root.fraction > root.clock.loopStart + root.clock.unitsPerSecond / root.clock.lengthValue
             onTriggered: {
                 root.clock.loopEnd = root.fraction;
@@ -311,12 +312,12 @@ Item {
             }
         }
         Controls.MenuItem {
-            text: root.clock.loopEnabled ? "Pause A–B loop" : "Enable A–B loop"
+            text: root.clock.loopEnabled ? (typeof i18n === "function" ? i18n("Pause A–B loop") : Translations.translate("Pause A–B loop")) : (typeof i18n === "function" ? i18n("Enable A–B loop") : Translations.translate("Enable A–B loop"))
             enabled: root.clock.validLoop
             onTriggered: root.clock.loopEnabled = !root.clock.loopEnabled
         }
         Controls.MenuItem {
-            text: "Clear A–B loop"
+            text: (typeof i18n === "function" ? i18n("Clear A–B loop") : Translations.translate("Clear A–B loop"))
             enabled: root.clock.loopStart >= 0
             onTriggered: root.clock.clearLoop()
         }

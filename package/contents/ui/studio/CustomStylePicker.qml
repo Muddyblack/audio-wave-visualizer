@@ -64,7 +64,7 @@ Column {
             anchors.right: expandButton.left
             anchors.rightMargin: 10
             anchors.verticalCenter: parent.verticalCenter
-            text: root.kindLabel + (root.selected ? " · " + CustomStyles.nameForUrl(root.selected) : "")
+            text: (typeof i18n === "function" ? i18n(root.kindLabel) : Translations.translate(root.kindLabel)) + (root.selected ? " · " + CustomStyles.nameForUrl(root.selected) : "")
             color: Theme.text
             font.family: Theme.fontFamily
             font.pixelSize: 12
@@ -74,7 +74,7 @@ Column {
             id: expandButton
             anchors.right: parent.right
             compact: true
-            text: root.expanded ? "Hide" : "Manage…"
+            text: root.expanded ? (typeof i18n === "function" ? i18n("Hide") : Translations.translate("Hide")) : (typeof i18n === "function" ? i18n("Manage…") : Translations.translate("Manage…"))
             areaName: "expand_" + root.selectionKey
             onClicked: root.expanded = !root.expanded
         }
@@ -183,7 +183,7 @@ Column {
     }
     FileDialog {
         id: fileDialog
-        title: root.buttons ? "Import trusted QML buttons" : root.progressBar ? "Import trusted QML progress bar" : "Import trusted QML visualizer"
+        title: root.buttons ? (typeof i18n === "function" ? i18n("Import trusted QML buttons") : Translations.translate("Import trusted QML buttons")) : root.progressBar ? (typeof i18n === "function" ? i18n("Import trusted QML progress bar") : Translations.translate("Import trusted QML progress bar")) : (typeof i18n === "function" ? i18n("Import trusted QML visualizer") : Translations.translate("Import trusted QML visualizer"))
         fileMode: FileDialog.OpenFile
         nameFilters: ["QML styles (*.qml)"]
         onAccepted: root.importFile(selectedFile)

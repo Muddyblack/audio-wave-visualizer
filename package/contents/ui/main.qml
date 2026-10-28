@@ -11,6 +11,7 @@ import "../code/Layouts.js" as LayoutSizes
 import "../code/PresentationSettings.js" as Presentations
 import "debug"
 import "text"
+import "studio/Translations.js" as Translations
 
 PlasmoidItem {
     id: root
@@ -152,7 +153,7 @@ PlasmoidItem {
                 opacity: popupState.keepOpen || popupHover.hovered || activeFocus ? 1 : 0
                 checkable: true
                 checked: popupState.keepOpen
-                Accessible.name: checked ? "Unpin and close popup" : "Keep popup open"
+                Accessible.name: checked ? (typeof i18n === "function" ? i18n("Unpin and close popup") : Translations.translate("Unpin and close popup")) : (typeof i18n === "function" ? i18n("Keep popup open") : Translations.translate("Keep popup open"))
                 Controls.ToolTip.visible: hovered
                 Controls.ToolTip.text: Accessible.name
                 onClicked: popupState.togglePin()

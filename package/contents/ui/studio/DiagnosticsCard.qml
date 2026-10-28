@@ -19,6 +19,11 @@ Column {
     readonly property var checks: parse(output)
     spacing: 6
 
+    function tr(text, value) {
+        if (value === undefined)
+            return typeof i18n === "function" ? i18n(text) : Translations.translate(text);
+        return typeof i18n === "function" ? i18n(text, value) : Translations.translate(text, value);
+    }
     function field(text, pattern) {
         const match = text.match(pattern);
         return match ? match[1].trim() : "";
@@ -31,14 +36,14 @@ Column {
         const backends = field(text, /^backends built in:\s*(.+)$/m);
         const server = field(text, /^pactl server:\s*(.+)$/m);
         const sink = field(text, /^default sink:\s*(.+)$/m);
-        const checks = [["cava found", !missing && path !== "", missing ? "not installed" : path], ["Capture backends", backends !== "", backends || "unknown"], ["Sound server", server !== "", server || "not reachable"], ["Default output", sink !== "", sink || "none"], ["Renderer", true, GraphicsInfo.api === GraphicsInfo.Software ? "canvas (software)" : "shader"]];
+        const checks = [[tr("cava found"), !missing && path !== "", missing ? tr("not installed") : path], [tr("Capture backends"), backends !== "", backends || tr("unknown")], [tr("Sound server"), server !== "", server || tr("not reachable")], [tr("Default output"), sink !== "", sink || tr("none")], [tr("Renderer"), true, GraphicsInfo.api === GraphicsInfo.Software ? tr("canvas (software)") : tr("shader")]];
         const python = field(text, /^python3:\s*(.+)$/m);
-        checks.push(["Python 3 (metadata and lyrics)", python === "found", python || "unknown"]);
+        checks.push([tr("Python 3 (metadata and lyrics)"), python === "found", tr(python || "unknown")]);
         const busctl = field(text, /^busctl:\s*(.+)$/m);
-        checks.push(["busctl (MPRIS metadata)", busctl === "found", busctl || "unknown"]);
+        checks.push([tr("busctl (MPRIS metadata)"), busctl === "found", tr(busctl || "unknown")]);
         for (const packageName of ["mutagen", "pykakasi", "pypinyin"]) {
             const state = field(text, new RegExp("^" + packageName + ":\\s*(.+)$", "m"));
-            checks.push([packageName + " (optional)", state === "found", state || "unknown"]);
+            checks.push([tr("%1 (optional)", packageName), state === "found", tr(state || "unknown")]);
         }
         return checks;
     }
@@ -66,7 +71,7 @@ Column {
             }
             Text {
                 width: parent.width
-                text: (card.inputNames[card.studio.draft.inputMethod] ?? "Auto-detect") + " · " + card.effectiveRate + " Hz · " + (card.studio.draft.numBars ?? 24) + " bars"
+                text: card.tr(card.inputNames[card.studio.draft.inputMethod] ?? "Auto-detect") + " · " + card.effectiveRate + " Hz · " + card.tr("%1 bars", card.studio.draft.numBars ?? 24)
                 color: Theme.muted
                 font.family: Theme.fontFamily
                 font.pixelSize: 11
@@ -79,7 +84,7 @@ Column {
             anchors.verticalCenter: parent.verticalCenter
             compact: true
             visible: typeof card.studio.diagnosticsRunner === "function"
-            text: card.running ? "Running…" : "Run diagnostics"
+            text: card.running ? card.tr("Running…") : card.tr("Run diagnostics")
             onClicked: {
                 if (card.running)
                     return;

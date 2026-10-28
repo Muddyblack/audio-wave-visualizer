@@ -527,7 +527,7 @@ Kirigami.Page {
         property string status: ""
         onNewData: (source, data) => {
             const count = parseInt(String(data["stdout"] || "").trim());
-            status = data["exit code"] === 0 && !isNaN(count) ? (count === 0 ? "No other widgets found" : "Copied to " + count + (count === 1 ? " other widget" : " other widgets")) : "Could not reach Plasma";
+            status = data["exit code"] === 0 && !isNaN(count) ? (count === 0 ? (typeof i18n === "function" ? i18n("No other widgets found") : Translations.translate("No other widgets found")) : count === 1 ? (typeof i18n === "function" ? i18n("Copied to 1 other widget") : Translations.translate("Copied to 1 other widget")) : (typeof i18n === "function" ? i18n("Copied to %1 other widgets", count) : Translations.translate("Copied to %1 other widgets", count))) : (typeof i18n === "function" ? i18n("Could not reach Plasma") : Translations.translate("Could not reach Plasma"));
             disconnectSource(source);
             statusReset.restart();
         }

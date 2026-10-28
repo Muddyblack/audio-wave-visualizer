@@ -14,7 +14,7 @@ Controls.ComboBox {
     model: options
     textRole: "label"
     currentIndex: Math.max(0, options.findIndex(o => String(o[0]) === String(value)))
-    displayText: options.length ? (options[currentIndex] ?? options[0])[1] : ""
+    displayText: options.length ? (typeof i18n === "function" ? i18n((options[currentIndex] ?? options[0])[1]) : Translations.translate((options[currentIndex] ?? options[0])[1])) : ""
     implicitWidth: Math.max(170, contentItem.implicitWidth + 40)
     implicitHeight: 32
     font.family: Theme.fontFamily

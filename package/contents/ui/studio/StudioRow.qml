@@ -126,7 +126,7 @@ Item {
             to: row.rowData.max
             stepSize: row.rowData.step
             value: Number(row.value)
-            display: Schema.format(row.rowData.fmt, Number(row.value))
+            display: Schema.format(row.rowData.fmt, Number(row.value), (pattern, value) => typeof i18n === "function" ? i18n(pattern, value) : Translations.translate(pattern, value))
             onMoved: value => row.commit(value)
         }
     }

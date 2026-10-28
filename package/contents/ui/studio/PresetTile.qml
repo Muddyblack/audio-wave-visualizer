@@ -136,7 +136,7 @@ Item {
         width: 24
         height: 24
         text: tile.favorite ? "★" : "☆"
-        Accessible.name: tile.favorite ? "Remove from favourites" : "Add to favourites"
+        Accessible.name: tile.favorite ? (typeof i18n === "function" ? i18n("Remove from favourites") : Translations.translate("Remove from favourites")) : (typeof i18n === "function" ? i18n("Add to favourites") : Translations.translate("Add to favourites"))
         Controls.ToolTip.visible: hovered
         Controls.ToolTip.text: Accessible.name
         contentItem: Text {
@@ -162,7 +162,7 @@ Item {
         text: "✎"
         Accessible.name: (typeof i18n === "function" ? i18n("Rename preset") : Translations.translate("Rename preset"))
         Controls.ToolTip.visible: hovered
-        Controls.ToolTip.text: (typeof i18n === "function" ? i18n("Rename preset") : "Rename preset")
+        Controls.ToolTip.text: (typeof i18n === "function" ? i18n("Rename preset") : Translations.translate("Rename preset"))
         contentItem: Text {
             text: parent.text
             color: "white"

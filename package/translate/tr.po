@@ -7,6 +7,7 @@ msgstr ""
 "Project-Id-Version: Plasma Audio Visualizer 3.1.7\n"
 "Report-Msgid-Bugs-To: https://github.com/Muddyblack/audio-wave-visualizer/issues\n"
 "PO-Revision-Date: 2026-10-28 00:00+0000\n"
+"Last-Translator: \n"
 "Language-Team: Turkish <https://tr.kde.org/localization/>\n"
 "Language: tr\n"
 "MIME-Version: 1.0\n"
@@ -2011,3 +2012,375 @@ msgstr "Gün boyu tek görünüm. Saklamak için kaydedin."
 
 msgid "kept your colours"
 msgstr "renkleriniz korundu"
+
+msgid "%1 bars"
+msgstr "%1 çubuk"
+
+msgid "%1 s"
+msgstr "%1 sn"
+
+msgid "1×"
+msgstr "1×"
+
+msgid "2×"
+msgstr "2×"
+
+msgid "Fit"
+msgstr "Sığdır"
+
+msgid "Smooth Wave"
+msgstr "Yumuşak Dalga"
+
+msgid "Rounded Bars"
+msgstr "Yuvarlak Çubuklar"
+
+msgid "Mirror Bars"
+msgstr "Ayna Çubuklar"
+
+msgid "Tech Line"
+msgstr "Teknik Çizgi"
+
+msgid "Floating Dots"
+msgstr "Yüzen Noktalar"
+
+msgid "Floating Dots Bold"
+msgstr "Kalın Yüzen Noktalar"
+
+msgid "Peak Bars"
+msgstr "Tepe Çubukları"
+
+msgid "LED Meter"
+msgstr "LED Ölçer"
+
+msgid "Mountain"
+msgstr "Dağ"
+
+msgid "Oscilloscope"
+msgstr "Osiloskop"
+
+msgid "Ribbon"
+msgstr "Şerit"
+
+msgid "Radial Burst"
+msgstr "Işınsal Patlama"
+
+msgid "Pixel Matrix"
+msgstr "Piksel Matrisi"
+
+msgid "Pulse Orb"
+msgstr "Nabız Küresi"
+
+msgid "Sparkles"
+msgstr "Işıltılar"
+
+msgid "Neon Terrain"
+msgstr "Neon Arazi"
+
+msgid "Audio Tunnel"
+msgstr "Ses Tüneli"
+
+msgid "Liquid Plasma"
+msgstr "Sıvı Plazma"
+
+msgid "CRT Oscilloscope"
+msgstr "CRT Osiloskop"
+
+msgid "Stereo Lissajous"
+msgstr "Stereo Lissajous"
+
+msgid "Gravity Sparks"
+msgstr "Yerçekimi Kıvılcımları"
+
+msgid "Glassy Sleek"
+msgstr "Cam Zarafeti"
+
+msgid "Ultra Minimal"
+msgstr "Ultra Sade"
+
+msgid "Glowing Pulse"
+msgstr "Parlayan Nabız"
+
+msgid "Bold Pill"
+msgstr "Kalın Hap"
+
+msgid "Waveform"
+msgstr "Dalga Formu"
+
+msgid "Squiggle"
+msgstr "Kıvrımlı"
+
+msgid "Segmented"
+msgstr "Bölümlü"
+
+msgid "Dotted"
+msgstr "Noktalı"
+
+msgid "Capsule"
+msgstr "Kapsül"
+
+msgid "Time only"
+msgstr "Yalnızca süre"
+
+msgid "Bars"
+msgstr "Çubuklar"
+
+msgid "Wave"
+msgstr "Dalga"
+
+msgid "Dots"
+msgstr "Noktalar"
+
+msgid "Sparks"
+msgstr "Kıvılcımlar"
+
+msgid "Regular"
+msgstr "Normal"
+
+msgid "Medium"
+msgstr "Orta"
+
+msgid "Semibold"
+msgstr "Yarı kalın"
+
+msgid "Bold"
+msgstr "Kalın"
+
+msgid "Extra bold"
+msgstr "Çok kalın"
+
+msgid "System font"
+msgstr "Sistem yazı tipi"
+
+msgid "One"
+msgstr "Bir"
+
+msgid "Two"
+msgstr "İki"
+
+msgid "Above windows"
+msgstr "Pencerelerin üstünde"
+
+msgid "Default output monitor"
+msgstr "Varsayılan çıkış monitörü"
+
+msgid "Built-in buttons"
+msgstr "Yerleşik düğmeler"
+
+msgid "Built-in progress bar"
+msgstr "Yerleşik ilerleme çubuğu"
+
+msgid "Built-in visualizer"
+msgstr "Yerleşik görselleştirici"
+
+msgid "Hide"
+msgstr "Gizle"
+
+msgid "Manage…"
+msgstr "Yönet…"
+
+msgid "Import trusted QML buttons"
+msgstr "Güvenilir QML düğmelerini içe aktar"
+
+msgid "Import trusted QML progress bar"
+msgstr "Güvenilir QML ilerleme çubuğunu içe aktar"
+
+msgid "Import trusted QML visualizer"
+msgstr "Güvenilir QML görselleştiricisini içe aktar"
+
+msgid "Preview options"
+msgstr "Önizleme seçenekleri"
+
+msgid "Hide preview options"
+msgstr "Önizleme seçeneklerini gizle"
+
+msgid "Use live audio"
+msgstr "Canlı sesi kullan"
+
+msgid "Live audio · On"
+msgstr "Canlı ses · Açık"
+
+msgid "Add to favourites"
+msgstr "Sık kullanılanlara ekle"
+
+msgid "Remove from favourites"
+msgstr "Sık kullanılanlardan kaldır"
+
+msgid "Run diagnostics"
+msgstr "Tanılamayı çalıştır"
+
+msgid "Running…"
+msgstr "Çalışıyor…"
+
+msgid "cava found"
+msgstr "cava bulundu"
+
+msgid "not installed"
+msgstr "kurulu değil"
+
+msgid "Capture backends"
+msgstr "Yakalama arka uçları"
+
+msgid "Sound server"
+msgstr "Ses sunucusu"
+
+msgid "not reachable"
+msgstr "erişilemiyor"
+
+msgid "Default output"
+msgstr "Varsayılan çıkış"
+
+msgid "Renderer"
+msgstr "Oluşturucu"
+
+msgid "canvas (software)"
+msgstr "tuval (yazılım)"
+
+msgid "shader"
+msgstr "gölgelendirici"
+
+msgid "unknown"
+msgstr "bilinmiyor"
+
+msgid "found"
+msgstr "bulundu"
+
+msgid "missing"
+msgstr "eksik"
+
+msgid "%1 (optional)"
+msgstr "%1 (isteğe bağlı)"
+
+msgid "Python 3 (metadata and lyrics)"
+msgstr "Python 3 (meta veri ve şarkı sözleri)"
+
+msgid "busctl (MPRIS metadata)"
+msgstr "busctl (MPRIS meta verisi)"
+
+msgid "Not checked"
+msgstr "Denetlenmedi"
+
+msgid "Checking…"
+msgstr "Denetleniyor…"
+
+msgid "Checked"
+msgstr "Denetlendi"
+
+msgid "Could not check for updates"
+msgstr "Güncellemeler denetlenemedi"
+
+msgid "Up to date"
+msgstr "Güncel"
+
+msgid "Update available"
+msgstr "Güncelleme var"
+
+msgid "Newer than latest release"
+msgstr "Son sürümden daha yeni"
+
+msgid "Version comparison unavailable"
+msgstr "Sürüm karşılaştırması kullanılamıyor"
+
+msgid "Get update ↗"
+msgstr "Güncellemeyi al ↗"
+
+msgid "View latest release ↗"
+msgstr "Son sürümü görüntüle ↗"
+
+msgid "GitHub stars"
+msgstr "GitHub yıldızları"
+
+msgid "GitHub downloads"
+msgstr "GitHub indirmeleri"
+
+msgid "OpenDesktop downloads"
+msgstr "OpenDesktop indirmeleri"
+
+msgid "%1, open %2"
+msgstr "%1, %2 adresini aç"
+
+msgid "%1 GitHub avatar"
+msgstr "%1 GitHub avatarı"
+
+msgid "%1 avatar"
+msgstr "%1 avatarı"
+
+msgid "1 commit"
+msgstr "1 commit"
+
+msgid "%1 commits"
+msgstr "%1 commit"
+
+msgid "From the bundled LICENSE file"
+msgstr "Paketteki LICENSE dosyasından"
+
+msgid "Muddyblack GitHub OpenDesktop KDE Store downloads stars support project"
+msgstr "Muddyblack GitHub OpenDesktop KDE Store indirmeler yıldızlar destek proje hakkında"
+
+msgid "No other widgets found"
+msgstr "Başka widget bulunamadı"
+
+msgid "Copied to 1 other widget"
+msgstr "1 başka widget'a kopyalandı"
+
+msgid "Copied to %1 other widgets"
+msgstr "%1 başka widget'a kopyalandı"
+
+msgid "Could not reach Plasma"
+msgstr "Plasma'ya ulaşılamadı"
+
+msgid "Shuffle on"
+msgstr "Karıştırma açık"
+
+msgid "Shuffle off"
+msgstr "Karıştırma kapalı"
+
+msgid "Shuffle unavailable for this player"
+msgstr "Bu oynatıcıda karıştırma kullanılamıyor"
+
+msgid "Repeat track"
+msgstr "Parçayı tekrarla"
+
+msgid "Repeat playlist"
+msgstr "Çalma listesini tekrarla"
+
+msgid "Repeat off"
+msgstr "Tekrarlama kapalı"
+
+msgid "Repeat unavailable for this player"
+msgstr "Bu oynatıcıda tekrarlama kullanılamıyor"
+
+msgid "Show track details"
+msgstr "Parça ayrıntılarını göster"
+
+msgid "Return to playback controls"
+msgstr "Oynatma denetimlerine dön"
+
+msgid "Keep popup open"
+msgstr "Açılır pencereyi açık tut"
+
+msgid "Unpin and close popup"
+msgstr "Sabitlemeyi kaldır ve açılır pencereyi kapat"
+
+msgid "Set loop start (A)"
+msgstr "Döngü başlangıcını ayarla (A)"
+
+msgid "Set loop end (B)"
+msgstr "Döngü sonunu ayarla (B)"
+
+msgid "Enable A–B loop"
+msgstr "A–B döngüsünü etkinleştir"
+
+msgid "Pause A–B loop"
+msgstr "A–B döngüsünü duraklat"
+
+msgid "Clear A–B loop"
+msgstr "A–B döngüsünü temizle"
+
+msgid "Chapter %1"
+msgstr "Bölüm %1"
+
+msgid "Stereo PCM unavailable"
+msgstr "Stereo PCM kullanılamıyor"
+
+msgid "Waiting for stereo output"
+msgstr "Stereo çıkış bekleniyor"

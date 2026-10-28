@@ -436,17 +436,21 @@ var NOTES = {
     }
 };
 
-function format(kind, v) {
+// `translate(pattern, value)` (optional) localizes unit patterns like "%1 bars".
+function format(kind, v, translate) {
+    function unit(pattern, value) {
+        return typeof translate === "function" ? translate(pattern, value) : pattern.replace("%1", value);
+    }
     switch (kind) {
     case "pct": return pct(v);
     case "px": return Math.round(v) + " px";
     case "percent": return Math.round(v) + "%";
     case "fixed1": return Number(v).toFixed(1);
     case "fixed2": return Number(v).toFixed(2);
-    case "bars": return Math.round(v) + " bars";
+    case "bars": return unit("%1 bars", Math.round(v));
     case "ms": return Math.round(v) + " ms";
     case "hz": return Math.round(v) + " Hz";
-    case "s": return Number(v) + " s";
+    case "s": return unit("%1 s", Number(v));
     default: return String(v);
     }
 }
@@ -467,15 +471,28 @@ function rowPatch(row, value, state) {
 function optionLabels(row) {
     return Array.isArray(row.opts) ? row.opts.map(function (o) { return Array.isArray(o) ? o[1] : o.label; }).join(" ") : "";
 }
-function searchText(row) {
-    return [row.label || "", row.desc || "", row.k || "", optionLabels(row)].join(" ").toLowerCase();
+// Case-folds for search. Turkish dotless/dotted i fold to plain "i" so that
+// "ışık", "Işık" and "IŞIK" all match whatever the host's lowercasing does.
+function foldSearch(text) {
+    return String(text || "").toLowerCase().replace(/\u0131/g, "i").replace(/i\u0307/g, "i");
 }
-function rowVisible(row, section, s, env, query) {
+// `translate` (optional) maps an English label to the displayed one, so
+// localized hosts match both the English and the translated wording.
+function searchText(row, translate) {
+    var parts = [row.label || "", row.desc || "", row.k || "", optionLabels(row)];
+    if (typeof translate === "function") {
+        parts.push(translate(row.label || ""), translate(row.desc || ""));
+        if (Array.isArray(row.opts))
+            row.opts.forEach(function (o) { parts.push(translate(Array.isArray(o) ? o[1] : o.label)); });
+    }
+    return foldSearch(parts.join(" "));
+}
+function rowVisible(row, section, s, env, query, translate) {
     if (section.when && !section.when(s, env))
         return false;
     if (row.when && !row.when(s, env))
         return false;
-    return query === "" || searchText(row).indexOf(query) !== -1;
+    return !query || searchText(row, translate).indexOf(foldSearch(query)) !== -1;
 }
 
 var FILTERS = [["all", "All"], ["current", "Classic"], ["desktop", "Desktop"], ["panel", "Panel"], ["glass", "Glass"], ["adaptive", "Adaptive colour"]];

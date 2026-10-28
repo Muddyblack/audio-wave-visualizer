@@ -20,7 +20,7 @@ Column {
     Text {
         width: parent.width
         visible: picker.studio.presetFilter === "daily"
-        text: (typeof i18n === "function" ? i18n(picker.studio.daily.note, picker.studio.daily.noteValue) + ". " + i18n("The same look all day; changes tomorrow. Save it to keep it.") : Translations.translate(picker.studio.daily.note, picker.studio.daily.noteValue) + ". " + Translations.translate("The same look all day; changes tomorrow. Save it to keep it.")")
+        text: (typeof i18n === "function" ? i18n(picker.studio.daily.note, i18n(picker.studio.daily.noteValue)) + ". " + i18n("The same look all day; changes tomorrow. Save it to keep it.") : Translations.translate(picker.studio.daily.note, Translations.translate(picker.studio.daily.noteValue)) + ". " + Translations.translate("The same look all day; changes tomorrow. Save it to keep it."))
         wrapMode: Text.WordWrap
         color: Theme.muted
         font.family: Theme.fontFamily
