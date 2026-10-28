@@ -49,7 +49,7 @@ Controls.ComboBox {
         width: control.width
         height: 30
         contentItem: Text {
-            text: item.modelData[1]
+            text: (typeof i18n === "function" ? i18n(item.modelData[1]) : item.modelData[1])
             color: item.index === control.currentIndex ? Theme.brand : Theme.text
             font: control.font
             verticalAlignment: Text.AlignVCenter
