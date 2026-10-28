@@ -4,6 +4,8 @@
 
 <h1 align="center">Plasma Audio Wave Visualizer</h1>
 
+<p align="center"><a href="README.md">English</a> · <a href="README.tr.md">Türkçe</a></p>
+
 
 <p align="center">
   <a href="https://muddyblack.github.io/audio-wave-visualizer/">
