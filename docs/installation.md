@@ -1,19 +1,19 @@
-# Install and use the visualizer
+# Görselleştiriciyi kurma ve kullanma
 
-Choose the host you use: [KDE Plasma](#kde-plasma) or [Hyprland / Quickshell](#hyprland--quickshell). Both use the same widget layouts and settings studio.
+Kullandığınız ortamı seçin: [KDE Plasma](#kde-plasma) veya [Hyprland / Quickshell](#hyprland--quickshell). Her ikisi de aynı widget düzenlerini ve ayar stüdyosunu kullanır.
 
-## Requirements
+## Gereksinimler
 
-- `cava` and a running PipeWire or PulseAudio server for audio-reactive visuals.
-- Python 3 and `busctl` on Plasma's session `PATH` for browser site names, queue details, and other MPRIS metadata. The Nix flake package supplies these for its metadata helper; manual NixOS installs need `pkgs.python3` and `pkgs.systemd` in `environment.systemPackages`.
-- `flock` from util-linux and `pkill` from procps.
-- KDE Plasma 6 with `kpackagetool6`, or Quickshell (`qs`) for the Hyprland host.
+- Ses tepkili görseller için `cava` ve çalışan bir PipeWire veya PulseAudio sunucusu.
+- Tarayıcı site adları, kuyruk ayrıntıları ve diğer MPRIS üst verileri için Plasma oturumunun `PATH` değişkeninde Python 3 ve `busctl`. Nix flake paketi bu araçları üst veri yardımcısı için sağlar; elle yapılan NixOS kurulumlarında `environment.systemPackages` içine `pkgs.python3` ve `pkgs.systemd` eklenmelidir.
+- util-linux paketinden `flock` ve procps paketinden `pkill`.
+- `kpackagetool6` ile KDE Plasma 6 veya Hyprland ortamı için Quickshell (`qs`).
 
-MPRIS playback information comes from your media player. Audio bars can work even when no player publishes track metadata.
+MPRIS oynatma bilgileri medya oynatıcınızdan alınır. Hiçbir oynatıcı parça üst verisi yayımlamasa bile ses çubukları çalışabilir.
 
 ## KDE Plasma
 
-Install from the [KDE Store](https://www.opendesktop.org/p/2359422/) or use this checkout:
+[KDE Store](https://www.opendesktop.org/p/2359422/) üzerinden kurun veya bu depoyu kullanın:
 
 ```bash
 git clone https://github.com/Muddyblack/audio-wave-visualizer.git
@@ -21,18 +21,18 @@ cd audio-wave-visualizer
 kpackagetool6 -t Plasma/Applet -i package
 ```
 
-Add **Plasma Audio Visualizer** from Plasma's **Add Widgets** panel. To update or remove a manual install:
+Plasma'nın **Gereç Ekle** panelinden **Plasma Audio Visualizer** öğesini ekleyin. Elle yapılan kurulumu güncellemek veya kaldırmak için:
 
 ```bash
 kpackagetool6 -t Plasma/Applet -u package
 kpackagetool6 -t Plasma/Applet -r org.muddyblack.plasmaAudioVisualizer
 ```
 
-Run only the command you need. For a packaged `.plasmoid`, use `make pack`. It writes the archive in the repository root.
+Yalnızca ihtiyacınız olan komutu çalıştırın. Paketlenmiş bir `.plasmoid` oluşturmak için `make pack` kullanın. Arşiv depo kök dizinine yazılır.
 
 ### NixOS flake
 
-Add the package and `cava` to your system packages:
+Paketi ve `cava` uygulamasını sistem paketlerinize ekleyin:
 
 ```nix
 {
@@ -55,33 +55,33 @@ Add the package and `cava` to your system packages:
 
 ## Hyprland / Quickshell
 
-Run the desktop widget from this checkout in your Hyprland session:
+Hyprland oturumunuzda bu depodaki masaüstü widget'ını çalıştırın:
 
 ```bash
 make view-hyprland
 ```
 
-This uses `hyprland/run.sh` when `qs` is on your PATH. Otherwise the Make target uses the Nix flake to supply Quickshell and its dependencies. KDE Plasma is not required. The widget starts below application windows on the first monitor; press **Ctrl+C** in that terminal to stop it.
+`qs` komutu `PATH` içinde bulunuyorsa `hyprland/run.sh` kullanılır. Aksi hâlde Make hedefi, Quickshell ve bağımlılıklarını sağlamak için Nix flake'i kullanır. KDE Plasma gerekmez. Widget ilk monitörde uygulama pencerelerinin altında başlar; durdurmak için terminalde **Ctrl+C** tuşlarına basın.
 
-Right-click the widget to open **Settings**. If the widget is hidden, run:
+**Ayarlar**'ı açmak için widget'a sağ tıklayın. Widget gizliyse şu komutu çalıştırın:
 
 ```bash
 make settings-hyprland
 ```
 
-Choose one monitor or **All displays**, position the widget, then click **Apply**. Preferences are saved in `~/.config/audio-wave-visualizer/hyprland.json` (or under `$XDG_CONFIG_HOME`). All displays share one audio backend. **Pause When Covered** stops rendering a fully covered view and stops capture when all views are covered.
+Bir monitör veya **Tüm ekranlar** seçeneğini belirleyin, widget'ı konumlandırın ve **Uygula**'ya tıklayın. Tercihler `~/.config/audio-wave-visualizer/hyprland.json` dosyasına (veya `$XDG_CONFIG_HOME` altına) kaydedilir. Tüm ekranlar tek bir ses arka ucunu paylaşır. **Üzeri Kapatıldığında Duraklat**, tamamen örtülen görünümün çizimini durdurur ve tüm görünümler örtüldüğünde ses yakalamayı da durdurur.
 
-To launch at login, add this to your Hyprland configuration with your checkout's actual path:
+Oturum açıldığında başlatmak için Hyprland yapılandırmanıza deponun gerçek yolunu yazarak şu satırı ekleyin:
 
 ```ini
 exec-once = bash /absolute/path/to/audio-wave-visualizer/hyprland/run.sh
 ```
 
-The Hyprland default is 15 Hz. In **Settings → Audio**, choose a lower frame rate for less work or a higher one for smoother motion. The default widget size is 360 × 104; placement and size can also be set in `shell.qml`.
+Hyprland için varsayılan hız 15 Hz'dir. Daha az kaynak tüketimi için **Ayarlar → Ses** bölümünde daha düşük, daha akıcı hareket için daha yüksek bir kare hızı seçin. Varsayılan widget boyutu 360 × 104'tür; konum ve boyut `shell.qml` içinde de ayarlanabilir.
 
-### Declarative defaults
+### Bildirimsel varsayılanlar
 
-Set `AUDIO_WAVE_DEFAULTS` to a JSON file to provide defaults without changing your Nix files from the GUI. It accepts widget settings plus `monitor`, `widgetWidth`, `widgetHeight`, `verticalPosition`, `desktopLayer`, `pauseWhenCovered`, `waveColor`, and `textColor`.
+GUI üzerinden Nix dosyalarınızı değiştirmeden varsayılanlar sağlamak için `AUDIO_WAVE_DEFAULTS` değişkenini bir JSON dosyasına ayarlayın. Dosya, widget ayarlarının yanı sıra `monitor`, `widgetWidth`, `widgetHeight`, `verticalPosition`, `desktopLayer`, `pauseWhenCovered`, `waveColor` ve `textColor` alanlarını kabul eder.
 
 ```nix
 home.sessionVariables.AUDIO_WAVE_DEFAULTS = toString (pkgs.writeText "audio-wave-defaults.json"
@@ -92,29 +92,29 @@ home.sessionVariables.AUDIO_WAVE_DEFAULTS = toString (pkgs.writeText "audio-wave
   }));
 ```
 
-The widget must inherit that environment variable. GUI changes are stored separately and override those defaults. **Reset to defaults** removes the local overrides.
+Widget bu ortam değişkenini devralmalıdır. GUI'de yapılan değişiklikler ayrı saklanır ve bu varsayılanlara üstün gelir. **Varsayılanlara sıfırla**, yerel geçersiz kılmaları kaldırır.
 
-## Settings and presets
+## Ayarlar ve hazır ayarlar
 
-The built-in studio previews changes while you edit. **Apply** or **OK** saves them; **Cancel** discards them. In Quickshell, right-click the widget to open it. In Plasma, open the widget's configuration.
+Yerleşik stüdyo, düzenleme sırasında değişiklikleri önizler. **Uygula** veya **Tamam** değişiklikleri kaydeder; **İptal** vazgeçer. Quickshell'de açmak için widget'a sağ tıklayın. Plasma'da widget'ın yapılandırmasını açın.
 
-To share a look, choose **Copy as JSON** in **My presets** (or **Copy current as JSON** in the [browser studio](https://muddyblack.github.io/audio-wave-visualizer/)), then use **Import JSON** in the other interface. [Preset sharing](sharing-presets.md) explains the details. See [lyrics setup](lyrics.md) for local files, LRCLIB, translations, and timing.
+Bir görünümü paylaşmak için **Hazır ayarlar → Hazır ayarlarım** bölümünde **JSON olarak kopyala** (veya [tarayıcı stüdyosunda](https://muddyblack.github.io/audio-wave-visualizer/) **Geçerli görünümü JSON olarak kopyala**) seçeneğini kullanın; ardından diğer arayüzde **JSON içe aktar**'ı seçin. Ayrıntılar için [hazır ayar paylaşımı](sharing-presets.md) belgesine bakın. Yerel dosyalar, LRCLIB, çeviriler ve zamanlama hakkında bilgi için [şarkı sözü kurulumunu](lyrics.md) inceleyin.
 
-## Troubleshooting
+## Sorun giderme
 
-If track information works but the bars never move, check `cava`: MPRIS metadata and audio capture are separate. Run the diagnostic:
+Parça bilgileri çalışıyor ancak çubuklar hiç hareket etmiyorsa `cava` durumunu kontrol edin: MPRIS üst verileri ile ses yakalama birbirinden bağımsızdır. Tanılama komutunu çalıştırın:
 
 ```bash
 make doctor
 ```
 
-For an installed Plasma widget, you can run `bash ~/.local/share/plasma/plasmoids/org.muddyblack.plasmaAudioVisualizer/contents/code/doctor.sh`. It reports your `cava` version, available input backends, sound server status, and a short capture test. Include its output when filing an issue.
+Kurulu bir Plasma widget'ı için `bash ~/.local/share/plasma/plasmoids/org.muddyblack.plasmaAudioVisualizer/contents/code/doctor.sh` komutunu çalıştırabilirsiniz. Komut; `cava` sürümünü, kullanılabilir giriş arka uçlarını, ses sunucusunun durumunu ve kısa bir yakalama testini raporlar. Sorun bildirirken çıktıyı ekleyin.
 
-| Symptom | Check |
+| Belirti | Kontrol |
 | --- | --- |
-| `cava is not installed` | Install `cava` with your distro's package manager. The widget retries automatically. |
-| `No usable audio input` | Check whether PipeWire or PulseAudio is running and whether your `cava` build supports it. |
-| Bars are flat or quiet | Raise **Sensitivity** or lower **Smoothing** in **Settings → Audio**. |
-| Widget is hidden in Hyprland | Run `make settings-hyprland` and check monitor and position settings. |
+| `cava is not installed` | Dağıtımınızın paket yöneticisiyle `cava` kurun. Widget otomatik olarak yeniden dener. |
+| `No usable audio input` | PipeWire veya PulseAudio'nun çalıştığını ve `cava` derlemenizin bunu desteklediğini doğrulayın. |
+| Çubuklar sabit veya çok sönük | **Ayarlar → Ses** bölümünde **Hassasiyet** değerini artırın veya **Yumuşatma** değerini azaltın. |
+| Hyprland'de widget gizli | `make settings-hyprland` komutunu çalıştırıp monitör ve konum ayarlarını kontrol edin. |
 
-The Plasma feeder writes `cava.log` under `$XDG_RUNTIME_DIR/audio-wave-widget/`. Quickshell keeps its status and log under `$XDG_RUNTIME_DIR/audio-wave-quickshell/`.
+Plasma besleyicisi `cava.log` dosyasını `$XDG_RUNTIME_DIR/audio-wave-widget/` altına yazar. Quickshell durum ve günlük dosyalarını `$XDG_RUNTIME_DIR/audio-wave-quickshell/` altında tutar.
