@@ -10,7 +10,13 @@ const queryAll = (s, r = document) => [...r.querySelectorAll(s)];
   const textState = new WeakMap();
   const attrState = new WeakMap();
   const ignored = 'SCRIPT,STYLE,CODE,PRE,NOSCRIPT';
-  function translateText(node) {
+  function translateValue(source) {
+    if (messages[source]) return messages[source];
+    let result = source;
+    const templateKeys = Object.keys(messages).filter(key => /%\d+/.test(key)).sort((a, b) => b.length - a.length);
+    for (const key of templateKeys) {
+      const parts = key.split(/(%\d+)/g);
+      const pattern = parts.map(part => /^%\d+$/.test(part) ? '(.+?)' : part.replace(/[.*+?^$()|[\]\\]/g, '\\  function translateText(node) {
     if (!node || !node.parentElement || node.parentElement.closest(ignored)) return;
     const current = node.nodeValue;
     const state = textState.get(node);
@@ -19,6 +25,32 @@ const queryAll = (s, r = document) => [...r.querySelectorAll(s)];
     const leading = current.match(/^\s*/)?.[0] || '';
     const trailing = current.match(/\s*$/)?.[0] || '';
     const translated = locale === 'tr' ? (messages[source] || source) : source;
+    const rendered = leading + translated + trailing;
+    textState.set(node, { source, rendered });
+    if (current !== rendered) node.nodeValue = rendered;
+  }')).join('');
+      const re = new RegExp(pattern, 'g');
+      result = result.replace(re, (...args) => {
+        let translated = messages[key];
+        const captures = args.slice(1, -2);
+        captures.forEach((value, index) => { translated = translated.replace('%' + (index + 1), value); });
+        return translated;
+      });
+    }
+    for (const key of Object.keys(messages).filter(key => key.length >= 10 && !/%\d+/.test(key)).sort((a, b) => b.length - a.length)) {
+      if (result.includes(key)) result = result.split(key).join(messages[key]);
+    }
+    return result;
+  }
+  function translateText(node) {
+    if (!node || !node.parentElement || node.parentElement.closest(ignored)) return;
+    const current = node.nodeValue;
+    const state = textState.get(node);
+    let source = state && current === state.rendered ? state.source : current.trim();
+    if (!source) return;
+    const leading = current.match(/^\s*/)?.[0] || '';
+    const trailing = current.match(/\s*$/)?.[0] || '';
+    const translated = locale === 'tr' ? translateValue(source) : source;
     const rendered = leading + translated + trailing;
     textState.set(node, { source, rendered });
     if (current !== rendered) node.nodeValue = rendered;
