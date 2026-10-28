@@ -1,4 +1,5 @@
 import QtQuick
+import "studio/Translations.js" as Translations
 import org.kde.plasma.core as PlasmaCore
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.private.mpris as Mpris
@@ -557,15 +558,15 @@ Kirigami.Page {
             Studio.StudioButton {
                 objectName: "syncAppearance"
                 compact: true
-                text: root.editingPopup ? "Use pill look" : "Use popup look"
-                tooltip: "Copy the other design into this one: colours, artwork, visualizer and progress styles. The pill enables the copied effects. Each view keeps its layout and playback controls. Apply saves; Discard undoes."
+                text: root.editingPopup ? (typeof i18n === "function" ? i18n("Use pill look") : Translations.translate("Use pill look")) : (typeof i18n === "function" ? i18n("Use popup look") : Translations.translate("Use popup look"))
+                tooltip: (typeof i18n === "function" ? i18n("Copy the other design into this one: colours, artwork, visualizer and progress styles. The pill enables the copied effects. Each view keeps its layout and playback controls. Apply saves; Discard undoes.") : Translations.translate("Copy the other design into this one: colours, artwork, visualizer and progress styles. The pill enables the copied effects. Each view keeps its layout and playback controls. Apply saves; Discard undoes."))
                 onClicked: root.assign(Presentations.syncAppearance(root.draft, root.editingPopup ? "panel" : "popup"))
             }
             Studio.StudioButton {
                 objectName: "syncAllWidgets"
                 compact: true
-                text: syncAll.status || "Copy to all widgets"
-                tooltip: "Copy these settings, including both panel designs, to every other copy of this widget, such as one per monitor. Each keeps its own monitor and position. Apply here first; the others change immediately and cannot be undone."
+                text: syncAll.status || (typeof i18n === "function" ? i18n("Copy to all widgets") : Translations.translate("Copy to all widgets"))
+                tooltip: (typeof i18n === "function" ? i18n("Copy these settings, including both panel designs, to every other copy of this widget, such as one per monitor. Each keeps its own monitor and position. Apply here first; the others change immediately and cannot be undone.") : Translations.translate("Copy these settings, including both panel designs, to every other copy of this widget, such as one per monitor. Each keeps its own monitor and position. Apply here first; the others change immediately and cannot be undone."))
                 onClicked: root.copyToAllWidgets()
             }
         }
