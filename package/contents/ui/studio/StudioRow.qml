@@ -1,4 +1,5 @@
 import QtQuick
+import "Translations.js" as Translations
 import "Theme.js" as Theme
 import "Schema.js" as Schema
 
@@ -51,7 +52,7 @@ Item {
             spacing: 2
             Text {
                 width: parent.width
-                text: (typeof i18n === "function" ? i18n(row.rowData.label || "") : (row.rowData.label || ""))
+                text: (typeof i18n === "function" ? i18n(row.rowData.label || "") : Translations.translate(row.rowData.label || ""))
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
@@ -61,7 +62,7 @@ Item {
             Text {
                 width: parent.width
                 visible: !!row.rowData.desc
-                text: (typeof i18n === "function" ? i18n(row.rowData.desc || "") : (row.rowData.desc || ""))
+                text: (typeof i18n === "function" ? i18n(row.rowData.desc || "") : Translations.translate(row.rowData.desc || ""))
                 color: Theme.muted
                 font.family: Theme.fontFamily
                 font.pixelSize: 11
@@ -194,8 +195,8 @@ Item {
     Component {
         id: noteComponent
         StudioNote {
-            title: row.studio.env === "kde" ? (typeof i18n === "function" ? i18n("On Plasma") : "On Plasma") : (typeof i18n === "function" ? i18n("On Hyprland") : "On Hyprland")
-            text: (typeof i18n === "function" ? i18n(Schema.NOTES[row.rowData.note][row.studio.env] || "") : (Schema.NOTES[row.rowData.note][row.studio.env] || ""))
+            title: row.studio.env === "kde" ? (typeof i18n === "function" ? i18n("On Plasma") : Translations.translate("On Plasma")) : (typeof i18n === "function" ? i18n("On Hyprland") : Translations.translate("On Hyprland"))
+            text: (typeof i18n === "function" ? i18n(Schema.NOTES[row.rowData.note][row.studio.env] || "") : Translations.translate(Schema.NOTES[row.rowData.note][row.studio.env] || ""))
         }
     }
     Component {
