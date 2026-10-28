@@ -1795,3 +1795,18 @@ msgstr ""
 
 msgid "Windows has no audio output, so nothing is playing that could be visualized. Connect speakers or headphones, enable sound in your remote desktop client, or install a virtual audio device. Picked up within seconds — no restart needed."
 msgstr ""
+
+msgid "cava is not installed"
+msgstr ""
+
+msgid "is PipeWire or PulseAudio running?"
+msgstr ""
+
+msgid "connect speakers, or enable sound in your remote desktop client"
+msgstr ""
+
+msgid "The widget picks it up within 30 seconds — no restart needed, unless your package manager only changes PATH for new sessions."
+msgstr ""
+
+msgid "cava keeps exiting — see %1"
+msgstr ""
