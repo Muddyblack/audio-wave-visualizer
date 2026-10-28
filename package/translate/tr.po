@@ -1450,3 +1450,93 @@ msgstr "cam"
 
 msgid "adaptive"
 msgstr "uyarlanabilir"
+
+msgid "Import QML…"
+msgstr "QML İçe Aktar…"
+
+msgid "Try example"
+msgstr "Örneği Dene"
+
+msgid "Remove"
+msgstr "Kaldır"
+
+msgid "QML styles run code with the host’s permissions. Import only files you trust. Keep the file and its assets in a permanent folder; importing remembers their location."
+msgstr "QML stilleri, ana ortamın izinleriyle kod çalıştırır. Yalnızca güvendiğiniz dosyaları içe aktarın. Dosyayı ve varlıklarını kalıcı bir klasörde tutun; içe aktarma işlemi konumlarını hatırlar."
+
+msgid "Audio capture"
+msgstr "Ses Yakalama"
+
+msgid "WALLPAPER"
+msgstr "DUVAR KÂĞIDI"
+
+msgid "STATE"
+msgstr "DURUM"
+
+msgid "ACCENT"
+msgstr "VURGU"
+
+msgid "No saved looks yet."
+msgstr "Henüz kaydedilmiş görünüm yok."
+
+msgid "My look"
+msgstr "Görünümüm"
+
+msgid "Copy as JSON"
+msgstr "JSON Olarak Kopyala"
+
+msgid "Import JSON"
+msgstr "JSON İçe Aktar"
+
+msgid "Import"
+msgstr "İçe Aktar"
+
+msgid "Saved looks and favorites are shared by all widgets on this device and saved immediately. To share a look with someone else, select it, then Copy as JSON. Custom QML files are not included."
+msgstr "Kaydedilmiş görünümler ve sık kullanılanlar bu aygıttaki tüm bileşenler tarafından paylaşılır ve hemen kaydedilir. Bir görünümü başkasıyla paylaşmak için seçin ve JSON Olarak Kopyala’yı kullanın. Özel QML dosyaları paylaşılmaz."
+
+msgid "How to contribute a preset ↗"
+msgstr "Önayar katkısı nasıl yapılır ↗"
+
+msgid "Preset name"
+msgstr "Önayar Adı"
+
+msgid "Plasma Audio Visualizer project icon"
+msgstr "Plasma Ses Görselleştirici proje simgesi"
+
+msgid "By %1 ↗"
+msgstr "Geliştirici: %1 ↗"
+
+msgid "An open-source music visualizer for Plasma and Hyprland. Explore the project, get updates, or help improve it."
+msgstr "Plasma ve Hyprland için açık kaynaklı bir müzik görselleştiricisi. Projeyi inceleyin, güncellemeleri takip edin veya geliştirilmesine katkıda bulunun."
+
+msgid "Installed version · %1"
+msgstr "Yüklü Sürüm · %1"
+
+msgid "Latest stable release · %1"
+msgstr "En Son Kararlı Sürüm · %1"
+
+msgid "Check again"
+msgstr "Yeniden Denetle"
+
+msgid "License · %1"
+msgstr "Lisans · %1"
+
+msgid "Contributors"
+msgstr "Katkıda Bulunanlar"
+
+msgid "See all on GitHub ↗"
+msgstr "Tümünü GitHub’da Gör ↗"
+
+msgid "Support the project"
+msgstr "Projeyi Destekle"
+
+msgid "View source on GitHub ↗"
+msgstr "Kaynak Kodunu GitHub’da Gör ↗"
+
+msgid "Report an issue ↗"
+msgstr "Sorun Bildir ↗"
+
+msgid "Open %1 on GitHub"
+msgstr "%1 GitHub’da Aç"
+
+msgid "Support on %1"
+msgstr "%1 üzerinden destek ol"
