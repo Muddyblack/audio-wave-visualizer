@@ -1774,3 +1774,24 @@ msgstr ""
 
 msgid "coral"
 msgstr ""
+
+msgid "Selected audio source unavailable"
+msgstr ""
+
+msgid "No usable audio input (tried %1)"
+msgstr ""
+
+msgid "No audio output device"
+msgstr ""
+
+msgid "Audio capture stopped"
+msgstr ""
+
+msgid "Start the application or choose a source in Audio settings"
+msgstr ""
+
+msgid "cava could not capture from any backend. Check that PipeWire or PulseAudio is running, or pin one under Audio Input in the widget settings."
+msgstr ""
+
+msgid "Windows has no audio output, so nothing is playing that could be visualized. Connect speakers or headphones, enable sound in your remote desktop client, or install a virtual audio device. Picked up within seconds — no restart needed."
+msgstr ""
