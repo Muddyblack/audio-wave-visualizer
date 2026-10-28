@@ -57,7 +57,7 @@ Column {
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width - 22 - runButton.width - 12
             Text {
-                text: "Audio capture"
+                text: (typeof i18n === "function" ? i18n("Audio capture") : "Audio capture")
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
