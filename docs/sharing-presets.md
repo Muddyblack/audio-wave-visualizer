@@ -1,44 +1,21 @@
-# Share a Studio preset
+# Stüdyo hazır ayarını paylaşma
 
-Open **Presets → My presets**, name your current look, and save it. To share a
-saved look, select it first, then choose **Copy as JSON** (on the website,
-**Copy current as JSON**). Send the JSON to another user; they can paste it into
-**Import JSON** in the desktop or web Studio.
+**Hazır ayarlar → Hazır ayarlarım** bölümünü açın, mevcut görünümünüze bir ad verin ve kaydedin. Kaydedilmiş bir görünümü paylaşmak için önce onu seçin, ardından **JSON olarak kopyala** (web sitesinde **Geçerli görünümü JSON olarak kopyala**) seçeneğini kullanın. JSON metnini başka bir kullanıcıya gönderin; kullanıcı bunu masaüstü veya web Stüdyosu'ndaki **JSON içe aktar** alanına yapıştırabilir.
 
-The export contains visual settings, not custom QML files (including button styles), favourites, or the
-automatic daily setting. A look using a custom QML style needs that trusted file
-installed separately. Never treat an unfamiliar QML file as a harmless preset.
+Dışa aktarma; görsel ayarlarını içerir, ancak özel QML dosyalarını (düğme stilleri dâhil), favorileri veya otomatik günlük ayarını içermez. Özel bir QML stili kullanan görünüm için bu güvenilir dosyanın ayrıca kurulması gerekir. Tanımadığınız bir QML dosyasını zararsız bir hazır ayar olarak görmeyin.
 
-## Suggest a preset for everyone
+## Herkese hazır ayar önerme
 
-1. Fork [the repository](https://github.com/Muddyblack/audio-wave-visualizer).
-2. Add the exported JSON as `docs/preset-submissions/your-look.json` in your fork.
-3. Open a pull request with a short description, a screenshot, and the name you
-   want credited. Use built-in styles so other users can reproduce the look.
+1. [Depoyu](https://github.com/Muddyblack/audio-wave-visualizer) çatallayın (fork oluşturun).
+2. Dışa aktarılan JSON dosyasını kendi deponuzda `docs/preset-submissions/your-look.json` yoluna ekleyin.
+3. Kısa bir açıklama, ekran görüntüsü ve katkınızda belirtilmesini istediğiniz adla bir pull request açın. Diğer kullanıcıların görünümü yeniden oluşturabilmesi için yerleşik stilleri kullanın.
 
-The GitHub web editor is enough to add the file. Submissions are reviewed;
-opening a pull request does not publish or install a preset automatically.
-Accepted looks can be added to the bundled preset list in a future release.
+Dosyayı eklemek için GitHub'ın web düzenleyicisi yeterlidir. Gönderiler incelenir; pull request açmak hazır ayarı otomatik olarak yayımlamaz veya kurmaz. Kabul edilen görünümler ilerideki bir sürümde paketlenmiş hazır ayar listesine eklenebilir.
 
-## Daily looks and favourites
+## Günlük görünümler ve favoriler
 
-**Presets → Today’s look** generates one variation from built-in styles for your
-local calendar date. Reopening Studio does not shuffle it. Save or star it to
-keep a copy in My presets; tomorrow's suggestion does not replace that copy.
+**Hazır ayarlar → Bugünün görünümü**, yerel takvim tarihiniz için yerleşik stillerden bir varyasyon oluşturur. Stüdyoyu yeniden açmak görünümü rastgele değiştirmez. Kopyasını korumak için kaydedin veya yıldızla işaretleyin; ertesi günün önerisi bu kopyanın yerini almaz.
 
-**Apply today’s look automatically** is optional and off by default. On desktop,
-apply your settings to enable it. The running widget checks the date on startup
-and every 30 seconds, applies the daily appearance once, and remembers the date
-across restarts. Audio settings, placement, and preset libraries are preserved.
-Manual changes then stay until the next day. Turning it off keeps the current
-look. In the web Studio the option affects only that browser, while the page is
-open or on the next visit; it cannot change your desktop widget.
+**Bugünün görünümünü otomatik uygula** isteğe bağlıdır ve varsayılan olarak kapalıdır. Masaüstünde etkinleştirmek için ayarlarınızı uygulayın. Çalışan widget başlangıçta ve her 30 saniyede bir tarihi kontrol eder, günlük görünümü bir kez uygular ve tarihi yeniden başlatmalar arasında hatırlar. Ses ayarları, konum ve hazır ayar kitaplıkları korunur. Elle yapılan değişiklikler ertesi güne kadar geçerli kalır. Bu seçeneği kapatmak mevcut görünümü korur. Web Stüdyosu'nda seçenek yalnızca sayfa açıkken veya sonraki ziyaretinizde o tarayıcıyı etkiler; masaüstü widget'ını değiştiremez.
 
-Desktop favourites and saved looks are stored for your user account in
-`~/.config/audio-wave-visualizer-presets.ini`. Every Plasma widget and the
-Hyprland Studio on that account shares them, and removing a widget keeps them.
-Existing per-widget libraries are imported the first time each widget opens
-Studio. Changes to this shared library save immediately, independently of
-**Apply**. The web Studio keeps its own browser-local library. The star marks
-a look without applying it; import/export can transfer saved looks between the
-desktop and web Studios.
+Masaüstü favorileri ve kaydedilen görünümler kullanıcı hesabınız için `~/.config/audio-wave-visualizer-presets.ini` dosyasında tutulur. Aynı hesaptaki tüm Plasma widget'ları ve Hyprland Stüdyosu bunları paylaşır; widget'ı kaldırmak bu verileri silmez. Widget'ların mevcut ayrı kitaplıkları, her widget Stüdyo'yu ilk açtığında içe aktarılır. Bu ortak kitaplıkta yapılan değişiklikler **Uygula** işleminden bağımsız olarak hemen kaydedilir. Web Stüdyosu kendi tarayıcı yerel kitaplığını kullanır. Yıldız, görünümü uygulamadan işaretler; içe/dışa aktarma ile kaydedilmiş görünümler masaüstü ve web Stüdyoları arasında aktarılabilir.
