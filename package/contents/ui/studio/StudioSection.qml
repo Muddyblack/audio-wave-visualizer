@@ -21,7 +21,7 @@ Column {
 
     Text {
         visible: !sectionRoot.librarySection
-        text: sectionRoot.sectionData.title.toUpperCase()
+        text: (typeof i18n === "function" ? i18n(sectionRoot.sectionData.title) : sectionRoot.sectionData.title).toUpperCase()
         color: Theme.sectionTitle
         font.family: Theme.fontFamily
         font.pixelSize: 11
