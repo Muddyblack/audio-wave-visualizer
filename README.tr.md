@@ -216,7 +216,7 @@ Bileşen masaüstünüzde görünür. **Ayarlar** için sağ tıklayın; durdurm
 
 ### Windows (çalışır; gerçek Windows üzerinde henüz sınanmadı)
 
-PySide6 tabanlı bir katman uygulaması aynı görselleştiriciyi görüntüler; cava yerine WASAPI döngü yakalama kullanır. Nasıl çalıştırıldığı, `make run-windows` komutu ve hangi özelliklerin doğrulanıp doğrulanmadığı için [docs/windows.tr.md](docs/windows.tr.md) belgesine bakın. Windows sürümünde henüz ayar arayüzü yoktur. Pencerenin sürekli altta kalma davranışı yalnızca teorik olarak değerlendirilmiş, gerçek bir Windows bilgisayarında denenmemiştir. Microsoft Store dağıtımı planlanmaktadır; henüz oluşturulmamıştır.
+Windows sürümü, aynı görselleştirici arayüzünü kullanır; ses yakalamada cava yerine WASAPI döngü yakalama kullanılır. Sistem tepsisi menüsü ortak ayar stüdyosunu açar. Medya oturumu ve bazı ses yakalama senaryoları sınanmıştır; gerçek Windows donanımında WASAPI, çoklu monitör ve DPI davranışı henüz tam doğrulanmamıştır. Durum ve sınırlamalar için [Windows kılavuzuna](docs/windows.tr.md) bakın.
 
 ## Nasıl çalışır?
 
