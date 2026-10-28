@@ -6,6 +6,7 @@ import Quickshell.Wayland
 import Quickshell.Services.Mpris
 import Quickshell.Services.UPower
 import "../package/contents/ui" as Shared
+import "../package/contents/ui/studio/Translations.js" as Translations
 import "../package/contents/ui/studio" as Studio
 import "Configuration.js" as Configuration
 import "../package/contents/code/HostDefaults.js" as HostDefaults
@@ -362,7 +363,7 @@ ShellRoot {
 
     FloatingWindow {
         visible: root.settingsOpen
-        title: "Audio Visualizer Settings"
+        title: Translations.translate("Audio Visualizer Settings")
         implicitWidth: 1180
         implicitHeight: 800
         color: "#1e1e2e"
