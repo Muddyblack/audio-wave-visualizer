@@ -1840,3 +1840,12 @@ msgstr "Pencerelerin arkasında"
 
 msgid "Light"
 msgstr "Açık"
+
+msgid "Close"
+msgstr "Kapat"
+
+msgid "Apply saves local overrides. Reset returns to your configured defaults."
+msgstr "Uygula, yerel geçersiz kılmaları kaydeder. Sıfırla, yapılandırılmış varsayılanlara döner."
+
+msgid "Audio Visualizer Settings"
+msgstr "Ses Görselleştirici Ayarları"
