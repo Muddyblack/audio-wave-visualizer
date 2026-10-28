@@ -1996,3 +1996,18 @@ msgstr "'cava' paketini kurun"
 
 msgid "see %1"
 msgstr "%1 konumuna bakın"
+
+msgid "Applied “%1”"
+msgstr "“%1” uygulandı"
+
+msgid "Applied “%1” · kept your colours"
+msgstr "“%1” uygulandı · renkleriniz korundu"
+
+msgid "Saved “%1”"
+msgstr "“%1” kaydedildi"
+
+msgid "One look all day. Save it to keep it."
+msgstr "Gün boyu tek görünüm. Saklamak için kaydedin."
+
+msgid "kept your colours"
+msgstr "renkleriniz korundu"
