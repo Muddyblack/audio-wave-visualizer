@@ -16,7 +16,7 @@ Column {
     // generated module only serves the hosts that have no Plasmoid object.
     readonly property string currentVersion: (typeof Plasmoid !== "undefined" && Plasmoid.metaData && Plasmoid.metaData.version) ? Plasmoid.metaData.version : Project.currentVersion
     property string latestVersion: ""
-    property string releaseCheckState: "Not checked"
+    property string releaseCheckState: I18n.N_("Not checked")
     readonly property string versionStatus: latestVersion ? Project.releaseStatus(currentVersion, latestVersion) : releaseCheckState
 
     readonly property bool onlineEnabled: studio.onScreen
@@ -33,8 +33,8 @@ Column {
     function cancelRequests() {
         if (client)
             client.pause();
-        if (releaseCheckState === "Checking…")
-            releaseCheckState = "Could not check for updates";
+        if (releaseCheckState === I18n.N_("Checking…"))
+            releaseCheckState = I18n.N_("Could not check for updates");
     }
 
     onOnlineEnabledChanged: {
@@ -173,7 +173,7 @@ Column {
                 width: parent.width
                 text: I18n.i18n(info.versionStatus)
                 wrapMode: Text.WordWrap
-                color: info.versionStatus === "Update available" ? Theme.brand : Theme.muted
+                color: info.versionStatus === I18n.N_("Update available") ? Theme.brand : Theme.muted
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
             }
@@ -181,7 +181,7 @@ Column {
                 width: parent.width
                 spacing: 8
                 StudioButton {
-                    text: info.versionStatus === "Update available" ? I18n.i18n("Get update ↗") : I18n.i18n("View latest release ↗")
+                    text: info.versionStatus === I18n.N_("Update available") ? I18n.i18n("Get update ↗") : I18n.i18n("View latest release ↗")
                     compact: true
                     onClicked: Qt.openUrlExternally(Project.releasesPage)
                 }

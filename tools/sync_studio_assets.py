@@ -62,7 +62,7 @@ def funding_module():
 
 def license_module():
     text = (ROOT / "LICENSE").read_text()
-    if not re.search(r"GNU GENERAL PUBLIC LICENSE\s+Version 3", text, re.I):
+    if not re.search(r"GNU GENERAL PUBLIC LICENSE\s+Version 3", text, re.IGNORECASE):
         raise ValueError("Unrecognized LICENSE type")
     # LICENSE stays the verbatim GPL text (so GitHub detects it); the
     # "or later" grant is declared here and in metadata.json.
@@ -245,7 +245,14 @@ def qt_shim_code():
 def outputs():
     catalog = (SOURCE_STUDIO / "StudioCatalog.js").read_bytes()
     data = json.loads(
-        catalog.decode().split("var StudioCatalog = ", 1)[1].rstrip().removesuffix(";")
+        re.sub(
+            r'N_\(("(?:[^"\\\n]|\\.)*")\)',
+            r"\1",
+            catalog.decode()
+            .split("var StudioCatalog = ", 1)[1]
+            .rstrip()
+            .removesuffix(";"),
+        )
     )
     result = {"icon.png": (ROOT / "package/icon.png").read_bytes()}
     for icon in (SOURCE_STUDIO / "icons").glob("*.svg"):

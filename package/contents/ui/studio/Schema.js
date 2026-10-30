@@ -5,12 +5,6 @@
 // Marks display text for Messages.sh; returns it unchanged.
 function N_(text) { return text; }
 
-// Names from StudioCatalog.js shown in the studio. Listed here so Messages.sh
-// extracts them; StudioCatalog.js stays plain data for the website build.
-// Interface text the QML and JS read as values and draws through I18n.i18n.
-// Listed here so Messages.sh extracts it; the markers are no-ops at runtime.
-var UI_TEXT = [N_("%1 (optional)"), N_("%1 bars"), N_("%1 s"), N_("1×"), N_("2×"), N_("Adjusts wallpaper blur in this preview. Actual popup blur strength is set in KDE System Settings → Desktop Effects → Blur."), N_("All categories"), N_("Blur application windows behind the rounded card. Requires KWin’s Blur effect."), N_("Blur behind card"), N_("Built-in buttons"), N_("Built-in progress bar"), N_("Built-in visualizer"), N_("Capture backends"), N_("Checked"), N_("Checking…"), N_("Click action"), N_("Could not check for updates"), N_("Default output"), N_("Default output monitor"), N_("Every monitor"), N_("First available display"), N_("Fit"), N_("GitHub downloads"), N_("GitHub stars"), N_("Newer than latest release"), N_("Not checked"), N_("OpenDesktop downloads"), N_("Preview wallpaper blur"), N_("Python 3 (metadata and lyrics)"), N_("Renderer"), N_("Run diagnostics"), N_("Running…"), N_("Sound server"), N_("Up to date"), N_("Update available"), N_("Version comparison unavailable"), N_("busctl (MPRIS metadata)"), N_("canvas (software)"), N_("cava found"), N_("found"), N_("not installed"), N_("not reachable"), N_("shader")];
-var CATALOG_TEXT = [N_("Pine lake"), N_("Afterglow"), N_("Midnight marina"), N_("Aurora sound"), N_("Moss & mist"), N_("Silver tide"), N_("Presets"), N_("My presets"), N_("Visualizer"), N_("Progress"), N_("Buttons"), N_("Layout"), N_("Artwork"), N_("Track info"), N_("Lyrics"), N_("Card"), N_("Colours"), N_("Behaviour"), N_("Audio"), N_("Info")];
 
 // Shared settings, presets and navigation for desktop and web. Hosts pass `env`
 // ("kde" or "hypr") to the `when` predicates; `s` is the current draft.
@@ -48,7 +42,7 @@ function dailyLook(day) {
     var settings = Object.assign({}, base.s, {
         useSystemAccent: false, accentFromArt: false, customColor: PALETTES[palette][0],
         vizColorMode: "palette", vizPalette: palette, bgRadius: pick([12, 18, 24]),
-        glowWave: pick([true, false]), cardShadow: pick(["none", N_("soft")])
+        glowWave: pick([true, false]), cardShadow: pick(["none", "soft"])
     });
     return {id: "daily-" + day, name: "Today’s look · " + day, note: N_("A daily variation of %1"), noteValue: base.name,
         bd: base.bd, cat: ["daily"], s: settings};

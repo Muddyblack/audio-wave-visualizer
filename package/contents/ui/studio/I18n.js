@@ -44,6 +44,9 @@ function substitute(text, args) {
 }
 
 function i18n(text) {
+    // Empty and missing values are shown as nothing, on every host.
+    if (text === undefined || text === null || text === "")
+        return "";
     var args = Array.prototype.slice.call(arguments);
     if (kdeI18n)
         return kdeI18n.apply(null, args);

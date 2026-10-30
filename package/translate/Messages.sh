@@ -4,6 +4,9 @@
 # dropped, and translations are kept. Run after changing any UI string.
 set -eu
 
+# Sorting and the #: location comments must not depend on the user's locale.
+export LC_ALL=C
+
 HERE=$(cd "$(dirname "$0")" && pwd)
 ROOT=$(cd "$HERE/../.." && pwd)
 cd "$ROOT"

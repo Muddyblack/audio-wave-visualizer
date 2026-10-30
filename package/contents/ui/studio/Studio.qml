@@ -59,7 +59,7 @@ Rectangle {
             dependencyCheck.connectSource("'" + path.replace(/'/g, "'\\''") + "' --check");
         }
     }
-    property var discoveredSources: [["auto", "Default output monitor"]]
+    property var discoveredSources: [["auto", I18n.N_("Default output monitor")]]
     readonly property var audioSourceOptions: discoveredSources.some(o => o[0] === (draft.inputSource || "auto")) ? discoveredSources : discoveredSources.concat([[draft.inputSource, I18n.i18n("Unavailable: %1", draft.inputSource)]])
     Shared.CommandSource {
         id: sourceDiscovery
@@ -151,7 +151,7 @@ Rectangle {
     // Previews animate only while the settings window is actually shown.
     readonly property bool onScreen: visible && !!Window.window && Window.window.visible
     readonly property color accent: draft.useSystemAccent === false ? draft.customColor : previewAccent
-    readonly property var monitorOptions: [["", "First available display"], ["all", "Every monitor"]].concat(screenNames.map(name => [name, name]))
+    readonly property var monitorOptions: [["", I18n.N_("First available display")], ["all", I18n.N_("Every monitor")]].concat(screenNames.map(name => [name, name]))
     // Keep the layout from bouncing between modes while the dialog is dragged
     // near a breakpoint. Width and height can move in opposite directions as
     // the host negotiates the page's size.
@@ -213,17 +213,17 @@ Rectangle {
     function rowDefinition(row) {
         if (env === "kde" && presentationTarget === "popup" && row.k === "glassBlur")
             return Object.assign({}, row, {
-                label: "Preview wallpaper blur",
-                desc: "Adjusts wallpaper blur in this preview. Actual popup blur strength is set in KDE System Settings → Desktop Effects → Blur."
+                label: I18n.N_("Preview wallpaper blur"),
+                desc: I18n.N_("Adjusts wallpaper blur in this preview. Actual popup blur strength is set in KDE System Settings → Desktop Effects → Blur.")
             });
         if (env === "kde" && presentationTarget === "popup" && row.k === "compositorGlass")
             return Object.assign({}, row, {
-                label: "Blur behind card",
-                desc: "Blur application windows behind the rounded card. Requires KWin’s Blur effect."
+                label: I18n.N_("Blur behind card"),
+                desc: I18n.N_("Blur application windows behind the rounded card. Requires KWin’s Blur effect.")
             });
         if (row.k === "pillClick" && env === "kde")
             return Object.assign({}, row, {
-                label: "Click action",
+                label: I18n.N_("Click action"),
                 opts: [["popup", "Nothing"], ["toggle", "Play / pause"]]
             });
         if (row.k === "pillEq" && draft.layoutMode === "pillicon")

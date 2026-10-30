@@ -2,7 +2,6 @@
 # Copyright (C) 2026 Plasma Audio Visualizer contributors
 # This file is distributed under the same license as the Plasma Audio Visualizer project.
 #
-#: package/contents/ui/studio/StudioRow.qml
 msgid ""
 msgstr ""
 "Project-Id-Version: Plasma Audio Visualizer 3.1.7\n"
@@ -15,7 +14,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "%1 (optional)"
 msgstr "%1 (isteğe bağlı)"
 
@@ -31,6 +30,7 @@ msgstr "%1 ve %2"
 msgid "%1 avatar"
 msgstr "%1 avatarı"
 
+#: package/contents/ui/studio/DiagnosticsCard.qml
 #: package/contents/ui/studio/Schema.js
 msgid "%1 bars"
 msgstr "%1 çubuk"
@@ -63,11 +63,12 @@ msgstr "1:31 · -2:27"
 msgid "1:31 · 3:58"
 msgstr "1:31 · 3:58"
 
-#: package/contents/ui/SeekInteraction.qml package/contents/ui/studio/Schema.js
+#: package/contents/ui/SeekInteraction.qml
+#: package/contents/ui/studio/PreviewPane.qml
 msgid "1×"
 msgstr "1×"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/PreviewPane.qml
 msgid "2×"
 msgstr "2×"
 
@@ -212,7 +213,7 @@ msgid "Adjusts the system output volume, not the player’s own."
 msgstr ""
 "Oynatıcının kendi ses düzeyini değil, sistem çıkış ses düzeyini ayarlar."
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Studio.qml
 msgid ""
 "Adjusts wallpaper blur in this preview. Actual popup blur strength is set in "
 "KDE System Settings → Desktop Effects → Blur."
@@ -239,7 +240,7 @@ msgstr ""
 "kez değiştirir. Elle yaptığınız değişiklikler yarına kadar korunur. Ses "
 "ayarları ve konum değişmez."
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Afterglow"
 msgstr "Alacakaranlık Işıltısı"
 
@@ -287,7 +288,7 @@ msgstr "Hizalama"
 msgid "All"
 msgstr "Tümü"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/PresetTools.qml
 msgid "All categories"
 msgstr "Tüm Kategoriler"
 
@@ -388,7 +389,7 @@ msgstr "Sanatçı Özeti"
 msgid "Artist — Title"
 msgstr "Sanatçı — Başlık"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Artwork"
 msgstr "Kapak Görseli"
 
@@ -396,7 +397,7 @@ msgstr "Kapak Görseli"
 msgid "Atmosphere"
 msgstr "Atmosfer"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Audio"
 msgstr "Ses"
 
@@ -428,7 +429,7 @@ msgstr "Ses Girişi"
 msgid "Audio-reactive progress"
 msgstr "Sese Tepki Veren İlerleme Çubuğu"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Aurora sound"
 msgstr "Kutup Işıkları Sesi"
 
@@ -526,7 +527,7 @@ msgstr "Bas Ağırlığı"
 msgid "Battery saver"
 msgstr "Pil Tasarrufu"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Behaviour"
 msgstr "Davranış"
 
@@ -542,7 +543,7 @@ msgstr "Örneklenen duvar kâğıdını hafif renk saçılmasıyla büker."
 msgid "Bloom"
 msgstr "Işık Yayılımı"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Studio.qml
 msgid ""
 "Blur application windows behind the rounded card. Requires KWin’s Blur "
 "effect."
@@ -550,7 +551,7 @@ msgstr ""
 "Yuvarlatılmış kartın arkasındaki uygulama pencerelerini bulanıklaştırır. "
 "KWin Bulanıklık efekti gerekir."
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Studio.qml
 msgid "Blur behind card"
 msgstr "Kartın arkasını bulanıklaştır"
 
@@ -582,15 +583,15 @@ msgstr "Zıplayan"
 msgid "Browser site names and media details need %1. %2"
 msgstr "Tarayıcıdaki site adları ve ortam ayrıntıları için %1 gerekir. %2"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/CustomStylePicker.qml
 msgid "Built-in buttons"
 msgstr "Yerleşik düğmeler"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/CustomStylePicker.qml
 msgid "Built-in progress bar"
 msgstr "Yerleşik ilerleme çubuğu"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/CustomStylePicker.qml
 msgid "Built-in visualizer"
 msgstr "Yerleşik görselleştirici"
 
@@ -599,6 +600,7 @@ msgid "Button colours"
 msgstr "Düğme Renkleri"
 
 #: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Buttons"
 msgstr "Düğmeler"
 
@@ -630,7 +632,7 @@ msgstr "Kapsül"
 msgid "Capture"
 msgstr "Yakalama"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "Capture backends"
 msgstr "Yakalama arka uçları"
 
@@ -639,6 +641,7 @@ msgid "Capture source"
 msgstr "Yakalama Kaynağı"
 
 #: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Card"
 msgstr "Kart"
 
@@ -678,11 +681,12 @@ msgstr "Bölüm İşaretleri"
 msgid "Check again"
 msgstr "Yeniden Denetle"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfoRequests.js
 msgid "Checked"
 msgstr "Denetlendi"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfoPane.qml
+#: package/contents/ui/studio/ProjectInfoRequests.js
 msgid "Checking…"
 msgstr "Denetleniyor…"
 
@@ -740,7 +744,7 @@ msgstr "Saydam cam, imlecinizi izleyen hafif bir kenar ışığı; renk kapaktan
 msgid "Click"
 msgstr "Tıklama"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Studio.qml
 msgid "Click action"
 msgstr "Tıklama eylemi"
 
@@ -787,7 +791,7 @@ msgstr ""
 "Renk kipi, görselleştiricinin paletini, gradyanını veya gökkuşağı efektini "
 "kullanır. Otomatik, denetimlerin mevcut renklerini korur."
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Colours"
 msgstr "Renkler"
 
@@ -866,7 +870,8 @@ msgstr "Tüm widget'lara kopyala"
 msgid "Corner radius"
 msgstr "Köşe Yarıçapı"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfoPane.qml
+#: package/contents/ui/studio/ProjectInfoRequests.js
 msgid "Could not check for updates"
 msgstr "Güncellemeler denetlenemedi"
 
@@ -1004,11 +1009,11 @@ msgstr "Düz malzeme üzerinde koyu metin ve simgeler kullanır."
 msgid "Dark tint, mirror bars and the glowing pulse bar."
 msgstr "Koyu ton, ayna çubuklar ve parlayan nabız çubuğu."
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "Default output"
 msgstr "Varsayılan çıkış"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Studio.qml
 msgid "Default output monitor"
 msgstr "Varsayılan çıkış monitörü"
 
@@ -1126,7 +1131,7 @@ msgstr "A–B döngüsünü etkinleştir"
 msgid "Essentials"
 msgstr "Temel Bilgiler"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Studio.qml
 msgid "Every monitor"
 msgstr "Tüm Ekranlar"
 
@@ -1170,11 +1175,11 @@ msgstr "Film Greni"
 msgid "Finding lyrics…"
 msgstr "Şarkı sözleri aranıyor…"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Studio.qml
 msgid "First available display"
 msgstr "İlk Kullanılabilir Ekran"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/PreviewPane.qml
 msgid "Fit"
 msgstr "Sığdır"
 
@@ -1269,11 +1274,11 @@ msgstr "Tür"
 msgid "Get update ↗"
 msgstr "Güncellemeyi al ↗"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfo.js
 msgid "GitHub downloads"
 msgstr "GitHub indirmeleri"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfo.js
 msgid "GitHub stars"
 msgstr "GitHub yıldızları"
 
@@ -1498,7 +1503,7 @@ msgstr ""
 "Bileşen panelde bu hap biçimli görünümü gösterir; tıklamak tam kartı açılır "
 "pencere olarak açar."
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Info"
 msgstr "Bilgi"
 
@@ -1604,6 +1609,7 @@ msgid "Layer"
 msgstr "Katman"
 
 #: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Layout"
 msgstr "Düzen"
 
@@ -1728,7 +1734,7 @@ msgstr "Düşük değer güç tasarrufu sağlar. 30 Hz zaten akıcı görünür.
 msgid "Lyricist"
 msgstr "Söz Yazarı"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Lyrics"
 msgstr "Şarkı Sözleri"
 
@@ -1768,7 +1774,7 @@ msgstr "Orta"
 msgid "Mel (resampled)"
 msgstr "Mel (yeniden örneklenmiş)"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Midnight marina"
 msgstr "Gece Yarısı Marinası"
 
@@ -1808,7 +1814,7 @@ msgstr "Eş Aralıklı"
 msgid "More bars look finer, fewer look bolder."
 msgstr "Daha fazla çubuk daha ince, daha az çubuk daha kalın görünür."
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Moss & mist"
 msgstr "Yosun ve Sis"
 
@@ -1850,6 +1856,7 @@ msgid "My look"
 msgstr "Görünümüm"
 
 #: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "My presets"
 msgstr "Önayarlarım"
 
@@ -1861,7 +1868,7 @@ msgstr "Neon Gece"
 msgid "Neon Terrain"
 msgstr "Neon Arazi"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfo.js
 msgid "Newer than latest release"
 msgstr "Son sürümden daha yeni"
 
@@ -1931,7 +1938,8 @@ msgstr "Yok"
 msgid "None (visualizer only)"
 msgstr "Yok (yalnızca görselleştirici)"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfoPane.qml
+#: package/contents/ui/studio/ProjectInfoRequests.js
 msgid "Not checked"
 msgstr "Denetlenmedi"
 
@@ -2060,7 +2068,7 @@ msgstr "Oynatıcıyı Aç"
 msgid "Open popup"
 msgstr "Açılır Pencereyi Aç"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfo.js
 msgid "OpenDesktop downloads"
 msgstr "OpenDesktop indirmeleri"
 
@@ -2155,7 +2163,7 @@ msgstr ""
 msgid "Pill / icon"
 msgstr "Hap / Simge"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Pine lake"
 msgstr "Çam Gölü"
 
@@ -2268,7 +2276,7 @@ msgstr "Önayar kategorisi"
 msgid "Preset name"
 msgstr "Önayar Adı"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Presets"
 msgstr "Önayarlar"
 
@@ -2276,7 +2284,7 @@ msgstr "Önayarlar"
 msgid "Preview options"
 msgstr "Önizleme seçenekleri"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Studio.qml
 msgid "Preview wallpaper blur"
 msgstr "Duvar kâğıdı bulanıklığını önizle"
 
@@ -2297,6 +2305,7 @@ msgid "Producers"
 msgstr "Yapımcılar"
 
 #: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Progress"
 msgstr "İlerleme"
 
@@ -2336,7 +2345,7 @@ msgstr "PulseAudio"
 msgid "Python 3"
 msgstr "Python 3"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "Python 3 (metadata and lyrics)"
 msgstr "Python 3 (meta veri ve şarkı sözleri)"
 
@@ -2433,7 +2442,7 @@ msgstr "Sık kullanılanlardan kaldır"
 msgid "Rename preset"
 msgstr "Önayarın adını değiştir"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "Renderer"
 msgstr "Oluşturucu"
 
@@ -2558,11 +2567,11 @@ msgstr "Yuvarlatılmış"
 msgid "Rounded Bars"
 msgstr "Yuvarlak Çubuklar"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "Run diagnostics"
 msgstr "Tanılamayı çalıştır"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "Running…"
 msgstr "Çalışıyor…"
 
@@ -2780,7 +2789,7 @@ msgstr "Sessizlikten Çıkış"
 msgid "Silk Ribbon"
 msgstr "İpek Şerit"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Silver tide"
 msgstr "Gümüş Gelgit"
 
@@ -2852,7 +2861,7 @@ msgstr "Şarkı Adı ve Sanatçı"
 msgid "Songwriters"
 msgstr "Şarkı Yazarları"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "Sound server"
 msgstr "Ses sunucusu"
 
@@ -3194,7 +3203,7 @@ msgstr "Üst"
 msgid "Track"
 msgstr "Parça"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Track info"
 msgstr "Parça Bilgileri"
 
@@ -3262,7 +3271,7 @@ msgstr "Sabitlemeyi kaldır ve açılır pencereyi kapat"
 msgid "Up Next"
 msgstr "Sıradaki"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfo.js
 msgid "Up to date"
 msgstr "Güncel"
 
@@ -3270,7 +3279,8 @@ msgstr "Güncel"
 msgid "Upcoming lines"
 msgstr "Sonraki Satırlar"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfo.js
+#: package/contents/ui/studio/ProjectInfoPane.qml
 msgid "Update available"
 msgstr "Güncelleme var"
 
@@ -3308,7 +3318,7 @@ msgstr ""
 msgid "Version"
 msgstr "Sürüm"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfo.js
 msgid "Version comparison unavailable"
 msgstr "Sürüm karşılaştırması kullanılamıyor"
 
@@ -3337,6 +3347,7 @@ msgid "Vinyl and CD spin while music plays."
 msgstr "Müzik çalarken plak ve CD döner."
 
 #: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Visualizer"
 msgstr "Ses Görselleştirici"
 
@@ -3476,11 +3487,11 @@ msgstr "Yapılandırmanıza pkgs.cava ekleyin"
 msgid "busctl"
 msgstr "busctl"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "busctl (MPRIS metadata)"
 msgstr "busctl (MPRIS meta verisi)"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "canvas (software)"
 msgstr "tuval (yazılım)"
 
@@ -3493,7 +3504,7 @@ msgstr ""
 "çalıştığını kontrol edin ya da widget ayarlarında Ses Girişi bölümünden bir "
 "arka uç seçin."
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "cava found"
 msgstr "cava bulundu"
 
@@ -3514,7 +3525,7 @@ msgstr "cava bulunamadı"
 msgid "connect speakers, or enable sound in your remote desktop client"
 msgstr "Hoparlör bağlayın veya uzak masaüstü istemcinizde sesi etkinleştirin."
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "found"
 msgstr "bulundu"
 
@@ -3530,11 +3541,11 @@ msgstr "PipeWire veya PulseAudio çalışıyor mu?"
 msgid "liquid"
 msgstr "sıvı"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "not installed"
 msgstr "kurulu değil"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "not reachable"
 msgstr "erişilemiyor"
 
@@ -3546,7 +3557,7 @@ msgstr "konum"
 msgid "see %1"
 msgstr "%1 konumuna bakın"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "shader"
 msgstr "gölgelendirici"
 

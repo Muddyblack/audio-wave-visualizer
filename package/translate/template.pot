@@ -3,7 +3,6 @@
 # This file is distributed under the same license as the Plasma Audio Visualizer package.
 # FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
 #
-#: package/contents/ui/studio/StudioRow.qml
 #, fuzzy
 msgid ""
 msgstr ""
@@ -18,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "%1 (optional)"
 msgstr ""
 
@@ -34,6 +33,7 @@ msgstr ""
 msgid "%1 avatar"
 msgstr ""
 
+#: package/contents/ui/studio/DiagnosticsCard.qml
 #: package/contents/ui/studio/Schema.js
 msgid "%1 bars"
 msgstr ""
@@ -66,11 +66,12 @@ msgstr ""
 msgid "1:31 · 3:58"
 msgstr ""
 
-#: package/contents/ui/SeekInteraction.qml package/contents/ui/studio/Schema.js
+#: package/contents/ui/SeekInteraction.qml
+#: package/contents/ui/studio/PreviewPane.qml
 msgid "1×"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/PreviewPane.qml
 msgid "2×"
 msgstr ""
 
@@ -203,7 +204,7 @@ msgstr ""
 msgid "Adjusts the system output volume, not the player’s own."
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Studio.qml
 msgid ""
 "Adjusts wallpaper blur in this preview. Actual popup blur strength is set in "
 "KDE System Settings → Desktop Effects → Blur."
@@ -224,7 +225,7 @@ msgid ""
 "are kept."
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Afterglow"
 msgstr ""
 
@@ -272,7 +273,7 @@ msgstr ""
 msgid "All"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/PresetTools.qml
 msgid "All categories"
 msgstr ""
 
@@ -361,7 +362,7 @@ msgstr ""
 msgid "Artist — Title"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Artwork"
 msgstr ""
 
@@ -369,7 +370,7 @@ msgstr ""
 msgid "Atmosphere"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Audio"
 msgstr ""
 
@@ -401,7 +402,7 @@ msgstr ""
 msgid "Audio-reactive progress"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Aurora sound"
 msgstr ""
 
@@ -487,7 +488,7 @@ msgstr ""
 msgid "Battery saver"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Behaviour"
 msgstr ""
 
@@ -503,13 +504,13 @@ msgstr ""
 msgid "Bloom"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Studio.qml
 msgid ""
 "Blur application windows behind the rounded card. Requires KWin’s Blur "
 "effect."
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Studio.qml
 msgid "Blur behind card"
 msgstr ""
 
@@ -541,15 +542,15 @@ msgstr ""
 msgid "Browser site names and media details need %1. %2"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/CustomStylePicker.qml
 msgid "Built-in buttons"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/CustomStylePicker.qml
 msgid "Built-in progress bar"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/CustomStylePicker.qml
 msgid "Built-in visualizer"
 msgstr ""
 
@@ -558,6 +559,7 @@ msgid "Button colours"
 msgstr ""
 
 #: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Buttons"
 msgstr ""
 
@@ -589,7 +591,7 @@ msgstr ""
 msgid "Capture"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "Capture backends"
 msgstr ""
 
@@ -598,6 +600,7 @@ msgid "Capture source"
 msgstr ""
 
 #: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Card"
 msgstr ""
 
@@ -637,11 +640,12 @@ msgstr ""
 msgid "Check again"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfoRequests.js
 msgid "Checked"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfoPane.qml
+#: package/contents/ui/studio/ProjectInfoRequests.js
 msgid "Checking…"
 msgstr ""
 
@@ -694,7 +698,7 @@ msgstr ""
 msgid "Click"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Studio.qml
 msgid "Click action"
 msgstr ""
 
@@ -736,7 +740,7 @@ msgid ""
 "keeps the original controls-based colours."
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Colours"
 msgstr ""
 
@@ -807,7 +811,8 @@ msgstr ""
 msgid "Corner radius"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfoPane.qml
+#: package/contents/ui/studio/ProjectInfoRequests.js
 msgid "Could not check for updates"
 msgstr ""
 
@@ -943,11 +948,11 @@ msgstr ""
 msgid "Dark tint, mirror bars and the glowing pulse bar."
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "Default output"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Studio.qml
 msgid "Default output monitor"
 msgstr ""
 
@@ -1061,7 +1066,7 @@ msgstr ""
 msgid "Essentials"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Studio.qml
 msgid "Every monitor"
 msgstr ""
 
@@ -1101,11 +1106,11 @@ msgstr ""
 msgid "Finding lyrics…"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Studio.qml
 msgid "First available display"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/PreviewPane.qml
 msgid "Fit"
 msgstr ""
 
@@ -1198,11 +1203,11 @@ msgstr ""
 msgid "Get update ↗"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfo.js
 msgid "GitHub downloads"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfo.js
 msgid "GitHub stars"
 msgstr ""
 
@@ -1406,7 +1411,7 @@ msgid ""
 "popup."
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Info"
 msgstr ""
 
@@ -1507,6 +1512,7 @@ msgid "Layer"
 msgstr ""
 
 #: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Layout"
 msgstr ""
 
@@ -1623,7 +1629,7 @@ msgstr ""
 msgid "Lyricist"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Lyrics"
 msgstr ""
 
@@ -1663,7 +1669,7 @@ msgstr ""
 msgid "Mel (resampled)"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Midnight marina"
 msgstr ""
 
@@ -1701,7 +1707,7 @@ msgstr ""
 msgid "More bars look finer, fewer look bolder."
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Moss & mist"
 msgstr ""
 
@@ -1736,6 +1742,7 @@ msgid "My look"
 msgstr ""
 
 #: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "My presets"
 msgstr ""
 
@@ -1747,7 +1754,7 @@ msgstr ""
 msgid "Neon Terrain"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfo.js
 msgid "Newer than latest release"
 msgstr ""
 
@@ -1815,7 +1822,8 @@ msgstr ""
 msgid "None (visualizer only)"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfoPane.qml
+#: package/contents/ui/studio/ProjectInfoRequests.js
 msgid "Not checked"
 msgstr ""
 
@@ -1926,7 +1934,7 @@ msgstr ""
 msgid "Open popup"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfo.js
 msgid "OpenDesktop downloads"
 msgstr ""
 
@@ -2019,7 +2027,7 @@ msgstr ""
 msgid "Pill / icon"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Pine lake"
 msgstr ""
 
@@ -2127,7 +2135,7 @@ msgstr ""
 msgid "Preset name"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Presets"
 msgstr ""
 
@@ -2135,7 +2143,7 @@ msgstr ""
 msgid "Preview options"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Studio.qml
 msgid "Preview wallpaper blur"
 msgstr ""
 
@@ -2156,6 +2164,7 @@ msgid "Producers"
 msgstr ""
 
 #: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Progress"
 msgstr ""
 
@@ -2193,7 +2202,7 @@ msgstr ""
 msgid "Python 3"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "Python 3 (metadata and lyrics)"
 msgstr ""
 
@@ -2285,7 +2294,7 @@ msgstr ""
 msgid "Rename preset"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "Renderer"
 msgstr ""
 
@@ -2401,11 +2410,11 @@ msgstr ""
 msgid "Rounded Bars"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "Run diagnostics"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "Running…"
 msgstr ""
 
@@ -2608,7 +2617,7 @@ msgstr ""
 msgid "Silk Ribbon"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Silver tide"
 msgstr ""
 
@@ -2680,7 +2689,7 @@ msgstr ""
 msgid "Songwriters"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "Sound server"
 msgstr ""
 
@@ -2993,7 +3002,7 @@ msgstr ""
 msgid "Track"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Track info"
 msgstr ""
 
@@ -3059,7 +3068,7 @@ msgstr ""
 msgid "Up Next"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfo.js
 msgid "Up to date"
 msgstr ""
 
@@ -3067,7 +3076,8 @@ msgstr ""
 msgid "Upcoming lines"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfo.js
+#: package/contents/ui/studio/ProjectInfoPane.qml
 msgid "Update available"
 msgstr ""
 
@@ -3101,7 +3111,7 @@ msgstr ""
 msgid "Version"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/ProjectInfo.js
 msgid "Version comparison unavailable"
 msgstr ""
 
@@ -3130,6 +3140,7 @@ msgid "Vinyl and CD spin while music plays."
 msgstr ""
 
 #: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
 msgid "Visualizer"
 msgstr ""
 
@@ -3260,11 +3271,11 @@ msgstr ""
 msgid "busctl"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "busctl (MPRIS metadata)"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "canvas (software)"
 msgstr ""
 
@@ -3274,7 +3285,7 @@ msgid ""
 "is running, or pin one under Audio Input in the widget settings."
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "cava found"
 msgstr ""
 
@@ -3295,7 +3306,7 @@ msgstr ""
 msgid "connect speakers, or enable sound in your remote desktop client"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "found"
 msgstr ""
 
@@ -3311,11 +3322,11 @@ msgstr ""
 msgid "liquid"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "not installed"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "not reachable"
 msgstr ""
 
@@ -3327,7 +3338,7 @@ msgstr ""
 msgid "see %1"
 msgstr ""
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "shader"
 msgstr ""
 

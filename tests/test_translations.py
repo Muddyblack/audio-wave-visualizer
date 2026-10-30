@@ -127,23 +127,15 @@ for name in ("Schema.js", "StudioCatalog.js"):
                 f"{name}: unmarked display text {unescape(match.group(1))!r}"
             )
 
-# 4b. Every catalog label shown in the studio is also marked in Schema.js.
+# 4b. Catalog labels are marked where they are defined, not copied into a list.
 catalog_text = (REPO / "package/contents/ui/studio/StudioCatalog.js").read_text(
     encoding="utf-8"
 )
-marked = set(
-    literals(
-        r"\bN_",
-        (REPO / "package/contents/ui/studio/Schema.js").read_text(encoding="utf-8"),
+for match in re.finditer(r'"label":\s*"', catalog_text):
+    failures.append(
+        "StudioCatalog.js: label is not marked with N_(): "
+        + catalog_text[match.start() : match.start() + 60].split("\n")[0]
     )
-)
-for match in re.finditer(r'"label":\s*' + STRING, catalog_text):
-    label = unescape(match.group(1))
-    if label not in marked:
-        failures.append(
-            f"StudioCatalog.js label not marked in Schema.js CATALOG_TEXT: {label!r}"
-        )
-
 # 5. The old translation layer is gone.
 for path in [*SOURCES, REPO / "tests/run.py", REPO / "test_install.sh"]:
     text = path.read_text(encoding="utf-8")

@@ -29,7 +29,7 @@ Item {
     property real jumpDirection: 0
     readonly property real targetSeconds: fraction * clock.lengthValue / clock.unitsPerSecond
     readonly property real deltaSeconds: targetSeconds - clock.displayedPosition / clock.unitsPerSecond
-    readonly property string speedText: speed === 1 ? I18n.i18n("1×") : speed === .5 ? "½×" : speed === .25 ? "¼×" : "fine"
+    readonly property string speedText: speed === 1 ? I18n.i18n(I18n.N_("1×")) : speed === .5 ? "½×" : speed === .25 ? "¼×" : "fine"
     readonly property string chapterTitle: {
         let title = "";
         for (const c of chapters) {

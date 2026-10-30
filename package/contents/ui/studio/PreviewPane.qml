@@ -264,7 +264,7 @@ Rectangle {
         layoutDirection: Qt.RightToLeft
         Chip {
             Repeater {
-                model: [["1", "1×"], ["2", "2×"], ["fit", "Fit"]]
+                model: [["1", I18n.N_("1×")], ["2", I18n.N_("2×")], ["fit", I18n.N_("Fit")]]
                 ChipButton {
                     required property var modelData
                     anchors.verticalCenter: parent.verticalCenter
