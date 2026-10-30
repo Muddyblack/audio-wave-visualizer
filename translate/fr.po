@@ -1,0 +1,2916 @@
+# French translation for Plasma Audio Visualizer.
+# Copyright (C) 2026 Plasma Audio Visualizer contributors
+# This file is distributed under the same license as the Plasma Audio Visualizer project.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: Plasma Audio Visualizer\n"
+"Report-Msgid-Bugs-To: https://github.com/Muddyblack/audio-wave-visualizer/"
+"issues\n"
+"PO-Revision-Date: 2026-10-30 00:00+0100\n"
+"Last-Translator: Plasma Audio Visualizer contributors\n"
+"Language-Team: French\n"
+"Language: fr\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
+
+msgid "Cannot read settings: %1"
+msgstr "Impossible de lire les paramètres : %1"
+
+msgid "Could not save settings to %1"
+msgstr "Impossible d’enregistrer les paramètres dans %1"
+
+msgid "Audio Visualizer Settings"
+msgstr "Paramètres du visualiseur audio"
+
+msgid "Apply saves local overrides. Reset returns to your configured defaults."
+msgstr ""
+"Appliquer enregistre les modifications locales. Réinitialiser rétablit vos "
+"valeurs par défaut configurées."
+
+msgid "Reset"
+msgstr "Réinitialiser"
+
+msgid "Close"
+msgstr "Fermer"
+
+msgid "Apply"
+msgstr "Appliquer"
+
+msgid "General"
+msgstr "Général"
+
+msgid "Song details & credits"
+msgstr "Détails du morceau et crédits"
+
+msgid ""
+"Online information is off. Enable it in Settings → Track info for catalog "
+"details and credits."
+msgstr ""
+"Les informations en ligne sont désactivées. Activez-les dans Paramètres → "
+"Infos du morceau pour consulter les détails du catalogue et les crédits."
+
+msgid "Close artwork"
+msgstr "Fermer la pochette"
+
+msgid "Chapter %1"
+msgstr "Chapitre %1"
+
+msgid "Choose a local .qml file."
+msgstr "Choisissez un fichier .qml local."
+
+msgid "Could not initialize this style: %1. Using the built-in style."
+msgstr "Impossible d’initialiser ce style : %1. Utilisation du style intégré."
+
+msgid ""
+"Could not load this QML style. Check that the file exists, its imports are "
+"installed, and it declares required property var %1. See the host log for "
+"QML errors. Using the built-in style."
+msgstr ""
+"Impossible de charger ce style QML. Vérifiez que le fichier existe, que ses "
+"imports sont installés et qu’il déclare required property var %1. Consultez "
+"le journal de l’application hôte pour les erreurs QML. Utilisation du style "
+"intégré."
+
+msgid ""
+"This style must have an Item root, apiVersion: 1, and required property var "
+"%1. Using the built-in style."
+msgstr ""
+"Ce style doit avoir une racine Item, apiVersion: 1 et required property var "
+"%1. Utilisation du style intégré."
+
+msgid "Up Next"
+msgstr "À suivre"
+
+msgid "Toggle upcoming tracks"
+msgstr "Afficher ou masquer les prochains morceaux"
+
+msgid "Queue unavailable in preview"
+msgstr "File d’attente indisponible dans l’aperçu"
+
+msgid "Loading queue…"
+msgstr "Chargement de la file d’attente…"
+
+msgid "This player does not share its queue"
+msgstr "Ce lecteur ne partage pas sa file d’attente"
+
+msgid "Current track is outside the shared queue"
+msgstr "Le morceau actuel ne figure pas dans la file d’attente partagée"
+
+msgid ""
+"Queue unavailable. Check that the player is running and busctl is installed."
+msgstr ""
+"File d’attente indisponible. Vérifiez que le lecteur est ouvert et que "
+"busctl est installé."
+
+msgid "Player playlist order • shuffle may differ"
+msgstr ""
+"Ordre de la liste de lecture du lecteur • l’ordre aléatoire peut différer"
+
+msgid "No upcoming tracks"
+msgstr "Aucun morceau à suivre"
+
+msgid "Unknown track"
+msgstr "Morceau inconnu"
+
+msgid "Showing the next 50 tracks"
+msgstr "Affichage des 50 prochains morceaux"
+
+msgid "1×"
+msgstr "1×"
+
+msgid "Set loop start (A)"
+msgstr "Définir le début de la boucle (A)"
+
+msgid "Set loop end (B)"
+msgstr "Définir la fin de la boucle (B)"
+
+msgid "Pause A–B loop"
+msgstr "Suspendre la boucle A–B"
+
+msgid "Enable A–B loop"
+msgstr "Activer la boucle A–B"
+
+msgid "Clear A–B loop"
+msgstr "Effacer la boucle A–B"
+
+msgid "Waiting for stereo output"
+msgstr "En attente d’une sortie stéréo"
+
+msgid "Stereo capture unavailable"
+msgstr "Capture stéréo indisponible"
+
+msgid "Album artist"
+msgstr "Artiste de l’album"
+
+msgid "Composer"
+msgstr "Compositeur"
+
+msgid "Lyricist"
+msgstr "Parolier"
+
+msgid "Writers"
+msgstr "Auteurs"
+
+msgid "Producers"
+msgstr "Producteurs"
+
+msgid "Performers"
+msgstr "Interprètes"
+
+msgid "Arrangers"
+msgstr "Arrangeurs"
+
+msgid "Label"
+msgstr "Label"
+
+msgid "Country"
+msgstr "Pays"
+
+msgid "Edition date"
+msgstr "Date d’édition"
+
+msgid "Version"
+msgstr "Version"
+
+msgid "ISRC"
+msgstr "ISRC"
+
+msgid "Album tracks"
+msgstr "Pistes de l’album"
+
+msgid "Disc"
+msgstr "Disque"
+
+msgid "BPM"
+msgstr "BPM"
+
+msgid "Comment"
+msgstr "Commentaire"
+
+msgid "Released"
+msgstr "Date de sortie"
+
+msgid "Type"
+msgstr "Type"
+
+msgid "Format"
+msgstr "Format"
+
+msgid "Album"
+msgstr "Album"
+
+msgid "Track"
+msgstr "Piste"
+
+msgid "Genre"
+msgstr "Genre"
+
+msgid "Length"
+msgstr "Durée"
+
+msgid "Source"
+msgstr "Source"
+
+msgid "Song"
+msgstr "Morceau"
+
+msgid "Credits"
+msgstr "Crédits"
+
+msgid "Release"
+msgstr "Parution"
+
+msgid "Playback"
+msgstr "Lecture"
+
+msgid "Choose a recording…"
+msgstr "Choisir un enregistrement…"
+
+msgid "Retry lookup"
+msgstr "Relancer la recherche"
+
+msgid "No track metadata"
+msgstr "Aucune métadonnée du morceau"
+
+msgid "Shuffle unavailable for this player"
+msgstr "Lecture aléatoire indisponible pour ce lecteur"
+
+msgid "Shuffle on"
+msgstr "Lecture aléatoire activée"
+
+msgid "Shuffle off"
+msgstr "Lecture aléatoire désactivée"
+
+msgid "Repeat unavailable for this player"
+msgstr "Répétition indisponible pour ce lecteur"
+
+msgid "Repeat track"
+msgstr "Répéter le morceau"
+
+msgid "Repeat playlist"
+msgstr "Répéter la liste de lecture"
+
+msgid "Repeat off"
+msgstr "Répétition désactivée"
+
+msgid "Selected audio source unavailable"
+msgstr "Source audio sélectionnée indisponible"
+
+msgid "cava is not installed"
+msgstr "cava n’est pas installé"
+
+msgid "No usable audio input (tried %1)"
+msgstr "Aucune entrée audio utilisable (essais : %1)"
+
+msgid "No audio output device"
+msgstr "Aucun périphérique de sortie audio"
+
+msgid "Audio capture stopped"
+msgstr "Capture audio arrêtée"
+
+msgid "add pkgs.cava to your configuration"
+msgstr "ajoutez pkgs.cava à votre configuration"
+
+msgid "install the 'cava' package"
+msgstr "installez le paquet « cava »"
+
+msgid "Start the application or choose a source in Audio settings"
+msgstr ""
+"Lancez l’application ou choisissez une source dans les paramètres audio"
+
+msgid "is PipeWire or PulseAudio running?"
+msgstr "PipeWire ou PulseAudio est-il en cours d’exécution ?"
+
+msgid "connect speakers, or enable sound in your remote desktop client"
+msgstr ""
+"branchez des haut-parleurs ou activez le son dans votre client de bureau à "
+"distance"
+
+msgid "see %1"
+msgstr "voir %1"
+
+msgid ""
+"The widget picks it up within 30 seconds — no restart needed, unless your "
+"package manager only changes PATH for new sessions."
+msgstr ""
+"Le composant le détecte sous 30 secondes, sans redémarrage, sauf si votre "
+"gestionnaire de paquets ne modifie PATH que pour les nouvelles sessions."
+
+msgid ""
+"cava could not capture from any backend. Check that PipeWire or PulseAudio "
+"is running, or pin one under Audio Input in the widget settings."
+msgstr ""
+"cava n’a pu capturer le son avec aucun moteur. Vérifiez que PipeWire ou "
+"PulseAudio est en cours d’exécution, ou sélectionnez un moteur sous Entrée "
+"audio dans les paramètres du composant."
+
+msgid ""
+"Windows has no audio output, so nothing is playing that could be visualized. "
+"Connect speakers or headphones, enable sound in your remote desktop client, "
+"or install a virtual audio device. Picked up within seconds — no restart "
+"needed."
+msgstr ""
+"Windows n’a aucune sortie audio : rien ne peut donc être visualisé. Branchez "
+"des haut-parleurs ou un casque, activez le son dans votre client de bureau à "
+"distance ou installez un périphérique audio virtuel. Détection en quelques "
+"secondes, sans redémarrage."
+
+msgid "cava keeps exiting — see %1"
+msgstr "cava s’arrête sans cesse — voir %1"
+
+msgid "The light falls softly on the water"
+msgstr "La lumière se pose doucement sur l’eau"
+
+msgid "And the city fades to blue"
+msgstr "Et la ville se fond dans le bleu"
+
+msgid "Let the evening drift away"
+msgstr "Laissons le soir s’écouler"
+
+msgid "There is nothing left to hurry"
+msgstr "Plus rien ne presse désormais"
+
+msgid "Just a little room to stay"
+msgstr "Juste un petit coin où rester"
+
+msgid "With the rhythm of the rain"
+msgstr "Au rythme de la pluie"
+
+msgid "Direct YouTube stream"
+msgstr "Flux YouTube direct"
+
+msgid "Player published no title"
+msgstr "Le lecteur n’a fourni aucun titre"
+
+msgid "Return to playback controls"
+msgstr "Revenir aux commandes de lecture"
+
+msgid "Show track details"
+msgstr "Afficher les détails du morceau"
+
+msgid "Stereo PCM unavailable"
+msgstr "PCM stéréo indisponible"
+
+msgid "No other widgets found"
+msgstr "Aucun autre composant trouvé"
+
+msgid "Copied to %1 other widget"
+msgid_plural "Copied to %1 other widgets"
+msgstr[0] "Copié vers %1 autre composant"
+msgstr[1] "Copié vers %1 autres composants"
+
+msgid "Could not reach Plasma"
+msgstr "Impossible de joindre Plasma"
+
+msgid "Panel pill"
+msgstr "Capsule du panneau"
+
+msgid "Card / popup"
+msgstr "Carte / fenêtre contextuelle"
+
+msgid "Use pill look"
+msgstr "Utiliser l’apparence de la capsule"
+
+msgid "Use popup look"
+msgstr "Utiliser l’apparence de la fenêtre contextuelle"
+
+msgid ""
+"Copy the other design into this one: colours, artwork, visualizer and "
+"progress styles. The pill enables the copied effects. Each view keeps its "
+"layout and playback controls. Apply saves; Discard undoes."
+msgstr ""
+"Copier l’autre apparence dans celle-ci : couleurs, pochette, styles de "
+"visualisation et de progression. La capsule active les effets copiés. Chaque "
+"vue conserve sa disposition et ses commandes de lecture. Appliquer "
+"enregistre ; Abandonner annule."
+
+msgid "Copy to all widgets"
+msgstr "Copier vers tous les composants"
+
+msgid ""
+"Copy these settings, including both panel designs, to every other copy of "
+"this widget, such as one per monitor. Each keeps its own monitor and "
+"position. Apply here first; the others change immediately and cannot be "
+"undone."
+msgstr ""
+"Copier ces paramètres, y compris les deux apparences du panneau, vers toutes "
+"les autres instances de ce composant, par exemple une par écran. Chacune "
+"conserve son écran et sa position. Appliquez d’abord ici ; les autres "
+"changent immédiatement et cette action est irréversible."
+
+msgid "Nothing playing"
+msgstr "Aucune lecture en cours"
+
+msgid "Start music in any player"
+msgstr "Lancez de la musique dans un lecteur"
+
+msgid "Delay lyrics by 100 milliseconds"
+msgstr "Retarder les paroles de 100 millisecondes"
+
+msgid "Delay lyrics 100 ms (−)"
+msgstr "Retarder les paroles de 100 ms (−)"
+
+msgid "Reset lyrics timing offset"
+msgstr "Réinitialiser le décalage des paroles"
+
+msgid "Reset timing; positive values show lyrics earlier"
+msgstr ""
+"Réinitialiser le décalage ; les valeurs positives affichent les paroles plus "
+"tôt"
+
+msgid "Advance lyrics by 100 milliseconds"
+msgstr "Avancer les paroles de 100 millisecondes"
+
+msgid "Advance lyrics 100 ms (+)"
+msgstr "Avancer les paroles de 100 ms (+)"
+
+msgid "Follow current line"
+msgstr "Suivre la ligne actuelle"
+
+msgid "Play a song to see its lyrics"
+msgstr "Lancez un morceau pour afficher ses paroles"
+
+msgid "Waiting for the song title and artist…"
+msgstr "En attente du titre et de l’artiste…"
+
+msgid "Finding lyrics…"
+msgstr "Recherche des paroles…"
+
+msgid "Couldn't load lyrics"
+msgstr "Impossible de charger les paroles"
+
+msgid "No synced lyrics available for this song"
+msgstr "Aucune parole synchronisée disponible pour ce morceau"
+
+msgid "No media"
+msgstr "Aucun média"
+
+msgid "Unpin and close popup"
+msgstr "Détacher et fermer la fenêtre contextuelle"
+
+msgid "Keep popup open"
+msgstr "Garder la fenêtre contextuelle ouverte"
+
+msgid "Custom button styles"
+msgstr "Styles de boutons personnalisés"
+
+msgid "Custom progress bars"
+msgstr "Barres de progression personnalisées"
+
+msgid "Custom visualizers"
+msgstr "Visualiseurs personnalisés"
+
+msgid "Built-in buttons"
+msgstr "Boutons intégrés"
+
+msgid "Built-in progress bar"
+msgstr "Barre de progression intégrée"
+
+msgid "Built-in visualizer"
+msgstr "Visualiseur intégré"
+
+msgid "Hide"
+msgstr "Masquer"
+
+msgid "Manage…"
+msgstr "Gérer…"
+
+msgid ""
+"QML styles run code with the host’s permissions. Import only files you "
+"trust. Keep the file and its assets in a permanent folder; importing "
+"remembers their location."
+msgstr ""
+"Les styles QML exécutent du code avec les autorisations de l’application "
+"hôte. Importez uniquement des fichiers de confiance. Conservez le fichier et "
+"ses ressources dans un dossier permanent ; l’importation mémorise leur "
+"emplacement."
+
+msgid "Import QML…"
+msgstr "Importer du QML…"
+
+msgid "Try example"
+msgstr "Essayer un exemple"
+
+msgid "Remove"
+msgstr "Supprimer"
+
+msgid "Import trusted QML buttons"
+msgstr "Importer des boutons QML de confiance"
+
+msgid "Import trusted QML progress bar"
+msgstr "Importer une barre de progression QML de confiance"
+
+msgid "Import trusted QML visualizer"
+msgstr "Importer un visualiseur QML de confiance"
+
+msgid "Auto-detect"
+msgstr "Détection automatique"
+
+msgid "missing"
+msgstr "absent"
+
+msgid "missing (optional)"
+msgstr "absent (facultatif)"
+
+msgid "cava found"
+msgstr "cava détecté"
+
+msgid "not installed"
+msgstr "non installé"
+
+msgid "Capture backends"
+msgstr "Moteurs de capture"
+
+msgid "unknown"
+msgstr "inconnu"
+
+msgid "Sound server"
+msgstr "Serveur audio"
+
+msgid "not reachable"
+msgstr "injoignable"
+
+msgid "Default output"
+msgstr "Sortie par défaut"
+
+msgid "none"
+msgstr "aucun"
+
+msgid "Renderer"
+msgstr "Moteur de rendu"
+
+msgid "canvas (software)"
+msgstr "canvas (logiciel)"
+
+msgid "shader"
+msgstr "shader"
+
+msgid "Python 3 (metadata and lyrics)"
+msgstr "Python 3 (métadonnées et paroles)"
+
+msgid "found"
+msgstr "détecté"
+
+msgid "busctl (MPRIS metadata)"
+msgstr "busctl (métadonnées MPRIS)"
+
+msgid "%1 (optional)"
+msgstr "%1 (facultatif)"
+
+msgid "Audio capture"
+msgstr "Capture audio"
+
+msgid "%1 bars"
+msgstr "%1 barres"
+
+msgid "Running…"
+msgstr "En cours…"
+
+msgid "Run diagnostics"
+msgstr "Lancer le diagnostic"
+
+msgid "Track details must be a list."
+msgstr "Les détails du morceau doivent être une liste."
+
+msgid "Invalid value for %1."
+msgstr "Valeur non valide pour %1."
+
+msgid "Paste a look object."
+msgstr "Collez un objet d’apparence."
+
+msgid "Unsupported look format."
+msgstr "Format d’apparence non pris en charge."
+
+msgid "Settings must be an object."
+msgstr "Les paramètres doivent être un objet."
+
+msgid "The same look all day; changes tomorrow. Save it to keep it."
+msgstr ""
+"La même apparence toute la journée ; elle changera demain. Enregistrez-la "
+"pour la conserver."
+
+msgid "Saved to My presets"
+msgstr "Enregistré dans Mes préréglages"
+
+msgid "Save today’s look"
+msgstr "Enregistrer l’apparence du jour"
+
+msgid "Apply today’s look automatically"
+msgstr "Appliquer automatiquement l’apparence du jour"
+
+msgid ""
+"After you apply settings, changes the look once per day on startup or while "
+"running. Manual changes stay until tomorrow. Audio settings and placement "
+"are kept."
+msgstr ""
+"Après application des paramètres, change l’apparence une fois par jour au "
+"démarrage ou pendant l’utilisation. Les modifications manuelles restent "
+"jusqu’à demain. Les paramètres audio et le placement sont conservés."
+
+msgid "Star a built-in or saved look to find it here."
+msgstr ""
+"Ajoutez une apparence intégrée ou enregistrée aux favoris pour la retrouver "
+"ici."
+
+msgid "Today’s look · %1"
+msgstr "Apparence du jour · %1"
+
+msgid "Remove from favourites"
+msgstr "Retirer des favoris"
+
+msgid "Add to favourites"
+msgstr "Ajouter aux favoris"
+
+msgid "Rename preset"
+msgstr "Renommer le préréglage"
+
+msgid "Preset name"
+msgstr "Nom du préréglage"
+
+msgid "All categories"
+msgstr "Toutes les catégories"
+
+msgid "Preset category"
+msgstr "Catégorie du préréglage"
+
+msgid "Keep my colours"
+msgstr "Conserver mes couleurs"
+
+msgid "Hide preview options"
+msgstr "Masquer les options d’aperçu"
+
+msgid "Preview options"
+msgstr "Options d’aperçu"
+
+msgid "Live audio · On"
+msgstr "Audio en direct · Activé"
+
+msgid "Use live audio"
+msgstr "Utiliser l’audio en direct"
+
+msgid "WALLPAPER"
+msgstr "FOND D’ÉCRAN"
+
+msgid "STATE"
+msgstr "ÉTAT"
+
+msgid "2×"
+msgstr "2×"
+
+msgid "Fit"
+msgstr "Ajuster"
+
+msgid "ACCENT"
+msgstr "ACCENTUATION"
+
+msgid "GitHub stars"
+msgstr "Étoiles GitHub"
+
+msgid "GitHub downloads"
+msgstr "Téléchargements GitHub"
+
+msgid "OpenDesktop downloads"
+msgstr "Téléchargements OpenDesktop"
+
+msgid "Version comparison unavailable"
+msgstr "Comparaison des versions indisponible"
+
+msgid "Update available"
+msgstr "Mise à jour disponible"
+
+msgid "Newer than latest release"
+msgstr "Version plus récente que la dernière publication"
+
+msgid "Up to date"
+msgstr "À jour"
+
+msgid "Not checked"
+msgstr "Non vérifié"
+
+msgid "Checking…"
+msgstr "Vérification…"
+
+msgid "Could not check for updates"
+msgstr "Impossible de rechercher les mises à jour"
+
+msgid "Plasma Audio Visualizer project icon"
+msgstr "Icône du projet Plasma Audio Visualizer"
+
+msgid "%1 GitHub avatar"
+msgstr "Avatar GitHub de %1"
+
+msgid "By %1 ↗"
+msgstr "Par %1 ↗"
+
+msgid ""
+"An open-source music visualizer for Plasma and Hyprland. Explore the "
+"project, get updates, or help improve it."
+msgstr ""
+"Un visualiseur musical libre pour Plasma et Hyprland. Découvrez le projet, "
+"obtenez les mises à jour ou contribuez à son amélioration."
+
+msgid "Installed version · %1"
+msgstr "Version installée · %1"
+
+msgid "Latest stable release · %1"
+msgstr "Dernière version stable · %1"
+
+msgid "Get update ↗"
+msgstr "Obtenir la mise à jour ↗"
+
+msgid "View latest release ↗"
+msgstr "Voir la dernière version ↗"
+
+msgid "Check again"
+msgstr "Vérifier à nouveau"
+
+msgid "%1, open %2"
+msgstr "%1, ouvrir %2"
+
+msgid "License · %1"
+msgstr "Licence · %1"
+
+msgid "From the bundled LICENSE file"
+msgstr "D’après le fichier LICENSE fourni"
+
+msgid "Contributors"
+msgstr "Contributeurs"
+
+msgid "See all on GitHub ↗"
+msgstr "Tout voir sur GitHub ↗"
+
+msgid "%1 avatar"
+msgstr "Avatar de %1"
+
+msgid "%1 commit"
+msgid_plural "%1 commits"
+msgstr[0] "%1 commit"
+msgstr[1] "%1 commits"
+
+msgid "Open %1 on GitHub"
+msgstr "Ouvrir %1 sur GitHub"
+
+msgid "Support the project"
+msgstr "Soutenir le projet"
+
+msgid "Support on %1"
+msgstr "Soutenir sur %1"
+
+msgid "View source on GitHub ↗"
+msgstr "Voir le code sur GitHub ↗"
+
+msgid "Report an issue ↗"
+msgstr "Signaler un problème ↗"
+
+msgid "Checked"
+msgstr "Vérifié"
+
+msgid "Appearance"
+msgstr "Apparence"
+
+msgid "All"
+msgstr "Tout"
+
+msgid "My presets"
+msgstr "Mes préréglages"
+
+msgid "Favourites"
+msgstr "Favoris"
+
+msgid "Today’s look"
+msgstr "Apparence du jour"
+
+msgid "A daily variation of %1"
+msgstr "Une variation quotidienne de %1"
+
+msgid "Smooth Wave"
+msgstr "Onde douce"
+
+msgid "Rounded Bars"
+msgstr "Barres arrondies"
+
+msgid "Mirror Bars"
+msgstr "Barres en miroir"
+
+msgid "Tech Line"
+msgstr "Ligne technique"
+
+msgid "Floating Dots"
+msgstr "Points flottants"
+
+msgid "Floating Dots Bold"
+msgstr "Points flottants épais"
+
+msgid "Peak Bars"
+msgstr "Barres de crête"
+
+msgid "LED Meter"
+msgstr "Vu-mètre LED"
+
+msgid "Mountain"
+msgstr "Montagne"
+
+msgid "Oscilloscope"
+msgstr "Oscilloscope"
+
+msgid "Ribbon"
+msgstr "Ruban"
+
+msgid "Radial Burst"
+msgstr "Explosion radiale"
+
+msgid "Pixel Matrix"
+msgstr "Matrice de pixels"
+
+msgid "Pulse Orb"
+msgstr "Orbe pulsant"
+
+msgid "Sparkles"
+msgstr "Étincelles"
+
+msgid "Silk Ribbon"
+msgstr "Ruban de soie"
+
+msgid "Neon Terrain"
+msgstr "Relief néon"
+
+msgid "Audio Tunnel"
+msgstr "Tunnel audio"
+
+msgid "Liquid Plasma"
+msgstr "Plasma liquide"
+
+msgid "CRT Oscilloscope"
+msgstr "Oscilloscope cathodique"
+
+msgid "Stereo Lissajous"
+msgstr "Lissajous stéréo"
+
+msgid "Gravity Sparks"
+msgstr "Étincelles gravitationnelles"
+
+msgid "Glassy Sleek"
+msgstr "Verre épuré"
+
+msgid "Ultra Minimal"
+msgstr "Ultra minimal"
+
+msgid "Glowing Pulse"
+msgstr "Pulsation lumineuse"
+
+msgid "Bold Pill"
+msgstr "Capsule épaisse"
+
+msgid "Waveform"
+msgstr "Forme d’onde"
+
+msgid "Squiggle"
+msgstr "Ondulation"
+
+msgid "Segmented"
+msgstr "Segments"
+
+msgid "Dotted"
+msgstr "Pointillés"
+
+msgid "Capsule"
+msgstr "Capsule"
+
+msgid "Time only"
+msgstr "Temps uniquement"
+
+msgid "Cover ring"
+msgstr "Anneau de pochette"
+
+msgid "Bars"
+msgstr "Barres"
+
+msgid "Wave"
+msgstr "Onde"
+
+msgid "Dots"
+msgstr "Points"
+
+msgid "Sparks"
+msgstr "Étincelles"
+
+msgid "Playing"
+msgstr "En lecture"
+
+msgid "Paused"
+msgstr "En pause"
+
+msgid "Long title"
+msgstr "Titre long"
+
+msgid "No metadata"
+msgstr "Aucune métadonnée"
+
+msgid "cava missing"
+msgstr "cava absent"
+
+msgid "Songwriters"
+msgstr "Auteurs-compositeurs"
+
+msgid "Album & year"
+msgstr "Album et année"
+
+msgid "Release date"
+msgstr "Date de sortie"
+
+msgid "Release type"
+msgstr "Type de parution"
+
+msgid "Track number"
+msgstr "Numéro de piste"
+
+msgid "Disc number"
+msgstr "Numéro de disque"
+
+msgid "Album track count"
+msgstr "Nombre de pistes de l’album"
+
+msgid "Playback & artist summary"
+msgstr "Lecture et présentation de l’artiste"
+
+msgid "Audio format"
+msgstr "Format audio"
+
+msgid "Player"
+msgstr "Lecteur"
+
+msgid "Artist summary"
+msgstr "Présentation de l’artiste"
+
+msgid "Looks"
+msgstr "Apparences"
+
+msgid "Start from a look"
+msgstr "Partir d’une apparence"
+
+msgid ""
+"One click sets everything. Fine-tune in the other tabs afterwards — your "
+"placement is never touched."
+msgstr ""
+"Un clic règle tout. Affinez ensuite dans les autres onglets ; votre "
+"placement reste inchangé."
+
+msgid "Saved looks"
+msgstr "Apparences enregistrées"
+
+msgid ""
+"Save the current settings under a name, or share a look as a small JSON "
+"snippet."
+msgstr ""
+"Enregistrez les paramètres actuels sous un nom ou partagez une apparence "
+"sous forme d’un petit extrait JSON."
+
+msgid "Orbit around the cover"
+msgstr "Orbite autour de la pochette"
+
+msgid "Ring style"
+msgstr "Style de l’anneau"
+
+msgid ""
+"The cover is the centre point and the visualizer circles it. Colour mode, "
+"glow and bloom below still apply."
+msgstr ""
+"La pochette est au centre et le visualiseur l’entoure. Le mode de couleur, "
+"la lueur et sa diffusion ci-dessous s’appliquent toujours."
+
+msgid "Reach"
+msgstr "Portée"
+
+msgid "How far the ring extends from the cover."
+msgstr "Distance jusqu’à laquelle l’anneau s’étend autour de la pochette."
+
+msgid "Slow rotation"
+msgstr "Rotation lente"
+
+msgid "Cover breathes with the bass"
+msgstr "La pochette respire au rythme des basses"
+
+msgid "Style"
+msgstr "Style"
+
+msgid ""
+"Import a trusted QML style and use it in the waveform area. Orbit and lyrics-"
+"only layouts use their own visuals."
+msgstr ""
+"Importez un style QML de confiance pour la zone de visualisation. Les "
+"dispositions Orbite et Paroles uniquement utilisent leurs propres visuels."
+
+msgid "Visualizer"
+msgstr "Visualiseur"
+
+msgid "Previews react to your colour, line and bloom settings."
+msgstr ""
+"Les aperçus réagissent à vos réglages de couleur, de trait et de diffusion "
+"lumineuse."
+
+msgid "Vertical offset"
+msgstr "Décalage vertical"
+
+msgid ""
+"Move the visualizer up (negative) or down (positive). Zero restores its "
+"original position; edges stay inside the visualizer area."
+msgstr ""
+"Déplacez le visualiseur vers le haut (valeur négative) ou le bas (valeur "
+"positive). Zéro rétablit sa position initiale ; les bords restent dans la "
+"zone de visualisation."
+
+msgid "Direction"
+msgstr "Direction"
+
+msgid "Bars rise from the bottom today — or let them hang from the top edge."
+msgstr ""
+"Les barres montent depuis le bas ; vous pouvez aussi les suspendre au bord "
+"supérieur."
+
+msgid "Rise from bottom"
+msgstr "Monter depuis le bas"
+
+msgid "Hang from top"
+msgstr "Suspendre depuis le haut"
+
+msgid "Ribbon curvature"
+msgstr "Courbure du ruban"
+
+msgid "How far the mids bend the ribbon."
+msgstr "Ampleur de la courbure du ruban sous l’effet des médiums."
+
+msgid "Ribbon fullness"
+msgstr "Épaisseur du ruban"
+
+msgid "How thick the bass makes it."
+msgstr "Épaisseur donnée par les basses."
+
+msgid "Line weight"
+msgstr "Épaisseur du trait"
+
+msgid "Stroke width of lines and dot size."
+msgstr "Épaisseur des lignes et taille des points."
+
+msgid "Gradient fill"
+msgstr "Remplissage en dégradé"
+
+msgid "Fill waves and liquid shapes, or soften Peak Bars with transparency."
+msgstr ""
+"Remplir les ondes et les formes liquides, ou adoucir les barres de crête "
+"avec de la transparence."
+
+msgid "Progress bar"
+msgstr "Barre de progression"
+
+msgid "Import a trusted QML progress bar with playback timing and seeking."
+msgstr ""
+"Importez une barre de progression QML de confiance avec suivi du temps et "
+"déplacement dans la lecture."
+
+msgid "Click anywhere on it in the widget to seek."
+msgstr ""
+"Cliquez n’importe où sur la barre du composant pour vous déplacer dans la "
+"lecture."
+
+msgid "None"
+msgstr "Aucun"
+
+msgid "Seek preview"
+msgstr "Aperçu du déplacement"
+
+msgid "Target time, jump delta and a ghost playhead."
+msgstr "Temps cible, écart et curseur de lecture fantôme."
+
+msgid "Seek gestures"
+msgstr "Gestes de déplacement"
+
+msgid "Wheel seeks; double-click the outer thirds to jump 10 seconds."
+msgstr ""
+"La molette déplace la lecture ; un double-clic dans les tiers extérieurs "
+"fait un saut de 10 secondes."
+
+msgid "Wheel seek step"
+msgstr "Pas de déplacement à la molette"
+
+msgid "Seconds per notch; 0 disables wheel seeking."
+msgstr "Secondes par cran ; 0 désactive le déplacement à la molette."
+
+msgid "Audio-reactive progress"
+msgstr "Progression réactive au son"
+
+msgid "Bass swells the track and playhead; reduced motion disables pulses."
+msgstr ""
+"Les basses font gonfler la piste et le curseur ; la réduction des animations "
+"désactive les pulsations."
+
+msgid "Chapter marks"
+msgstr "Repères de chapitre"
+
+msgid "Uses player chapter metadata or local embedded chapters and cue files."
+msgstr ""
+"Utilise les chapitres fournis par le lecteur, intégrés aux fichiers locaux "
+"ou définis dans les fichiers cue."
+
+msgid "Time labels"
+msgstr "Indications de temps"
+
+msgid "Off"
+msgstr "Désactivé"
+
+msgid "1:31 · 3:58"
+msgstr "1:31 · 3:58"
+
+msgid "1:31 · -2:27"
+msgstr "1:31 · -2:27"
+
+msgid "Panel buttons"
+msgstr "Boutons du panneau"
+
+msgid "Buttons"
+msgstr "Boutons"
+
+msgid "Add playback controls directly to the panel pill."
+msgstr ""
+"Ajouter des commandes de lecture directement dans la capsule du panneau."
+
+msgid "Play / pause"
+msgstr "Lecture / pause"
+
+msgid "Previous · Play · Next"
+msgstr "Précédent · Lecture · Suivant"
+
+msgid "Show buttons on hover only"
+msgstr "Afficher les boutons uniquement au survol"
+
+msgid ""
+"Reveal playback buttons while the pointer is over the pill. Keeps the pill's "
+"width steady."
+msgstr ""
+"Afficher les boutons de lecture lorsque le pointeur survole la capsule. La "
+"largeur de la capsule reste constante."
+
+msgid "Playback buttons"
+msgstr "Boutons de lecture"
+
+msgid "Import a trusted QML style for the playback controls."
+msgstr "Importez un style QML de confiance pour les commandes de lecture."
+
+msgid "Choose the shape around your playback controls."
+msgstr "Choisissez la forme qui entoure vos commandes de lecture."
+
+msgid "Glass pill"
+msgstr "Capsule en verre"
+
+msgid "Soft pill"
+msgstr "Capsule douce"
+
+msgid "Outline pill"
+msgstr "Contour de capsule"
+
+msgid "Tinted pill"
+msgstr "Capsule teintée"
+
+msgid "Bare icons"
+msgstr "Icônes seules"
+
+msgid "Accent play"
+msgstr "Lecture accentuée"
+
+msgid "Show on hover only"
+msgstr "Afficher uniquement au survol"
+
+msgid ""
+"Hide the playback buttons until the pointer is over the card. Works with any "
+"style."
+msgstr ""
+"Masquer les boutons de lecture jusqu’au survol de la carte. Fonctionne avec "
+"tous les styles."
+
+msgid "Previous & next"
+msgstr "Précédent et suivant"
+
+msgid "Shuffle & repeat"
+msgstr "Aléatoire et répétition"
+
+msgid "For players that support them."
+msgstr "Pour les lecteurs qui les prennent en charge."
+
+msgid "Button colours"
+msgstr "Couleurs des boutons"
+
+msgid "Icon colour"
+msgstr "Couleur des icônes"
+
+msgid "Colour mode follows the visualizer. System adapts to light cards."
+msgstr ""
+"Le mode de couleur suit le visualiseur. Système s’adapte aux cartes claires."
+
+msgid "System"
+msgstr "Système"
+
+msgid "Accent"
+msgstr "Accentuation"
+
+msgid "Colour mode"
+msgstr "Mode de couleur"
+
+msgid "Custom"
+msgstr "Personnalisé"
+
+msgid "Custom icon colour"
+msgstr "Couleur personnalisée des icônes"
+
+msgid "Background colour"
+msgstr "Couleur d’arrière-plan"
+
+msgid "Applies to pill styles. Tinted uses your accent when set to Automatic."
+msgstr ""
+"S’applique aux styles en capsule. Le style teinté utilise votre couleur "
+"d’accentuation en mode Automatique."
+
+msgid "Automatic"
+msgstr "Automatique"
+
+msgid "Custom background"
+msgstr "Arrière-plan personnalisé"
+
+msgid "Arrangement"
+msgstr "Agencement"
+
+msgid "Layout"
+msgstr "Disposition"
+
+msgid ""
+"Visualizer only fills a transparent widget with the selected effect. Lyrics "
+"only shows a scrollable verse with the current line highlighted. Uses online "
+"lyrics from LRCLIB."
+msgstr ""
+"Visualiseur uniquement remplit un composant transparent avec l’effet choisi. "
+"Paroles uniquement affiche des paroles défilantes dont la ligne actuelle est "
+"mise en évidence. Utilise les paroles en ligne de LRCLIB."
+
+msgid "Visualizer only"
+msgstr "Visualiseur uniquement"
+
+msgid "Classic"
+msgstr "Classique"
+
+msgid "Mirrored"
+msgstr "En miroir"
+
+msgid "Inline"
+msgstr "En ligne"
+
+msgid "Hero wave"
+msgstr "Onde principale"
+
+msgid "Stacked"
+msgstr "Empilé"
+
+msgid "Orbit"
+msgstr "Orbite"
+
+msgid "Lyrics only"
+msgstr "Paroles uniquement"
+
+msgid "Poster"
+msgstr "Affiche"
+
+msgid "Slim strip"
+msgstr "Bande fine"
+
+msgid "Panel icon"
+msgstr "Icône du panneau"
+
+msgid "No art"
+msgstr "Sans pochette"
+
+msgid "Text"
+msgstr "Texte"
+
+msgid "Title"
+msgstr "Titre"
+
+msgid "Title · Artist"
+msgstr "Titre · Artiste"
+
+msgid "Artist — Title"
+msgstr "Artiste — Titre"
+
+msgid "None (visualizer only)"
+msgstr "Aucun (visualiseur uniquement)"
+
+msgid "Cover thumbnail"
+msgstr "Miniature de la pochette"
+
+msgid "Motion"
+msgstr "Mouvement"
+
+msgid ""
+"Mini visualizer follows the music using your selected visualizer style. "
+"Choose Static for still bars."
+msgstr ""
+"Le mini-visualiseur suit la musique avec le style sélectionné. Choisissez "
+"Statique pour des barres immobiles."
+
+msgid "Static"
+msgstr "Statique"
+
+msgid "Bouncing"
+msgstr "Rebondissant"
+
+msgid "Mini visualizer"
+msgstr "Mini-visualiseur"
+
+msgid "Progress"
+msgstr "Progression"
+
+msgid "Underline"
+msgstr "Soulignement"
+
+msgid "Styled bar"
+msgstr "Barre stylisée"
+
+msgid "Maximum width"
+msgstr "Largeur maximale"
+
+msgid "Open popup"
+msgstr "Ouvrir la fenêtre contextuelle"
+
+msgid ""
+"Hover closes when you leave the pill and card. Click toggles it. Both lets a "
+"click pin the hovered card; click again to close."
+msgstr ""
+"Survol ferme la carte quand vous quittez la capsule et la carte. Clic "
+"l’ouvre ou la ferme. Les deux permet de fixer la carte survolée par un "
+"clic ; cliquez à nouveau pour la fermer."
+
+msgid "Hover"
+msgstr "Survol"
+
+msgid "Click"
+msgstr "Clic"
+
+msgid "Both"
+msgstr "Les deux"
+
+msgid "Open card"
+msgstr "Ouvrir la carte"
+
+msgid "Alignment"
+msgstr "Alignement"
+
+msgid "Left"
+msgstr "Gauche"
+
+msgid "Centre"
+msgstr "Centre"
+
+msgid "Title lines"
+msgstr "Lignes du titre"
+
+msgid "Let long titles wrap onto a second line."
+msgstr "Permettre aux titres longs de passer sur une deuxième ligne."
+
+msgid "One"
+msgstr "Une"
+
+msgid "Two"
+msgstr "Deux"
+
+msgid "Visualizer behind the title"
+msgstr "Visualiseur derrière le titre"
+
+msgid ""
+"A soft texture under the text; style and direction follow the Visualizer tab."
+msgstr ""
+"Une texture douce sous le texte ; le style et la direction suivent l’onglet "
+"Visualiseur."
+
+msgid "Texture strength"
+msgstr "Intensité de la texture"
+
+msgid "Large clock"
+msgstr "Grand compteur"
+
+msgid "Elapsed time set big beside the progress line."
+msgstr "Le temps écoulé en grand à côté de la ligne de progression."
+
+msgid "Album in the top line"
+msgstr "Album sur la première ligne"
+
+msgid "Track text"
+msgstr "Texte du morceau"
+
+msgid "Text size"
+msgstr "Taille du texte"
+
+msgid "Artist and album follow the title."
+msgstr "L’artiste et l’album suivent le titre."
+
+msgid "Right"
+msgstr "Droite"
+
+msgid "Scroll long titles"
+msgstr "Faire défiler les titres longs"
+
+msgid ""
+"Scroll overflowing titles, including the panel pill. Disabled by Reduced "
+"motion."
+msgstr ""
+"Faire défiler les titres qui débordent, y compris dans la capsule du "
+"panneau. Désactivé par la réduction des animations."
+
+msgid "Cover"
+msgstr "Pochette"
+
+msgid "Show artwork"
+msgstr "Afficher la pochette"
+
+msgid "Falls back to the player’s icon when a track has no cover."
+msgstr "Utilise l’icône du lecteur si le morceau n’a pas de pochette."
+
+msgid "Shape"
+msgstr "Forme"
+
+msgid "Vinyl and CD spin while music plays."
+msgstr "Le vinyle et le CD tournent pendant la lecture."
+
+msgid "Sharp"
+msgstr "Angles vifs"
+
+msgid "Rounded"
+msgstr "Arrondi"
+
+msgid "Squircle"
+msgstr "Carré arrondi"
+
+msgid "Circle"
+msgstr "Cercle"
+
+msgid "Vinyl"
+msgstr "Vinyle"
+
+msgid "CD"
+msgstr "CD"
+
+msgid ""
+"Square always crops the art. Auto keeps square art cropped, switches the "
+"cover to 16:9 for wide art, and fits tall art whole with blurred edges. The "
+"two whole options fit the full image in the square: over a dimmed copy, or "
+"filled with its blurred edges. Wide 16:9 makes the cover a widescreen box "
+"(not for circle, vinyl or CD)."
+msgstr ""
+"Carré recadre toujours l’image. Auto recadre les images carrées, passe en "
+"16:9 pour les images larges et affiche entièrement les images hautes avec "
+"des bords floutés. Les deux options d’image entière affichent toute l’image "
+"dans le carré, sur une copie assombrie ou avec des bords floutés. Large 16:9 "
+"donne un cadre panoramique à la pochette (sauf pour Cercle, Vinyle et CD)."
+
+msgid "Square"
+msgstr "Carré"
+
+msgid "Auto"
+msgstr "Auto"
+
+msgid "Whole, dimmed"
+msgstr "Entière, fond sombre"
+
+msgid "Whole, edges"
+msgstr "Entière, bords floutés"
+
+msgid "Wide 16:9"
+msgstr "Large 16:9"
+
+msgid "Size"
+msgstr "Taille"
+
+msgid "Capped by the layout height."
+msgstr "Limitée par la hauteur de la disposition."
+
+msgid "Border"
+msgstr "Bordure"
+
+msgid "Subtle"
+msgstr "Discrète"
+
+msgid "Effects"
+msgstr "Effets"
+
+msgid "Colour glow"
+msgstr "Lueur colorée"
+
+msgid "A shadow tinted with the cover’s own colour."
+msgstr "Une ombre teintée avec la couleur de la pochette."
+
+msgid "Cover tilt on hover"
+msgstr "Incliner la pochette au survol"
+
+msgid ""
+"A gentle tilt after hovering the cover. Click targets stay fixed; reduced "
+"motion disables it."
+msgstr ""
+"Une légère inclinaison après le survol de la pochette. Les zones cliquables "
+"restent fixes ; la réduction des animations la désactive."
+
+msgid "Reflection"
+msgstr "Reflet"
+
+msgid "A faint mirror image under the cover."
+msgstr "Un léger reflet sous la pochette."
+
+msgid "Greyscale while paused"
+msgstr "Niveaux de gris en pause"
+
+msgid "When there is no cover"
+msgstr "En l’absence de pochette"
+
+msgid "Placeholder"
+msgstr "Image de remplacement"
+
+msgid "Try the “No metadata” state."
+msgstr "Essayez l’état « Aucune métadonnée »."
+
+msgid "Player icon"
+msgstr "Icône du lecteur"
+
+msgid "Gradient"
+msgstr "Dégradé"
+
+msgid "Initials"
+msgstr "Initiales"
+
+msgid "Clicking the cover"
+msgstr "Au clic sur la pochette"
+
+msgid "Nothing"
+msgstr "Rien"
+
+msgid "Show large"
+msgstr "Agrandir"
+
+msgid "Open player"
+msgstr "Ouvrir le lecteur"
+
+msgid "On the card"
+msgstr "Sur la carte"
+
+msgid "Album name"
+msgstr "Nom de l’album"
+
+msgid "A quiet third line with album and year."
+msgstr "Une troisième ligne discrète avec l’album et l’année."
+
+msgid "Player name"
+msgstr "Nom du lecteur"
+
+msgid "Where the music is coming from."
+msgstr "La provenance de la musique."
+
+msgid "Player switcher"
+msgstr "Sélecteur de lecteur"
+
+msgid "Pick which of several running players the widget follows."
+msgstr ""
+"Choisir le lecteur suivi par le composant parmi ceux en cours d’exécution."
+
+msgid "Synced lyrics line"
+msgstr "Ligne de paroles synchronisées"
+
+msgid ""
+"Online lookup (LRCLIB). Sends title, artist, album and length. For a full "
+"verse, choose the Lyrics only layout."
+msgstr ""
+"Recherche en ligne (LRCLIB). Envoie le titre, l’artiste, l’album et la "
+"durée. Pour afficher les paroles complètes, choisissez la disposition "
+"Paroles uniquement."
+
+msgid "Display"
+msgstr "Affichage"
+
+msgid "Lyrics display"
+msgstr "Affichage des paroles"
+
+msgid ""
+"Local sidecars and ID3 lyrics first, then LRCLIB. The online lookup sends "
+"the song title, artist, album and length. Card backgrounds are in the Card "
+"tab."
+msgstr ""
+"Utilise d’abord les fichiers de paroles locaux associés et les paroles ID3, "
+"puis LRCLIB. La recherche en ligne envoie le titre, l’artiste, l’album et la "
+"durée. Les arrière-plans se règlent dans l’onglet Carte."
+
+msgid "Line on card"
+msgstr "Ligne sur la carte"
+
+msgid "Reading language"
+msgstr "Langue de lecture"
+
+msgid ""
+"Automatic detects Japanese kana. Select Japanese or Chinese for Han-only "
+"text. Requires Python pykakasi / pypinyin."
+msgstr ""
+"Automatique détecte les kana japonais. Sélectionnez Japonais ou Chinois pour "
+"un texte composé uniquement de caractères han. Nécessite les modules Python "
+"pykakasi / pypinyin."
+
+msgid "Japanese"
+msgstr "Japonais"
+
+msgid "Chinese"
+msgstr "Chinois"
+
+msgid "Pronunciation subtitle"
+msgstr "Sous-titre de prononciation"
+
+msgid "Romaji / Pinyin"
+msgstr "Romaji / Pinyin"
+
+msgid "Kana"
+msgstr "Kana"
+
+msgid "Timing offset (seconds)"
+msgstr "Décalage temporel (secondes)"
+
+msgid ""
+"Positive values show lyrics earlier; negative values delay them. Applies to "
+"both lyrics displays."
+msgstr ""
+"Les valeurs positives affichent les paroles plus tôt ; les valeurs négatives "
+"les retardent. S’applique aux deux affichages des paroles."
+
+msgid "Typography"
+msgstr "Typographie"
+
+msgid "Font"
+msgstr "Police"
+
+msgid "System font"
+msgstr "Police du système"
+
+msgid "Sans serif"
+msgstr "Sans empattement"
+
+msgid "Serif"
+msgstr "Avec empattements"
+
+msgid "Monospace"
+msgstr "Chasse fixe"
+
+msgid "Font size"
+msgstr "Taille de police"
+
+msgid "Card line size"
+msgstr "Taille de la ligne sur la carte"
+
+msgid "Text weight"
+msgstr "Graisse du texte"
+
+msgid "Light"
+msgstr "Légère"
+
+msgid "Regular"
+msgstr "Normale"
+
+msgid "Medium"
+msgstr "Moyenne"
+
+msgid "Semibold"
+msgstr "Demi-grasse"
+
+msgid "Bold"
+msgstr "Grasse"
+
+msgid "Current line weight"
+msgstr "Graisse de la ligne actuelle"
+
+msgid "Extra bold"
+msgstr "Extra-grasse"
+
+msgid "Italic"
+msgstr "Italique"
+
+msgid "Letter spacing"
+msgstr "Espacement des lettres"
+
+msgid "Wrapped line height"
+msgstr "Interligne du texte renvoyé à la ligne"
+
+msgid "Spacing within a verse that wraps across multiple lines."
+msgstr "Espacement au sein d’un vers réparti sur plusieurs lignes."
+
+msgid "Highlight and contrast"
+msgstr "Mise en évidence et contraste"
+
+msgid "Current line colour"
+msgstr "Couleur de la ligne actuelle"
+
+msgid "Highlight colour"
+msgstr "Couleur de mise en évidence"
+
+msgid "Past lines"
+msgstr "Lignes passées"
+
+msgid "Upcoming lines"
+msgstr "Lignes à venir"
+
+msgid "Text edge"
+msgstr "Contour du texte"
+
+msgid "Extra contrast on busy wallpapers."
+msgstr "Davantage de contraste sur les fonds d’écran chargés."
+
+msgid "Outline"
+msgstr "Contour"
+
+msgid "Shadow"
+msgstr "Ombre"
+
+msgid "Edge colour"
+msgstr "Couleur du contour"
+
+msgid "Reading layout"
+msgstr "Disposition de lecture"
+
+msgid "Preferred width"
+msgstr "Largeur souhaitée"
+
+msgid "Desktop hosts can override the preferred size by resizing the widget."
+msgstr ""
+"L’environnement de bureau peut modifier la taille souhaitée en "
+"redimensionnant le composant."
+
+msgid "Preferred height"
+msgstr "Hauteur souhaitée"
+
+msgid "Card padding"
+msgstr "Marges intérieures de la carte"
+
+msgid "Maximum text width"
+msgstr "Largeur maximale du texte"
+
+msgid "Keep verses easy to read on a wide card."
+msgstr "Garder les vers lisibles sur une carte large."
+
+msgid "Space between verses"
+msgstr "Espace entre les vers"
+
+msgid "Song title and artist"
+msgstr "Titre du morceau et artiste"
+
+msgid "Show scrollbar"
+msgstr "Afficher la barre de défilement"
+
+msgid "Following playback"
+msgstr "Suivi de la lecture"
+
+msgid ""
+"Scrolling pauses following so you can read ahead. Use the button on the card "
+"to resume."
+msgstr ""
+"Le défilement suspend le suivi pour vous permettre de lire la suite. "
+"Utilisez le bouton sur la carte pour reprendre."
+
+msgid "Current line position"
+msgstr "Position de la ligne actuelle"
+
+msgid "Top"
+msgstr "Haut"
+
+msgid "Bottom"
+msgstr "Bas"
+
+msgid "On hover"
+msgstr "Au survol"
+
+msgid "Online track information"
+msgstr "Informations du morceau en ligne"
+
+msgid ""
+"Off by default. Sends song title, artist, album and length to MusicBrainz, "
+"and artist name to English Wikipedia when details open. Adds recording "
+"credits when available. Results are cached for 24 hours."
+msgstr ""
+"Désactivé par défaut. Envoie le titre, l’artiste, l’album et la durée à "
+"MusicBrainz, et le nom de l’artiste à Wikipédia en anglais à l’ouverture des "
+"détails. Ajoute les crédits de l’enregistrement lorsqu’ils sont disponibles. "
+"Les résultats sont mis en cache pendant 24 heures."
+
+msgid "Apple catalog fallback"
+msgstr "Recours au catalogue Apple"
+
+msgid ""
+"Off by default. If MusicBrainz cannot match the song, send its title and "
+"artist to Apple’s public catalog. Requires online track information."
+msgstr ""
+"Désactivé par défaut. Si MusicBrainz ne trouve pas le morceau, envoie son "
+"titre et son artiste au catalogue public d’Apple. Nécessite les informations "
+"du morceau en ligne."
+
+msgid "Details"
+msgstr "Détails"
+
+msgid ""
+"Tooltip is a compact preview near the pointer; drawer is a wider panel below "
+"the widget. Flip opens after hovering over the cover or song title for a "
+"moment. Playback buttons and seeking never trigger it. Leave the card, press "
+"Escape or use × to return."
+msgstr ""
+"L’infobulle est un aperçu compact près du pointeur ; le tiroir est un "
+"panneau plus large sous le composant. Le retournement s’active après un "
+"court survol de la pochette ou du titre. Les boutons et le déplacement dans "
+"la lecture ne le déclenchent jamais. Quittez la carte, appuyez sur Échap ou "
+"utilisez × pour revenir."
+
+msgid "Tooltip"
+msgstr "Infobulle"
+
+msgid "Drawer"
+msgstr "Tiroir"
+
+msgid "Flip card"
+msgstr "Retourner la carte"
+
+msgid "Show flip info button"
+msgstr "Afficher le bouton pour retourner la carte"
+
+msgid ""
+"Keep a click target alongside cover and title hover. The return button "
+"remains available while flipped."
+msgstr ""
+"Conserver une zone cliquable en plus du survol de la pochette et du titre. "
+"Le bouton de retour reste disponible au verso."
+
+msgid "What to show"
+msgstr "Éléments à afficher"
+
+msgid ""
+"Choose a set in one click, or customize the fields below. Missing "
+"information stays hidden. These choices survive Surprise me and daily looks."
+msgstr ""
+"Choisissez un ensemble en un clic ou personnalisez les champs ci-dessous. "
+"Les informations manquantes restent masquées. Ces choix sont conservés avec "
+"Surprenez-moi et les apparences du jour."
+
+msgid "Essentials"
+msgstr "Essentiel"
+
+msgid "All details"
+msgstr "Tous les détails"
+
+msgid "Customize"
+msgstr "Personnaliser"
+
+msgid "Background"
+msgstr "Arrière-plan"
+
+msgid "Show a card"
+msgstr "Afficher une carte"
+
+msgid "Off: the widget floats directly on the wallpaper (current default)."
+msgstr ""
+"Désactivé : le composant flotte directement sur le fond d’écran "
+"(comportement par défaut actuel)."
+
+msgid "Material"
+msgstr "Matériau"
+
+msgid "Tint"
+msgstr "Teinte"
+
+msgid "Glass"
+msgstr "Verre"
+
+msgid "Liquid"
+msgstr "Liquide"
+
+msgid "Solid"
+msgstr "Uni"
+
+msgid "Atmosphere"
+msgstr "Atmosphère"
+
+msgid "Tint colour"
+msgstr "Couleur de teinte"
+
+msgid "Compositor glass"
+msgstr "Verre du compositeur"
+
+msgid ""
+"Requests the Plasma translucent background; Hyprland needs the supplied "
+"layer blur rule."
+msgstr ""
+"Demande l’arrière-plan translucide de Plasma ; Hyprland nécessite la règle "
+"de flou de couche fournie."
+
+msgid "liquid"
+msgstr "liquide"
+
+msgid "Wallpaper blur"
+msgstr "Flou du fond d’écran"
+
+msgid ""
+"Choose how frosted the glass looks. 0% turns blur off; text and artwork stay "
+"sharp."
+msgstr ""
+"Choisissez l’aspect dépoli du verre. 0 % désactive le flou ; le texte et la "
+"pochette restent nets."
+
+msgid "Cover blur"
+msgstr "Flou de la pochette"
+
+msgid "0 keeps the art crisp."
+msgstr "0 garde la pochette nette."
+
+msgid "Cover darkness"
+msgstr "Assombrissement de la pochette"
+
+msgid "Keeps text readable on bright covers."
+msgstr "Garde le texte lisible sur les pochettes claires."
+
+msgid "Keep sharp thumbnail"
+msgstr "Garder la miniature nette"
+
+msgid "Card opacity"
+msgstr "Opacité de la carte"
+
+msgid "Only the card fades; text and wave stay solid."
+msgstr "Seule la carte s’estompe ; le texte et l’onde restent opaques."
+
+msgid "Corner radius"
+msgstr "Rayon des coins"
+
+msgid "Glass colour"
+msgstr "Couleur du verre"
+
+msgid "Glass tint"
+msgstr "Teinte du verre"
+
+msgid "Clear"
+msgstr "Transparent"
+
+msgid "Frost"
+msgstr "Givré"
+
+msgid "Smoke"
+msgstr "Fumé"
+
+msgid "Cover colour"
+msgstr "Couleur de la pochette"
+
+msgid "Custom glass colour"
+msgstr "Couleur personnalisée du verre"
+
+msgid "Liquid glass"
+msgstr "Verre liquide"
+
+msgid "Refraction"
+msgstr "Réfraction"
+
+msgid "Bends the sampled wallpaper with a subtle colour fringe."
+msgstr "Déforme le fond d’écran échantillonné avec une légère frange colorée."
+
+msgid "Light follows pointer"
+msgstr "La lumière suit le pointeur"
+
+msgid "A soft specular highlight tracks the mouse."
+msgstr "Un doux reflet spéculaire suit la souris."
+
+msgid "Depth & finish"
+msgstr "Profondeur et finition"
+
+msgid "Soft"
+msgstr "Douce"
+
+msgid "Lifted"
+msgstr "Surélevée"
+
+msgid "Edge highlight"
+msgstr "Bord lumineux"
+
+msgid "A thin line of light along the top edge."
+msgstr "Une fine ligne lumineuse le long du bord supérieur."
+
+msgid "Film grain"
+msgstr "Grain de film"
+
+msgid "Stops gradients from banding."
+msgstr "Évite les bandes dans les dégradés."
+
+msgid "Bass pulse"
+msgstr "Pulsation des basses"
+
+msgid "The edge glows in the accent colour on every kick."
+msgstr ""
+"Le bord s’illumine dans la couleur d’accentuation à chaque coup de grosse "
+"caisse."
+
+msgid "Ambient desktop glow"
+msgstr "Lueur ambiante du bureau"
+
+msgid ""
+"Project a soft, sound-reactive ambient glow onto the wallpaper or panel "
+"edges."
+msgstr ""
+"Projeter une douce lueur ambiante réactive au son sur le fond d’écran ou les "
+"bords du panneau."
+
+msgid "Accent colour"
+msgstr "Couleur d’accentuation"
+
+msgid ""
+"Drives the wave, progress and play button. System follows your desktop "
+"accent."
+msgstr ""
+"Colore l’onde, la progression et le bouton de lecture. Système suit la "
+"couleur d’accentuation de votre bureau."
+
+msgid "From cover"
+msgstr "Depuis la pochette"
+
+msgid "Custom colour"
+msgstr "Couleur personnalisée"
+
+msgid "Colour mode & visualizer light"
+msgstr "Mode de couleur et lumière du visualiseur"
+
+msgid ""
+"Used by the visualizer. Choose Colour mode for progress and controls below "
+"to share its palette or animated rainbow."
+msgstr ""
+"Utilisé par le visualiseur. Choisissez Mode de couleur pour la progression "
+"et les commandes ci-dessous afin de partager sa palette ou son arc-en-ciel "
+"animé."
+
+msgid "Palette"
+msgstr "Palette"
+
+msgid "Rainbow"
+msgstr "Arc-en-ciel"
+
+msgid "Your colour range"
+msgstr "Votre gamme de couleurs"
+
+msgid ""
+"Any number of colours, blended left to right. Click a colour to change it, × "
+"removes it, + adds one. The glow takes the middle of the range."
+msgstr ""
+"Autant de couleurs que vous le souhaitez, fondues de gauche à droite. "
+"Cliquez sur une couleur pour la modifier, × la supprime, + en ajoute une. La "
+"lueur utilise le milieu de la gamme."
+
+msgid "Curated palettes with bounded hues, so they never turn muddy."
+msgstr ""
+"Des palettes soigneusement choisies aux teintes délimitées pour éviter les "
+"mélanges ternes."
+
+msgid "Music-reactive hue"
+msgstr "Teinte réactive à la musique"
+
+msgid "Colours drift slowly with the bass / treble balance."
+msgstr ""
+"Les couleurs évoluent lentement selon l’équilibre entre basses et aigus."
+
+msgid "Glow"
+msgstr "Lueur"
+
+msgid "Soft light around the visualizer."
+msgstr "Lumière douce autour du visualiseur."
+
+msgid "Glow colour"
+msgstr "Couleur de la lueur"
+
+msgid ""
+"Same uses the middle of your colour range. Custom gives the glow a range of "
+"its own, which it drifts slowly through."
+msgstr ""
+"Identique utilise le milieu de votre gamme de couleurs. Personnalisée donne "
+"à la lueur sa propre gamme, qu’elle parcourt lentement."
+
+msgid "Same as colours"
+msgstr "Identique aux couleurs"
+
+msgid "Custom range"
+msgstr "Gamme personnalisée"
+
+msgid "Your glow range"
+msgstr "Votre gamme de lueur"
+
+msgid ""
+"Any number of colours. Click one to change it, × removes it, + adds one."
+msgstr ""
+"Autant de couleurs que vous le souhaitez. Cliquez sur une couleur pour la "
+"modifier, × la supprime, + en ajoute une."
+
+msgid "Bloom"
+msgstr "Diffusion lumineuse"
+
+msgid "How far the glow spreads."
+msgstr "Étendue de la lueur."
+
+msgid "Progress colour"
+msgstr "Couleur de progression"
+
+msgid "Progress bar & cover ring"
+msgstr "Barre de progression et anneau de pochette"
+
+msgid ""
+"Colour mode shares the visualizer’s palette, gradient or rainbow. Automatic "
+"keeps the original controls-based colours."
+msgstr ""
+"Mode de couleur partage la palette, le dégradé ou l’arc-en-ciel du "
+"visualiseur. Automatique conserve les couleurs initiales des commandes."
+
+msgid "Custom progress colour"
+msgstr "Couleur personnalisée de progression"
+
+msgid "Text colour"
+msgstr "Couleur du texte"
+
+msgid "Custom text colour"
+msgstr "Couleur personnalisée du texte"
+
+msgid "Adapt to light cards"
+msgstr "Adapter aux cartes claires"
+
+msgid "Dark text and icons on the Solid material."
+msgstr "Texte et icônes sombres sur le matériau Uni."
+
+msgid "Panel placement"
+msgstr "Placement dans le panneau"
+
+msgid ""
+"Automatic shows the full card when it fits and your pill or icon design "
+"otherwise. Card or Pill / icon forces one at any panel size."
+msgstr ""
+"Automatique affiche la carte complète si elle tient, sinon votre capsule ou "
+"icône. Carte ou Capsule / icône impose un affichage quelle que soit la "
+"taille du panneau."
+
+msgid "Card"
+msgstr "Carte"
+
+msgid "Pill / icon"
+msgstr "Capsule / icône"
+
+msgid "Card size"
+msgstr "Taille de la carte"
+
+msgid ""
+"Fit grows the card to fill the panel's thickness. Fixed uses the scale below."
+msgstr ""
+"Ajuster agrandit la carte pour remplir l’épaisseur du panneau. Fixe utilise "
+"l’échelle ci-dessous."
+
+msgid "Fit panel"
+msgstr "Ajuster au panneau"
+
+msgid "Fixed"
+msgstr "Fixe"
+
+msgid "Card scale"
+msgstr "Échelle de la carte"
+
+msgid "Scales the card in the panel; the panel must have room for it."
+msgstr ""
+"Redimensionne la carte dans le panneau ; celui-ci doit être assez grand."
+
+msgid ""
+"Automatic follows the panel edge. Upright uses an icon in narrow side panels."
+msgstr ""
+"Automatique suit le bord du panneau. Droit utilise une icône dans les "
+"panneaux latéraux étroits."
+
+msgid "Upright"
+msgstr "Droit"
+
+msgid "Rotate left"
+msgstr "Pivoter à gauche"
+
+msgid "Rotate right"
+msgstr "Pivoter à droite"
+
+msgid "When nothing plays"
+msgstr "En l’absence de lecture"
+
+msgid "Keep visible"
+msgstr "Garder visible"
+
+msgid ""
+"Off hides the widget until a player appears. Try the “Nothing playing” state."
+msgstr ""
+"Désactivé masque le composant jusqu’à l’apparition d’un lecteur. Essayez "
+"l’état « Aucune lecture en cours »."
+
+msgid "Friendly idle message"
+msgstr "Message convivial au repos"
+
+msgid "Ambient idle wave"
+msgstr "Onde ambiante au repos"
+
+msgid "A slow, quiet movement instead of a flat line."
+msgstr "Un mouvement lent et discret au lieu d’une ligne plate."
+
+msgid "When paused"
+msgstr "En pause"
+
+msgid "Dim the widget"
+msgstr "Assombrir le composant"
+
+msgid "Fade the visualizer"
+msgstr "Estomper le visualiseur"
+
+msgid "Interaction"
+msgstr "Interaction"
+
+msgid "Lift on hover"
+msgstr "Surélever au survol"
+
+msgid "Scroll to change volume"
+msgstr "Faire défiler pour régler le volume"
+
+msgid "Adjusts the system output volume, not the player’s own."
+msgstr "Règle le volume de sortie du système, pas celui du lecteur."
+
+msgid "Comfort & power"
+msgstr "Confort et énergie"
+
+msgid "Language"
+msgstr "Langue"
+
+msgid "Follow system font size"
+msgstr "Suivre la taille de police du système"
+
+msgid "Scale text with Appearance > Fonts. Off keeps the original sizes."
+msgstr ""
+"Adapter le texte à Apparence > Polices. Désactivé conserve les tailles "
+"initiales."
+
+msgid "Reduced motion"
+msgstr "Réduire les animations"
+
+msgid "No ripples, sweeps, spins or scrolling text; the wave still reacts."
+msgstr ""
+"Sans ondulations, balayages, rotations ni texte défilant ; l’onde reste "
+"réactive."
+
+msgid "Battery saver"
+msgstr "Économiseur de batterie"
+
+msgid "On battery: 20 Hz and no glow."
+msgstr "Sur batterie : 20 Hz et aucune lueur."
+
+msgid "Simple rendering"
+msgstr "Rendu simple"
+
+msgid "Lightweight Canvas path — also the automatic fallback if shaders fail."
+msgstr ""
+"Rendu Canvas léger, également utilisé automatiquement en cas d’échec des "
+"shaders."
+
+msgid "Position"
+msgstr "Position"
+
+msgid "place"
+msgstr "placement"
+
+msgid "Screen position"
+msgstr "Position à l’écran"
+
+msgid "Vertical position"
+msgstr "Position verticale"
+
+msgid "Monitor"
+msgstr "Écran"
+
+msgid "Layer"
+msgstr "Couche"
+
+msgid "Behind windows"
+msgstr "Derrière les fenêtres"
+
+msgid "Above windows"
+msgstr "Au-dessus des fenêtres"
+
+msgid "Pause when covered"
+msgstr "Suspendre quand le composant est recouvert"
+
+msgid "Stops drawing while a window hides the widget — saves real power."
+msgstr ""
+"Arrête le rendu lorsqu’une fenêtre masque le composant pour économiser de "
+"l’énergie."
+
+msgid "Width"
+msgstr "Largeur"
+
+msgid "360 × 104 follows the chosen layout."
+msgstr "360 × 104 suit la disposition choisie."
+
+msgid "Height"
+msgstr "Hauteur"
+
+msgid "Connection"
+msgstr "Connexion"
+
+msgid "Status"
+msgstr "État"
+
+msgid "Capture"
+msgstr "Capture"
+
+msgid "Audio input"
+msgstr "Entrée audio"
+
+msgid "Auto-detect tries PipeWire, then PulseAudio, then ALSA."
+msgstr "La détection automatique essaie PipeWire, puis PulseAudio, puis ALSA."
+
+msgid "PipeWire"
+msgstr "PipeWire"
+
+msgid "PulseAudio"
+msgstr "PulseAudio"
+
+msgid "ALSA (snd_aloop)"
+msgstr "ALSA (snd_aloop)"
+
+msgid "Capture source"
+msgstr "Source de capture"
+
+msgid ""
+"Live devices and applications. Start playback to list a stream. Explicit "
+"sources override the backend; unavailable sources never fall back."
+msgstr ""
+"Périphériques et applications actifs. Lancez la lecture pour afficher un "
+"flux. Les sources explicites remplacent le choix du moteur ; aucune autre "
+"source n’est utilisée si elles sont indisponibles."
+
+msgid "Low cutoff"
+msgstr "Fréquence de coupure basse"
+
+msgid "High cutoff"
+msgstr "Fréquence de coupure haute"
+
+msgid "Must exceed low cutoff; invalid ranges use 50–10000 Hz."
+msgstr ""
+"Doit dépasser la coupure basse ; les plages non valides sont remplacées par "
+"50–10000 Hz."
+
+msgid "Frequency spacing"
+msgstr "Espacement des fréquences"
+
+msgid "Logarithmic"
+msgstr "Logarithmique"
+
+msgid "Mel (resampled)"
+msgstr "Mel (rééchantillonné)"
+
+msgid "Bass weight"
+msgstr "Poids des basses"
+
+msgid "Treble weight"
+msgstr "Poids des aigus"
+
+msgid "Silence release"
+msgstr "Atténuation vers le silence"
+
+msgid "Time constant for fading into silence or the idle ambient wave."
+msgstr ""
+"Constante de temps de la transition vers le silence ou l’onde ambiante au "
+"repos."
+
+msgid "Detail"
+msgstr "Détail"
+
+msgid "More bars look finer, fewer look bolder."
+msgstr ""
+"Plus de barres pour un aspect plus fin, moins pour un aspect plus marqué."
+
+msgid "Sensitivity"
+msgstr "Sensibilité"
+
+msgid "Raise it if quiet music barely moves the wave."
+msgstr "Augmentez-la si une musique douce fait à peine bouger l’onde."
+
+msgid "Smoothing"
+msgstr "Lissage"
+
+msgid "Higher glides gently; lower snaps to every beat."
+msgstr ""
+"Une valeur élevée donne un mouvement doux ; une valeur basse suit chaque "
+"battement."
+
+msgid "Frame rate"
+msgstr "Fréquence d’affichage"
+
+msgid "Lower saves power. 30 Hz already looks smooth."
+msgstr ""
+"Une valeur plus basse économise l’énergie. 30 Hz offre déjà un rendu fluide."
+
+msgid "About the project"
+msgstr "À propos du projet"
+
+msgid "Muddyblack GitHub OpenDesktop KDE Store downloads stars support project"
+msgstr ""
+"Muddyblack GitHub OpenDesktop KDE Store téléchargements étoiles soutien "
+"projet"
+
+msgid ""
+"Glass and Liquid blur the desktop wallpaper when it is available, with tint "
+"and highlights above it. Text and artwork stay sharp. Wallpaper blur "
+"requires GPU rendering; panels and hosts without a wallpaper source keep the "
+"translucent tint."
+msgstr ""
+"Verre et Liquide floutent le fond d’écran lorsqu’il est disponible, avec une "
+"teinte et des reflets par-dessus. Le texte et la pochette restent nets. Le "
+"flou du fond d’écran nécessite un rendu GPU ; les panneaux et les hôtes sans "
+"source de fond d’écran conservent la teinte translucide."
+
+msgid ""
+"Glass and Liquid are drawn by the widget. Add a blur layer rule for the "
+"audio-wave-visualizer namespace to blur behind them — on a Bottom-layer "
+"surface this re-blurs the whole monitor on every frame, so keep the frame "
+"rate low."
+msgstr ""
+"Verre et Liquide sont dessinés par le composant. Ajoutez une règle de flou "
+"de couche pour l’espace de noms audio-wave-visualizer afin de flouter "
+"l’arrière-plan. Sur une surface de couche inférieure, cela recalcule le flou "
+"de tout l’écran à chaque image ; gardez donc une fréquence d’affichage basse."
+
+msgid ""
+"In a panel the widget shows this pill; clicking it opens the full card as a "
+"popup."
+msgstr ""
+"Dans un panneau, le composant affiche cette capsule ; un clic ouvre la carte "
+"complète dans une fenêtre contextuelle."
+
+msgid ""
+"Add hyprland/PanelPill.qml to a Quickshell bar, or use run.sh --waybar for a "
+"Waybar custom module."
+msgstr ""
+"Ajoutez hyprland/PanelPill.qml à une barre Quickshell ou utilisez run.sh --"
+"waybar pour un module personnalisé Waybar."
+
+msgid ""
+"Plasma places desktop widgets by dragging them in edit mode, and panel "
+"widgets inside the panel, so there is nothing to set here."
+msgstr ""
+"Plasma place les composants du bureau par glisser-déposer en mode édition et "
+"ceux du panneau à l’intérieur de celui-ci ; il n’y a donc rien à régler ici."
+
+msgid "Where the desktop widget sits on your screens."
+msgstr "Emplacement du composant de bureau sur vos écrans."
+
+msgid "%1 s"
+msgstr "%1 s"
+
+msgid "Desktop"
+msgstr "Bureau"
+
+msgid "Panel"
+msgstr "Panneau"
+
+msgid "Adaptive colour"
+msgstr "Couleur adaptative"
+
+msgid "Exactly today’s defaults — nothing changes for current users."
+msgstr ""
+"Exactement les valeurs par défaut actuelles ; rien ne change pour les "
+"utilisateurs existants."
+
+msgid "Glass Classic"
+msgstr "Verre classique"
+
+msgid "The layout people know, on a frosted card with a soft lift."
+msgstr "La disposition familière, sur une carte dépolie légèrement surélevée."
+
+msgid "Liquid Glass"
+msgstr "Verre liquide"
+
+msgid ""
+"Clear glass, a light rim that follows your pointer, colour from the cover."
+msgstr ""
+"Du verre transparent, un bord lumineux qui suit le pointeur et les couleurs "
+"de la pochette."
+
+msgid ""
+"The title set big, the music as a soft texture behind it, and a large clock."
+msgstr ""
+"Un grand titre, la musique en texture douce derrière lui et un grand "
+"compteur."
+
+msgid "Poster · Hanging bars"
+msgstr "Affiche · Barres suspendues"
+
+msgid "A centred two-line title with bars hanging from the top edge behind it."
+msgstr ""
+"Un titre centré sur deux lignes, devant des barres suspendues au bord "
+"supérieur."
+
+msgid "Stalactites"
+msgstr "Stalactites"
+
+msgid ""
+"Peak bars hang from the top edge and drip toward the title. Ice palette."
+msgstr ""
+"Les barres de crête pendent du bord supérieur et descendent vers le titre. "
+"Palette Glace."
+
+msgid ""
+"The cover is the centre; bars circle it, rotate slowly, and the cover "
+"breathes with the bass."
+msgstr ""
+"La pochette est au centre ; les barres l’entourent et tournent lentement, "
+"tandis qu’elle respire au rythme des basses."
+
+msgid "Halo"
+msgstr "Halo"
+
+msgid ""
+"A spinning record inside a soft ribbon halo, with a progress ring. Iris "
+"palette."
+msgstr ""
+"Un disque tournant dans un doux halo de ruban, avec un anneau de "
+"progression. Palette Iris."
+
+msgid "Sunburst"
+msgstr "Éclat solaire"
+
+msgid "Sparks fly off the cover on every beat. Ember palette on a dark tint."
+msgstr ""
+"Des étincelles jaillissent de la pochette à chaque battement. Palette Braise "
+"sur une teinte sombre."
+
+msgid "Dot Halo"
+msgstr "Halo de points"
+
+msgid ""
+"A dotted neon ring spikes outward on every beat. Swap the custom colour for "
+"any glow."
+msgstr ""
+"Un anneau néon en pointillés jaillit vers l’extérieur à chaque battement. "
+"Changez la couleur personnalisée pour varier la lueur."
+
+msgid "Orbit Icon"
+msgstr "Icône orbitale"
+
+msgid "A tiny radial ring around the cover, living in the bar."
+msgstr "Un petit anneau radial autour de la pochette, dans la barre."
+
+msgid "Quiet Glass"
+msgstr "Verre paisible"
+
+msgid "Title leads, calm mirror bars, one soft accent, round play button."
+msgstr ""
+"Le titre au premier plan, des barres en miroir calmes, une accentuation "
+"douce et un bouton de lecture rond."
+
+msgid "Panel Pill"
+msgstr "Capsule du panneau"
+
+msgid ""
+"Text pill for Plasma panels with a mini visualizer that follows the music."
+msgstr ""
+"Une capsule textuelle pour les panneaux Plasma avec un mini-visualiseur qui "
+"suit la musique."
+
+msgid "Bar Icon"
+msgstr "Icône de barre"
+
+msgid "Just the cover with a progress ring, for a Hyprland bar."
+msgstr ""
+"Juste la pochette avec un anneau de progression, pour une barre Hyprland."
+
+msgid "Ribbon Pill"
+msgstr "Capsule de ruban"
+
+msgid "A glowing silk ribbon living in the panel, Aurora palette."
+msgstr "Un ruban de soie lumineux dans le panneau, palette Aurore."
+
+msgid ""
+"Bass thickens it, mids bend it, highs light the filaments. Ember palette."
+msgstr ""
+"Les basses l’épaississent, les médiums le courbent, les aigus illuminent ses "
+"filaments. Palette Braise."
+
+msgid "Cover Art"
+msgstr "Pochette d’album"
+
+msgid "Album art fills the card; the sharp thumbnail stays on top."
+msgstr ""
+"La pochette remplit la carte ; la miniature nette reste au premier plan."
+
+msgid "Album Atmosphere"
+msgstr "Atmosphère de l’album"
+
+msgid "Cover colours bleed into the card and drive the accent."
+msgstr ""
+"Les couleurs de la pochette se diffusent dans la carte et définissent "
+"l’accentuation."
+
+msgid ""
+"Room to read: surrounding lines, a clear current line, and automatic "
+"scrolling. Online lyrics from LRCLIB."
+msgstr ""
+"De l’espace pour lire : lignes voisines, ligne actuelle bien visible et "
+"défilement automatique. Paroles en ligne de LRCLIB."
+
+msgid "Lyrics Card"
+msgstr "Carte de paroles"
+
+msgid "Synced lyric line under the artist, Ribbon wave, cover palette."
+msgstr ""
+"Une ligne de paroles synchronisées sous l’artiste, une onde en ruban et la "
+"palette de la pochette."
+
+msgid "CD Player"
+msgstr "Lecteur CD"
+
+msgid "Spinning disc art, squiggle seek bar, flips over for track details."
+msgstr ""
+"Une pochette en disque tournant, une barre de progression ondulée et les "
+"détails du morceau au verso."
+
+msgid "Soft Solid"
+msgstr "Uni doux"
+
+msgid "Warm mineral surface and crisp dark text. No blur needed."
+msgstr ""
+"Une surface minérale chaleureuse et un texte sombre bien net. Aucun flou "
+"nécessaire."
+
+msgid "Neon Night"
+msgstr "Nuit néon"
+
+msgid "Dark tint, mirror bars and the glowing pulse bar."
+msgstr ""
+"Une teinte sombre, des barres en miroir et une barre de progression à "
+"pulsation lumineuse."
+
+msgid "Arcade"
+msgstr "Arcade"
+
+msgid "LED meter with hot peaks, pixel-sharp art, time-only readout."
+msgstr ""
+"Un vu-mètre LED aux crêtes vives, une pochette aux pixels nets et le temps "
+"uniquement."
+
+msgid "A record that spins while playing, sparkles, colour from the cover."
+msgstr ""
+"Un disque qui tourne pendant la lecture, des étincelles et les couleurs de "
+"la pochette."
+
+msgid "Hero Wave"
+msgstr "Onde principale"
+
+msgid "The visualizer takes the stage; track info tucks underneath."
+msgstr ""
+"Le visualiseur occupe la scène ; les informations du morceau se glissent en "
+"dessous."
+
+msgid "Slim Strip"
+msgstr "Bande fine"
+
+msgid "A wide, low bar for the bottom of the screen."
+msgstr "Une barre large et basse pour le bas de l’écran."
+
+msgid "Mirrored Minimal"
+msgstr "Minimal en miroir"
+
+msgid "Art on the right, dotted progress, no card, controls on hover."
+msgstr ""
+"La pochette à droite, une progression en pointillés, aucune carte et les "
+"commandes au survol."
+
+msgid ""
+"Transparent Neon Terrain for an audio-reactive desktop. Choose any effect in "
+"Visualizer."
+msgstr ""
+"Un relief néon transparent pour un bureau réactif au son. Choisissez "
+"n’importe quel effet dans Visualiseur."
+
+msgid "Compact"
+msgstr "Compact"
+
+msgid "No art column — visualizer, progress and title only."
+msgstr ""
+"Sans colonne de pochette : uniquement le visualiseur, la progression et le "
+"titre."
+
+msgid "soft"
+msgstr "doux"
+
+msgid "Python 3"
+msgstr "Python 3"
+
+msgid "busctl"
+msgstr "busctl"
+
+msgid ""
+"On NixOS, add pkgs.python3 and pkgs.systemd to environment.systemPackages, "
+"rebuild, then sign out and in."
+msgstr ""
+"Sur NixOS, ajoutez pkgs.python3 et pkgs.systemd à "
+"environment.systemPackages, reconstruisez la configuration, puis déconnectez-"
+"vous et reconnectez-vous."
+
+msgid ""
+"Install the missing tools with your distribution’s package manager, then "
+"restart Plasma."
+msgstr ""
+"Installez les outils manquants avec le gestionnaire de paquets de votre "
+"distribution, puis redémarrez Plasma."
+
+msgid "%1 and %2"
+msgstr "%1 et %2"
+
+msgid "Browser site names and media details need %1. %2"
+msgstr ""
+"Les noms des sites du navigateur et les détails des médias nécessitent %1. %2"
+
+msgid "Default output monitor"
+msgstr "Moniteur de la sortie par défaut"
+
+msgid "Unavailable: %1"
+msgstr "Indisponible : %1"
+
+msgid "First available display"
+msgstr "Premier écran disponible"
+
+msgid "Every monitor"
+msgstr "Tous les écrans"
+
+msgid "Preview wallpaper blur"
+msgstr "Aperçu du flou du fond d’écran"
+
+msgid ""
+"Adjusts wallpaper blur in this preview. Actual popup blur strength is set in "
+"KDE System Settings → Desktop Effects → Blur."
+msgstr ""
+"Règle le flou du fond d’écran dans cet aperçu. L’intensité réelle du flou de "
+"la fenêtre contextuelle se règle dans Configuration du système de KDE → "
+"Effets de bureau → Flou."
+
+msgid "Blur behind card"
+msgstr "Flou derrière la carte"
+
+msgid ""
+"Blur application windows behind the rounded card. Requires KWin’s Blur "
+"effect."
+msgstr ""
+"Flouter les fenêtres d’application derrière la carte arrondie. Nécessite "
+"l’effet Flou de KWin."
+
+msgid "Click action"
+msgstr "Action au clic"
+
+msgid "Search settings…"
+msgstr "Rechercher dans les paramètres…"
+
+msgid "Discard"
+msgstr "Abandonner"
+
+msgid "Discard unapplied changes"
+msgstr "Abandonner les modifications non appliquées"
+
+msgid ""
+"Restore every setting to its default. Apply to keep it; Discard undoes it. "
+"Saved presets are kept."
+msgstr ""
+"Rétablir tous les paramètres par défaut. Appliquer les conserve ; Abandonner "
+"annule. Les préréglages enregistrés sont conservés."
+
+msgid "Surprise me"
+msgstr "Surprenez-moi"
+
+msgid "No settings match that search."
+msgstr "Aucun paramètre ne correspond à cette recherche."
+
+msgid "No settings are available for this design."
+msgstr "Aucun paramètre n’est disponible pour cette apparence."
+
+msgid "Pine lake"
+msgstr "Lac aux pins"
+
+msgid "Afterglow"
+msgstr "Lueur du couchant"
+
+msgid "Midnight marina"
+msgstr "Port à minuit"
+
+msgid "Aurora sound"
+msgstr "Détroit de l’aurore"
+
+msgid "Moss & mist"
+msgstr "Mousse et brume"
+
+msgid "Silver tide"
+msgstr "Marée d’argent"
+
+msgid "Presets"
+msgstr "Préréglages"
+
+msgid "Artwork"
+msgstr "Pochette"
+
+msgid "Track info"
+msgstr "Infos du morceau"
+
+msgid "Lyrics"
+msgstr "Paroles"
+
+msgid "Colours"
+msgstr "Couleurs"
+
+msgid "Behaviour"
+msgstr "Comportement"
+
+msgid "Audio"
+msgstr "Audio"
+
+msgid "Info"
+msgstr "Infos"
+
+msgid "On Plasma"
+msgstr "Sur Plasma"
+
+msgid "On Hyprland"
+msgstr "Sur Hyprland"
+
+msgid "No saved looks yet."
+msgstr "Aucune apparence enregistrée pour le moment."
+
+msgid "My look"
+msgstr "Mon apparence"
+
+msgid "Save"
+msgstr "Enregistrer"
+
+msgid "Copy as JSON"
+msgstr "Copier en JSON"
+
+msgid "Copied."
+msgstr "Copié."
+
+msgid "Import JSON"
+msgstr "Importer du JSON"
+
+msgid "Import"
+msgstr "Importer"
+
+msgid "That is not a valid look."
+msgstr "Cette apparence n’est pas valide."
+
+msgid ""
+"Saved looks and favorites are shared by all widgets on this device and saved "
+"immediately. To share a look with someone else, select it, then Copy as "
+"JSON. Custom QML files are not included."
+msgstr ""
+"Les apparences enregistrées et les favoris sont partagés entre tous les "
+"composants de cet appareil et enregistrés immédiatement. Pour partager une "
+"apparence avec quelqu’un, sélectionnez-la puis choisissez Copier en JSON. "
+"Les fichiers QML personnalisés ne sont pas inclus."
+
+msgid "How to contribute a preset ↗"
+msgstr "Comment proposer un préréglage ↗"
+
+msgid "System default"
+msgstr "Valeur par défaut du système"
+
+msgid "Show"
+msgstr "Afficher"
+
+msgid "Move / resize…"
+msgstr "Déplacer / redimensionner…"
+
+msgid "Lock in place"
+msgstr "Verrouiller la position"
+
+msgid "Audio Visualizer — drag, resize, then close (×) or Enter to lock"
+msgstr ""
+"Visualiseur audio — déplacez, redimensionnez, puis fermez (×) ou appuyez sur "
+"Entrée pour verrouiller"
+
+msgid "Reset position"
+msgstr "Réinitialiser la position"
+
+msgid "Settings…"
+msgstr "Paramètres…"
+
+msgid "Quit"
+msgstr "Quitter"
+
+msgid "Could not save settings to %1: %2"
+msgstr "Impossible d’enregistrer les paramètres dans %1 : %2"
+
+msgid ""
+"Reactive audio visualizer with 16 visualizer styles, 28 built-in presets, a "
+"live settings studio, album artwork with glass/liquid card styling, synced "
+"lyrics, and MPRIS playback controls."
+msgstr ""
+"Visualiseur audio réactif avec 16 styles de visualisation, 28 préréglages "
+"intégrés, un studio de réglages en direct, des pochettes d’album sur des "
+"cartes de style verre ou liquide, des paroles synchronisées et des commandes "
+"de lecture MPRIS."
