@@ -60,7 +60,7 @@ def literals(pattern, text):
 
 
 sys.path.insert(0, str(TRANSLATE))
-import catalog as generated
+import catalog as generated  # noqa: E402
 
 catalog = read_po(TRANSLATE / "tr.po")
 failures = []
