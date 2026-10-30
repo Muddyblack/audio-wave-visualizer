@@ -75,7 +75,7 @@ Waveform {
     Text {
         anchors.centerIn: parent
         visible: [19, 20].includes(root.visualizerType) && !root.stereoSamples.length && !root.backendFailed
-        text: I18n.i18n(root.visualizer?.stereoStatus || "Stereo PCM unavailable")
+        text: I18n.i18n(root.visualizer?.stereoStatus || I18n.noop("Stereo PCM unavailable"))
         color: root.textColor
         font.pixelSize: SystemText.px(10)
         width: parent.width

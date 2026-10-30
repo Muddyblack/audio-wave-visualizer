@@ -111,10 +111,10 @@ Column {
             compact: true
             text: I18n.i18n("Copy as JSON")
             onClicked: {
-                clipboard.text = Schema.exportPreset(nameInput.text.trim() || "My look", saved.studio.draft, saved.studio.defaults);
+                clipboard.text = Schema.exportPreset(nameInput.text.trim() || I18n.i18n("My look"), saved.studio.draft, saved.studio.defaults);
                 clipboard.selectAll();
                 clipboard.copy();
-                saved.message = "Copied.";
+                saved.message = I18n.i18n("Copied.");
             }
         }
         StudioButton {
@@ -156,7 +156,7 @@ Column {
                     saved.importing = false;
                     saved.message = "";
                 } catch (error) {
-                    saved.message = error.message || "That is not a valid look.";
+                    saved.message = error.template ? I18n.i18n(error.template, error.arg) : I18n.i18n(error.message || I18n.noop("That is not a valid look."));
                 }
             }
         }

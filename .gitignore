@@ -3,8 +3,6 @@
 # Compiled catalogs; built from translate/*.po by translate/build.sh.
 package/contents/locale/
 package/contents/translate/
-# Extracted from the sources by translate/Messages.sh; tr.po and friends are the source.
-translate/template.pot
 # Generated browser assets; originals live in package/contents/ui/studio.
 docs/website/assets/studio/
 notes.md

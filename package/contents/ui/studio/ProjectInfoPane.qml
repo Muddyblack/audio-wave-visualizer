@@ -349,7 +349,7 @@ Column {
                             font.weight: Font.DemiBold
                         }
                         Text {
-                            text: contributorCard.modelData.commits === 1 ? I18n.i18n("1 commit") : I18n.i18n("%1 commits", contributorCard.modelData.commits)
+                            text: I18n.i18np("%1 commit", "%1 commits", contributorCard.modelData.commits)
                             color: Theme.muted
                             font.family: Theme.fontFamily
                             font.pixelSize: 10

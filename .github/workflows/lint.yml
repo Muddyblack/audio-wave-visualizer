@@ -33,7 +33,10 @@ jobs:
       - name: i18n catalogs complete
         run: nix develop --command ./translate/check.sh
 
+      - name: i18n catalogs compile
+        run: nix develop --command ./translate/build.sh
+
       - name: i18n catalogs in sync with sources
         run: |
           nix develop --command ./translate/Messages.sh
-          git diff --exit-code -- 'translate/*.po'
+          git diff --exit-code -- translate/

@@ -5,8 +5,8 @@
 #
 # The widget ships its own translations inside the .plasmoid archive, in
 # package/contents/locale/<lang>/LC_MESSAGES/plasma_applet_<Id>.mo. This script
-# only updates the sources of truth, translate/*.po, through template.pot. The
-# template, and the .mo files build.sh compiles, are git-ignored build output.
+# only produces the sources of truth: translate/template.pot and translate/*.po.
+# build.sh compiles the .mo files; they are git-ignored build output.
 #
 # Requires gettext (xgettext, msgmerge).
 set -euo pipefail
@@ -20,15 +20,16 @@ dir="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 root="$(dirname "$dir")"
 pkg="$root/package"
 
-version="$(grep -oE '"Version"[[:space:]]*:[[:space:]]*"[^"]+"' "$pkg/metadata.json" | head -1 | sed -E 's/.*"([^"]+)"$/\1/')"
 bug_url="$(grep -oE '"Website"[[:space:]]*:[[:space:]]*"[^"]+"' "$pkg/metadata.json" | head -1 | sed -E 's/.*"([^"]+)"$/\1/')"
 
 pot="$dir/template.pot"
 
 # QML is not a language xgettext knows, but every translatable call sits inside
-# a JavaScript expression, so the JavaScript backend finds them all. N_ (JS) and
-# noop (QML, where a method cannot start with a capital) mark
-# text stored as data and translated when it is drawn.
+# a JavaScript expression, so the JavaScript backend finds them all. noop marks
+# text stored as data and translated when it is drawn. Windows's tray words pass
+# through QML too (windows/qml/Overlay.qml), so Python needs no pass of its own.
+#
+# The template carries no version, so a release bump leaves it unchanged.
 #
 # Paths are relative to the repo root so template.pot does not embed the build
 # machine's home directory (which would make every diff machine-specific).
@@ -46,9 +47,9 @@ xgettext \
     --language=JavaScript \
     --add-comments=TRANSLATORS \
     --add-location=file \
-    --keyword=i18n --keyword=N_ --keyword=noop \
+    --keyword=i18n --keyword=i18nc:1c,2 --keyword=i18np:1,2 --keyword=i18ncp:1c,2,3 \
+    --keyword=noop \
     --package-name="Plasma Audio Visualizer" \
-    --package-version="$version" \
     --msgid-bugs-address="$bug_url/issues" \
     --output="$pot" \
     "${sources[@]}"

@@ -14,7 +14,7 @@ Column {
     property bool buttons: false
     readonly property string selectionKey: buttons ? "customButtons" : progressBar ? "customProgressBar" : "customVisualizer"
     readonly property string libraryKey: buttons ? "customButtonStyles" : progressBar ? "customProgressBars" : "customVisualizers"
-    readonly property string kindLabel: buttons ? "Custom button styles" : progressBar ? "Custom progress bars" : "Custom visualizers"
+    readonly property string kindLabel: buttons ? I18n.noop("Custom button styles") : progressBar ? I18n.noop("Custom progress bars") : I18n.noop("Custom visualizers")
     readonly property string builtInLabel: buttons ? I18n.noop("Built-in buttons") : progressBar ? I18n.noop("Built-in progress bar") : I18n.noop("Built-in visualizer")
     readonly property var library: CustomStyles.readLibrary(studio.draft[libraryKey] ?? "")
     readonly property string selected: studio.draft[selectionKey] ?? ""
@@ -26,7 +26,7 @@ Column {
         expanded = true;
         const source = String(url);
         if (!CustomStyles.validUrl(source)) {
-            message = "Choose a local .qml file.";
+            message = I18n.i18n("Choose a local .qml file.");
             return;
         }
         const entries = library.slice();

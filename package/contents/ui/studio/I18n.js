@@ -190,7 +190,9 @@ function i18ncp(catalog, ctx, singular, plural, n) {
     return translatePlural(catalog, ctx, singular, plural, n, rest(arguments, 5));
 }
 
-// Marks text stored as data for Messages.sh; it is translated when drawn.
-function N_(text) {
+// Marks text stored as data for Messages.sh; it is translated when drawn. Not
+// N_, the gettext habit, because text/I18n.qml must offer the same name and a
+// QML method cannot start with a capital.
+function noop(text) {
     return text;
 }

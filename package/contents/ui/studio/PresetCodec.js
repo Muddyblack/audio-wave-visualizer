@@ -1,5 +1,8 @@
 // Portable look format used by the browser and QML. No desktop placement or
 // nested preset library is transferred. Legacy {name, settings} and bare maps work.
+// Marks these errors for Messages.sh. The studio translates them; the browser,
+// which loads this file on its own, shows the English.
+function noop(text) { return text; }
 var excluded = ['appleTrackInfo', 'onlineTrackInfo', 'panelAppearance', 'popupAppearance', 'customProgressBar', 'customProgressBars', 'customVisualizer', 'customVisualizers', 'customButtons', 'customButtonStyles', 'userPresets', 'favoritePresets', 'autoDailyLook', 'dailyLookApplied', 'monitor', 'verticalPosition', 'desktopLayer',
                 'pauseWhenCovered', 'hAnchor', 'widgetWidth', 'widgetHeight', 'dockMode', 'dockMargin', 'barHeight', 'widthExpansion', 'dockPosition', 'panelDisplayMode', 'panelOrientation', 'panelCardSizing', 'panelCardScale'];
 function object(value) {
@@ -17,7 +20,7 @@ function canonical(settings) {
     }
     if (out.detailFields !== undefined) {
         if (!Array.isArray(out.detailFields) && typeof out.detailFields !== 'string')
-            throw new Error('Track details must be a list.');
+            throw new Error(noop('Track details must be a list.'));
         out.detailFields = (Array.isArray(out.detailFields) ? out.detailFields : out.detailFields.split(','))
             .map(function (v) { return String(v).trim(); }).filter(Boolean);
     }
@@ -32,7 +35,7 @@ function clean(settings, known) {
         if (key === 'detailFields') out[key] = value;
         else if (typeof value === typeof known[key] && !object(value) && !Array.isArray(value)
                  && (typeof value !== 'number' || isFinite(value))) out[key] = value;
-        else throw new Error('Invalid value for ' + key + '.');
+        else throw Object.assign(new Error('Invalid value for ' + key + '.'), {template: noop('Invalid value for %1.'), arg: key});
     });
     return out;
 }
@@ -63,11 +66,11 @@ function encode(name, settings, known, browserState) {
 }
 function decode(text, known, forBrowser) {
     var data = JSON.parse(text);
-    if (!object(data)) throw new Error('Paste a look object.');
+    if (!object(data)) throw new Error(noop('Paste a look object.'));
     if (data.format !== undefined && (data.format !== 'plasma-audio-visualizer-look' || data.version !== 1))
-        throw new Error('Unsupported look format.');
+        throw new Error(noop('Unsupported look format.'));
     var settings = data.settings === undefined ? data : data.settings;
-    if (!object(settings)) throw new Error('Settings must be an object.');
+    if (!object(settings)) throw new Error(noop('Settings must be an object.'));
     var result = clean(settings, known);
     return {name: typeof data.name === 'string' ? data.name : 'Imported look',
             settings: forBrowser ? browser(result) : result};

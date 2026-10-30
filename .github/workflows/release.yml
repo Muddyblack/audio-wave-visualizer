@@ -82,6 +82,11 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "artifact=${NAME}-${VERSION}.plasmoid" >> "$GITHUB_OUTPUT"
 
+      - name: Check the archive carries translations
+        run: |
+          unzip -l "${{ steps.info.outputs.artifact }}" | grep -qE 'contents/locale/[^/]+/LC_MESSAGES/[^ ]+\.mo$'
+          unzip -l "${{ steps.info.outputs.artifact }}" | grep -qE 'contents/translate/[^ ]+\.po$'
+
       - name: Generate release notes
         id: notes
         run: |

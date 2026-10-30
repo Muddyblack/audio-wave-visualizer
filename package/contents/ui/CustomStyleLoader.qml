@@ -1,5 +1,6 @@
 import QtQuick
 import "../code/CustomStyles.js" as CustomStyles
+import "text"
 
 // Trusted extensions execute in the host QML engine. The small, versioned
 // interface is a compatibility boundary, not a security boundary.
@@ -24,7 +25,7 @@ Item {
         if (!sourceUrl)
             return;
         if (!CustomStyles.validUrl(sourceUrl)) {
-            error = "Choose a local .qml file.";
+            error = I18n.i18n("Choose a local .qml file.");
             return;
         }
         try {
@@ -32,7 +33,7 @@ Item {
             properties[interfaceName] = interfaceObject;
             loader.setSource(sourceUrl, properties);
         } catch (exception) {
-            error = "Could not initialize this style: " + String(exception) + ". Using the built-in style.";
+            error = I18n.i18n("Could not initialize this style: %1. Using the built-in style.", String(exception));
             loader.source = "";
         }
     }
@@ -54,13 +55,13 @@ Item {
         visible: root.ready && root.contentVisible
         onStatusChanged: {
             if (status === Loader.Error)
-                root.error = "Could not load this QML style. Check that the file exists, its imports are installed, and it declares required property var " + root.interfaceName + ". See the host log for QML errors. Using the built-in style.";
+                root.error = I18n.i18n("Could not load this QML style. Check that the file exists, its imports are installed, and it declares required property var %1. See the host log for QML errors. Using the built-in style.", root.interfaceName);
         }
         onLoaded: {
             // Loaded extensions deliberately have a dynamic, versioned interface.
             // qmllint disable missing-property
             if (!(item instanceof Item) || item.apiVersion !== 1 || item[root.interfaceName] !== root.interfaceObject) {
-                root.error = "This style must have an Item root, apiVersion: 1, and required property var " + root.interfaceName + ". Using the built-in style.";
+                root.error = I18n.i18n("This style must have an Item root, apiVersion: 1, and required property var %1. Using the built-in style.", root.interfaceName);
                 source = "";
             } else {
                 root.error = "";

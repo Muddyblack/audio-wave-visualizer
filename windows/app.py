@@ -16,6 +16,7 @@ Run it:
   python windows/app.py --selftest-audio   synthetic capture and backend imports
 """
 
+import json
 import os
 import sys
 import time
@@ -78,12 +79,23 @@ class SettingsStore(QObject):
     """Saves what the settings window applies; Overlay.qml calls saveSettings."""
 
     changed = Signal()
+    labelsChanged = Signal()
 
     def __init__(self):
         super().__init__()
         self._error = ""
+        self._labels = {}
 
     settingsError = Property(str, lambda self: self._error, notify=changed)
+
+    @Slot(str)
+    def setLabels(self, text: str) -> None:
+        """The tray's words, translated on the QML side, again on a language change."""
+        self._labels = json.loads(text)
+        self.labelsChanged.emit()
+
+    def label(self, key: str, english: str) -> str:
+        return self._labels.get(key) or english
 
     @Slot(result="QVariantList")
     def catalogLanguages(self) -> list:
@@ -106,7 +118,11 @@ class SettingsStore(QObject):
             os.replace(tmp, path)
             self._error = ""
         except OSError as error:
-            self._error = f"Could not save settings to {path}: {error.strerror}"
+            self._error = (
+                self.label("saveFailed", "Could not save settings to %1: %2")
+                .replace("%1", str(path))
+                .replace("%2", str(error.strerror))
+            )
         self.changed.emit()
 
 
@@ -317,9 +333,7 @@ class Placement:
         geometry = self._reachable(self.view.geometry())
         self.view.hide()
         self.view.setFlags(ADJUST_FLAGS)
-        self.view.setTitle(
-            "Audio Visualizer — drag, resize, then close (×) or Enter to lock"
-        )
+        self.view.setTitle(self.adjusting_title)
         # Tinted, so the window's extent is visible even with silent bars.
         self.view.setColor(QColor(20, 20, 30, 140))
         self.view.setGeometry(geometry)
@@ -505,21 +519,35 @@ def main(argv: list[str]) -> int:
     tray.setToolTip("Audio Visualizer")
 
     menu = QMenu()
-    toggle_action = menu.addAction("Hide")
+    toggle_action = menu.addAction("")
     toggle_action.triggered.connect(placement.toggle_visible)
-    adjust_action = menu.addAction("Move / resize…")
+    adjust_action = menu.addAction("")
     adjust_action.triggered.connect(
         lambda: placement.pin() if placement.adjusting else placement.adjust()
     )
 
     def update_menu() -> None:
-        toggle_action.setText("Hide" if view.isVisible() else "Show")
+        toggle_action.setText(
+            store.label("hide", "Hide")
+            if view.isVisible()
+            else store.label("show", "Show")
+        )
         adjust_action.setText(
-            "Lock in place" if placement.adjusting else "Move / resize…"
+            store.label("lock", "Lock in place")
+            if placement.adjusting
+            else store.label("adjust", "Move / resize…")
+        )
+        reset_action.setText(store.label("reset", "Reset position"))
+        settings_action.setText(store.label("settings", "Settings…"))
+        quit_action.setText(store.label("quit", "Quit"))
+        placement.adjusting_title = store.label(
+            "adjusting",
+            "Audio Visualizer — drag, resize, then close (×) or Enter to lock",
         )
 
     placement.changed = update_menu
     menu.aboutToShow.connect(update_menu)
+    store.labelsChanged.connect(update_menu)
     # Left-clicking the tray icon toggles, so a hidden overlay is one click
     # away rather than buried in a menu.
     tray.activated.connect(
@@ -529,13 +557,14 @@ def main(argv: list[str]) -> int:
             else None
         )
     )
-    reset_action = menu.addAction("Reset position")
+    reset_action = menu.addAction("")
     reset_action.triggered.connect(placement.reset)
-    settings_action = menu.addAction("Settings…")
+    settings_action = menu.addAction("")
     settings_action.triggered.connect(lambda: root.setProperty("settingsOpen", True))
     menu.addSeparator()
-    quit_action = menu.addAction("Quit")
+    quit_action = menu.addAction("")
     quit_action.triggered.connect(app.quit)
+    update_menu()
     tray.setContextMenu(menu)
     tray.show()
     # The same menu on the overlay itself, like a widget's right-click menu on

@@ -4,7 +4,7 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: Plasma Audio Visualizer 3.1.7\n"
+"Project-Id-Version: Plasma Audio Visualizer\n"
 "Report-Msgid-Bugs-To: https://github.com/Muddyblack/audio-wave-visualizer/"
 "issues\n"
 "Language-Team: Turkish <https://tr.kde.org/localization/>\n"
@@ -13,6 +13,14 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: hyprland/AudioVisualizerShell.qml
+msgid "Cannot read settings: %1"
+msgstr "Ayarlar okunamadı: %1"
+
+#: hyprland/AudioVisualizerShell.qml
+msgid "Could not save settings to %1"
+msgstr "Ayarlar %1 konumuna kaydedilemedi"
 
 #: hyprland/AudioVisualizerShell.qml windows/qml/Overlay.qml
 msgid "Audio Visualizer Settings"
@@ -59,6 +67,33 @@ msgstr "Kapak görselini kapat"
 #: package/contents/ui/ChapterModel.qml
 msgid "Chapter %1"
 msgstr "Bölüm %1"
+
+#: package/contents/ui/CustomStyleLoader.qml
+#: package/contents/ui/studio/CustomStylePicker.qml
+msgid "Choose a local .qml file."
+msgstr "Yerel bir .qml dosyası seçin."
+
+#: package/contents/ui/CustomStyleLoader.qml
+msgid "Could not initialize this style: %1. Using the built-in style."
+msgstr "Bu stil başlatılamadı: %1. Yerleşik stil kullanılıyor."
+
+#: package/contents/ui/CustomStyleLoader.qml
+msgid ""
+"Could not load this QML style. Check that the file exists, its imports are "
+"installed, and it declares required property var %1. See the host log for "
+"QML errors. Using the built-in style."
+msgstr ""
+"Bu QML stili yüklenemedi. Dosyanın var olduğunu, içe aktarımlarının kurulu "
+"olduğunu ve required property var %1 bildirdiğini kontrol edin. QML hataları "
+"için ana uygulama günlüğüne bakın. Yerleşik stil kullanılıyor."
+
+#: package/contents/ui/CustomStyleLoader.qml
+msgid ""
+"This style must have an Item root, apiVersion: 1, and required property var "
+"%1. Using the built-in style."
+msgstr ""
+"Bu stilin kökü Item olmalı; apiVersion: 1 ve required property var %1 "
+"içermelidir. Yerleşik stil kullanılıyor."
 
 #: package/contents/ui/PlayQueue.qml
 msgid "Up Next"
@@ -135,6 +170,10 @@ msgstr "A–B döngüsünü temizle"
 #: package/contents/ui/StereoCapture.qml
 msgid "Waiting for stereo output"
 msgstr "Stereo çıkış bekleniyor"
+
+#: package/contents/ui/StereoCapture.qml
+msgid "Stereo capture unavailable"
+msgstr "Stereo yakalama kullanılamıyor"
 
 #: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
 msgid "Album artist"
@@ -416,16 +455,22 @@ msgid "No other widgets found"
 msgstr "Başka widget bulunamadı"
 
 #: package/contents/ui/configStudio.qml
-msgid "Copied to 1 other widget"
-msgstr "1 başka widget'a kopyalandı"
-
-#: package/contents/ui/configStudio.qml
-msgid "Copied to %1 other widgets"
-msgstr "%1 başka widget'a kopyalandı"
+msgid "Copied to %1 other widget"
+msgid_plural "Copied to %1 other widgets"
+msgstr[0] "%1 başka widget'a kopyalandı"
+msgstr[1] "%1 başka widget'a kopyalandı"
 
 #: package/contents/ui/configStudio.qml
 msgid "Could not reach Plasma"
 msgstr "Plasma'ya ulaşılamadı"
+
+#: package/contents/ui/configStudio.qml package/contents/ui/studio/Schema.js
+msgid "Panel pill"
+msgstr "Panel Hapı"
+
+#: package/contents/ui/configStudio.qml
+msgid "Card / popup"
+msgstr "Kart / açılır pencere"
 
 #: package/contents/ui/configStudio.qml
 msgid "Use pill look"
@@ -532,6 +577,21 @@ msgid "Keep popup open"
 msgstr "Açılır pencereyi açık tut"
 
 #: package/contents/ui/studio/CustomStylePicker.qml
+#: package/contents/ui/studio/Schema.js
+msgid "Custom button styles"
+msgstr "Özel Düğme Stilleri"
+
+#: package/contents/ui/studio/CustomStylePicker.qml
+#: package/contents/ui/studio/Schema.js
+msgid "Custom progress bars"
+msgstr "Özel İlerleme Çubukları"
+
+#: package/contents/ui/studio/CustomStylePicker.qml
+#: package/contents/ui/studio/Schema.js
+msgid "Custom visualizers"
+msgstr "Özel Görselleştiriciler"
+
+#: package/contents/ui/studio/CustomStylePicker.qml
 msgid "Built-in buttons"
 msgstr "Yerleşik düğmeler"
 
@@ -543,7 +603,7 @@ msgstr "Yerleşik ilerleme çubuğu"
 msgid "Built-in visualizer"
 msgstr "Yerleşik görselleştirici"
 
-#: package/contents/ui/studio/CustomStylePicker.qml
+#: package/contents/ui/studio/CustomStylePicker.qml windows/qml/Overlay.qml
 msgid "Hide"
 msgstr "Gizle"
 
@@ -586,6 +646,19 @@ msgid "Import trusted QML visualizer"
 msgstr "Güvenilir QML görselleştiricisini içe aktar"
 
 #: package/contents/ui/studio/DiagnosticsCard.qml
+#: package/contents/ui/studio/Schema.js
+msgid "Auto-detect"
+msgstr "Otomatik Algıla"
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "missing"
+msgstr "eksik"
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "missing (optional)"
+msgstr "eksik (isteğe bağlı)"
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "cava found"
 msgstr "cava bulundu"
 
@@ -598,6 +671,10 @@ msgid "Capture backends"
 msgstr "Yakalama arka uçları"
 
 #: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "unknown"
+msgstr "bilinmiyor"
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "Sound server"
 msgstr "Ses sunucusu"
 
@@ -608,6 +685,10 @@ msgstr "erişilemiyor"
 #: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "Default output"
 msgstr "Varsayılan çıkış"
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "none"
+msgstr "yok"
 
 #: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "Renderer"
@@ -653,6 +734,26 @@ msgstr "Çalışıyor…"
 #: package/contents/ui/studio/DiagnosticsCard.qml
 msgid "Run diagnostics"
 msgstr "Tanılamayı çalıştır"
+
+#: package/contents/ui/studio/PresetCodec.js
+msgid "Track details must be a list."
+msgstr "Parça ayrıntıları bir liste olmalıdır."
+
+#: package/contents/ui/studio/PresetCodec.js
+msgid "Invalid value for %1."
+msgstr "%1 için geçersiz değer."
+
+#: package/contents/ui/studio/PresetCodec.js
+msgid "Paste a look object."
+msgstr "Bir görünüm nesnesi yapıştırın."
+
+#: package/contents/ui/studio/PresetCodec.js
+msgid "Unsupported look format."
+msgstr "Desteklenmeyen görünüm biçimi."
+
+#: package/contents/ui/studio/PresetCodec.js
+msgid "Settings must be an object."
+msgstr "Ayarlar bir nesne olmalıdır."
 
 #: package/contents/ui/studio/PresetPicker.qml
 msgid "The same look all day; changes tomorrow. Save it to keep it."
@@ -864,12 +965,10 @@ msgid "%1 avatar"
 msgstr "%1 avatarı"
 
 #: package/contents/ui/studio/ProjectInfoPane.qml
-msgid "1 commit"
-msgstr "1 commit"
-
-#: package/contents/ui/studio/ProjectInfoPane.qml
-msgid "%1 commits"
-msgstr "%1 commit"
+msgid "%1 commit"
+msgid_plural "%1 commits"
+msgstr[0] "%1 commit"
+msgstr[1] "%1 commit"
 
 #: package/contents/ui/studio/ProjectInfoPane.qml
 msgid "Open %1 on GitHub"
@@ -1197,10 +1296,6 @@ msgid "Style"
 msgstr "Stil"
 
 #: package/contents/ui/studio/Schema.js
-msgid "Custom visualizers"
-msgstr "Özel Görselleştiriciler"
-
-#: package/contents/ui/studio/Schema.js
 msgid ""
 "Import a trusted QML style and use it in the waveform area. Orbit and lyrics-"
 "only layouts use their own visuals."
@@ -1285,10 +1380,6 @@ msgid "Progress bar"
 msgstr "İlerleme Çubuğu"
 
 #: package/contents/ui/studio/Schema.js
-msgid "Custom progress bars"
-msgstr "Özel İlerleme Çubukları"
-
-#: package/contents/ui/studio/Schema.js
 msgid "Import a trusted QML progress bar with playback timing and seeking."
 msgstr ""
 "Oynatma zamanlaması ve konumlandırma desteği olan güvenilir bir QML ilerleme "
@@ -1355,7 +1446,7 @@ msgstr ""
 msgid "Time labels"
 msgstr "Zaman Etiketleri"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Schema.js package/contents/ui/studio/Studio.qml
 msgid "Off"
 msgstr "Kapalı"
 
@@ -1380,7 +1471,7 @@ msgstr "Düğmeler"
 msgid "Add playback controls directly to the panel pill."
 msgstr "Oynatma denetimlerini doğrudan panel hapına ekler."
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Schema.js package/contents/ui/studio/Studio.qml
 msgid "Play / pause"
 msgstr "Oynat / Duraklat"
 
@@ -1403,10 +1494,6 @@ msgstr ""
 #: package/contents/ui/studio/Schema.js
 msgid "Playback buttons"
 msgstr "Oynatma Düğmeleri"
-
-#: package/contents/ui/studio/Schema.js
-msgid "Custom button styles"
-msgstr "Özel Düğme Stilleri"
 
 #: package/contents/ui/studio/Schema.js
 msgid "Import a trusted QML style for the playback controls."
@@ -1559,7 +1646,7 @@ msgstr "Öne Çıkan Dalga"
 msgid "Stacked"
 msgstr "Üst Üste"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Schema.js package/contents/ui/studio/Studio.qml
 msgid "Orbit"
 msgstr "Yörünge"
 
@@ -1574,10 +1661,6 @@ msgstr "Afiş"
 #: package/contents/ui/studio/Schema.js
 msgid "Slim strip"
 msgstr "İnce Şerit"
-
-#: package/contents/ui/studio/Schema.js
-msgid "Panel pill"
-msgstr "Panel Hapı"
 
 #: package/contents/ui/studio/Schema.js
 msgid "Panel icon"
@@ -1623,15 +1706,15 @@ msgstr ""
 "Mini görselleştirici, seçtiğiniz stili kullanarak müziği izler. Sabit "
 "çubuklar için Sabit’i seçin."
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Schema.js package/contents/ui/studio/Studio.qml
 msgid "Static"
 msgstr "Sabit"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Schema.js package/contents/ui/studio/Studio.qml
 msgid "Bouncing"
 msgstr "Zıplayan"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Schema.js package/contents/ui/studio/Studio.qml
 msgid "Mini visualizer"
 msgstr "Mini Görselleştirici"
 
@@ -1922,7 +2005,7 @@ msgstr "Baş Harfler"
 msgid "Clicking the cover"
 msgstr "Kapağa Tıklama"
 
-#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/Schema.js package/contents/ui/studio/Studio.qml
 msgid "Nothing"
 msgstr "Hiçbiri"
 
@@ -2919,10 +3002,6 @@ msgstr ""
 "Otomatik algılama önce PipeWire’ı, ardından PulseAudio’yu ve ALSA’yı dener."
 
 #: package/contents/ui/studio/Schema.js
-msgid "Auto-detect"
-msgstr "Otomatik Algıla"
-
-#: package/contents/ui/studio/Schema.js
 msgid "PipeWire"
 msgstr "PipeWire"
 
@@ -3547,12 +3626,20 @@ msgid "Copy as JSON"
 msgstr "JSON Olarak Kopyala"
 
 #: package/contents/ui/studio/UserPresets.qml
+msgid "Copied."
+msgstr "Kopyalandı."
+
+#: package/contents/ui/studio/UserPresets.qml
 msgid "Import JSON"
 msgstr "JSON İçe Aktar"
 
 #: package/contents/ui/studio/UserPresets.qml
 msgid "Import"
 msgstr "İçe Aktar"
+
+#: package/contents/ui/studio/UserPresets.qml
+msgid "That is not a valid look."
+msgstr "Bu geçerli bir görünüm değil."
 
 #: package/contents/ui/studio/UserPresets.qml
 msgid ""
@@ -3572,6 +3659,40 @@ msgstr "Önayar katkısı nasıl yapılır ↗"
 #: package/contents/ui/text/I18n.qml
 msgid "System default"
 msgstr "Sistem varsayılanı"
+
+#: windows/qml/Overlay.qml
+msgid "Show"
+msgstr "Göster"
+
+#: windows/qml/Overlay.qml
+msgid "Move / resize…"
+msgstr "Taşı / yeniden boyutlandır…"
+
+#: windows/qml/Overlay.qml
+msgid "Lock in place"
+msgstr "Yerine kilitle"
+
+#: windows/qml/Overlay.qml
+msgid "Audio Visualizer — drag, resize, then close (×) or Enter to lock"
+msgstr ""
+"Audio Visualizer — sürükleyin, boyutlandırın, sonra kilitlemek için kapatın "
+"(×) veya Enter'a basın"
+
+#: windows/qml/Overlay.qml
+msgid "Reset position"
+msgstr "Konumu sıfırla"
+
+#: windows/qml/Overlay.qml
+msgid "Settings…"
+msgstr "Ayarlar…"
+
+#: windows/qml/Overlay.qml
+msgid "Quit"
+msgstr "Çık"
+
+#: windows/qml/Overlay.qml
+msgid "Could not save settings to %1: %2"
+msgstr "Ayarlar %1 konumuna kaydedilemedi: %2"
 
 #: translate/metadata-i18n.js
 msgid ""

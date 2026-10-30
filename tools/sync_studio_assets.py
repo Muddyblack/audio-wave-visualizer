@@ -246,7 +246,7 @@ def outputs():
     catalog = (SOURCE_STUDIO / "StudioCatalog.js").read_bytes()
     data = json.loads(
         re.sub(
-            r'N_\(("(?:[^"\\\n]|\\.)*")\)',
+            r'noop\(("(?:[^"\\\n]|\\.)*")\)',
             r"\1",
             catalog.decode()
             .split("var StudioCatalog = ", 1)[1]

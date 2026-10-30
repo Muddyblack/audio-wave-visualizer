@@ -76,10 +76,10 @@ ShellRoot {
                 root.userSettings = Configuration.parsePreferences(text());
                 root.settingsError = "";
             } catch (error) {
-                root.settingsError = "Cannot read settings: " + error;
+                root.settingsError = I18n.i18n("Cannot read settings: %1", String(error));
             }
         }
-        onSaveFailed: root.settingsError = "Could not save settings to " + root.configPath
+        onSaveFailed: root.settingsError = I18n.i18n("Could not save settings to %1", root.configPath)
         onSaved: root.settingsError = ""
     }
     FileView {

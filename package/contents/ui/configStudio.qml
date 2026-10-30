@@ -537,7 +537,7 @@ Kirigami.Page {
         property string status: ""
         onNewData: (source, data) => {
             const count = parseInt(String(data["stdout"] || "").trim());
-            status = data["exit code"] === 0 && !isNaN(count) ? (count === 0 ? I18n.i18n("No other widgets found") : count === 1 ? I18n.i18n("Copied to 1 other widget") : I18n.i18n("Copied to %1 other widgets", count)) : I18n.i18n("Could not reach Plasma");
+            status = data["exit code"] === 0 && !isNaN(count) ? (count === 0 ? I18n.i18n("No other widgets found") : I18n.i18np("Copied to %1 other widget", "Copied to %1 other widgets", count)) : I18n.i18n("Could not reach Plasma");
             disconnectSource(source);
             statusReset.restart();
         }
@@ -561,7 +561,7 @@ Kirigami.Page {
             Studio.StudioSeg {
                 objectName: "presentationTarget"
                 width: implicitWidth
-                options: [[false, "Panel pill"], [true, "Card / popup"]]
+                options: [[false, I18n.noop("Panel pill")], [true, I18n.noop("Card / popup")]]
                 value: root.editingPopup
                 onActivated: value => root.editingPopup = value
             }

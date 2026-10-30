@@ -59,11 +59,23 @@ Item {
     readonly property var configuration: Object.assign({}, settingsBaseline, userSettings)
     readonly property string language: configuration.language ?? ""
     onLanguageChanged: loadCatalog()
-    onHostChanged: loadCatalog()
+    Component.onCompleted: loadCatalog()
     function loadCatalog() {
         I18n.available = host ? host.catalogLanguages() : [];
         const texts = I18n.candidates(language).map(code => host ? host.readCatalog(code) : "");
         I18n.load(texts.find(text => text) || "");
+        if (host)
+            host.setLabels(JSON.stringify({
+                hide: I18n.i18n("Hide"),
+                show: I18n.i18n("Show"),
+                adjust: I18n.i18n("Move / resize…"),
+                lock: I18n.i18n("Lock in place"),
+                adjusting: I18n.i18n("Audio Visualizer — drag, resize, then close (×) or Enter to lock"),
+                reset: I18n.i18n("Reset position"),
+                settings: I18n.i18n("Settings…"),
+                quit: I18n.i18n("Quit"),
+                saveFailed: I18n.i18n("Could not save settings to %1: %2")
+            }));
     }
 
     function saveSettings(overrides) {

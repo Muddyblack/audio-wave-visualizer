@@ -73,7 +73,7 @@ Item {
         onNewData: function (source, data) {
             disconnectSource(source);
             if (root.active)
-                root.status = String(data["stdout"] || "Stereo capture unavailable").trim();
+                root.status = String(data["stdout"] || I18n.noop("Stereo capture unavailable")).trim();
         }
     }
     function heartbeat() {

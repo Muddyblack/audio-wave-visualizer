@@ -38,6 +38,15 @@ QtObject {
             return "";
         return Po.i18n.apply(null, [catalog].concat(Array.prototype.slice.call(arguments)));
     }
+    function i18nc(context, text) {
+        return Po.i18nc.apply(null, [catalog].concat(Array.prototype.slice.call(arguments)));
+    }
+    function i18np(singular, plural, n) {
+        return Po.i18np.apply(null, [catalog].concat(Array.prototype.slice.call(arguments)));
+    }
+    function i18ncp(context, singular, plural, n) {
+        return Po.i18ncp.apply(null, [catalog].concat(Array.prototype.slice.call(arguments)));
+    }
     // Marks text stored as data for Messages.sh; it is translated when drawn.
     function noop(text) {
         return text;

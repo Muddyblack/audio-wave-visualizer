@@ -48,6 +48,19 @@ TestCase {
         I18n.load("");
         compare(label.shown, "Apply");
     }
+    function test_pluralsFollowTheCatalogRule() {
+        compare(I18n.i18np("%1 commit", "%1 commits", 1), "1 commit");
+        compare(I18n.i18np("%1 commit", "%1 commits", 3), "3 commits");
+        I18n.load('msgid ""\nmsgstr ""\n"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n<5 ? 1 : 2);\\n"\n\n' + 'msgid "%1 file"\nmsgid_plural "%1 files"\nmsgstr[0] "%1 plik"\nmsgstr[1] "%1 pliki"\nmsgstr[2] "%1 plików"\n');
+        compare(I18n.i18np("%1 file", "%1 files", 1), "1 plik");
+        compare(I18n.i18np("%1 file", "%1 files", 3), "3 pliki");
+        compare(I18n.i18np("%1 file", "%1 files", 7), "7 plików");
+    }
+    function test_contextSeparatesMeanings() {
+        I18n.load('msgctxt "verb"\nmsgid "Close"\nmsgstr "Kapat"\n');
+        compare(I18n.i18nc("verb", "Close"), "Kapat");
+        compare(I18n.i18n("Close"), "Close");
+    }
     function loaderFor(language) {
         return createTemporaryObject(loaderComponent, this, {
             language: language

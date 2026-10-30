@@ -63,15 +63,29 @@ for name in ("Schema.js", "StudioCatalog.js"):
                 f"{name}: unmarked display text {unescape(match.group(1))!r}"
             )
 
+# 3. QML text is marked. Not a parser, but it catches the usual ways in.
+UNMARKED = re.compile(
+    r"\b(?:text|title|tooltip|placeholderText|message|error|Accessible\.name)"
+    r'\s*[:=]\s*"[A-Z][a-z]'
+)
+OPTION = re.compile(r'\[[^\[\]"]*(?:"[^"]*")?\s*,\s*"[A-Z][a-z]')
+for root in ("package/contents/ui", "hyprland", "windows/qml"):
+    for path in sorted((REPO / root).rglob("*.qml")):
+        for number, line in enumerate(path.read_text(encoding="utf-8").split("\n"), 1):
+            if UNMARKED.search(line) or (
+                re.search(r"\b(?:opts|options):", line) and OPTION.search(line)
+            ):
+                failures.append(f"{path.relative_to(REPO)}:{number}: unmarked text")
+
 if shutil.which("msgfmt"):
-    # 3. Every catalog compiles; the listed languages are complete.
+    # 4. Every catalog compiles; the listed languages are complete.
     result = subprocess.run(
         [str(TRANSLATE / "check.sh")], capture_output=True, text=True, check=False
     )
     if result.returncode:
         failures.append("check.sh failed: " + result.stderr.strip())
 
-    # 4. The catalog is named after the package it is built for.
+    # 5. The catalog is named after the package it is built for.
     with tempfile.TemporaryDirectory() as directory:
         package = Path(directory)
         (package / "metadata.json").write_text(
