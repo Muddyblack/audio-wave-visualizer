@@ -86,7 +86,8 @@ if shutil.which("msgfmt"):
         compiled = (
             package / "contents/locale/tr/LC_MESSAGES/plasma_applet_org.example.test.mo"
         )
-        if result.returncode or not compiled.is_file():
+        copied = package / "contents/translate/tr.po"
+        if result.returncode or not compiled.is_file() or not copied.is_file():
             failures.append("build.sh failed: " + result.stderr.strip())
 else:
     print("SKIP: msgfmt is not on PATH; catalog compilation not checked")

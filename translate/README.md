@@ -6,9 +6,11 @@ and translated when it is drawn is marked `N_("…")` in JS, `I18n.noop("…")` 
 
 - `Messages.sh` extracts the strings into `template.pot` and merges it into
   every `.po`. Run it after changing a string; the pre-commit hook does.
-- `build.sh` compiles each `.po` to the `.mo` Plasma loads for its own `i18n()`.
-- Quickshell and Windows have no KDE `i18n()`: they read the `.po` at runtime
-  (`package/contents/ui/text/I18n.qml`, parsed by `ui/studio/I18n.js`).
+- Every host reads the `.po` at runtime (`package/contents/ui/text/I18n.qml`,
+  parsed by `ui/studio/I18n.js`), so Settings → Comfort & power can switch the
+  language without a restart.
+- `build.sh` copies each `.po` into the package and compiles the `.mo` Plasma
+  reads for the store description.
 
 ## Translating
 
@@ -18,6 +20,9 @@ make new-language CODE=de      # starts translate/de.po from the template
 make translations              # re-extract and merge, keeps your work
 make check-translations        # every catalog must compile
 ```
+
+The language setting offers every catalog it finds, so nothing else needs
+changing.
 
 Placeholders are `%1`, `%2`, … and may be reordered. Lines starting with `#.`
 in the catalog are notes for translators; add one in the source with a

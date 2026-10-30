@@ -85,6 +85,10 @@ class SettingsStore(QObject):
 
     settingsError = Property(str, lambda self: self._error, notify=changed)
 
+    @Slot(result="QVariantList")
+    def catalogLanguages(self) -> list:
+        return sorted(path.stem for path in (ROOT / "translate").glob("*.po"))
+
     @Slot(str, result=str)
     def readCatalog(self, language: str) -> str:
         try:

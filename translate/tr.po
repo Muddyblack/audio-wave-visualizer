@@ -2802,6 +2802,10 @@ msgid "Comfort & power"
 msgstr "Konfor ve Güç"
 
 #: package/contents/ui/studio/Schema.js
+msgid "Language"
+msgstr "Dil"
+
+#: package/contents/ui/studio/Schema.js
 msgid "Follow system font size"
 msgstr "Sistem Yazı Tipi Boyutunu İzle"
 
@@ -3564,6 +3568,10 @@ msgstr ""
 #: package/contents/ui/studio/UserPresets.qml
 msgid "How to contribute a preset ↗"
 msgstr "Önayar katkısı nasıl yapılır ↗"
+
+#: package/contents/ui/text/I18n.qml
+msgid "System default"
+msgstr "Sistem varsayılanı"
 
 #: translate/metadata-i18n.js
 msgid ""

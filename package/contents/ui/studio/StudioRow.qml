@@ -177,7 +177,7 @@ Item {
             StudioSelect {
                 id: select
                 anchors.right: row.stacked ? undefined : parent.right
-                options: row.rowData.opts === "audioSources" ? row.studio.audioSourceOptions : row.rowData.opts === "screens" ? row.studio.monitorOptions : row.rowData.opts
+                options: row.rowData.opts === "languages" ? I18n.languageOptions : row.rowData.opts === "audioSources" ? row.studio.audioSourceOptions : row.rowData.opts === "screens" ? row.studio.monitorOptions : row.rowData.opts
                 value: row.value
                 onChosen: value => row.commit(value)
             }

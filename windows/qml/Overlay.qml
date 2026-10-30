@@ -28,16 +28,6 @@ Item {
     property string settingsJson: ""
     property var media: null
     property var host: null
-    // No KDE i18n() here: load the system language's catalog from translate/.
-    onHostChanged: {
-        for (const language of I18n.languages()) {
-            const text = host ? host.readCatalog(language) : "";
-            if (text) {
-                I18n.load(text);
-                break;
-            }
-        }
-    }
 
     readonly property var defaults: Configuration.defaults(defaultsXml)
     property var userSettings: {
@@ -67,6 +57,14 @@ Item {
         alwaysVisible: true
     })
     readonly property var configuration: Object.assign({}, settingsBaseline, userSettings)
+    readonly property string language: configuration.language ?? ""
+    onLanguageChanged: loadCatalog()
+    onHostChanged: loadCatalog()
+    function loadCatalog() {
+        I18n.available = host ? host.catalogLanguages() : [];
+        const texts = I18n.candidates(language).map(code => host ? host.readCatalog(code) : "");
+        I18n.load(texts.find(text => text) || "");
+    }
 
     function saveSettings(overrides) {
         userSettings = overrides;

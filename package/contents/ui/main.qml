@@ -24,8 +24,13 @@ PlasmoidItem {
     readonly property bool followSystemFont: plasmoid.configuration.followSystemFont ?? true
     onGpuDebugChanged: GpuDebug.apply(gpuDebug)
     onFollowSystemFontChanged: SystemText.follow = followSystemFont
+    CatalogLoader {
+        language: plasmoid.configuration.language ?? ""
+        commandSourceComponent: Component {
+            PlasmaCommandSource {}
+        }
+    }
     Component.onCompleted: {
-        I18n.useKde(i18n);
         GpuDebug.apply(gpuDebug);
         SystemText.follow = followSystemFont;
     }
@@ -232,6 +237,7 @@ PlasmoidItem {
     }
     fullRepresentation: FittedFrame {
         id: fullFrame
+        opacity: I18n.loading ? 0 : 1
         // A roomy panel displays the card inline. Small panels display the
         // pill and open the same card in the borderless popup above.
         contentRotation: root.inPanel ? panelPlacement.contentRotation : 0

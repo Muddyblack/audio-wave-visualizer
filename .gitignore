@@ -2,6 +2,7 @@
 *.plasmoid
 # Compiled catalogs; built from translate/*.po by translate/build.sh.
 package/contents/locale/
+package/contents/translate/
 # Generated browser assets; originals live in package/contents/ui/studio.
 docs/website/assets/studio/
 notes.md

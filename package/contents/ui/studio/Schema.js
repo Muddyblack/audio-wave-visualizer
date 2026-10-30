@@ -390,6 +390,7 @@ var SECTIONS = [
         { k: "scrollVolume", type: "switch", label: N_("Scroll to change volume"), desc: N_("Adjusts the system output volume, not the player’s own.") }
     ]),
     tab("behavior", N_("Comfort & power"), [
+        { k: "language", type: "select", nativeOnly: true, label: N_("Language"), opts: "languages" },
         { k: "followSystemFont", type: "switch", label: N_("Follow system font size"), desc: N_("Scale text with Appearance > Fonts. Off keeps the original sizes.") },
         { k: "reducedMotion", type: "switch", label: N_("Reduced motion"), desc: N_("No ripples, sweeps, spins or scrolling text; the wave still reacts.") },
         { k: "batterySaver", type: "switch", label: N_("Battery saver"), desc: N_("On battery: 20 Hz and no glow.") },

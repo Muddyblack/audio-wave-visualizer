@@ -5,9 +5,10 @@
 #
 # Usage: translate/build.sh [PACKAGE_DIR]   (default: package)
 #
-# The .mo files are build output, not committed. The catalog name comes from
-# the package's own metadata.json, so test_install.sh can build one for its
-# renamed test copy.
+# The widget reads <package>/contents/translate/<lang>.po for its own text, and
+# Plasma reads the .mo for the store description. Both are build output, not
+# committed. The catalog name comes from the package's own metadata.json, so
+# test_install.sh can build one for its renamed test copy.
 set -euo pipefail
 
 if ! command -v msgfmt >/dev/null 2>&1; then
@@ -36,6 +37,8 @@ force="${FORCE_TRANSLATIONS:-0}"
 shopt -s nullglob
 for po in "$dir"/*.po; do
     lang="$(basename "$po" .po)"
+    mkdir -p "$pkg/contents/translate"
+    cp "$po" "$pkg/contents/translate/"
     outdir="$pkg/contents/locale/$lang/LC_MESSAGES"
     out="$outdir/$domain.mo"
     if [ "$force" != "1" ] && [ -e "$out" ] && [ "$out" -nt "$po" ]; then

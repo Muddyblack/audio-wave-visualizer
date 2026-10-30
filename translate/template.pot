@@ -2655,6 +2655,10 @@ msgid "Comfort & power"
 msgstr ""
 
 #: package/contents/ui/studio/Schema.js
+msgid "Language"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
 msgid "Follow system font size"
 msgstr ""
 
@@ -3344,6 +3348,10 @@ msgstr ""
 
 #: package/contents/ui/studio/UserPresets.qml
 msgid "How to contribute a preset ↗"
+msgstr ""
+
+#: package/contents/ui/text/I18n.qml
+msgid "System default"
 msgstr ""
 
 #: translate/metadata-i18n.js

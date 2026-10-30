@@ -1137,7 +1137,7 @@ function renderSettings() {
     const wrap = document.createElement('div');
     wrap.className = 'sec'; wrap.dataset.tab = sec.tab; wrap._sec = sec;
     wrap.innerHTML = `<h4>${sec.title}</h4><div class="card"></div>`;
-    for (const r of sec.rows) { const row = buildRow(r); $('.card', wrap).appendChild(row.el); rows.push(row); }
+    for (const r of sec.rows.filter(r => !r.nativeOnly)) { const row = buildRow(r); $('.card', wrap).appendChild(row.el); rows.push(row); }
     body.appendChild(wrap);
   }
   body.insertAdjacentHTML('beforeend', '<div class="empty-search" hidden>No settings match that search.</div>');

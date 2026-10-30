@@ -352,6 +352,8 @@ Kirigami.Page {
     property bool cfg_hoverLiftDefault
     property bool cfg_scrollVolume
     property bool cfg_scrollVolumeDefault
+    property string cfg_language
+    property string cfg_languageDefault
     property bool cfg_followSystemFont
     property bool cfg_followSystemFontDefault
     property string cfg_gpuDebug
@@ -422,8 +424,16 @@ Kirigami.Page {
         return false;
     }
 
+    // Previews the choice in the studio; Apply saves it for the widget, and
+    // closing without saving hands the catalog back to the widget's choice.
+    CatalogLoader {
+        preview: true
+        language: root.cfg_language
+        commandSourceComponent: Component {
+            PlasmaCommandSource {}
+        }
+    }
     Component.onCompleted: {
-        I18n.useKde(i18n);
         GpuDebug.apply(cfg_gpuDebug ?? "");
         SystemText.follow = cfg_followSystemFont;
         // Enumerate outside a binding: Qt can evaluate unrelated getters while

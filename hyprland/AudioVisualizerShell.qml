@@ -54,17 +54,13 @@ ShellRoot {
     property string settingsError: ""
     readonly property string configPath: (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/audio-wave-visualizer/hyprland.json"
 
-    // No KDE i18n() here: read the system language's catalog from translate/.
-    // Quickshell pins Qt.locale() to en_US, so the language comes from the
-    // environment. The most specific catalog that exists loads last and wins.
-    Variants {
-        model: I18n.languages(Quickshell.env("LC_ALL") || Quickshell.env("LC_MESSAGES") || Quickshell.env("LANG")).reverse()
-        FileView {
-            required property string modelData
-            path: Qt.resolvedUrl("../translate/" + modelData + ".po").toString().replace(/^file:\/\//, "")
-            blockLoading: true
-            printErrors: false
-            onLoaded: I18n.load(text())
+    Shared.CatalogLoader {
+        translateDir: Qt.resolvedUrl("../translate").toString().replace(/^file:\/\//, "")
+        language: root.configuration.language ?? ""
+        // Quickshell pins Qt.locale() to en_US, so read the environment.
+        systemLocale: Quickshell.env("LC_ALL") || Quickshell.env("LC_MESSAGES") || Quickshell.env("LANG") || ""
+        commandSourceComponent: Component {
+            CommandProcess {}
         }
     }
     FileView {
@@ -176,7 +172,7 @@ ShellRoot {
         configuration: root.configuration
         onApply: next => root.saveSettings(Configuration.overrides(root.baseline, next))
     }
-    readonly property bool shouldShow: !!player || configuration.alwaysVisible
+    readonly property bool shouldShow: !I18n.loading && (!!player || configuration.alwaysVisible)
     readonly property var selectedScreens: Configuration.screens(Quickshell.screens, configuration.monitor)
     readonly property var widgetRectangles: selectedScreens.map(screen => widgetGeometry(screen))
 

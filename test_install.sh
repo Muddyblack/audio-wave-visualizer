@@ -44,9 +44,9 @@ PY
 TEST_ID="${TEST_METADATA%%$'\n'*}"
 NAME="${TEST_METADATA#*$'\n'}"
 
-# Plasma's i18n() reads plasma_applet_<plugin id>.mo from the package, so the
-# catalog must be built after the Id gets its "Test" suffix. Drop any catalog
-# copied from a previous `make pack`; it carries the release Id's name.
+# plasma_applet_<plugin id>.mo must be built after the Id gets its "Test" suffix.
+# Drop any catalog copied from a previous `make pack`; it carries the release
+# Id's name.
 rm -rf -- "$TEMP_DIR/contents/locale"
 if command -v msgfmt >/dev/null 2>&1; then
     "$HERE/translate/build.sh" "$TEMP_DIR"
