@@ -1,0 +1,3354 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the Plasma Audio Visualizer package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: Plasma Audio Visualizer 3.1.7\n"
+"Report-Msgid-Bugs-To: https://github.com/Muddyblack/audio-wave-visualizer/"
+"issues\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: hyprland/AudioVisualizerShell.qml windows/qml/Overlay.qml
+msgid "Audio Visualizer Settings"
+msgstr ""
+
+#: hyprland/SettingsPage.qml
+msgid "Apply saves local overrides. Reset returns to your configured defaults."
+msgstr ""
+
+#: hyprland/SettingsPage.qml package/contents/ui/studio/Studio.qml
+msgid "Reset"
+msgstr ""
+
+#: hyprland/SettingsPage.qml
+msgid "Close"
+msgstr ""
+
+#: hyprland/SettingsPage.qml
+msgid "Apply"
+msgstr ""
+
+#: package/contents/config/config.qml
+msgid "General"
+msgstr ""
+
+#: package/contents/ui/ArtistInfo.qml
+msgid "Song details & credits"
+msgstr ""
+
+#: package/contents/ui/ArtistInfo.qml
+msgid ""
+"Online information is off. Enable it in Settings → Track info for catalog "
+"details and credits."
+msgstr ""
+
+#: package/contents/ui/ArtworkLightbox.qml
+msgid "Close artwork"
+msgstr ""
+
+#: package/contents/ui/ChapterModel.qml
+msgid "Chapter %1"
+msgstr ""
+
+#: package/contents/ui/PlayQueue.qml
+msgid "Up Next"
+msgstr ""
+
+#: package/contents/ui/PlayQueue.qml
+msgid "Toggle upcoming tracks"
+msgstr ""
+
+#: package/contents/ui/PlayQueue.qml
+msgid "Queue unavailable in preview"
+msgstr ""
+
+#: package/contents/ui/PlayQueue.qml
+msgid "Loading queue…"
+msgstr ""
+
+#: package/contents/ui/PlayQueue.qml
+msgid "This player does not share its queue"
+msgstr ""
+
+#: package/contents/ui/PlayQueue.qml
+msgid "Current track is outside the shared queue"
+msgstr ""
+
+#: package/contents/ui/PlayQueue.qml
+msgid ""
+"Queue unavailable. Check that the player is running and busctl is installed."
+msgstr ""
+
+#: package/contents/ui/PlayQueue.qml
+msgid "Player playlist order • shuffle may differ"
+msgstr ""
+
+#: package/contents/ui/PlayQueue.qml
+msgid "No upcoming tracks"
+msgstr ""
+
+#: package/contents/ui/PlayQueue.qml
+msgid "Unknown track"
+msgstr ""
+
+#: package/contents/ui/PlayQueue.qml
+msgid "Showing the next 50 tracks"
+msgstr ""
+
+#: package/contents/ui/SeekInteraction.qml
+#: package/contents/ui/studio/PreviewPane.qml
+msgid "1×"
+msgstr ""
+
+#: package/contents/ui/SeekInteraction.qml
+msgid "Set loop start (A)"
+msgstr ""
+
+#: package/contents/ui/SeekInteraction.qml
+msgid "Set loop end (B)"
+msgstr ""
+
+#: package/contents/ui/SeekInteraction.qml
+msgid "Pause A–B loop"
+msgstr ""
+
+#: package/contents/ui/SeekInteraction.qml
+msgid "Enable A–B loop"
+msgstr ""
+
+#: package/contents/ui/SeekInteraction.qml
+msgid "Clear A–B loop"
+msgstr ""
+
+#: package/contents/ui/StereoCapture.qml
+msgid "Waiting for stereo output"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "Album artist"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "Composer"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "Lyricist"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml
+msgid "Writers"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "Producers"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "Performers"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "Arrangers"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "Label"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "Country"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "Edition date"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "Version"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "ISRC"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml
+msgid "Album tracks"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml
+msgid "Disc"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "BPM"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "Comment"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml
+msgid "Released"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml
+msgid "Type"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "Format"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml
+msgid "Album"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml
+msgid "Track"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "Genre"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "Length"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml
+msgid "Source"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "Song"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "Credits"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml package/contents/ui/studio/Schema.js
+msgid "Release"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml
+msgid "Playback"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml
+msgid "Choose a recording…"
+msgstr ""
+
+#: package/contents/ui/TrackDetails.qml
+msgid "Retry lookup"
+msgstr ""
+
+#: package/contents/ui/TrackText.qml package/contents/ui/layouts/Poster.qml
+msgid "No track metadata"
+msgstr ""
+
+#: package/contents/ui/TransportDock.qml
+msgid "Shuffle unavailable for this player"
+msgstr ""
+
+#: package/contents/ui/TransportDock.qml
+msgid "Shuffle on"
+msgstr ""
+
+#: package/contents/ui/TransportDock.qml
+msgid "Shuffle off"
+msgstr ""
+
+#: package/contents/ui/TransportDock.qml
+msgid "Repeat unavailable for this player"
+msgstr ""
+
+#: package/contents/ui/TransportDock.qml
+msgid "Repeat track"
+msgstr ""
+
+#: package/contents/ui/TransportDock.qml
+msgid "Repeat playlist"
+msgstr ""
+
+#: package/contents/ui/TransportDock.qml
+msgid "Repeat off"
+msgstr ""
+
+#: package/contents/ui/VisualizerCore.qml
+msgid "Selected audio source unavailable"
+msgstr ""
+
+#: package/contents/ui/VisualizerCore.qml
+#: package/contents/ui/studio/PreviewPane.qml
+msgid "cava is not installed"
+msgstr ""
+
+#: package/contents/ui/VisualizerCore.qml
+msgid "No usable audio input (tried %1)"
+msgstr ""
+
+#: package/contents/ui/VisualizerCore.qml
+msgid "No audio output device"
+msgstr ""
+
+#: package/contents/ui/VisualizerCore.qml
+msgid "Audio capture stopped"
+msgstr ""
+
+#: package/contents/ui/VisualizerCore.qml
+msgid "add pkgs.cava to your configuration"
+msgstr ""
+
+#: package/contents/ui/VisualizerCore.qml
+msgid "install the 'cava' package"
+msgstr ""
+
+#: package/contents/ui/VisualizerCore.qml
+msgid "Start the application or choose a source in Audio settings"
+msgstr ""
+
+#: package/contents/ui/VisualizerCore.qml
+msgid "is PipeWire or PulseAudio running?"
+msgstr ""
+
+#: package/contents/ui/VisualizerCore.qml
+msgid "connect speakers, or enable sound in your remote desktop client"
+msgstr ""
+
+#: package/contents/ui/VisualizerCore.qml
+msgid "see %1"
+msgstr ""
+
+#: package/contents/ui/VisualizerCore.qml
+msgid ""
+"The widget picks it up within 30 seconds — no restart needed, unless your "
+"package manager only changes PATH for new sessions."
+msgstr ""
+
+#: package/contents/ui/VisualizerCore.qml
+msgid ""
+"cava could not capture from any backend. Check that PipeWire or PulseAudio "
+"is running, or pin one under Audio Input in the widget settings."
+msgstr ""
+
+#: package/contents/ui/VisualizerCore.qml
+msgid ""
+"Windows has no audio output, so nothing is playing that could be visualized. "
+"Connect speakers or headphones, enable sound in your remote desktop client, "
+"or install a virtual audio device. Picked up within seconds — no restart "
+"needed."
+msgstr ""
+
+#: package/contents/ui/VisualizerCore.qml
+msgid "cava keeps exiting — see %1"
+msgstr ""
+
+#: package/contents/ui/VisualizerView.qml
+msgid "The light falls softly on the water"
+msgstr ""
+
+#: package/contents/ui/VisualizerView.qml
+msgid "And the city fades to blue"
+msgstr ""
+
+#: package/contents/ui/VisualizerView.qml
+msgid "Let the evening drift away"
+msgstr ""
+
+#: package/contents/ui/VisualizerView.qml
+msgid "There is nothing left to hurry"
+msgstr ""
+
+#: package/contents/ui/VisualizerView.qml
+msgid "Just a little room to stay"
+msgstr ""
+
+#: package/contents/ui/VisualizerView.qml
+msgid "With the rhythm of the rain"
+msgstr ""
+
+#: package/contents/ui/VisualizerView.qml
+msgid "Direct YouTube stream"
+msgstr ""
+
+#: package/contents/ui/VisualizerView.qml
+msgid "Player published no title"
+msgstr ""
+
+#: package/contents/ui/VisualizerView.qml
+msgid "Return to playback controls"
+msgstr ""
+
+#: package/contents/ui/VisualizerView.qml
+msgid "Show track details"
+msgstr ""
+
+#: package/contents/ui/WaveArea.qml
+msgid "Stereo PCM unavailable"
+msgstr ""
+
+#: package/contents/ui/configStudio.qml
+msgid "No other widgets found"
+msgstr ""
+
+#: package/contents/ui/configStudio.qml
+msgid "Copied to 1 other widget"
+msgstr ""
+
+#: package/contents/ui/configStudio.qml
+msgid "Copied to %1 other widgets"
+msgstr ""
+
+#: package/contents/ui/configStudio.qml
+msgid "Could not reach Plasma"
+msgstr ""
+
+#: package/contents/ui/configStudio.qml
+msgid "Use pill look"
+msgstr ""
+
+#: package/contents/ui/configStudio.qml
+msgid "Use popup look"
+msgstr ""
+
+#: package/contents/ui/configStudio.qml
+msgid ""
+"Copy the other design into this one: colours, artwork, visualizer and "
+"progress styles. The pill enables the copied effects. Each view keeps its "
+"layout and playback controls. Apply saves; Discard undoes."
+msgstr ""
+
+#: package/contents/ui/configStudio.qml
+msgid "Copy to all widgets"
+msgstr ""
+
+#: package/contents/ui/configStudio.qml
+msgid ""
+"Copy these settings, including both panel designs, to every other copy of "
+"this widget, such as one per monitor. Each keeps its own monitor and "
+"position. Apply here first; the others change immediately and cannot be "
+"undone."
+msgstr ""
+
+#: package/contents/ui/layouts/LayoutTexts.qml
+#: package/contents/ui/layouts/Poster.qml package/contents/ui/studio/Schema.js
+msgid "Nothing playing"
+msgstr ""
+
+#: package/contents/ui/layouts/LayoutTexts.qml
+msgid "Start music in any player"
+msgstr ""
+
+#: package/contents/ui/layouts/Lyrics.qml
+msgid "Delay lyrics by 100 milliseconds"
+msgstr ""
+
+#: package/contents/ui/layouts/Lyrics.qml
+msgid "Delay lyrics 100 ms (−)"
+msgstr ""
+
+#: package/contents/ui/layouts/Lyrics.qml
+msgid "Reset lyrics timing offset"
+msgstr ""
+
+#: package/contents/ui/layouts/Lyrics.qml
+msgid "Reset timing; positive values show lyrics earlier"
+msgstr ""
+
+#: package/contents/ui/layouts/Lyrics.qml
+msgid "Advance lyrics by 100 milliseconds"
+msgstr ""
+
+#: package/contents/ui/layouts/Lyrics.qml
+msgid "Advance lyrics 100 ms (+)"
+msgstr ""
+
+#: package/contents/ui/layouts/Lyrics.qml package/contents/ui/studio/Schema.js
+msgid "Follow current line"
+msgstr ""
+
+#: package/contents/ui/layouts/Lyrics.qml
+msgid "Play a song to see its lyrics"
+msgstr ""
+
+#: package/contents/ui/layouts/Lyrics.qml
+msgid "Waiting for the song title and artist…"
+msgstr ""
+
+#: package/contents/ui/layouts/Lyrics.qml
+msgid "Finding lyrics…"
+msgstr ""
+
+#: package/contents/ui/layouts/Lyrics.qml
+msgid "Couldn't load lyrics"
+msgstr ""
+
+#: package/contents/ui/layouts/Lyrics.qml
+msgid "No synced lyrics available for this song"
+msgstr ""
+
+#: package/contents/ui/layouts/Pill.qml
+msgid "No media"
+msgstr ""
+
+#: package/contents/ui/main.qml
+msgid "Unpin and close popup"
+msgstr ""
+
+#: package/contents/ui/main.qml
+msgid "Keep popup open"
+msgstr ""
+
+#: package/contents/ui/studio/CustomStylePicker.qml
+msgid "Built-in buttons"
+msgstr ""
+
+#: package/contents/ui/studio/CustomStylePicker.qml
+msgid "Built-in progress bar"
+msgstr ""
+
+#: package/contents/ui/studio/CustomStylePicker.qml
+msgid "Built-in visualizer"
+msgstr ""
+
+#: package/contents/ui/studio/CustomStylePicker.qml
+msgid "Hide"
+msgstr ""
+
+#: package/contents/ui/studio/CustomStylePicker.qml
+msgid "Manage…"
+msgstr ""
+
+#: package/contents/ui/studio/CustomStylePicker.qml
+msgid ""
+"QML styles run code with the host’s permissions. Import only files you "
+"trust. Keep the file and its assets in a permanent folder; importing "
+"remembers their location."
+msgstr ""
+
+#: package/contents/ui/studio/CustomStylePicker.qml
+msgid "Import QML…"
+msgstr ""
+
+#: package/contents/ui/studio/CustomStylePicker.qml
+msgid "Try example"
+msgstr ""
+
+#: package/contents/ui/studio/CustomStylePicker.qml
+msgid "Remove"
+msgstr ""
+
+#: package/contents/ui/studio/CustomStylePicker.qml
+msgid "Import trusted QML buttons"
+msgstr ""
+
+#: package/contents/ui/studio/CustomStylePicker.qml
+msgid "Import trusted QML progress bar"
+msgstr ""
+
+#: package/contents/ui/studio/CustomStylePicker.qml
+msgid "Import trusted QML visualizer"
+msgstr ""
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "cava found"
+msgstr ""
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "not installed"
+msgstr ""
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "Capture backends"
+msgstr ""
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "Sound server"
+msgstr ""
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "not reachable"
+msgstr ""
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "Default output"
+msgstr ""
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "Renderer"
+msgstr ""
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "canvas (software)"
+msgstr ""
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "shader"
+msgstr ""
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "Python 3 (metadata and lyrics)"
+msgstr ""
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "found"
+msgstr ""
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "busctl (MPRIS metadata)"
+msgstr ""
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "%1 (optional)"
+msgstr ""
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "Audio capture"
+msgstr ""
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+#: package/contents/ui/studio/Schema.js
+msgid "%1 bars"
+msgstr ""
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "Running…"
+msgstr ""
+
+#: package/contents/ui/studio/DiagnosticsCard.qml
+msgid "Run diagnostics"
+msgstr ""
+
+#: package/contents/ui/studio/PresetPicker.qml
+msgid "The same look all day; changes tomorrow. Save it to keep it."
+msgstr ""
+
+#: package/contents/ui/studio/PresetPicker.qml
+msgid "Saved to My presets"
+msgstr ""
+
+#: package/contents/ui/studio/PresetPicker.qml
+msgid "Save today’s look"
+msgstr ""
+
+#: package/contents/ui/studio/PresetPicker.qml
+msgid "Apply today’s look automatically"
+msgstr ""
+
+#: package/contents/ui/studio/PresetPicker.qml
+msgid ""
+"After you apply settings, changes the look once per day on startup or while "
+"running. Manual changes stay until tomorrow. Audio settings and placement "
+"are kept."
+msgstr ""
+
+#: package/contents/ui/studio/PresetPicker.qml
+msgid "Star a built-in or saved look to find it here."
+msgstr ""
+
+#: package/contents/ui/studio/PresetTile.qml
+msgid "Today’s look · %1"
+msgstr ""
+
+#: package/contents/ui/studio/PresetTile.qml
+msgid "Remove from favourites"
+msgstr ""
+
+#: package/contents/ui/studio/PresetTile.qml
+msgid "Add to favourites"
+msgstr ""
+
+#: package/contents/ui/studio/PresetTile.qml
+msgid "Rename preset"
+msgstr ""
+
+#: package/contents/ui/studio/PresetTile.qml
+msgid "Preset name"
+msgstr ""
+
+#: package/contents/ui/studio/PresetTools.qml
+msgid "All categories"
+msgstr ""
+
+#: package/contents/ui/studio/PresetTools.qml
+msgid "Preset category"
+msgstr ""
+
+#: package/contents/ui/studio/PresetTools.qml
+msgid "Keep my colours"
+msgstr ""
+
+#: package/contents/ui/studio/PreviewPane.qml
+msgid "Hide preview options"
+msgstr ""
+
+#: package/contents/ui/studio/PreviewPane.qml
+msgid "Preview options"
+msgstr ""
+
+#: package/contents/ui/studio/PreviewPane.qml
+msgid "Live audio · On"
+msgstr ""
+
+#: package/contents/ui/studio/PreviewPane.qml
+msgid "Use live audio"
+msgstr ""
+
+#: package/contents/ui/studio/PreviewPane.qml
+msgid "WALLPAPER"
+msgstr ""
+
+#: package/contents/ui/studio/PreviewPane.qml
+msgid "STATE"
+msgstr ""
+
+#: package/contents/ui/studio/PreviewPane.qml
+msgid "2×"
+msgstr ""
+
+#: package/contents/ui/studio/PreviewPane.qml
+msgid "Fit"
+msgstr ""
+
+#: package/contents/ui/studio/PreviewPane.qml
+msgid "ACCENT"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfo.js
+msgid "GitHub stars"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfo.js
+msgid "GitHub downloads"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfo.js
+msgid "OpenDesktop downloads"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfo.js
+msgid "Version comparison unavailable"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfo.js
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "Update available"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfo.js
+msgid "Newer than latest release"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfo.js
+msgid "Up to date"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+#: package/contents/ui/studio/ProjectInfoRequests.js
+msgid "Not checked"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+#: package/contents/ui/studio/ProjectInfoRequests.js
+msgid "Checking…"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+#: package/contents/ui/studio/ProjectInfoRequests.js
+msgid "Could not check for updates"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "Plasma Audio Visualizer project icon"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "%1 GitHub avatar"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "By %1 ↗"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid ""
+"An open-source music visualizer for Plasma and Hyprland. Explore the "
+"project, get updates, or help improve it."
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "Installed version · %1"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "Latest stable release · %1"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "Get update ↗"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "View latest release ↗"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "Check again"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "%1, open %2"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "License · %1"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "From the bundled LICENSE file"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "Contributors"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "See all on GitHub ↗"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "%1 avatar"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "1 commit"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "%1 commits"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "Open %1 on GitHub"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "Support the project"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "Support on %1"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "View source on GitHub ↗"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoPane.qml
+msgid "Report an issue ↗"
+msgstr ""
+
+#: package/contents/ui/studio/ProjectInfoRequests.js
+msgid "Checked"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Appearance"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "All"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "My presets"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Favourites"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Today’s look"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "A daily variation of %1"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Smooth Wave"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Rounded Bars"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Mirror Bars"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Tech Line"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Floating Dots"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Floating Dots Bold"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Peak Bars"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "LED Meter"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Mountain"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Oscilloscope"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Ribbon"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Radial Burst"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Pixel Matrix"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Pulse Orb"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Sparkles"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Silk Ribbon"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Neon Terrain"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Audio Tunnel"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Liquid Plasma"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "CRT Oscilloscope"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Stereo Lissajous"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Gravity Sparks"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Glassy Sleek"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Ultra Minimal"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Glowing Pulse"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Bold Pill"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Waveform"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Squiggle"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Segmented"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Dotted"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Capsule"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Time only"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Cover ring"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Bars"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Wave"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Dots"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Sparks"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Playing"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Paused"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Long title"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "No metadata"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "cava missing"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Songwriters"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Album & year"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Release date"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Release type"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Track number"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Disc number"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Album track count"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Playback & artist summary"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Audio format"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Player"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Artist summary"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Looks"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Start from a look"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"One click sets everything. Fine-tune in the other tabs afterwards — your "
+"placement is never touched."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Saved looks"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Save the current settings under a name, or share a look as a small JSON "
+"snippet."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Orbit around the cover"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Ring style"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"The cover is the centre point and the visualizer circles it. Colour mode, "
+"glow and bloom below still apply."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Reach"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "How far the ring extends from the cover."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Slow rotation"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Cover breathes with the bass"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Style"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Custom visualizers"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Import a trusted QML style and use it in the waveform area. Orbit and lyrics-"
+"only layouts use their own visuals."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Visualizer"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Previews react to your colour, line and bloom settings."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Vertical offset"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Move the visualizer up (negative) or down (positive). Zero restores its "
+"original position; edges stay inside the visualizer area."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Direction"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Bars rise from the bottom today — or let them hang from the top edge."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Rise from bottom"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Hang from top"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Ribbon curvature"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "How far the mids bend the ribbon."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Ribbon fullness"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "How thick the bass makes it."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Line weight"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Stroke width of lines and dot size."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Gradient fill"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Fill waves and liquid shapes, or soften Peak Bars with transparency."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Progress bar"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Custom progress bars"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Import a trusted QML progress bar with playback timing and seeking."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Click anywhere on it in the widget to seek."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "None"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Seek preview"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Target time, jump delta and a ghost playhead."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Seek gestures"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Wheel seeks; double-click the outer thirds to jump 10 seconds."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Wheel seek step"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Seconds per notch; 0 disables wheel seeking."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Audio-reactive progress"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Bass swells the track and playhead; reduced motion disables pulses."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Chapter marks"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Uses player chapter metadata or local embedded chapters and cue files."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Time labels"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Off"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "1:31 · 3:58"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "1:31 · -2:27"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Panel buttons"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Buttons"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Add playback controls directly to the panel pill."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Play / pause"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Previous · Play · Next"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Show buttons on hover only"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Reveal playback buttons while the pointer is over the pill. Keeps the pill's "
+"width steady."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Playback buttons"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Custom button styles"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Import a trusted QML style for the playback controls."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Choose the shape around your playback controls."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Glass pill"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Soft pill"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Outline pill"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Tinted pill"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Bare icons"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Accent play"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Show on hover only"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Hide the playback buttons until the pointer is over the card. Works with any "
+"style."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Previous & next"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Shuffle & repeat"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "For players that support them."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Button colours"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Icon colour"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Colour mode follows the visualizer. System adapts to light cards."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "System"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Accent"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Colour mode"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Custom"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Custom icon colour"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Background colour"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Applies to pill styles. Tinted uses your accent when set to Automatic."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Automatic"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Custom background"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Arrangement"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Layout"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Visualizer only fills a transparent widget with the selected effect. Lyrics "
+"only shows a scrollable verse with the current line highlighted. Uses online "
+"lyrics from LRCLIB."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Visualizer only"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Classic"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Mirrored"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Inline"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Hero wave"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Stacked"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Orbit"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Lyrics only"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Poster"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Slim strip"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Panel pill"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Panel icon"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "No art"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Text"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Title"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Title · Artist"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Artist — Title"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "None (visualizer only)"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Cover thumbnail"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Motion"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Mini visualizer follows the music using your selected visualizer style. "
+"Choose Static for still bars."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Static"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Bouncing"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Mini visualizer"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Progress"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Underline"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Styled bar"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Maximum width"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Open popup"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Hover closes when you leave the pill and card. Click toggles it. Both lets a "
+"click pin the hovered card; click again to close."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Hover"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Click"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Both"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Open card"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Alignment"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Left"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Centre"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Title lines"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Let long titles wrap onto a second line."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "One"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Two"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Visualizer behind the title"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"A soft texture under the text; style and direction follow the Visualizer tab."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Texture strength"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Large clock"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Elapsed time set big beside the progress line."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Album in the top line"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Track text"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Text size"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Artist and album follow the title."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Right"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Scroll long titles"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Scroll overflowing titles, including the panel pill. Disabled by Reduced "
+"motion."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Cover"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Show artwork"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Falls back to the player’s icon when a track has no cover."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Shape"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Vinyl and CD spin while music plays."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Sharp"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Rounded"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Squircle"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Circle"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Vinyl"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "CD"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Square always crops the art. Auto keeps square art cropped, switches the "
+"cover to 16:9 for wide art, and fits tall art whole with blurred edges. The "
+"two whole options fit the full image in the square: over a dimmed copy, or "
+"filled with its blurred edges. Wide 16:9 makes the cover a widescreen box "
+"(not for circle, vinyl or CD)."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Square"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Auto"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Whole, dimmed"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Whole, edges"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Wide 16:9"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Size"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Capped by the layout height."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Border"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Subtle"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Effects"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Colour glow"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "A shadow tinted with the cover’s own colour."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Cover tilt on hover"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"A gentle tilt after hovering the cover. Click targets stay fixed; reduced "
+"motion disables it."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Reflection"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "A faint mirror image under the cover."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Greyscale while paused"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "When there is no cover"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Placeholder"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Try the “No metadata” state."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Player icon"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Gradient"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Initials"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Clicking the cover"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Nothing"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Show large"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Open player"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "On the card"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Album name"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "A quiet third line with album and year."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Player name"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Where the music is coming from."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Player switcher"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Pick which of several running players the widget follows."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Synced lyrics line"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Online lookup (LRCLIB). Sends title, artist, album and length. For a full "
+"verse, choose the Lyrics only layout."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Display"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Lyrics display"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Local sidecars and ID3 lyrics first, then LRCLIB. The online lookup sends "
+"the song title, artist, album and length. Card backgrounds are in the Card "
+"tab."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Line on card"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Reading language"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Automatic detects Japanese kana. Select Japanese or Chinese for Han-only "
+"text. Requires Python pykakasi / pypinyin."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Japanese"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Chinese"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Pronunciation subtitle"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Romaji / Pinyin"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Kana"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Timing offset (seconds)"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Positive values show lyrics earlier; negative values delay them. Applies to "
+"both lyrics displays."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Typography"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Font"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "System font"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Sans serif"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Serif"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Monospace"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Font size"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Card line size"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Text weight"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Light"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Regular"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Medium"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Semibold"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Bold"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Current line weight"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Extra bold"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Italic"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Letter spacing"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Wrapped line height"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Spacing within a verse that wraps across multiple lines."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Highlight and contrast"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Current line colour"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Highlight colour"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Past lines"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Upcoming lines"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Text edge"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Extra contrast on busy wallpapers."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Outline"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Shadow"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Edge colour"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Reading layout"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Preferred width"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Desktop hosts can override the preferred size by resizing the widget."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Preferred height"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Card padding"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Maximum text width"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Keep verses easy to read on a wide card."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Space between verses"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Song title and artist"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Show scrollbar"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Following playback"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Scrolling pauses following so you can read ahead. Use the button on the card "
+"to resume."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Current line position"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Top"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Bottom"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "On hover"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Online track information"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Off by default. Sends song title, artist, album and length to MusicBrainz, "
+"and artist name to English Wikipedia when details open. Adds recording "
+"credits when available. Results are cached for 24 hours."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Apple catalog fallback"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Off by default. If MusicBrainz cannot match the song, send its title and "
+"artist to Apple’s public catalog. Requires online track information."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Details"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Tooltip is a compact preview near the pointer; drawer is a wider panel below "
+"the widget. Flip opens after hovering over the cover or song title for a "
+"moment. Playback buttons and seeking never trigger it. Leave the card, press "
+"Escape or use × to return."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Tooltip"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Drawer"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Flip card"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Show flip info button"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Keep a click target alongside cover and title hover. The return button "
+"remains available while flipped."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "What to show"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Choose a set in one click, or customize the fields below. Missing "
+"information stays hidden. These choices survive Surprise me and daily looks."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Essentials"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "All details"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Customize"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Background"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Show a card"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Off: the widget floats directly on the wallpaper (current default)."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Material"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Tint"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Glass"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Liquid"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Solid"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Atmosphere"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Tint colour"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Compositor glass"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Requests the Plasma translucent background; Hyprland needs the supplied "
+"layer blur rule."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "liquid"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Wallpaper blur"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Choose how frosted the glass looks. 0% turns blur off; text and artwork stay "
+"sharp."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Cover blur"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "0 keeps the art crisp."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Cover darkness"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Keeps text readable on bright covers."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Keep sharp thumbnail"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Card opacity"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Only the card fades; text and wave stay solid."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Corner radius"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Glass colour"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Glass tint"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Clear"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Frost"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Smoke"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Cover colour"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Custom glass colour"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Liquid glass"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Refraction"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Bends the sampled wallpaper with a subtle colour fringe."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Light follows pointer"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "A soft specular highlight tracks the mouse."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Depth & finish"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Soft"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Lifted"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Edge highlight"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "A thin line of light along the top edge."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Film grain"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Stops gradients from banding."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Bass pulse"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "The edge glows in the accent colour on every kick."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Ambient desktop glow"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Project a soft, sound-reactive ambient glow onto the wallpaper or panel "
+"edges."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Accent colour"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Drives the wave, progress and play button. System follows your desktop "
+"accent."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "From cover"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Custom colour"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Colour mode & visualizer light"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Used by the visualizer. Choose Colour mode for progress and controls below "
+"to share its palette or animated rainbow."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Palette"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Rainbow"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Your colour range"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Any number of colours, blended left to right. Click a colour to change it, × "
+"removes it, + adds one. The glow takes the middle of the range."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Curated palettes with bounded hues, so they never turn muddy."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Music-reactive hue"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Colours drift slowly with the bass / treble balance."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Glow"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Soft light around the visualizer."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Glow colour"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Same uses the middle of your colour range. Custom gives the glow a range of "
+"its own, which it drifts slowly through."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Same as colours"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Custom range"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Your glow range"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Any number of colours. Click one to change it, × removes it, + adds one."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Bloom"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "How far the glow spreads."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Progress colour"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Progress bar & cover ring"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Colour mode shares the visualizer’s palette, gradient or rainbow. Automatic "
+"keeps the original controls-based colours."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Custom progress colour"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Text colour"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Custom text colour"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Adapt to light cards"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Dark text and icons on the Solid material."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Panel placement"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Automatic shows the full card when it fits and your pill or icon design "
+"otherwise. Card or Pill / icon forces one at any panel size."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Card"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Pill / icon"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Card size"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Fit grows the card to fill the panel's thickness. Fixed uses the scale below."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Fit panel"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Fixed"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Card scale"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Scales the card in the panel; the panel must have room for it."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Automatic follows the panel edge. Upright uses an icon in narrow side panels."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Upright"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Rotate left"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Rotate right"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "When nothing plays"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Keep visible"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Off hides the widget until a player appears. Try the “Nothing playing” state."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Friendly idle message"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Ambient idle wave"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "A slow, quiet movement instead of a flat line."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "When paused"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Dim the widget"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Fade the visualizer"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Interaction"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Lift on hover"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Scroll to change volume"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Adjusts the system output volume, not the player’s own."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Comfort & power"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Follow system font size"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Scale text with Appearance > Fonts. Off keeps the original sizes."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Reduced motion"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "No ripples, sweeps, spins or scrolling text; the wave still reacts."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Battery saver"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "On battery: 20 Hz and no glow."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Simple rendering"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Lightweight Canvas path — also the automatic fallback if shaders fail."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Position"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "place"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Screen position"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Vertical position"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Monitor"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Layer"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Behind windows"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Above windows"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Pause when covered"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Stops drawing while a window hides the widget — saves real power."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Width"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "360 × 104 follows the chosen layout."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Height"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Connection"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Status"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Capture"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Audio input"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Auto-detect tries PipeWire, then PulseAudio, then ALSA."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Auto-detect"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "PipeWire"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "PulseAudio"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "ALSA (snd_aloop)"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Capture source"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Live devices and applications. Start playback to list a stream. Explicit "
+"sources override the backend; unavailable sources never fall back."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Low cutoff"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "High cutoff"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Must exceed low cutoff; invalid ranges use 50–10000 Hz."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Frequency spacing"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Logarithmic"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Mel (resampled)"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Bass weight"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Treble weight"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Silence release"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Time constant for fading into silence or the idle ambient wave."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Detail"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "More bars look finer, fewer look bolder."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Sensitivity"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Raise it if quiet music barely moves the wave."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Smoothing"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Higher glides gently; lower snaps to every beat."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Frame rate"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Lower saves power. 30 Hz already looks smooth."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "About the project"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Muddyblack GitHub OpenDesktop KDE Store downloads stars support project"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Glass and Liquid blur the desktop wallpaper when it is available, with tint "
+"and highlights above it. Text and artwork stay sharp. Wallpaper blur "
+"requires GPU rendering; panels and hosts without a wallpaper source keep the "
+"translucent tint."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Glass and Liquid are drawn by the widget. Add a blur layer rule for the "
+"audio-wave-visualizer namespace to blur behind them — on a Bottom-layer "
+"surface this re-blurs the whole monitor on every frame, so keep the frame "
+"rate low."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"In a panel the widget shows this pill; clicking it opens the full card as a "
+"popup."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Add hyprland/PanelPill.qml to a Quickshell bar, or use run.sh --waybar for a "
+"Waybar custom module."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Plasma places desktop widgets by dragging them in edit mode, and panel "
+"widgets inside the panel, so there is nothing to set here."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Where the desktop widget sits on your screens."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "%1 s"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Desktop"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Panel"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Adaptive colour"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Exactly today’s defaults — nothing changes for current users."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Glass Classic"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "The layout people know, on a frosted card with a soft lift."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Liquid Glass"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Clear glass, a light rim that follows your pointer, colour from the cover."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"The title set big, the music as a soft texture behind it, and a large clock."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Poster · Hanging bars"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "A centred two-line title with bars hanging from the top edge behind it."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Stalactites"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Peak bars hang from the top edge and drip toward the title. Ice palette."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"The cover is the centre; bars circle it, rotate slowly, and the cover "
+"breathes with the bass."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Halo"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"A spinning record inside a soft ribbon halo, with a progress ring. Iris "
+"palette."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Sunburst"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Sparks fly off the cover on every beat. Ember palette on a dark tint."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Dot Halo"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"A dotted neon ring spikes outward on every beat. Swap the custom colour for "
+"any glow."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Orbit Icon"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "A tiny radial ring around the cover, living in the bar."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Quiet Glass"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Title leads, calm mirror bars, one soft accent, round play button."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Panel Pill"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Text pill for Plasma panels with a mini visualizer that follows the music."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Bar Icon"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Just the cover with a progress ring, for a Hyprland bar."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Ribbon Pill"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "A glowing silk ribbon living in the panel, Aurora palette."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Bass thickens it, mids bend it, highs light the filaments. Ember palette."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Cover Art"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Album art fills the card; the sharp thumbnail stays on top."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Album Atmosphere"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Cover colours bleed into the card and drive the accent."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Room to read: surrounding lines, a clear current line, and automatic "
+"scrolling. Online lyrics from LRCLIB."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Lyrics Card"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Synced lyric line under the artist, Ribbon wave, cover palette."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "CD Player"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Spinning disc art, squiggle seek bar, flips over for track details."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Soft Solid"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Warm mineral surface and crisp dark text. No blur needed."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Neon Night"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Dark tint, mirror bars and the glowing pulse bar."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Arcade"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "LED meter with hot peaks, pixel-sharp art, time-only readout."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "A record that spins while playing, sparkles, colour from the cover."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Hero Wave"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "The visualizer takes the stage; track info tucks underneath."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Slim Strip"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "A wide, low bar for the bottom of the screen."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Mirrored Minimal"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Art on the right, dotted progress, no card, controls on hover."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid ""
+"Transparent Neon Terrain for an audio-reactive desktop. Choose any effect in "
+"Visualizer."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "Compact"
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "No art column — visualizer, progress and title only."
+msgstr ""
+
+#: package/contents/ui/studio/Schema.js
+msgid "soft"
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid "Python 3"
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid "busctl"
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid ""
+"On NixOS, add pkgs.python3 and pkgs.systemd to environment.systemPackages, "
+"rebuild, then sign out and in."
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid ""
+"Install the missing tools with your distribution’s package manager, then "
+"restart Plasma."
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid "%1 and %2"
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid "Browser site names and media details need %1. %2"
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid "Default output monitor"
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid "Unavailable: %1"
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid "First available display"
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid "Every monitor"
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid "Preview wallpaper blur"
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid ""
+"Adjusts wallpaper blur in this preview. Actual popup blur strength is set in "
+"KDE System Settings → Desktop Effects → Blur."
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid "Blur behind card"
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid ""
+"Blur application windows behind the rounded card. Requires KWin’s Blur "
+"effect."
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid "Click action"
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid "Search settings…"
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid "Discard"
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid "Discard unapplied changes"
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid ""
+"Restore every setting to its default. Apply to keep it; Discard undoes it. "
+"Saved presets are kept."
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid "Surprise me"
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid "No settings match that search."
+msgstr ""
+
+#: package/contents/ui/studio/Studio.qml
+msgid "No settings are available for this design."
+msgstr ""
+
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Pine lake"
+msgstr ""
+
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Afterglow"
+msgstr ""
+
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Midnight marina"
+msgstr ""
+
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Aurora sound"
+msgstr ""
+
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Moss & mist"
+msgstr ""
+
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Silver tide"
+msgstr ""
+
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Presets"
+msgstr ""
+
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Artwork"
+msgstr ""
+
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Track info"
+msgstr ""
+
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Lyrics"
+msgstr ""
+
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Colours"
+msgstr ""
+
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Behaviour"
+msgstr ""
+
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Audio"
+msgstr ""
+
+#: package/contents/ui/studio/StudioCatalog.js
+msgid "Info"
+msgstr ""
+
+#: package/contents/ui/studio/StudioRow.qml
+msgid "On Plasma"
+msgstr ""
+
+#: package/contents/ui/studio/StudioRow.qml
+msgid "On Hyprland"
+msgstr ""
+
+#: package/contents/ui/studio/UserPresets.qml
+msgid "No saved looks yet."
+msgstr ""
+
+#: package/contents/ui/studio/UserPresets.qml
+msgid "My look"
+msgstr ""
+
+#: package/contents/ui/studio/UserPresets.qml
+msgid "Save"
+msgstr ""
+
+#: package/contents/ui/studio/UserPresets.qml
+msgid "Copy as JSON"
+msgstr ""
+
+#: package/contents/ui/studio/UserPresets.qml
+msgid "Import JSON"
+msgstr ""
+
+#: package/contents/ui/studio/UserPresets.qml
+msgid "Import"
+msgstr ""
+
+#: package/contents/ui/studio/UserPresets.qml
+msgid ""
+"Saved looks and favorites are shared by all widgets on this device and saved "
+"immediately. To share a look with someone else, select it, then Copy as "
+"JSON. Custom QML files are not included."
+msgstr ""
+
+#: package/contents/ui/studio/UserPresets.qml
+msgid "How to contribute a preset ↗"
+msgstr ""
+
+#: translate/metadata-i18n.js
+msgid ""
+"Reactive audio visualizer with 16 visualizer styles, 28 built-in presets, a "
+"live settings studio, album artwork with glass/liquid card styling, synced "
+"lyrics, and MPRIS playback controls."
+msgstr ""

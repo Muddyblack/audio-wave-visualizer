@@ -2,7 +2,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import "../package/contents/ui/studio" as Studio
 import "../package/contents/ui/studio/Theme.js" as Theme
-import "../package/contents/ui/studio/I18n.js" as I18n
+import "../package/contents/ui/text"
 
 // Hyprland settings window: the shared studio over a draft, with Reset, Close
 // and Apply. Apply saves local overrides; Reset returns to configured defaults.

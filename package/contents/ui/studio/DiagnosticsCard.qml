@@ -1,5 +1,5 @@
 import QtQuick
-import "I18n.js" as I18n
+import "../text"
 import "Theme.js" as Theme
 
 // Audio status and "Run diagnostics" (HTML `.status` / `.check`), fed by the
@@ -36,14 +36,14 @@ Column {
         const backends = field(text, /^backends built in:\s*(.+)$/m);
         const server = field(text, /^pactl server:\s*(.+)$/m);
         const sink = field(text, /^default sink:\s*(.+)$/m);
-        const checks = [[tr(I18n.N_("cava found")), !missing && path !== "", missing ? tr(I18n.N_("not installed")) : path], [tr(I18n.N_("Capture backends")), backends !== "", backends || tr("unknown")], [tr(I18n.N_("Sound server")), server !== "", server || tr(I18n.N_("not reachable"))], [tr(I18n.N_("Default output")), sink !== "", sink || tr("none")], [tr(I18n.N_("Renderer")), true, GraphicsInfo.api === GraphicsInfo.Software ? tr(I18n.N_("canvas (software)")) : tr(I18n.N_("shader"))]];
+        const checks = [[tr(I18n.noop("cava found")), !missing && path !== "", missing ? tr(I18n.noop("not installed")) : path], [tr(I18n.noop("Capture backends")), backends !== "", backends || tr("unknown")], [tr(I18n.noop("Sound server")), server !== "", server || tr(I18n.noop("not reachable"))], [tr(I18n.noop("Default output")), sink !== "", sink || tr("none")], [tr(I18n.noop("Renderer")), true, GraphicsInfo.api === GraphicsInfo.Software ? tr(I18n.noop("canvas (software)")) : tr(I18n.noop("shader"))]];
         const python = field(text, /^python3:\s*(.+)$/m);
-        checks.push([tr(I18n.N_("Python 3 (metadata and lyrics)")), python === I18n.N_("found"), tr(python || "unknown")]);
+        checks.push([tr(I18n.noop("Python 3 (metadata and lyrics)")), python === I18n.noop("found"), tr(python || "unknown")]);
         const busctl = field(text, /^busctl:\s*(.+)$/m);
-        checks.push([tr(I18n.N_("busctl (MPRIS metadata)")), busctl === I18n.N_("found"), tr(busctl || "unknown")]);
+        checks.push([tr(I18n.noop("busctl (MPRIS metadata)")), busctl === I18n.noop("found"), tr(busctl || "unknown")]);
         for (const packageName of ["mutagen", "pykakasi", "pypinyin"]) {
             const state = field(text, new RegExp("^" + packageName + ":\\s*(.+)$", "m"));
-            checks.push([tr(I18n.N_("%1 (optional)"), packageName), state === I18n.N_("found"), tr(state || "unknown")]);
+            checks.push([tr(I18n.noop("%1 (optional)"), packageName), state === I18n.noop("found"), tr(state || "unknown")]);
         }
         return checks;
     }
@@ -71,7 +71,7 @@ Column {
             }
             Text {
                 width: parent.width
-                text: card.tr(card.inputNames[card.studio.draft.inputMethod] ?? "Auto-detect") + " · " + card.effectiveRate + " Hz · " + card.tr(I18n.N_("%1 bars"), card.studio.draft.numBars ?? 24)
+                text: card.tr(card.inputNames[card.studio.draft.inputMethod] ?? "Auto-detect") + " · " + card.effectiveRate + " Hz · " + card.tr(I18n.noop("%1 bars"), card.studio.draft.numBars ?? 24)
                 color: Theme.muted
                 font.family: Theme.fontFamily
                 font.pixelSize: 11
@@ -84,7 +84,7 @@ Column {
             anchors.verticalCenter: parent.verticalCenter
             compact: true
             visible: typeof card.studio.diagnosticsRunner === "function"
-            text: card.running ? card.tr(I18n.N_("Running…")) : card.tr(I18n.N_("Run diagnostics"))
+            text: card.running ? card.tr(I18n.noop("Running…")) : card.tr(I18n.noop("Run diagnostics"))
             onClicked: {
                 if (card.running)
                     return;

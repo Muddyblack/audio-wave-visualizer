@@ -1,7 +1,7 @@
 pragma ComponentBehavior: Bound
 import QtQuick
 import QtCore
-import "studio/I18n.js" as I18n
+import "text"
 
 // Each owner has a lease. Hiding, destruction or a host crash stops capture
 // within three seconds, including hosts without command cancellation support.

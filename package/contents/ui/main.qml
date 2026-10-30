@@ -11,7 +11,6 @@ import "../code/Layouts.js" as LayoutSizes
 import "../code/PresentationSettings.js" as Presentations
 import "debug"
 import "text"
-import "studio/I18n.js" as I18n
 
 PlasmoidItem {
     id: root

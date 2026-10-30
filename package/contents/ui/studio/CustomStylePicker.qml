@@ -1,6 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
-import "I18n.js" as I18n
+import "../text"
 import QtQuick.Dialogs
 import ".."
 import "Theme.js" as Theme
@@ -15,7 +15,7 @@ Column {
     readonly property string selectionKey: buttons ? "customButtons" : progressBar ? "customProgressBar" : "customVisualizer"
     readonly property string libraryKey: buttons ? "customButtonStyles" : progressBar ? "customProgressBars" : "customVisualizers"
     readonly property string kindLabel: buttons ? "Custom button styles" : progressBar ? "Custom progress bars" : "Custom visualizers"
-    readonly property string builtInLabel: buttons ? I18n.N_("Built-in buttons") : progressBar ? I18n.N_("Built-in progress bar") : I18n.N_("Built-in visualizer")
+    readonly property string builtInLabel: buttons ? I18n.noop("Built-in buttons") : progressBar ? I18n.noop("Built-in progress bar") : I18n.noop("Built-in visualizer")
     readonly property var library: CustomStyles.readLibrary(studio.draft[libraryKey] ?? "")
     readonly property string selected: studio.draft[selectionKey] ?? ""
     property string message: ""

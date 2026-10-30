@@ -1,5 +1,5 @@
 import QtQuick
-import "studio/I18n.js" as I18n
+import "text"
 import QtCore
 import "../code/WaveMath.js" as WaveMath
 

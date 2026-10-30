@@ -1,5 +1,5 @@
 import QtQuick
-import "I18n.js" as I18n
+import "../text"
 import QtQuick.Controls.Basic as Controls
 import ".."
 import "Theme.js" as Theme
@@ -264,7 +264,7 @@ Rectangle {
         layoutDirection: Qt.RightToLeft
         Chip {
             Repeater {
-                model: [["1", I18n.N_("1×")], ["2", I18n.N_("2×")], ["fit", I18n.N_("Fit")]]
+                model: [["1", I18n.noop("1×")], ["2", I18n.noop("2×")], ["fit", I18n.noop("Fit")]]
                 ChipButton {
                     required property var modelData
                     anchors.verticalCenter: parent.verticalCenter

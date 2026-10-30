@@ -1,5 +1,5 @@
 import QtQuick
-import "I18n.js" as I18n
+import "../text"
 import QtQuick.Controls.Basic as Controls
 import ".."
 import "Theme.js" as Theme

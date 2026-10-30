@@ -1,5 +1,4 @@
 import QtQuick
-import "studio/I18n.js" as I18n
 import QtQuick.Layouts
 import QtQuick.Controls.Basic as Controls
 import "../code/TrackInfo.js" as TrackInfo

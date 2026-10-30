@@ -22,3 +22,18 @@ jobs:
         run: |
           nix develop --command bash -c 'find package/contents -name "*.qml" -print0 | xargs -0 qmlformat -i'
           git diff --exit-code -- package/contents
+
+  i18n:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: cachix/install-nix-action@v31.11.1
+
+      - name: i18n catalogs complete
+        run: nix develop --command ./translate/check.sh
+
+      - name: i18n catalogs in sync with sources
+        run: |
+          nix develop --command ./translate/Messages.sh
+          git diff --exit-code -- translate/

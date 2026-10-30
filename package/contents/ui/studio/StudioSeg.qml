@@ -1,5 +1,5 @@
 import QtQuick
-import "I18n.js" as I18n
+import "../text"
 import "Theme.js" as Theme
 
 // Segmented choice (HTML `.seg`): sunk group, the pressed segment raised.

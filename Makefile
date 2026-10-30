@@ -1,4 +1,4 @@
-.PHONY: help view view-h view-hyprland settings-hyprland install doctor pack tag shaders docs gallery lint-python format-python run-windows
+.PHONY: help view view-h view-hyprland settings-hyprland install doctor pack tag shaders docs gallery lint-python format-python run-windows translations new-language check-translations
 .DEFAULT_GOAL := help
 
 lint-python: ## check Python lint and formatting with Ruff
@@ -21,6 +21,7 @@ view: ## preview widget (planar)
 	@if command -v nix >/dev/null 2>&1 && [ -f flake.nix ]; then \
 	  nix run .#view; \
 	else \
+	  ./translate/build.sh; \
 	  QML_XHR_ALLOW_FILE_READ=1 plasmoidviewer -a package -f planar; \
 	fi
 
@@ -45,6 +46,7 @@ view-h: ## preview widget (horizontal)
 	@if command -v nix >/dev/null 2>&1 && [ -f flake.nix ]; then \
 	  nix run .#view -- horizontal; \
 	else \
+	  ./translate/build.sh; \
 	  plasmoidviewer -a package -f horizontal; \
 	fi
 
@@ -80,7 +82,7 @@ pack: ## build .plasmoid archive
 	@if command -v nix >/dev/null 2>&1 && [ -f flake.nix ]; then \
 	  nix run .#pack; \
 	else \
-	  sh package/translate/build.sh; \
+	  ./translate/build.sh; \
 	  ver=$$(grep -oE '"Version":[[:space:]]*"[^"]+"' package/metadata.json | head -1 | sed -E 's/.*"([^"]+)"$$/\1/'); \
 	  name=$$(basename "$$PWD"); \
 	  out="$$PWD/$$name-$$ver.plasmoid"; \
@@ -88,6 +90,21 @@ pack: ## build .plasmoid archive
 	  (cd package && zip -r "$$out" . -x '*.swp' '*~' '*__pycache__*' '*.pyc' '*.pyo' 'contents/shaders/build_shaders.py' 'contents/ui/studio/wallpapers/README.md'); \
 	  echo "wrote $$out"; \
 	fi
+
+translations: ## re-extract strings into translate/*.po and compile them
+	@./translate/Messages.sh
+	@./translate/build.sh
+
+new-language: ## start a catalog for a language (make new-language CODE=de); LANG is the shell's locale, so not that
+	@test -n "$(CODE)" || { echo "usage: make new-language CODE=de" >&2; exit 1; }
+	@test ! -e translate/$(CODE).po || { echo "translate/$(CODE).po already exists" >&2; exit 1; }
+	@./translate/Messages.sh >/dev/null
+	@msginit --no-translator --input=translate/template.pot --locale=$(CODE) --output-file=translate/$(CODE).po
+	@sed -i '/^"POT-Creation-Date:/d' translate/$(CODE).po
+	@echo "wrote translate/$(CODE).po: translate it, then: make translations && make check-translations"
+
+check-translations: ## check every catalog compiles; listed ones (translate/complete-languages) must be complete
+	@./translate/check.sh
 
 tag: ## open a release PR (bump version); merging it tags + publishes
 	@./tag.sh

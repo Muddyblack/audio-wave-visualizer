@@ -6,7 +6,7 @@ import Quickshell.Wayland
 import Quickshell.Services.Mpris
 import Quickshell.Services.UPower
 import "../package/contents/ui" as Shared
-import "../package/contents/ui/studio/I18n.js" as I18n
+import "../package/contents/ui/text"
 import "../package/contents/ui/studio" as Studio
 import "Configuration.js" as Configuration
 import "../package/contents/code/HostDefaults.js" as HostDefaults
@@ -54,6 +54,19 @@ ShellRoot {
     property string settingsError: ""
     readonly property string configPath: (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/audio-wave-visualizer/hyprland.json"
 
+    // No KDE i18n() here: read the system language's catalog from translate/.
+    // Quickshell pins Qt.locale() to en_US, so the language comes from the
+    // environment. The most specific catalog that exists loads last and wins.
+    Variants {
+        model: I18n.languages(Quickshell.env("LC_ALL") || Quickshell.env("LC_MESSAGES") || Quickshell.env("LANG")).reverse()
+        FileView {
+            required property string modelData
+            path: Qt.resolvedUrl("../translate/" + modelData + ".po").toString().replace(/^file:\/\//, "")
+            blockLoading: true
+            printErrors: false
+            onLoaded: I18n.load(text())
+        }
+    }
     FileView {
         id: preferences
         path: root.configPath

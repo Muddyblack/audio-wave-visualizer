@@ -1,5 +1,5 @@
 import QtQuick
-import "I18n.js" as I18n
+import "../text"
 import "Theme.js" as Theme
 import "Schema.js" as Schema
 

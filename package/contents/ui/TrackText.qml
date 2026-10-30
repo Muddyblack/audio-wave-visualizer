@@ -1,5 +1,4 @@
 import QtQuick
-import "studio/I18n.js" as I18n
 import QtQuick.Controls as QQC
 import "text"
 

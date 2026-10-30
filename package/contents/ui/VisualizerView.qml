@@ -1,6 +1,5 @@
 pragma ComponentBehavior: Bound
 import QtQuick
-import "studio/I18n.js" as I18n
 import QtQuick.Controls.Basic as Controls
 import "layouts" as Layouts
 import "../code/Layouts.js" as LayoutSizes

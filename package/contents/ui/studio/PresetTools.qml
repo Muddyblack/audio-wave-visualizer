@@ -1,5 +1,5 @@
 import QtQuick
-import "I18n.js" as I18n
+import "../text"
 import "Schema.js" as Schema
 import "Theme.js" as Theme
 
@@ -11,7 +11,7 @@ Item {
     StudioSelect {
         visible: tools.showFilter
         width: Math.min(170, tools.width)
-        options: Schema.FILTERS.map(p => [p[0], p[0] === "all" ? I18n.N_("All categories") : p[1]])
+        options: Schema.FILTERS.map(p => [p[0], p[0] === "all" ? I18n.noop("All categories") : p[1]])
         value: tools.studio.presetFilter
         Accessible.name: I18n.i18n("Preset category")
         onChosen: value => tools.studio.presetFilter = value

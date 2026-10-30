@@ -85,6 +85,13 @@ class SettingsStore(QObject):
 
     settingsError = Property(str, lambda self: self._error, notify=changed)
 
+    @Slot(str, result=str)
+    def readCatalog(self, language: str) -> str:
+        try:
+            return (ROOT / "translate" / f"{language}.po").read_text(encoding="utf-8")
+        except OSError:
+            return ""
+
     @Slot(str)
     def saveSettings(self, text: str) -> None:
         path = settings_path()

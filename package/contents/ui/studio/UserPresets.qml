@@ -1,7 +1,7 @@
 import QtQuick
 import "Theme.js" as Theme
 import "Schema.js" as Schema
-import "I18n.js" as I18n
+import "../text"
 
 // Saved looks: grid, name field with Save,
 // Copy as JSON and Import JSON. Placement keys are never saved.

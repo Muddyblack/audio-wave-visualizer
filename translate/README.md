@@ -1,0 +1,27 @@
+# Translations
+
+One gettext catalog per language, `translate/<lang>.po`, translates everything
+a user reads, on every platform. QML calls `I18n.i18n("…")`; text stored as data
+and translated when it is drawn is marked `N_("…")` in JS, `I18n.noop("…")` in QML.
+
+- `Messages.sh` extracts the strings into `template.pot` and merges it into
+  every `.po`. Run it after changing a string; the pre-commit hook does.
+- `build.sh` compiles each `.po` to the `.mo` Plasma loads for its own `i18n()`.
+- Quickshell and Windows have no KDE `i18n()`: they read the `.po` at runtime
+  (`package/contents/ui/text/I18n.qml`, parsed by `ui/studio/I18n.js`).
+
+## Translating
+
+```bash
+make new-language CODE=de      # starts translate/de.po from the template
+# edit translate/de.po (Poedit, Lokalize, or any text editor)
+make translations              # re-extract and merge, keeps your work
+make check-translations        # every catalog must compile
+```
+
+Placeholders are `%1`, `%2`, … and may be reordered. Lines starting with `#.`
+in the catalog are notes for translators; add one in the source with a
+`// TRANSLATORS: …` comment on the line before the string.
+
+`complete-languages` lists the languages CI requires to stay 100% translated;
+any other language may be partial and shows English for the rest.

@@ -1,5 +1,4 @@
 import QtQuick
-import "studio/I18n.js" as I18n
 import org.kde.plasma.core as PlasmaCore
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.private.mpris as Mpris

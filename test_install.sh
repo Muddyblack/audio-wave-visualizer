@@ -49,7 +49,7 @@ NAME="${TEST_METADATA#*$'\n'}"
 # copied from a previous `make pack`; it carries the release Id's name.
 rm -rf -- "$TEMP_DIR/contents/locale"
 if command -v msgfmt >/dev/null 2>&1; then
-    sh "$HERE/package/translate/build.sh" "$TEMP_DIR"
+    "$HERE/translate/build.sh" "$TEMP_DIR"
 else
     echo "warning: gettext (msgfmt) not found; the test widget will be English only." >&2
 fi

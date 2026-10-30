@@ -1,7 +1,6 @@
 import QtQuick
 import QtQuick.Controls as QQC
 import "text"
-import "studio/I18n.js" as I18n
 
 // Backend status and both renderers share the same area in every layout.
 Waveform {

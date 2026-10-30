@@ -1,6 +1,6 @@
 # Build artifacts
 *.plasmoid
-# Compiled catalogs; built from package/translate/*.po by build.sh.
+# Compiled catalogs; built from translate/*.po by translate/build.sh.
 package/contents/locale/
 # Generated browser assets; originals live in package/contents/ui/studio.
 docs/website/assets/studio/

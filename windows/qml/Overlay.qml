@@ -11,6 +11,7 @@ pragma ComponentBehavior: Bound
 import QtQuick
 import QtQuick.Window
 import "../../package/contents/ui" as Shared
+import "../../package/contents/ui/text"
 import "../../hyprland" as Hyprland
 import "../../hyprland/Configuration.js" as Configuration
 import "../../package/contents/code/HostDefaults.js" as HostDefaults
@@ -27,6 +28,16 @@ Item {
     property string settingsJson: ""
     property var media: null
     property var host: null
+    // No KDE i18n() here: load the system language's catalog from translate/.
+    onHostChanged: {
+        for (const language of I18n.languages()) {
+            const text = host ? host.readCatalog(language) : "";
+            if (text) {
+                I18n.load(text);
+                break;
+            }
+        }
+    }
 
     readonly property var defaults: Configuration.defaults(defaultsXml)
     property var userSettings: {
@@ -71,7 +82,12 @@ Item {
     readonly property var widgetRect: {
         const screen = Configuration.screens(Qt.application.screens, configuration.monitor)[0];
         if (!screen)
-            return ({ x: 0, y: 0, width: 360, height: 104 });
+            return ({
+                    x: 0,
+                    y: 0,
+                    width: 360,
+                    height: 104
+                });
         const sx = screen.virtualX, sy = screen.virtualY;
         const layoutSize = LayoutSizes.size(configuration);
         const defaultSize = configuration.widgetWidth === 360 && configuration.widgetHeight === 104;
@@ -98,7 +114,12 @@ Item {
             x = sx + screen.width - width - (isDocked ? gap : 0);
         else
             x = sx + (screen.width - width) / 2;
-        return ({ x: Math.round(x), y: Math.round(y), width: Math.round(width), height: Math.round(height) });
+        return ({
+                x: Math.round(x),
+                y: Math.round(y),
+                width: Math.round(width),
+                height: Math.round(height)
+            });
     }
 
     // VisualizerCore drives feeder.sh through this on Linux. Windows has no
@@ -177,7 +198,7 @@ Item {
     Window {
         objectName: "settingsWindow" // app.py gives it a shader cache
         visible: root.settingsOpen
-        title: "Audio Visualizer Settings"
+        title: I18n.i18n("Audio Visualizer Settings")
         // Centred on its screen and within the work area: left to the window
         // manager it opened with the title bar above the top edge.
         width: Math.min(1180, Screen.desktopAvailableWidth - 40)

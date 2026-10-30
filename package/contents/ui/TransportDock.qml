@@ -3,7 +3,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Effects
 import "debug"
 import "../code/MediaSource.js" as MediaSource
-import "studio/I18n.js" as I18n
+import "text"
 
 // Playback controls. Shuffle/repeat use the MPRIS player properties.
 Item {
