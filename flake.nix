@@ -14,9 +14,12 @@
           default = pkgs.stdenvNoCC.mkDerivation {
             pname = "plasma-audio-visualizer";
             version = metadata.KPlugin.Version;
-            src = ./package;
+            src = pkgs.lib.fileset.toSource {
+              root = ./.;
+              fileset = pkgs.lib.fileset.unions [ ./package ./translate ];
+            };
 
-            nativeBuildInputs = [ pkgs.makeWrapper ];
+            nativeBuildInputs = [ pkgs.makeWrapper pkgs.gettext ];
 
             dontConfigure = true;
             dontBuild = true;
@@ -25,7 +28,8 @@
               runHook preInstall
               root=$out/share/plasma/plasmoids/${metadata.KPlugin.Id}
               mkdir -p "$root"
-              cp -r . "$root/"
+              cp -r package/. "$root/"
+              bash translate/build.sh "$root"
               for script in feeder.sh doctor.sh stereo_capture.sh local_lyrics.sh track_profile.sh media_metadata.sh; do
                 chmod +x "$root/contents/code/$script"
                 wrapProgram "$root/contents/code/$script" \
@@ -65,6 +69,7 @@
             program = toString (pkgs.writeShellScript "view" ''
               export PATH=${pkgs.lib.makeBinPath [ pkgs.kdePackages.plasma-sdk (pkgs.python3.withPackages (ps: [ ps.mutagen ps.pykakasi ps.pypinyin ])) ]}:"$PATH"
               export QML_XHR_ALLOW_FILE_READ=1
+              PATH=${pkgs.gettext}/bin:"$PATH" ./translate/build.sh
               exec plasmoidviewer \
                 -a "$PWD/package" -f "''${1:-planar}"
             '');
@@ -74,6 +79,8 @@
             program = toString (pkgs.writeShellScript "pack" ''
               set -euo pipefail
               here="$PWD"
+              export PATH=${pkgs.gettext}/bin:"$PATH"
+              "$here/translate/build.sh"
               ver="$(grep -oE '"Version":[[:space:]]*"[^"]+"' "$here/package/metadata.json" | head -1 | sed -E 's/.*"([^"]+)"$/\1/')"
               name="$(basename "$here")"
               out="$here/$name-$ver.plasmoid"
@@ -118,6 +125,7 @@
               kdePackages.plasma-sdk
               pre-commit
               zip
+              gettext
               # tests/test_feeder.py also streams frames through the awks
               # Debian/Ubuntu (mawk) and BSD-style systems (nawk) ship.
               mawk

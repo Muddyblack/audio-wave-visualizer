@@ -59,6 +59,7 @@ jobs:
               # Windows build alone.
               - 'package/contents/**'
               - 'package/icon.png'
+              - 'translate/*.po'
               - 'hyprland/Configuration.js'
               - 'hyprland/SettingsPage.qml'
 

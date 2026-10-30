@@ -24,6 +24,12 @@ PlasmoidItem {
     readonly property bool followSystemFont: plasmoid.configuration.followSystemFont ?? true
     onGpuDebugChanged: GpuDebug.apply(gpuDebug)
     onFollowSystemFontChanged: SystemText.follow = followSystemFont
+    CatalogLoader {
+        language: plasmoid.configuration.language ?? ""
+        commandSourceComponent: Component {
+            PlasmaCommandSource {}
+        }
+    }
     Component.onCompleted: {
         GpuDebug.apply(gpuDebug);
         SystemText.follow = followSystemFont;
@@ -152,7 +158,7 @@ PlasmoidItem {
                 opacity: popupState.keepOpen || popupHover.hovered || activeFocus ? 1 : 0
                 checkable: true
                 checked: popupState.keepOpen
-                Accessible.name: checked ? "Unpin and close popup" : "Keep popup open"
+                Accessible.name: checked ? I18n.i18n("Unpin and close popup") : I18n.i18n("Keep popup open")
                 Controls.ToolTip.visible: hovered
                 Controls.ToolTip.text: Accessible.name
                 onClicked: popupState.togglePin()
@@ -231,6 +237,7 @@ PlasmoidItem {
     }
     fullRepresentation: FittedFrame {
         id: fullFrame
+        opacity: I18n.loading ? 0 : 1
         // A roomy panel displays the card inline. Small panels display the
         // pill and open the same card in the borderless popup above.
         contentRotation: root.inPanel ? panelPlacement.contentRotation : 0

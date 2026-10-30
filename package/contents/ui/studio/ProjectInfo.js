@@ -1,4 +1,5 @@
 // Shared project links and optional network statistics for both Studios.
+.import "I18n.js" as I18n
 .import "ProjectFunding.js" as Funding
 .import "ProjectLicense.js" as License
 .import "ProjectVersion.js" as Version
@@ -14,9 +15,9 @@ var licenseId = License.spdx;
 var contributorsUrl = "https://api.github.com/repos/Muddyblack/audio-wave-visualizer/contributors?per_page=12";
 var contributorsPage = repository + "/graphs/contributors";
 var statistics = [
-    {id: "stars", label: "GitHub stars", icon: "star.svg", href: repository + "/stargazers", url: "https://img.shields.io/github/stars/Muddyblack/audio-wave-visualizer.json"},
-    {id: "downloads", label: "GitHub downloads", icon: "download.svg", href: repository + "/releases", url: "https://img.shields.io/github/downloads/Muddyblack/audio-wave-visualizer/total.json"},
-    {id: "kde", label: "OpenDesktop downloads", icon: "download.svg", href: store, url: "https://img.shields.io/badge/dynamic/json.json?url=" + encodeURIComponent("https://api.pling.com/ocs/v1/content/data?search=audio+wave+visualizer&format=json") + "&query=" + encodeURIComponent("$.data[0].downloads") + "&label=Downloads"}
+    {id: "stars", label: I18n.noop("GitHub stars"), icon: "star.svg", href: repository + "/stargazers", url: "https://img.shields.io/github/stars/Muddyblack/audio-wave-visualizer.json"},
+    {id: "downloads", label: I18n.noop("GitHub downloads"), icon: "download.svg", href: repository + "/releases", url: "https://img.shields.io/github/downloads/Muddyblack/audio-wave-visualizer/total.json"},
+    {id: "kde", label: I18n.noop("OpenDesktop downloads"), icon: "download.svg", href: store, url: "https://img.shields.io/badge/dynamic/json.json?url=" + encodeURIComponent("https://api.pling.com/ocs/v1/content/data?search=audio+wave+visualizer&format=json") + "&query=" + encodeURIComponent("$.data[0].downloads") + "&label=Downloads"}
 ];
 function count(text) {
     try {
@@ -57,12 +58,12 @@ function parseVersion(value) {
 // Compare against a stable release; a prerelease of the same version is older.
 function releaseStatus(current, latest) {
     var local = parseVersion(current), remote = parseVersion(latest);
-    if (!local || !remote || remote.prerelease) return "Version comparison unavailable";
+    if (!local || !remote || remote.prerelease) return I18n.noop("Version comparison unavailable");
     for (var i = 0; i < 3; i++) {
-        if (local.numbers[i] < remote.numbers[i]) return "Update available";
-        if (local.numbers[i] > remote.numbers[i]) return "Newer than latest release";
+        if (local.numbers[i] < remote.numbers[i]) return I18n.noop("Update available");
+        if (local.numbers[i] > remote.numbers[i]) return I18n.noop("Newer than latest release");
     }
-    return local.prerelease ? "Update available" : "Up to date";
+    return local.prerelease ? I18n.noop("Update available") : I18n.noop("Up to date");
 }
 
 function releaseVersion(text) {

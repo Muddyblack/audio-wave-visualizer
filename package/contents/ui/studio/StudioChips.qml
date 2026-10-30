@@ -1,4 +1,5 @@
 import QtQuick
+import "../text"
 import "Theme.js" as Theme
 import "Schema.js" as Schema
 
@@ -28,7 +29,7 @@ Flow {
                 id: chipLabel
                 anchors.centerIn: parent
                 textFormat: Text.StyledText
-                text: (chip.pressed ? "<font color=\"" + Theme.brand + "\">✓ </font>" : "") + chip.modelData[1]
+                text: (chip.pressed ? "<font color=\"" + Theme.brand + "\">✓ </font>" : "") + I18n.i18n(chip.modelData[1])
                 color: chip.pressed ? Theme.text : Theme.muted
                 font.family: Theme.fontFamily
                 font.pixelSize: 11

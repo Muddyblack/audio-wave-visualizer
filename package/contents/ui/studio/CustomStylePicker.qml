@@ -1,5 +1,6 @@
 pragma ComponentBehavior: Bound
 import QtQuick
+import "../text"
 import QtQuick.Dialogs
 import ".."
 import "Theme.js" as Theme
@@ -13,8 +14,8 @@ Column {
     property bool buttons: false
     readonly property string selectionKey: buttons ? "customButtons" : progressBar ? "customProgressBar" : "customVisualizer"
     readonly property string libraryKey: buttons ? "customButtonStyles" : progressBar ? "customProgressBars" : "customVisualizers"
-    readonly property string kindLabel: buttons ? "Custom button styles" : progressBar ? "Custom progress bars" : "Custom visualizers"
-    readonly property string builtInLabel: buttons ? "Built-in buttons" : progressBar ? "Built-in progress bar" : "Built-in visualizer"
+    readonly property string kindLabel: buttons ? I18n.noop("Custom button styles") : progressBar ? I18n.noop("Custom progress bars") : I18n.noop("Custom visualizers")
+    readonly property string builtInLabel: buttons ? I18n.noop("Built-in buttons") : progressBar ? I18n.noop("Built-in progress bar") : I18n.noop("Built-in visualizer")
     readonly property var library: CustomStyles.readLibrary(studio.draft[libraryKey] ?? "")
     readonly property string selected: studio.draft[selectionKey] ?? ""
     property string message: ""
@@ -25,7 +26,7 @@ Column {
         expanded = true;
         const source = String(url);
         if (!CustomStyles.validUrl(source)) {
-            message = "Choose a local .qml file.";
+            message = I18n.i18n("Choose a local .qml file.");
             return;
         }
         const entries = library.slice();
@@ -63,7 +64,7 @@ Column {
             anchors.right: expandButton.left
             anchors.rightMargin: 10
             anchors.verticalCenter: parent.verticalCenter
-            text: root.kindLabel + (root.selected ? " · " + CustomStyles.nameForUrl(root.selected) : "")
+            text: I18n.i18n(root.kindLabel) + (root.selected ? " · " + CustomStyles.nameForUrl(root.selected) : "")
             color: Theme.text
             font.family: Theme.fontFamily
             font.pixelSize: 12
@@ -73,7 +74,7 @@ Column {
             id: expandButton
             anchors.right: parent.right
             compact: true
-            text: root.expanded ? "Hide" : "Manage…"
+            text: root.expanded ? I18n.i18n("Hide") : I18n.i18n("Manage…")
             areaName: "expand_" + root.selectionKey
             onClicked: root.expanded = !root.expanded
         }
@@ -84,7 +85,7 @@ Column {
         spacing: 8
         Text {
             width: parent.width
-            text: "QML styles run code with the host’s permissions. Import only files you trust. Keep the file and its assets in a permanent folder; importing remembers their location."
+            text: I18n.i18n("QML styles run code with the host’s permissions. Import only files you trust. Keep the file and its assets in a permanent folder; importing remembers their location.")
             color: Theme.muted
             font.family: Theme.fontFamily
             font.pixelSize: 11
@@ -101,16 +102,16 @@ Column {
             width: parent.width
             spacing: 8
             StudioButton {
-                text: "Import QML…"
+                text: I18n.i18n("Import QML…")
                 areaName: root.buttons ? "importCustomButtons" : root.progressBar ? "importCustomProgressBar" : "importCustomVisualizer"
                 onClicked: fileDialog.open()
             }
             StudioButton {
-                text: "Try example"
+                text: I18n.i18n("Try example")
                 onClicked: root.importFile(Qt.resolvedUrl(root.buttons ? "../../examples/MinimalButtons.qml" : root.progressBar ? "../../examples/GradientProgress.qml" : "../../examples/PulseBars.qml"))
             }
             StudioButton {
-                text: "Remove"
+                text: I18n.i18n("Remove")
                 areaName: root.buttons ? "removeCustomButtons" : root.progressBar ? "removeCustomProgressBar" : "removeCustomVisualizer"
                 enabled: root.selected !== ""
                 onClicked: root.removeSelected()
@@ -182,7 +183,7 @@ Column {
     }
     FileDialog {
         id: fileDialog
-        title: root.buttons ? "Import trusted QML buttons" : root.progressBar ? "Import trusted QML progress bar" : "Import trusted QML visualizer"
+        title: root.buttons ? I18n.i18n("Import trusted QML buttons") : root.progressBar ? I18n.i18n("Import trusted QML progress bar") : I18n.i18n("Import trusted QML visualizer")
         fileMode: FileDialog.OpenFile
         nameFilters: ["QML styles (*.qml)"]
         onAccepted: root.importFile(selectedFile)

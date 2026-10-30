@@ -352,6 +352,8 @@ Kirigami.Page {
     property bool cfg_hoverLiftDefault
     property bool cfg_scrollVolume
     property bool cfg_scrollVolumeDefault
+    property string cfg_language
+    property string cfg_languageDefault
     property bool cfg_followSystemFont
     property bool cfg_followSystemFontDefault
     property string cfg_gpuDebug
@@ -422,6 +424,15 @@ Kirigami.Page {
         return false;
     }
 
+    // Previews the choice in the studio; Apply saves it for the widget, and
+    // closing without saving hands the catalog back to the widget's choice.
+    CatalogLoader {
+        preview: true
+        language: root.cfg_language
+        commandSourceComponent: Component {
+            PlasmaCommandSource {}
+        }
+    }
     Component.onCompleted: {
         GpuDebug.apply(cfg_gpuDebug ?? "");
         SystemText.follow = cfg_followSystemFont;
@@ -526,7 +537,7 @@ Kirigami.Page {
         property string status: ""
         onNewData: (source, data) => {
             const count = parseInt(String(data["stdout"] || "").trim());
-            status = data["exit code"] === 0 && !isNaN(count) ? (count === 0 ? "No other widgets found" : "Copied to " + count + (count === 1 ? " other widget" : " other widgets")) : "Could not reach Plasma";
+            status = data["exit code"] === 0 && !isNaN(count) ? (count === 0 ? I18n.i18n("No other widgets found") : I18n.i18np("Copied to %1 other widget", "Copied to %1 other widgets", count)) : I18n.i18n("Could not reach Plasma");
             disconnectSource(source);
             statusReset.restart();
         }
@@ -550,22 +561,22 @@ Kirigami.Page {
             Studio.StudioSeg {
                 objectName: "presentationTarget"
                 width: implicitWidth
-                options: [[false, "Panel pill"], [true, "Card / popup"]]
+                options: [[false, I18n.noop("Panel pill")], [true, I18n.noop("Card / popup")]]
                 value: root.editingPopup
                 onActivated: value => root.editingPopup = value
             }
             Studio.StudioButton {
                 objectName: "syncAppearance"
                 compact: true
-                text: root.editingPopup ? "Use pill look" : "Use popup look"
-                tooltip: "Copy the other design into this one: colours, artwork, visualizer and progress styles. The pill enables the copied effects. Each view keeps its layout and playback controls. Apply saves; Discard undoes."
+                text: root.editingPopup ? I18n.i18n("Use pill look") : I18n.i18n("Use popup look")
+                tooltip: I18n.i18n("Copy the other design into this one: colours, artwork, visualizer and progress styles. The pill enables the copied effects. Each view keeps its layout and playback controls. Apply saves; Discard undoes.")
                 onClicked: root.assign(Presentations.syncAppearance(root.draft, root.editingPopup ? "panel" : "popup"))
             }
             Studio.StudioButton {
                 objectName: "syncAllWidgets"
                 compact: true
-                text: syncAll.status || "Copy to all widgets"
-                tooltip: "Copy these settings, including both panel designs, to every other copy of this widget, such as one per monitor. Each keeps its own monitor and position. Apply here first; the others change immediately and cannot be undone."
+                text: syncAll.status || I18n.i18n("Copy to all widgets")
+                tooltip: I18n.i18n("Copy these settings, including both panel designs, to every other copy of this widget, such as one per monitor. Each keeps its own monitor and position. Apply here first; the others change immediately and cannot be undone.")
                 onClicked: root.copyToAllWidgets()
             }
         }

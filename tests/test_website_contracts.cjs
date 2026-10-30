@@ -150,7 +150,7 @@ context.platformNote = () => '';
 vm.runInContext('let S = structuredClone(DEFAULTS); const SCREENS = [];', context);
 vm.runInContext(source.slice(source.indexOf('function buildRow('), source.indexOf('function renderSettings()')), context);
 vm.runInContext(`
-  for (const section of Schema.SECTIONS) for (const row of section.rows) {
+  for (const section of Schema.SECTIONS) for (const row of section.rows.filter(row => !row.nativeOnly)) {
     const built = buildRow(row);
     built.sync(DEFAULTS);
     assert(!/undefined|NaN/.test(built.el.innerHTML), row.k || row.id);

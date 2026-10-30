@@ -1,4 +1,5 @@
 import QtQuick
+import "../text"
 import "Schema.js" as Schema
 import "Theme.js" as Theme
 
@@ -10,9 +11,9 @@ Item {
     StudioSelect {
         visible: tools.showFilter
         width: Math.min(170, tools.width)
-        options: Schema.FILTERS.map(p => [p[0], p[0] === "all" ? "All categories" : p[1]])
+        options: Schema.FILTERS.map(p => [p[0], p[0] === "all" ? I18n.noop("All categories") : p[1]])
         value: tools.studio.presetFilter
-        Accessible.name: "Preset category"
+        Accessible.name: I18n.i18n("Preset category")
         onChosen: value => tools.studio.presetFilter = value
     }
     Row {
@@ -24,7 +25,7 @@ Item {
             onToggled: checked => tools.studio.keepColors = checked
         }
         Text {
-            text: "Keep my colours"
+            text: I18n.i18n("Keep my colours")
             color: Theme.muted
             font.family: Theme.fontFamily
             font.pixelSize: 11

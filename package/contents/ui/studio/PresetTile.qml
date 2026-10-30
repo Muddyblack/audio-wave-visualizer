@@ -1,4 +1,5 @@
 import QtQuick
+import "../text"
 import QtQuick.Controls.Basic as Controls
 import ".."
 import "Theme.js" as Theme
@@ -103,7 +104,7 @@ Item {
             spacing: 4
             Text {
                 width: parent.width - check.width - 4
-                text: tile.name
+                text: !tile.renamable ? (tile.name.indexOf("Today’s look · ") === 0 ? I18n.i18n("Today’s look · %1", tile.name.substring("Today’s look · ".length)) : I18n.i18n(tile.name)) : tile.name
                 textFormat: Text.PlainText
                 color: tile.active ? Theme.text : Theme.muted
                 font.family: Theme.fontFamily
@@ -135,7 +136,7 @@ Item {
         width: 24
         height: 24
         text: tile.favorite ? "★" : "☆"
-        Accessible.name: tile.favorite ? "Remove from favourites" : "Add to favourites"
+        Accessible.name: tile.favorite ? I18n.i18n("Remove from favourites") : I18n.i18n("Add to favourites")
         Controls.ToolTip.visible: hovered
         Controls.ToolTip.text: Accessible.name
         contentItem: Text {
@@ -159,9 +160,9 @@ Item {
         width: 24
         height: 24
         text: "✎"
-        Accessible.name: "Rename preset"
+        Accessible.name: I18n.i18n("Rename preset")
         Controls.ToolTip.visible: hovered
-        Controls.ToolTip.text: "Rename preset"
+        Controls.ToolTip.text: I18n.i18n("Rename preset")
         contentItem: Text {
             text: parent.text
             color: "white"
@@ -199,7 +200,7 @@ Item {
             font.pixelSize: 11
             clip: true
             selectByMouse: true
-            Accessible.name: "Preset name"
+            Accessible.name: I18n.i18n("Preset name")
             onAccepted: tile.finishRename()
             Keys.onEscapePressed: tile.renaming = false
         }

@@ -195,9 +195,9 @@ FocusScope {
         Controls.ToolButton {
             objectName: "lyricsOffsetMinus"
             text: "−"
-            Accessible.name: qsTr("Delay lyrics by 100 milliseconds")
+            Accessible.name: I18n.i18n("Delay lyrics by 100 milliseconds")
             Controls.ToolTip.visible: hovered
-            Controls.ToolTip.text: qsTr("Delay lyrics 100 ms (−)")
+            Controls.ToolTip.text: I18n.i18n("Delay lyrics 100 ms (−)")
             onClicked: {
                 root.nudge(-1);
                 root.forceActiveFocus();
@@ -206,9 +206,9 @@ FocusScope {
         Controls.ToolButton {
             objectName: "lyricsOffsetReset"
             text: ((root.cfg.lyricsOffset ?? 0) >= 0 ? "+" : "") + Math.round((root.cfg.lyricsOffset ?? 0) * 1000) + " ms"
-            Accessible.name: qsTr("Reset lyrics timing offset")
+            Accessible.name: I18n.i18n("Reset lyrics timing offset")
             Controls.ToolTip.visible: hovered
-            Controls.ToolTip.text: qsTr("Reset timing; positive values show lyrics earlier")
+            Controls.ToolTip.text: I18n.i18n("Reset timing; positive values show lyrics earlier")
             onClicked: {
                 root.setOffset(0);
                 root.forceActiveFocus();
@@ -217,9 +217,9 @@ FocusScope {
         Controls.ToolButton {
             objectName: "lyricsOffsetPlus"
             text: "+"
-            Accessible.name: qsTr("Advance lyrics by 100 milliseconds")
+            Accessible.name: I18n.i18n("Advance lyrics by 100 milliseconds")
             Controls.ToolTip.visible: hovered
-            Controls.ToolTip.text: qsTr("Advance lyrics 100 ms (+)")
+            Controls.ToolTip.text: I18n.i18n("Advance lyrics 100 ms (+)")
             onClicked: {
                 root.nudge(1);
                 root.forceActiveFocus();
@@ -233,7 +233,7 @@ FocusScope {
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottomMargin: timingControls.height + 8
-        text: qsTr("Follow current line")
+        text: I18n.i18n("Follow current line")
         onClicked: {
             root.following = true;
             root.followCurrent();
@@ -250,15 +250,15 @@ FocusScope {
                 return root.view.lyricNotice;
             switch (root.view.lyricStatus) {
             case "idle":
-                return qsTr("Play a song to see its lyrics");
+                return I18n.i18n("Play a song to see its lyrics");
             case "metadata":
-                return qsTr("Waiting for the song title and artist…");
+                return I18n.i18n("Waiting for the song title and artist…");
             case "loading":
-                return qsTr("Finding lyrics…");
+                return I18n.i18n("Finding lyrics…");
             case "error":
-                return qsTr("Couldn't load lyrics");
+                return I18n.i18n("Couldn't load lyrics");
             default:
-                return qsTr("No synced lyrics available for this song");
+                return I18n.i18n("No synced lyrics available for this song");
             }
         }
         textFormat: Text.PlainText

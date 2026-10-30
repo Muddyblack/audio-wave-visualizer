@@ -1,4 +1,5 @@
 import QtQuick
+import "../text"
 import "Theme.js" as Theme
 
 // Segmented choice (HTML `.seg`): sunk group, the pressed segment raised.
@@ -40,7 +41,7 @@ Rectangle {
                 Text {
                     id: segmentLabel
                     anchors.centerIn: parent
-                    text: segment.modelData[1]
+                    text: I18n.i18n(segment.modelData[1])
                     color: segment.pressed ? Theme.segPressedText : Theme.muted
                     font.family: Theme.fontFamily
                     font.pixelSize: 11

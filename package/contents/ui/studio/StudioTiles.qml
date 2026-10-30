@@ -1,4 +1,5 @@
 import QtQuick
+import "../text"
 import "Theme.js" as Theme
 
 // Tile grid (HTML `.tiles` / `.tile`): live preview area, label, selected
@@ -78,7 +79,7 @@ Flow {
                     x: 9
                     y: 62
                     width: parent.width - 18
-                    text: tile.option.label
+                    text: I18n.i18n(tile.option.label)
                     color: tile.pressed ? Theme.text : Theme.muted
                     font.family: Theme.fontFamily
                     font.pixelSize: 11

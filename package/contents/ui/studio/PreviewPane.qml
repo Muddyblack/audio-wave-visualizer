@@ -1,4 +1,5 @@
 import QtQuick
+import "../text"
 import QtQuick.Controls.Basic as Controls
 import ".."
 import "Theme.js" as Theme
@@ -47,7 +48,7 @@ Rectangle {
         hasAudio: pane.stateName !== "paused" && pane.stateName !== "idle"
         backendFailed: pane.stateName === "backend"
         backendCode: backendFailed ? "no-cava" : ""
-        backendMessage: backendFailed ? "cava is not installed" : ""
+        backendMessage: backendFailed ? I18n.i18n("cava is not installed") : ""
         backendAction: backendFailed ? "sudo pacman -S cava" : ""
     }
     SamplePlayer {
@@ -144,7 +145,7 @@ Rectangle {
         Text {
             id: buttonLabel
             anchors.centerIn: parent
-            text: chipButton.label
+            text: I18n.i18n(chipButton.label)
             color: chipButton.pressed ? "#ffffff" : "#aab1a7"
             font.family: Theme.fontFamily
             font.pixelSize: 11
@@ -163,7 +164,7 @@ Rectangle {
         anchors.top: parent.top
         anchors.margins: 4
         height: 28
-        text: pane.optionsExpanded ? "Hide preview options" : "Preview options"
+        text: pane.optionsExpanded ? I18n.i18n("Hide preview options") : I18n.i18n("Preview options")
         onClicked: pane.optionsExpanded = !pane.optionsExpanded
     }
     StudioButton {
@@ -175,7 +176,7 @@ Rectangle {
         height: 28
         compact: true
         primary: pane.liveMode
-        text: pane.liveMode ? "Live audio · On" : "Use live audio"
+        text: pane.liveMode ? I18n.i18n("Live audio · On") : I18n.i18n("Use live audio")
         areaName: "livePreviewButton"
         onClicked: pane.studio.livePreview = !pane.studio.livePreview
     }
@@ -189,16 +190,16 @@ Rectangle {
         spacing: 8
         Chip {
             ChipLabel {
-                text: "WALLPAPER"
+                text: I18n.i18n("WALLPAPER")
             }
             Repeater {
                 model: Schema.BACKDROPS
                 Item {
                     id: backdropButton
                     objectName: "wallpaper_" + modelData[0]
-                    Accessible.name: modelData[1]
+                    Accessible.name: I18n.i18n(modelData[1])
                     Controls.ToolTip.visible: wallpaperArea.containsMouse
-                    Controls.ToolTip.text: modelData[1]
+                    Controls.ToolTip.text: I18n.i18n(modelData[1])
                     Controls.ToolTip.delay: 400
                     required property var modelData
                     width: 30
@@ -231,21 +232,21 @@ Rectangle {
             visible: pane.compact && !pane.liveMode
             width: 180
             height: 30
-            model: Schema.STATES.map(state => state[1])
+            model: Schema.STATES.map(state => I18n.i18n(state[1]))
             currentIndex: Schema.STATES.findIndex(state => state[0] === pane.stateName)
             onActivated: pane.stateName = Schema.STATES[currentIndex][0]
         }
         Chip {
             visible: !pane.compact && !pane.liveMode
             ChipLabel {
-                text: "STATE"
+                text: I18n.i18n("STATE")
             }
             Repeater {
                 model: Schema.STATES
                 ChipButton {
                     required property var modelData
                     anchors.verticalCenter: parent.verticalCenter
-                    label: modelData[1]
+                    label: I18n.i18n(modelData[1])
                     pressed: pane.stateName === modelData[0]
                     onClicked: pane.stateName = modelData[0]
                 }
@@ -263,11 +264,11 @@ Rectangle {
         layoutDirection: Qt.RightToLeft
         Chip {
             Repeater {
-                model: [["1", "1×"], ["2", "2×"], ["fit", "Fit"]]
+                model: [["1", I18n.noop("1×")], ["2", I18n.noop("2×")], ["fit", I18n.noop("Fit")]]
                 ChipButton {
                     required property var modelData
                     anchors.verticalCenter: parent.verticalCenter
-                    label: modelData[1]
+                    label: I18n.i18n(modelData[1])
                     pressed: pane.zoom === modelData[0]
                     onClicked: pane.zoom = modelData[0]
                 }
@@ -291,7 +292,7 @@ Rectangle {
         }
         Chip {
             ChipLabel {
-                text: "ACCENT"
+                text: I18n.i18n("ACCENT")
             }
             Repeater {
                 model: ["#3daee9", "#a855f7", "#ff6fb0", "#f5b26b", "#34d399"]

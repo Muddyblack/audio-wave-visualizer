@@ -1,6 +1,7 @@
 import QtQuick
 import "Theme.js" as Theme
 import "Schema.js" as Schema
+import "../text"
 
 // Saved looks: grid, name field with Save,
 // Copy as JSON and Import JSON. Placement keys are never saved.
@@ -61,7 +62,7 @@ Column {
     }
     Text {
         visible: !saved.favoritesOnly && saved.list.length === 0
-        text: "No saved looks yet."
+        text: I18n.i18n("No saved looks yet.")
         color: Theme.dim
         font.family: Theme.fontFamily
         font.pixelSize: 11
@@ -95,30 +96,30 @@ Column {
                 anchors.fill: nameInput
                 verticalAlignment: Text.AlignVCenter
                 visible: nameInput.text === ""
-                text: "My look"
+                text: I18n.i18n("My look")
                 color: Theme.dim
                 font: nameInput.font
             }
         }
         StudioButton {
             primary: true
-            text: "Save"
+            text: I18n.i18n("Save")
             areaName: "saveUserPreset"
             onClicked: saved.save()
         }
         StudioButton {
             compact: true
-            text: "Copy as JSON"
+            text: I18n.i18n("Copy as JSON")
             onClicked: {
-                clipboard.text = Schema.exportPreset(nameInput.text.trim() || "My look", saved.studio.draft, saved.studio.defaults);
+                clipboard.text = Schema.exportPreset(nameInput.text.trim() || I18n.i18n("My look"), saved.studio.draft, saved.studio.defaults);
                 clipboard.selectAll();
                 clipboard.copy();
-                saved.message = "Copied.";
+                saved.message = I18n.i18n("Copied.");
             }
         }
         StudioButton {
             compact: true
-            text: "Import JSON"
+            text: I18n.i18n("Import JSON")
             onClicked: saved.importing = !saved.importing
         }
     }
@@ -147,7 +148,7 @@ Column {
         spacing: 8
         StudioButton {
             primary: true
-            text: "Import"
+            text: I18n.i18n("Import")
             onClicked: {
                 try {
                     saved.studio.addUserPreset(Schema.importPreset(importInput.text, saved.studio.defaults));
@@ -155,7 +156,7 @@ Column {
                     saved.importing = false;
                     saved.message = "";
                 } catch (error) {
-                    saved.message = error.message || "That is not a valid look.";
+                    saved.message = error.template ? I18n.i18n(error.template, error.arg) : I18n.i18n(error.message || I18n.noop("That is not a valid look."));
                 }
             }
         }
@@ -170,7 +171,7 @@ Column {
     Text {
         visible: !saved.favoritesOnly
         width: parent.width
-        text: "Saved looks and favorites are shared by all widgets on this device and saved immediately. To share a look with someone else, select it, then Copy as JSON. Custom QML files are not included."
+        text: I18n.i18n("Saved looks and favorites are shared by all widgets on this device and saved immediately. To share a look with someone else, select it, then Copy as JSON. Custom QML files are not included.")
         wrapMode: Text.WordWrap
         color: Theme.muted
         font.family: Theme.fontFamily
@@ -178,7 +179,7 @@ Column {
     }
     StudioButton {
         visible: !saved.favoritesOnly
-        text: "How to contribute a preset ↗"
+        text: I18n.i18n("How to contribute a preset ↗")
         onClicked: Qt.openUrlExternally(Schema.SHARE_URL)
     }
     TextEdit {

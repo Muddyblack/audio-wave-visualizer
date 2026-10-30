@@ -13,7 +13,7 @@ Item {
     readonly property string eqMode: view.hasPlayer ? (cfg.pillEq ?? "wave") : "off"
     readonly property string controls: view.hasPlayer ? (cfg.pillControls ?? "none") : "none"
     readonly property string content: cfg.pillContent ?? "title-artist"
-    readonly property string titleText: view.displayTrack !== "" ? view.displayTrack : qsTr("No media")
+    readonly property string titleText: view.displayTrack !== "" ? view.displayTrack : I18n.i18n("No media")
     readonly property bool showText: content !== "none"
     readonly property bool withArtist: showText && content !== "title" && view.artist !== ""
     readonly property real maxWidth: cfg.pillMaxWidth ?? 300

@@ -1,4 +1,5 @@
 import QtQuick
+import "../text"
 import "Theme.js" as Theme
 
 // Audio status and "Run diagnostics" (HTML `.status` / `.check`), fed by the
@@ -9,12 +10,14 @@ Column {
     property string output: ""
     property bool running: false
     readonly property var inputNames: ({
-            auto: "Auto-detect",
+            auto: I18n.noop("Auto-detect"),
             pipewire: "PipeWire",
             pulse: "PulseAudio",
             alsa: "ALSA"
         })
     readonly property int effectiveRate: studio.draft.batterySaver ? Math.min(20, studio.draft.framerate ?? 30) : (studio.draft.framerate ?? 30)
+    // States doctor.sh reports besides "found", so they reach the catalog.
+    readonly property var doctorStates: [I18n.noop("missing"), I18n.noop("missing (optional)")]
     readonly property var checks: parse(output)
     spacing: 6
 
@@ -30,14 +33,14 @@ Column {
         const backends = field(text, /^backends built in:\s*(.+)$/m);
         const server = field(text, /^pactl server:\s*(.+)$/m);
         const sink = field(text, /^default sink:\s*(.+)$/m);
-        const checks = [["cava found", !missing && path !== "", missing ? "not installed" : path], ["Capture backends", backends !== "", backends || "unknown"], ["Sound server", server !== "", server || "not reachable"], ["Default output", sink !== "", sink || "none"], ["Renderer", true, GraphicsInfo.api === GraphicsInfo.Software ? "canvas (software)" : "shader"]];
+        const checks = [[I18n.i18n("cava found"), !missing && path !== "", missing ? I18n.i18n("not installed") : path], [I18n.i18n("Capture backends"), backends !== "", backends || I18n.i18n("unknown")], [I18n.i18n("Sound server"), server !== "", server || I18n.i18n("not reachable")], [I18n.i18n("Default output"), sink !== "", sink || I18n.i18n("none")], [I18n.i18n("Renderer"), true, GraphicsInfo.api === GraphicsInfo.Software ? I18n.i18n("canvas (software)") : I18n.i18n("shader")]];
         const python = field(text, /^python3:\s*(.+)$/m);
-        checks.push(["Python 3 (metadata and lyrics)", python === "found", python || "unknown"]);
+        checks.push([I18n.i18n("Python 3 (metadata and lyrics)"), python === I18n.noop("found"), I18n.i18n(python || I18n.noop("unknown"))]);
         const busctl = field(text, /^busctl:\s*(.+)$/m);
-        checks.push(["busctl (MPRIS metadata)", busctl === "found", busctl || "unknown"]);
+        checks.push([I18n.i18n("busctl (MPRIS metadata)"), busctl === I18n.noop("found"), I18n.i18n(busctl || I18n.noop("unknown"))]);
         for (const packageName of ["mutagen", "pykakasi", "pypinyin"]) {
             const state = field(text, new RegExp("^" + packageName + ":\\s*(.+)$", "m"));
-            checks.push([packageName + " (optional)", state === "found", state || "unknown"]);
+            checks.push([I18n.i18n("%1 (optional)", packageName), state === I18n.noop("found"), I18n.i18n(state || I18n.noop("unknown"))]);
         }
         return checks;
     }
@@ -57,7 +60,7 @@ Column {
             anchors.verticalCenter: parent.verticalCenter
             width: parent.width - 22 - runButton.width - 12
             Text {
-                text: "Audio capture"
+                text: I18n.i18n("Audio capture")
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
@@ -65,7 +68,7 @@ Column {
             }
             Text {
                 width: parent.width
-                text: (card.inputNames[card.studio.draft.inputMethod] ?? "Auto-detect") + " · " + card.effectiveRate + " Hz · " + (card.studio.draft.numBars ?? 24) + " bars"
+                text: I18n.i18n(card.inputNames[card.studio.draft.inputMethod] ?? I18n.noop("Auto-detect")) + " · " + card.effectiveRate + " Hz · " + I18n.i18n("%1 bars", card.studio.draft.numBars ?? 24)
                 color: Theme.muted
                 font.family: Theme.fontFamily
                 font.pixelSize: 11
@@ -78,7 +81,7 @@ Column {
             anchors.verticalCenter: parent.verticalCenter
             compact: true
             visible: typeof card.studio.diagnosticsRunner === "function"
-            text: card.running ? "Running…" : "Run diagnostics"
+            text: card.running ? I18n.i18n("Running…") : I18n.i18n("Run diagnostics")
             onClicked: {
                 if (card.running)
                     return;

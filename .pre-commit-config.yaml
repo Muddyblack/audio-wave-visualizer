@@ -1,29 +1,50 @@
+# tools/dev-tool.sh runs each tool from the Nix dev shell when Nix is installed,
+# and from your own PATH otherwise, so the hooks work with or without Nix.
 repos:
   - repo: local
     hooks:
       - id: qmlformat
         name: qmlformat
-        entry: nix develop --command qmlformat
+        entry: tools/dev-tool.sh qmlformat
         args: ["-i"]
         language: system
         files: \.qml$
 
       - id: qmllint
         name: qmllint
-        entry: nix develop --command qmllint
+        entry: tools/dev-tool.sh qmllint
         args: ["--unresolved-type", "info"]
         language: system
         files: \.qml$
 
       - id: ruff-check
         name: ruff check
-        entry: nix develop --command ruff check
+        entry: tools/dev-tool.sh ruff check
         args: ["--fix"]
         language: system
         types: [python]
 
       - id: ruff-format
         name: ruff format
-        entry: nix develop --command ruff format
+        entry: tools/dev-tool.sh ruff format
         language: system
         types: [python]
+
+      # CI fails when a translate/*.po is stale, so regenerate them whenever
+      # source that can hold an i18n() string changes. The hook fails once if it
+      # rewrote anything: stage the result and commit again.
+      - id: i18n-catalogs
+        name: i18n catalogs
+        entry: tools/dev-tool.sh ./translate/Messages.sh
+        language: system
+        pass_filenames: false
+        files: \.(qml|js)$
+
+      # Regeneration adds empty entries; enforce CI's completeness requirement
+      # afterwards, including on commits that only change catalogs or config.
+      - id: i18n-complete
+        name: i18n catalogs complete
+        entry: tools/dev-tool.sh ./translate/check.sh
+        language: system
+        pass_filenames: false
+        always_run: true

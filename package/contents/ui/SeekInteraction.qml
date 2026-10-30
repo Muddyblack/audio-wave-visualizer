@@ -28,7 +28,7 @@ Item {
     property real jumpDirection: 0
     readonly property real targetSeconds: fraction * clock.lengthValue / clock.unitsPerSecond
     readonly property real deltaSeconds: targetSeconds - clock.displayedPosition / clock.unitsPerSecond
-    readonly property string speedText: speed === 1 ? "1×" : speed === .5 ? "½×" : speed === .25 ? "¼×" : "fine"
+    readonly property string speedText: speed === 1 ? I18n.i18n("1×") : speed === .5 ? "½×" : speed === .25 ? "¼×" : "fine"
     readonly property string chapterTitle: {
         let title = "";
         for (const c of chapters) {
@@ -296,14 +296,14 @@ Item {
     Controls.Menu {
         id: menu
         Controls.MenuItem {
-            text: "Set loop start (A)"
+            text: I18n.i18n("Set loop start (A)")
             onTriggered: {
                 root.clock.clearLoop();
                 root.clock.loopStart = root.fraction;
             }
         }
         Controls.MenuItem {
-            text: "Set loop end (B)"
+            text: I18n.i18n("Set loop end (B)")
             enabled: root.clock.loopStart >= 0 && root.fraction > root.clock.loopStart + root.clock.unitsPerSecond / root.clock.lengthValue
             onTriggered: {
                 root.clock.loopEnd = root.fraction;
@@ -311,12 +311,12 @@ Item {
             }
         }
         Controls.MenuItem {
-            text: root.clock.loopEnabled ? "Pause A–B loop" : "Enable A–B loop"
+            text: root.clock.loopEnabled ? I18n.i18n("Pause A–B loop") : I18n.i18n("Enable A–B loop")
             enabled: root.clock.validLoop
             onTriggered: root.clock.loopEnabled = !root.clock.loopEnabled
         }
         Controls.MenuItem {
-            text: "Clear A–B loop"
+            text: I18n.i18n("Clear A–B loop")
             enabled: root.clock.loopStart >= 0
             onTriggered: root.clock.clearLoop()
         }

@@ -21,6 +21,7 @@ datas = [
     # which app.py reads for the configuration defaults.
     (os.path.join(ROOT, "package", "contents"), os.path.join("package", "contents")),
     (os.path.join(ROOT, "package", "icon.png"), "package"),
+    (os.path.join(ROOT, "translate", "*.po"), "translate"),
     # The settings parser and the settings window (plain QtQuick around the
     # shared studio); the rest of hyprland/ is Quickshell-only.
     (os.path.join(ROOT, "hyprland", "Configuration.js"), "hyprland"),

@@ -1,4 +1,5 @@
 import QtQuick
+import "../text"
 import QtQuick.Controls.Basic as Controls
 import "Schema.js" as Schema
 
@@ -24,7 +25,7 @@ Item {
                 model: Schema.PRESET_VIEWS.filter(view => navigation.studio.presentationTarget === "desktop" || view[0] !== "daily")
                 StudioButton {
                     required property var modelData
-                    text: modelData[1]
+                    text: I18n.i18n(modelData[1])
                     icon: modelData[2]
                     compact: true
                     primary: modelData[0] === "mine" ? navigation.studio.currentTab === "saved" : navigation.studio.currentTab === "presets" && (navigation.studio.presetFilter === modelData[0] || modelData[0] === "all" && ["favorites", "daily"].indexOf(navigation.studio.presetFilter) === -1)

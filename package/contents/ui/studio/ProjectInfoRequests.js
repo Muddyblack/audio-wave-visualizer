@@ -1,4 +1,5 @@
 // One client per Info pane. The visible pane drives tick(); no background polling.
+.import "I18n.js" as I18n
 function create(project, makeRequest, now, publish) {
     var entries = [{id: "release", url: project.latestReleaseUrl}]
         .concat(project.statistics)
@@ -8,7 +9,7 @@ function create(project, makeRequest, now, publish) {
                 done: false, request: null, started: 0, blockedUntil: 0};
         });
     var counts = {}, contributors = [], latestVersion = "";
-    var releaseState = "Not checked", lastRefresh = null, disposed = false, previousState = "";
+    var releaseState = I18n.noop("Not checked"), lastRefresh = null, disposed = false, previousState = "";
 
     function busy() {
         return entries.some(function (entry) { return entry.request !== null; });
@@ -32,7 +33,7 @@ function create(project, makeRequest, now, publish) {
         entry.done = success;
         entry.due = now() + (entry.attempts === 1 ? 15000 : 60000);
         if (entry.id === "release")
-            releaseState = success ? "Checked" : "Could not check for updates";
+            releaseState = success ? I18n.noop("Checked") : I18n.noop("Could not check for updates");
         update();
     }
     function start(entry) {
@@ -40,7 +41,7 @@ function create(project, makeRequest, now, publish) {
         entry.request = request;
         entry.started = now();
         entry.attempts++;
-        if (entry.id === "release") releaseState = "Checking…";
+        if (entry.id === "release") releaseState = I18n.noop("Checking…");
         try {
             request.open("GET", entry.url);
             request.onreadystatechange = function () {

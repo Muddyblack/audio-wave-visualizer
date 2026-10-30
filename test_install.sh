@@ -43,6 +43,16 @@ PY
 )"
 TEST_ID="${TEST_METADATA%%$'\n'*}"
 NAME="${TEST_METADATA#*$'\n'}"
+
+# plasma_applet_<plugin id>.mo must be built after the Id gets its "Test" suffix.
+# Drop any catalog copied from a previous `make pack`; it carries the release
+# Id's name.
+rm -rf -- "$TEMP_DIR/contents/locale"
+if command -v msgfmt >/dev/null 2>&1; then
+    "$HERE/translate/build.sh" "$TEMP_DIR"
+else
+    echo "warning: gettext (msgfmt) not found; the test widget will be English only." >&2
+fi
 DATA_DIR="${XDG_DATA_HOME:-$HOME/.local/share}"
 PACKAGE_ROOT="$DATA_DIR/plasma/plasmoids"
 
@@ -76,6 +86,8 @@ cp "$HERE/package/icon.png" "$ICON_DIR/$TEST_ID.png"
 echo ""
 echo "=== Test Widget Installed! ==="
 echo "Add '$NAME' to your desktop or panel."
+echo "Plasma caches translations; after an update, restart the shell to load them:"
+echo "  systemctl --user restart plasma-plasmashell"
 echo "To uninstall the test version later, run:"
 printf '  %q -t Plasma/Applet -p %q -r %q\n' "$KPACKAGETOOL6" "$PACKAGE_ROOT" "$TEST_ID"
 printf '  rm -f %q\n' "$ICON_DIR/$TEST_ID.png"

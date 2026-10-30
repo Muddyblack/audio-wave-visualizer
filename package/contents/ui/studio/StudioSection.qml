@@ -1,4 +1,5 @@
 import QtQuick
+import "../text"
 import "Theme.js" as Theme
 import "Schema.js" as Schema
 
@@ -21,7 +22,12 @@ Column {
 
     Text {
         visible: !sectionRoot.librarySection
-        text: sectionRoot.sectionData.title.toUpperCase()
+        text: {
+            const source = sectionRoot.sectionData.title;
+            const translated = I18n.i18n(source);
+            const heading = translated !== source ? translated.replace(/i/g, "İ").replace(/ı/g, "I") : translated;
+            return heading.toUpperCase();
+        }
         color: Theme.sectionTitle
         font.family: Theme.fontFamily
         font.pixelSize: 11

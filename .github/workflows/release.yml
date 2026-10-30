@@ -68,6 +68,9 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Install gettext
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends gettext
+
       - name: Build .plasmoid
         run: make pack
 
@@ -78,6 +81,11 @@ jobs:
           NAME="$(basename "$PWD")"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "artifact=${NAME}-${VERSION}.plasmoid" >> "$GITHUB_OUTPUT"
+
+      - name: Check the archive carries translations
+        run: |
+          unzip -l "${{ steps.info.outputs.artifact }}" | grep -qE 'contents/locale/[^/]+/LC_MESSAGES/[^ ]+\.mo$'
+          unzip -l "${{ steps.info.outputs.artifact }}" | grep -qE 'contents/translate/[^ ]+\.po$'
 
       - name: Generate release notes
         id: notes

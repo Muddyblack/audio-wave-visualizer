@@ -6,6 +6,7 @@ import Quickshell.Wayland
 import Quickshell.Services.Mpris
 import Quickshell.Services.UPower
 import "../package/contents/ui" as Shared
+import "../package/contents/ui/text"
 import "../package/contents/ui/studio" as Studio
 import "Configuration.js" as Configuration
 import "../package/contents/code/HostDefaults.js" as HostDefaults
@@ -53,6 +54,15 @@ ShellRoot {
     property string settingsError: ""
     readonly property string configPath: (Quickshell.env("XDG_CONFIG_HOME") || Quickshell.env("HOME") + "/.config") + "/audio-wave-visualizer/hyprland.json"
 
+    Shared.CatalogLoader {
+        translateDir: Qt.resolvedUrl("../translate").toString().replace(/^file:\/\//, "")
+        language: root.configuration.language ?? ""
+        // Quickshell pins Qt.locale() to en_US, so read the environment.
+        systemLocale: Quickshell.env("LC_ALL") || Quickshell.env("LC_MESSAGES") || Quickshell.env("LANG") || ""
+        commandSourceComponent: Component {
+            CommandProcess {}
+        }
+    }
     FileView {
         id: preferences
         path: root.configPath
@@ -66,10 +76,10 @@ ShellRoot {
                 root.userSettings = Configuration.parsePreferences(text());
                 root.settingsError = "";
             } catch (error) {
-                root.settingsError = "Cannot read settings: " + error;
+                root.settingsError = I18n.i18n("Cannot read settings: %1", String(error));
             }
         }
-        onSaveFailed: root.settingsError = "Could not save settings to " + root.configPath
+        onSaveFailed: root.settingsError = I18n.i18n("Could not save settings to %1", root.configPath)
         onSaved: root.settingsError = ""
     }
     FileView {
@@ -162,7 +172,7 @@ ShellRoot {
         configuration: root.configuration
         onApply: next => root.saveSettings(Configuration.overrides(root.baseline, next))
     }
-    readonly property bool shouldShow: !!player || configuration.alwaysVisible
+    readonly property bool shouldShow: !I18n.loading && (!!player || configuration.alwaysVisible)
     readonly property var selectedScreens: Configuration.screens(Quickshell.screens, configuration.monitor)
     readonly property var widgetRectangles: selectedScreens.map(screen => widgetGeometry(screen))
 
@@ -362,7 +372,7 @@ ShellRoot {
 
     FloatingWindow {
         visible: root.settingsOpen
-        title: "Audio Visualizer Settings"
+        title: I18n.i18n("Audio Visualizer Settings")
         implicitWidth: 1180
         implicitHeight: 800
         color: "#1e1e2e"

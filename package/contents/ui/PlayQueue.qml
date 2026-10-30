@@ -11,8 +11,8 @@ ColumnLayout {
     spacing: 8
     Controls.Button {
         Layout.fillWidth: true
-        text: (root.expanded ? "▾  " : "▸  ") + qsTr("Up Next")
-        Accessible.name: qsTr("Toggle upcoming tracks")
+        text: (root.expanded ? "▾  " : "▸  ") + I18n.i18n("Up Next")
+        Accessible.name: I18n.i18n("Toggle upcoming tracks")
         onClicked: root.expanded = !root.expanded
     }
     MediaLookup {
@@ -36,7 +36,7 @@ ColumnLayout {
         color: "#aeb7bc"
         font.pixelSize: SystemText.px(11)
         wrapMode: Text.Wrap
-        text: root.view.samplePlayback ? qsTr("Queue unavailable in preview") : lookup.status === "loading" ? qsTr("Loading queue…") : lookup.status === "unsupported" ? qsTr("This player does not share its queue") : lookup.status === "unknown" ? qsTr("Current track is outside the shared queue") : lookup.status === "error" ? qsTr("Queue unavailable. Check that the player is running and busctl is installed.") : lookup.status === "ready" ? ((lookup.result.tracks ?? []).length ? qsTr("Player playlist order • shuffle may differ") : qsTr("No upcoming tracks")) : ""
+        text: root.view.samplePlayback ? I18n.i18n("Queue unavailable in preview") : lookup.status === "loading" ? I18n.i18n("Loading queue…") : lookup.status === "unsupported" ? I18n.i18n("This player does not share its queue") : lookup.status === "unknown" ? I18n.i18n("Current track is outside the shared queue") : lookup.status === "error" ? I18n.i18n("Queue unavailable. Check that the player is running and busctl is installed.") : lookup.status === "ready" ? ((lookup.result.tracks ?? []).length ? I18n.i18n("Player playlist order • shuffle may differ") : I18n.i18n("No upcoming tracks")) : ""
     }
     ListView {
         Layout.fillWidth: true
@@ -55,7 +55,7 @@ ColumnLayout {
                 width: parent.width - 12
                 Text {
                     width: parent.width
-                    text: (entry.index + 1) + ".  " + (entry.modelData["xesam:title"] || qsTr("Unknown track"))
+                    text: (entry.index + 1) + ".  " + (entry.modelData["xesam:title"] || I18n.i18n("Unknown track"))
                     textFormat: Text.PlainText
                     elide: Text.ElideRight
                     color: "#eef0ec"
@@ -75,7 +75,7 @@ ColumnLayout {
     }
     Text {
         visible: root.expanded && (lookup.result.total ?? 0) > 50
-        text: qsTr("Showing the next 50 tracks")
+        text: I18n.i18n("Showing the next 50 tracks")
         color: "#aeb7bc"
         font.pixelSize: SystemText.px(10)
     }

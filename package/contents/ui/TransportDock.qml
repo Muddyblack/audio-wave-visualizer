@@ -3,6 +3,7 @@ import QtQuick.Layouts 1.1
 import QtQuick.Effects
 import "debug"
 import "../code/MediaSource.js" as MediaSource
+import "text"
 
 // Playback controls. Shuffle/repeat use the MPRIS player properties.
 Item {
@@ -193,7 +194,7 @@ Item {
             Layout.preferredHeight: 22
             areaName: "shuffleArea"
             available: root.canShuffle
-            label: !root.canShuffle ? "Shuffle unavailable for this player" : root.shuffleOn ? "Shuffle on" : "Shuffle off"
+            label: !root.canShuffle ? I18n.i18n("Shuffle unavailable for this player") : root.shuffleOn ? I18n.i18n("Shuffle on") : I18n.i18n("Shuffle off")
             active: root.shuffleOn
             controlColor: root.controlColor
             accentColor: root.accentColor
@@ -335,7 +336,7 @@ Item {
             Layout.preferredHeight: 22
             areaName: "repeatArea"
             available: root.canLoop
-            label: !root.canLoop ? "Repeat unavailable for this player" : root.loopTrack ? "Repeat track" : root.loopOn ? "Repeat playlist" : "Repeat off"
+            label: !root.canLoop ? I18n.i18n("Repeat unavailable for this player") : root.loopTrack ? I18n.i18n("Repeat track") : root.loopOn ? I18n.i18n("Repeat playlist") : I18n.i18n("Repeat off")
             badge: root.loopTrack ? "1" : ""
             active: root.loopOn
             controlColor: root.controlColor

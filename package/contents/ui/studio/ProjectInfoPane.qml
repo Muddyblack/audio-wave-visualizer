@@ -1,4 +1,5 @@
 import QtQuick
+import "../text"
 import ".." as Shared
 import "Theme.js" as Theme
 import "ProjectInfo.js" as Project
@@ -15,7 +16,7 @@ Column {
     // generated module only serves the hosts that have no Plasmoid object.
     readonly property string currentVersion: (typeof Plasmoid !== "undefined" && Plasmoid.metaData && Plasmoid.metaData.version) ? Plasmoid.metaData.version : Project.currentVersion
     property string latestVersion: ""
-    property string releaseCheckState: "Not checked"
+    property string releaseCheckState: I18n.noop("Not checked")
     readonly property string versionStatus: latestVersion ? Project.releaseStatus(currentVersion, latestVersion) : releaseCheckState
 
     readonly property bool onlineEnabled: studio.onScreen
@@ -32,8 +33,8 @@ Column {
     function cancelRequests() {
         if (client)
             client.pause();
-        if (releaseCheckState === "Checking…")
-            releaseCheckState = "Could not check for updates";
+        if (releaseCheckState === I18n.noop("Checking…"))
+            releaseCheckState = I18n.noop("Could not check for updates");
     }
 
     onOnlineEnabledChanged: {
@@ -83,7 +84,7 @@ Column {
             sourceSize.width: 128
             sourceSize.height: 128
             fillMode: Image.PreserveAspectFit
-            Accessible.name: "Plasma Audio Visualizer project icon"
+            Accessible.name: I18n.i18n("Plasma Audio Visualizer project icon")
         }
         Column {
             width: parent.width - 78
@@ -120,12 +121,12 @@ Column {
                         source: info.onlineEnabled ? Project.avatar : ""
                         imageSize: Qt.size(128, 128)
                         radius: 12
-                        Accessible.name: Project.author + " GitHub avatar"
+                        Accessible.name: I18n.i18n("%1 GitHub avatar", Project.author)
                     }
                 }
                 StudioButton {
                     anchors.verticalCenter: parent.verticalCenter
-                    text: "By " + Project.author + " ↗"
+                    text: I18n.i18n("By %1 ↗", Project.author)
                     compact: true
                     onClicked: Qt.openUrlExternally(Project.profile)
                 }
@@ -134,7 +135,7 @@ Column {
     }
     Text {
         width: parent.width
-        text: "An open-source music visualizer for Plasma and Hyprland. Explore the project, get updates, or help improve it."
+        text: I18n.i18n("An open-source music visualizer for Plasma and Hyprland. Explore the project, get updates, or help improve it.")
         wrapMode: Text.WordWrap
         color: Theme.muted
         font.family: Theme.fontFamily
@@ -154,7 +155,7 @@ Column {
             width: parent.width - 26
             spacing: 8
             Text {
-                text: "Installed version · " + info.currentVersion
+                text: I18n.i18n("Installed version · %1", info.currentVersion)
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
@@ -162,7 +163,7 @@ Column {
             }
             Text {
                 objectName: "latestVersionLabel"
-                text: "Latest stable release · " + (info.latestVersion || "—")
+                text: I18n.i18n("Latest stable release · %1", info.latestVersion || "—")
                 color: Theme.muted
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
@@ -170,9 +171,9 @@ Column {
             Text {
                 objectName: "versionStatusLabel"
                 width: parent.width
-                text: info.versionStatus
+                text: I18n.i18n(info.versionStatus)
                 wrapMode: Text.WordWrap
-                color: text === "Update available" ? Theme.brand : Theme.muted
+                color: info.versionStatus === I18n.noop("Update available") ? Theme.brand : Theme.muted
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
             }
@@ -180,12 +181,12 @@ Column {
                 width: parent.width
                 spacing: 8
                 StudioButton {
-                    text: info.versionStatus === "Update available" ? "Get update ↗" : "View latest release ↗"
+                    text: info.versionStatus === I18n.noop("Update available") ? I18n.i18n("Get update ↗") : I18n.i18n("View latest release ↗")
                     compact: true
                     onClicked: Qt.openUrlExternally(Project.releasesPage)
                 }
                 StudioButton {
-                    text: "Check again"
+                    text: I18n.i18n("Check again")
                     compact: true
                     enabled: info.onlineEnabled && info.canRefresh
                     onClicked: info.client.refresh()
@@ -229,7 +230,7 @@ Column {
                     x: 12
                     y: 48
                     width: parent.width - 30
-                    text: parent.modelData.label + " ↗"
+                    text: I18n.i18n(parent.modelData.label) + " ↗"
                     color: Theme.muted
                     font.family: Theme.fontFamily
                     font.pixelSize: 11
@@ -240,7 +241,7 @@ Column {
                     anchors.fill: parent
                     hoverEnabled: true
                     cursorShape: Qt.PointingHandCursor
-                    Accessible.name: parent.modelData.label + ", open " + parent.modelData.href
+                    Accessible.name: I18n.i18n("%1, open %2", (I18n.i18n(parent.modelData.label)), parent.modelData.href)
                     onClicked: Qt.openUrlExternally(parent.modelData.href)
                 }
             }
@@ -259,14 +260,14 @@ Column {
             anchors.verticalCenter: parent.verticalCenter
             spacing: 3
             Text {
-                text: "License · " + Project.license
+                text: I18n.i18n("License · %1", Project.license)
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
                 font.weight: Font.DemiBold
             }
             Text {
-                text: Project.licenseId + " · From the bundled LICENSE file"
+                text: Project.licenseId + " · " + I18n.i18n("From the bundled LICENSE file")
                 color: Theme.muted
                 font.family: Theme.fontFamily
                 font.pixelSize: 10
@@ -282,7 +283,7 @@ Column {
             width: parent.width
             spacing: 10
             Text {
-                text: "Contributors"
+                text: I18n.i18n("Contributors")
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: 14
@@ -290,7 +291,7 @@ Column {
             }
             StudioButton {
                 anchors.verticalCenter: parent.verticalCenter
-                text: "See all on GitHub ↗"
+                text: I18n.i18n("See all on GitHub ↗")
                 compact: true
                 onClicked: Qt.openUrlExternally(Project.contributorsPage)
             }
@@ -330,7 +331,7 @@ Column {
                             source: info.onlineEnabled ? contributorCard.modelData.avatar : ""
                             imageSize: Qt.size(96, 96)
                             radius: 17
-                            Accessible.name: contributorCard.modelData.login + " avatar"
+                            Accessible.name: I18n.i18n("%1 avatar", contributorCard.modelData.login)
                         }
                     }
                     Column {
@@ -348,7 +349,7 @@ Column {
                             font.weight: Font.DemiBold
                         }
                         Text {
-                            text: contributorCard.modelData.commits + (contributorCard.modelData.commits === 1 ? " commit" : " commits")
+                            text: I18n.i18np("%1 commit", "%1 commits", contributorCard.modelData.commits)
                             color: Theme.muted
                             font.family: Theme.fontFamily
                             font.pixelSize: 10
@@ -359,7 +360,7 @@ Column {
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        Accessible.name: "Open " + contributorCard.modelData.login + " on GitHub"
+                        Accessible.name: I18n.i18n("Open %1 on GitHub", contributorCard.modelData.login)
                         onClicked: Qt.openUrlExternally(contributorCard.modelData.profile)
                     }
                 }
@@ -370,7 +371,7 @@ Column {
         width: parent.width
         spacing: 8
         Text {
-            text: "Support the project"
+            text: I18n.i18n("Support the project")
             color: Theme.text
             font.family: Theme.fontFamily
             font.pixelSize: 14
@@ -418,7 +419,7 @@ Column {
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
-                        Accessible.name: "Support on " + parent.modelData.label
+                        Accessible.name: I18n.i18n("Support on %1", parent.modelData.label)
                         onClicked: Qt.openUrlExternally(parent.modelData.url)
                     }
                 }
@@ -429,12 +430,12 @@ Column {
         width: parent.width
         spacing: 8
         StudioButton {
-            text: "View source on GitHub ↗"
+            text: I18n.i18n("View source on GitHub ↗")
             compact: true
             onClicked: Qt.openUrlExternally(Project.repository)
         }
         StudioButton {
-            text: "Report an issue ↗"
+            text: I18n.i18n("Report an issue ↗")
             compact: true
             onClicked: Qt.openUrlExternally(Project.repository + "/issues")
         }

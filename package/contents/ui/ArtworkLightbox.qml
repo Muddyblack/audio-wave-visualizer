@@ -84,7 +84,7 @@ Window {
             anchors.top: parent.top
             anchors.right: parent.right
             text: "×"
-            Accessible.name: qsTr("Close artwork")
+            Accessible.name: I18n.i18n("Close artwork")
             onClicked: lightbox.view.zoomOpen = false
         }
     }

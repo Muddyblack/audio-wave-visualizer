@@ -1,6 +1,10 @@
 .pragma library
 .import "StudioCatalog.js" as Catalog
 .import "PresetCodec.js" as PresetCodec
+.import "I18n.js" as I18n
+
+var noop = I18n.noop;
+
 
 // Shared settings, presets and navigation for desktop and web. Hosts pass `env`
 // ("kde" or "hypr") to the `when` predicates; `s` is the current draft.
@@ -11,12 +15,12 @@ function tabGroup(id) {
     return id === "saved" ? "presets" : APPEARANCE_TABS.indexOf(id) !== -1 ? "appearance" : id;
 }
 var MAIN_TABS = TABS.filter(function (t) { return t.id !== "saved" && (APPEARANCE_TABS.indexOf(t.id) === -1 || t.id === "viz"); }).map(function (t) {
-    return t.id === "viz" ? {id: "appearance", label: "Appearance", icon: t.icon} : t;
+    return t.id === "viz" ? {id: "appearance", label: noop("Appearance"), icon: t.icon} : t;
 });
 var PRESET_VIEWS = [
-    ["all", "All", TABS[0].icon], ["mine", "My presets", TABS[1].icon],
-    ["favorites", "Favourites", "M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"],
-    ["daily", "Today’s look", "M5 5h14v16H5zM8 3v4M16 3v4M5 10h14M9 14h2M13 17h2"]
+    ["all", noop("All"), TABS[0].icon], ["mine", noop("My presets"), TABS[1].icon],
+    ["favorites", noop("Favourites"), "M12 3l2.8 5.7 6.2.9-4.5 4.4 1.1 6.2-5.6-3-5.6 3 1.1-6.2L3 9.6l6.2-.9z"],
+    ["daily", noop("Today’s look"), "M5 5h14v16H5zM8 3v4M16 3v4M5 10h14M9 14h2M13 17h2"]
 ];
 var SHARE_URL = "https://github.com/Muddyblack/audio-wave-visualizer/blob/HEAD/docs/sharing-presets.md";
 var CUSTOM_QML_DOCS = "https://github.com/Muddyblack/audio-wave-visualizer/blob/HEAD/docs/custom-visualizers.md";
@@ -40,7 +44,7 @@ function dailyLook(day) {
         vizColorMode: "palette", vizPalette: palette, bgRadius: pick([12, 18, 24]),
         glowWave: pick([true, false]), cardShadow: pick(["none", "soft"])
     });
-    return {id: "daily-" + day, name: "Today’s look · " + day, note: "A daily variation of " + base.name,
+    return {id: "daily-" + day, name: "Today’s look · " + day, note: noop("A daily variation of %1"), noteValue: base.name,
         bd: base.bd, cat: ["daily"], s: settings};
 }
 function favoriteIds(text) {
@@ -50,9 +54,9 @@ function favoriteIds(text) {
     } catch (error) { return []; }
 }
 
-var VIZ = ["Smooth Wave", "Rounded Bars", "Mirror Bars", "Tech Line", "Floating Dots", "Floating Dots Bold", "Peak Bars", "LED Meter", "Mountain", "Oscilloscope", "Ribbon", "Radial Burst", "Pixel Matrix", "Pulse Orb", "Sparkles", "Silk Ribbon", "Neon Terrain", "Audio Tunnel", "Liquid Plasma", "CRT Oscilloscope", "Stereo Lissajous", "Gravity Sparks"];
-var PBS = ["Glassy Sleek", "Ultra Minimal", "Glowing Pulse", "Bold Pill", "Waveform", "Squiggle", "Segmented", "Dotted", "Capsule", "Time only", "Cover ring"];
-var ORBITS = ["Bars", "Wave", "Dots", "Ribbon", "Sparks"];
+var VIZ = [noop("Smooth Wave"), noop("Rounded Bars"), noop("Mirror Bars"), noop("Tech Line"), noop("Floating Dots"), noop("Floating Dots Bold"), noop("Peak Bars"), noop("LED Meter"), noop("Mountain"), noop("Oscilloscope"), noop("Ribbon"), noop("Radial Burst"), noop("Pixel Matrix"), noop("Pulse Orb"), noop("Sparkles"), noop("Silk Ribbon"), noop("Neon Terrain"), noop("Audio Tunnel"), noop("Liquid Plasma"), noop("CRT Oscilloscope"), noop("Stereo Lissajous"), noop("Gravity Sparks")];
+var PBS = [noop("Glassy Sleek"), noop("Ultra Minimal"), noop("Glowing Pulse"), noop("Bold Pill"), noop("Waveform"), noop("Squiggle"), noop("Segmented"), noop("Dotted"), noop("Capsule"), noop("Time only"), noop("Cover ring")];
+var ORBITS = [noop("Bars"), noop("Wave"), noop("Dots"), noop("Ribbon"), noop("Sparks")];
 var PALETTES = {
     aurora: ["#5ef2c1", "#4aa8ff", "#b57bff"], ember: ["#ffc36b", "#ff6a3d", "#d6246e"], ice: ["#e6f9ff", "#86d6ff", "#3a7bd5"],
     grove: ["#d8f59a", "#6fcf6f", "#1f8a70"], iris: ["#cdb8ff", "#8f6bff", "#ff7ad9"], coral: ["#ffd6b8", "#ff8a7a", "#ff4f81"]
@@ -60,17 +64,17 @@ var PALETTES = {
 var SWATCHES = ["#3daee9", "#a855f7", "#ff6fb0", "#f5b26b", "#d1e5bd", "#34d399", "#ffffff", "#1e241d"];
 var BGSWATCHES = ["#0a0b10", "#1b1e21", "#231a33", "#10231d", "#2b1d14", "#f4f1ea"];
 var BACKDROPS = Catalog.StudioCatalog.wallpapers.map(function (wallpaper) { return [wallpaper.id, wallpaper.label]; });
-var STATES = [["normal", "Playing"], ["paused", "Paused"], ["long", "Long title"], ["nometa", "No metadata"], ["idle", "Nothing playing"], ["backend", "cava missing"]];
+var STATES = [["normal", noop("Playing")], ["paused", noop("Paused")], ["long", noop("Long title")], ["nometa", noop("No metadata")], ["idle", noop("Nothing playing")], ["backend", noop("cava missing")]];
 
 // Colour keys "Keep my colours" preserves; placement is never part of a look.
 var COLOR_KEYS = ["controlsColorSource", "progressColorSource", "customProgressColor", "useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "vizCustomColors", "glowColorMode", "glowCustomColors", "hueReactive", "bgColor", "glassTintColor", "lyricsHighlightColor", "lyricsTextStyleColor"];
 var PLACEMENT_KEYS = ["monitor", "verticalPosition", "desktopLayer", "pauseWhenCovered", "hAnchor", "widgetWidth", "widgetHeight", "panelDisplayMode", "panelOrientation", "panelCardSizing", "panelCardScale"];
 var TRACK_INFO_KEYS = ["hoverDetails", "detailFields", "detailCustomize", "flipInfoButton", "onlineTrackInfo", "appleTrackInfo"];
 var DETAIL_FIELD_GROUPS = [
-    {id: "detailSong", label: "Song", opts: [["genre", "Genre"], ["length", "Length"], ["bpm", "BPM"], ["recordingNote", "Version"], ["comment", "Comment"]]},
-    {id: "detailCredits", label: "Credits", opts: [["albumArtist", "Album artist"], ["composer", "Composer"], ["lyricist", "Lyricist"], ["writers", "Songwriters"], ["producers", "Producers"], ["performers", "Performers"], ["arrangers", "Arrangers"]]},
-    {id: "detailRelease", label: "Release", opts: [["album", "Album & year"], ["date", "Release date"], ["releaseType", "Release type"], ["track", "Track number"], ["disc", "Disc number"], ["trackCount", "Album track count"], ["label", "Label"], ["country", "Country"], ["editionDate", "Edition date"], ["isrc", "ISRC"]]},
-    {id: "detailOther", label: "Playback & artist summary", opts: [["format", "Audio format"], ["player", "Player"], ["summary", "Artist summary"]]}
+    {id: "detailSong", label: noop("Song"), opts: [["genre", noop("Genre")], ["length", noop("Length")], ["bpm", noop("BPM")], ["recordingNote", noop("Version")], ["comment", noop("Comment")]]},
+    {id: "detailCredits", label: noop("Credits"), opts: [["albumArtist", noop("Album artist")], ["composer", noop("Composer")], ["lyricist", noop("Lyricist")], ["writers", noop("Songwriters")], ["producers", noop("Producers")], ["performers", noop("Performers")], ["arrangers", noop("Arrangers")]]},
+    {id: "detailRelease", label: noop("Release"), opts: [["album", noop("Album & year")], ["date", noop("Release date")], ["releaseType", noop("Release type")], ["track", noop("Track number")], ["disc", noop("Disc number")], ["trackCount", noop("Album track count")], ["label", noop("Label")], ["country", noop("Country")], ["editionDate", noop("Edition date")], ["isrc", noop("ISRC")]]},
+    {id: "detailOther", label: noop("Playback & artist summary"), opts: [["format", noop("Audio format")], ["player", noop("Player")], ["summary", noop("Artist summary")]]}
 ];
 var DETAIL_PROFILES = {
     essentials: ["album", "genre", "format", "player"],
@@ -143,310 +147,315 @@ function tab(id, title, rows, when) {
 }
 
 var SECTIONS = [
-    tab("presets", "Looks", [
-        { id: "pick", type: "presets", full: true, label: "Start from a look", desc: "One click sets everything. Fine-tune in the other tabs afterwards — your placement is never touched." }
+    tab("presets", noop("Looks"), [
+        { id: "pick", type: "presets", full: true, label: noop("Start from a look"), desc: noop("One click sets everything. Fine-tune in the other tabs afterwards — your placement is never touched.") }
     ]),
-    tab("saved", "My presets", [
-        { id: "mine", type: "userPresets", full: true, label: "Saved looks", desc: "Save the current settings under a name, or share a look as a small JSON snippet." }
+    tab("saved", noop("My presets"), [
+        { id: "mine", type: "userPresets", full: true, label: noop("Saved looks"), desc: noop("Save the current settings under a name, or share a look as a small JSON snippet.") }
     ]),
-    tab("viz", "Orbit around the cover", [
-        { k: "orbitStyle", type: "tiles", full: true, label: "Ring style", desc: "The cover is the centre point and the visualizer circles it. Colour mode, glow and bloom below still apply.", tw: 92,
+    tab("viz", noop("Orbit around the cover"), [
+        { k: "orbitStyle", type: "tiles", full: true, label: noop("Ring style"), desc: noop("The cover is the centre point and the visualizer circles it. Colour mode, glow and bloom below still apply."), tw: 92,
           opts: ORBITS.map(function (l) { return { v: l.toLowerCase(), label: l, pv: "orbit" }; }) },
-        { k: "orbitReach", type: "range", label: "Reach", desc: "How far the ring extends from the cover.", min: .5, max: 1.3, step: .05, fmt: "pct" },
-        { k: "orbitRotate", type: "switch", label: "Slow rotation" },
-        { k: "orbitCoverPulse", type: "switch", label: "Cover breathes with the bass" }
+        { k: "orbitReach", type: "range", label: noop("Reach"), desc: noop("How far the ring extends from the cover."), min: .5, max: 1.3, step: .05, fmt: "pct" },
+        { k: "orbitRotate", type: "switch", label: noop("Slow rotation") },
+        { k: "orbitCoverPulse", type: "switch", label: noop("Cover breathes with the bass") }
     ], function (s) { return s.layoutMode === "orbit"; }),
-    tab("viz", "Style", [
-        { id: "customVisualizers", type: "customStyle", full: true, label: "Custom visualizers", desc: "Import a trusted QML style and use it in the waveform area. Orbit and lyrics-only layouts use their own visuals.", docs: CUSTOM_QML_DOCS },
-        { k: "visualizerType", type: "tiles", full: true, label: "Visualizer", desc: "Previews react to your colour, line and bloom settings.", tw: 104,
+    tab("viz", noop("Style"), [
+        { id: "customVisualizers", type: "customStyle", full: true, label: noop("Custom visualizers"), desc: noop("Import a trusted QML style and use it in the waveform area. Orbit and lyrics-only layouts use their own visuals."), docs: CUSTOM_QML_DOCS },
+        { k: "visualizerType", type: "tiles", full: true, label: noop("Visualizer"), desc: noop("Previews react to your colour, line and bloom settings."), tw: 104,
           when: function (s) { return s.layoutMode !== "orbit"; },
           opts: VIZ.map(function (l, i) { return { v: i, label: l, pv: "viz" }; }) },
-        { k: "vizVerticalOffset", type: "range", label: "Vertical offset", desc: "Move the visualizer up (negative) or down (positive). Zero restores its original position; edges stay inside the visualizer area.", min: -1, max: 1, step: .01, fmt: "pct", when: function (s) { return ["orbit", "lyrics", "pillicon"].indexOf(s.layoutMode) === -1; } },
-        { k: "vizDirection", type: "seg", label: "Direction", desc: "Bars rise from the bottom today — or let them hang from the top edge.", opts: [["up", "Rise from bottom"], ["down", "Hang from top"]],
+        { k: "vizVerticalOffset", type: "range", label: noop("Vertical offset"), desc: noop("Move the visualizer up (negative) or down (positive). Zero restores its original position; edges stay inside the visualizer area."), min: -1, max: 1, step: .01, fmt: "pct", when: function (s) { return ["orbit", "lyrics", "pillicon"].indexOf(s.layoutMode) === -1; } },
+        { k: "vizDirection", type: "seg", label: noop("Direction"), desc: noop("Bars rise from the bottom today — or let them hang from the top edge."), opts: [["up", noop("Rise from bottom")], ["down", noop("Hang from top")]],
           when: function (s) { return [1, 6, 7, 8].indexOf(s.visualizerType) !== -1 && s.layoutMode !== "orbit"; } },
-        { k: "ribbonCurvature", type: "range", label: "Ribbon curvature", desc: "How far the mids bend the ribbon.", min: .5, max: 1.25, step: .05, fmt: "pct", when: function (s) { return s.visualizerType === 15; } },
-        { k: "ribbonFullness", type: "range", label: "Ribbon fullness", desc: "How thick the bass makes it.", min: .6, max: 1.3, step: .05, fmt: "pct", when: function (s) { return s.visualizerType === 15; } },
-        { k: "lineWidth", type: "range", label: "Line weight", desc: "Stroke width of lines and dot size.", min: 1, max: 8, step: .2, fmt: "fixed1" },
-        { k: "fillWave", type: "switch", label: "Gradient fill", desc: "Fill waves and liquid shapes, or soften Peak Bars with transparency.",
+        { k: "ribbonCurvature", type: "range", label: noop("Ribbon curvature"), desc: noop("How far the mids bend the ribbon."), min: .5, max: 1.25, step: .05, fmt: "pct", when: function (s) { return s.visualizerType === 15; } },
+        { k: "ribbonFullness", type: "range", label: noop("Ribbon fullness"), desc: noop("How thick the bass makes it."), min: .6, max: 1.3, step: .05, fmt: "pct", when: function (s) { return s.visualizerType === 15; } },
+        { k: "lineWidth", type: "range", label: noop("Line weight"), desc: noop("Stroke width of lines and dot size."), min: 1, max: 8, step: .2, fmt: "fixed1" },
+        { k: "fillWave", type: "switch", label: noop("Gradient fill"), desc: noop("Fill waves and liquid shapes, or soften Peak Bars with transparency."),
           when: function (s) { return s.layoutMode === "orbit" ? s.orbitStyle === "wave" : [0, 6, 10, 18].indexOf(s.visualizerType) !== -1; } }
     ]),
-    tab("controls", "Progress bar", [
-        { id: "customProgressBar", type: "customStyle", full: true, label: "Custom progress bars", desc: "Import a trusted QML progress bar with playback timing and seeking.", docs: CUSTOM_QML_DOCS + "#custom-progress-bars" },
-        { k: "progressBarStyle", type: "tiles", full: true, label: "Style", desc: "Click anywhere on it in the widget to seek.", tw: 104,
-          opts: [{ v: -1, label: "None", pv: "progress" }].concat(PBS.map(function (l, i) { return { v: i, label: l, pv: "progress" }; })) },
-        { k: "seekHover", type: "switch", label: "Seek preview", desc: "Target time, jump delta and a ghost playhead." },
-        { k: "seekGestures", type: "switch", label: "Seek gestures", desc: "Wheel seeks; double-click the outer thirds to jump 10 seconds." },
-        { k: "wheelSeekSeconds", type: "range", label: "Wheel seek step", min: 0, max: 10, step: 1, fmt: "s", desc: "Seconds per notch; 0 disables wheel seeking." },
-        { k: "reactiveProgress", type: "switch", label: "Audio-reactive progress", desc: "Bass swells the track and playhead; reduced motion disables pulses." },
-        { k: "showChapters", type: "switch", label: "Chapter marks", desc: "Uses player chapter metadata or local embedded chapters and cue files." },
-        { id: "timeLabels", type: "seg", label: "Time labels",
-          opts: [["off", "Off"], ["total", "1:31 · 3:58"], ["remaining", "1:31 · -2:27"]],
+    tab("controls", noop("Progress bar"), [
+        { id: "customProgressBar", type: "customStyle", full: true, label: noop("Custom progress bars"), desc: noop("Import a trusted QML progress bar with playback timing and seeking."), docs: CUSTOM_QML_DOCS + "#custom-progress-bars" },
+        { k: "progressBarStyle", type: "tiles", full: true, label: noop("Style"), desc: noop("Click anywhere on it in the widget to seek."), tw: 104,
+          opts: [{ v: -1, label: noop("None"), pv: "progress" }].concat(PBS.map(function (l, i) { return { v: i, label: l, pv: "progress" }; })) },
+        { k: "seekHover", type: "switch", label: noop("Seek preview"), desc: noop("Target time, jump delta and a ghost playhead.") },
+        { k: "seekGestures", type: "switch", label: noop("Seek gestures"), desc: noop("Wheel seeks; double-click the outer thirds to jump 10 seconds.") },
+        { k: "wheelSeekSeconds", type: "range", label: noop("Wheel seek step"), min: 0, max: 10, step: 1, fmt: "s", desc: noop("Seconds per notch; 0 disables wheel seeking.") },
+        { k: "reactiveProgress", type: "switch", label: noop("Audio-reactive progress"), desc: noop("Bass swells the track and playhead; reduced motion disables pulses.") },
+        { k: "showChapters", type: "switch", label: noop("Chapter marks"), desc: noop("Uses player chapter metadata or local embedded chapters and cue files.") },
+        { id: "timeLabels", type: "seg", label: noop("Time labels"),
+          opts: [["off", noop("Off")], ["total", noop("1:31 · 3:58")], ["remaining", noop("1:31 · -2:27")]],
           get: function (s) { return s.showTimes ? s.timeFormat : "off"; },
           set: function (v) { return v === "off" ? { showTimes: false } : { showTimes: true, timeFormat: v }; } }
     ]),
-    tab("buttons", "Panel buttons", [
-        { k: "pillControls", type: "seg", label: "Buttons", desc: "Add playback controls directly to the panel pill.", opts: [["none", "None"], ["play", "Play / pause"], ["all", "Previous · Play · Next"]], when: function (s) { return s.layoutMode === "pill"; } },
-        { k: "pillControlsOnHover", type: "switch", label: "Show buttons on hover only", desc: "Reveal playback buttons while the pointer is over the pill. Keeps the pill's width steady.", when: function (s) { return s.layoutMode === "pill" && s.pillControls !== "none"; } }
+    tab("buttons", noop("Panel buttons"), [
+        { k: "pillControls", type: "seg", label: noop("Buttons"), desc: noop("Add playback controls directly to the panel pill."), opts: [["none", noop("None")], ["play", noop("Play / pause")], ["all", noop("Previous · Play · Next")]], when: function (s) { return s.layoutMode === "pill"; } },
+        { k: "pillControlsOnHover", type: "switch", label: noop("Show buttons on hover only"), desc: noop("Reveal playback buttons while the pointer is over the pill. Keeps the pill's width steady."), when: function (s) { return s.layoutMode === "pill" && s.pillControls !== "none"; } }
     ], isPill),
-    tab("buttons", "Playback buttons", [
-        { id: "customButtons", type: "customStyle", full: true, label: "Custom button styles", desc: "Import a trusted QML style for the playback controls.", docs: CUSTOM_QML_DOCS + "#custom-playback-buttons" },
-        { k: "dockStyle", type: "tiles", full: true, label: "Style", desc: "Choose the shape around your playback controls.", tw: 118,
-          opts: [{ v: "glass", label: "Glass pill", pv: "dock" }, { v: "soft", label: "Soft pill", pv: "dock" }, { v: "outline", label: "Outline pill", pv: "dock" }, { v: "tinted", label: "Tinted pill", pv: "dock" }, { v: "bare", label: "Bare icons", pv: "dock" }, { v: "accent", label: "Accent play", pv: "dock" }] },
-        { k: "controlsOnHover", type: "switch", label: "Show on hover only", desc: "Hide the playback buttons until the pointer is over the card. Works with any style." },
-        { k: "showSkipButtons", type: "switch", label: "Previous & next" },
-        { k: "showShuffleRepeat", type: "switch", label: "Shuffle & repeat", desc: "For players that support them." }
+    tab("buttons", noop("Playback buttons"), [
+        { id: "customButtons", type: "customStyle", full: true, label: noop("Custom button styles"), desc: noop("Import a trusted QML style for the playback controls."), docs: CUSTOM_QML_DOCS + "#custom-playback-buttons" },
+        { k: "dockStyle", type: "tiles", full: true, label: noop("Style"), desc: noop("Choose the shape around your playback controls."), tw: 118,
+          opts: [{ v: "glass", label: noop("Glass pill"), pv: "dock" }, { v: "soft", label: noop("Soft pill"), pv: "dock" }, { v: "outline", label: noop("Outline pill"), pv: "dock" }, { v: "tinted", label: noop("Tinted pill"), pv: "dock" }, { v: "bare", label: noop("Bare icons"), pv: "dock" }, { v: "accent", label: noop("Accent play"), pv: "dock" }] },
+        { k: "controlsOnHover", type: "switch", label: noop("Show on hover only"), desc: noop("Hide the playback buttons until the pointer is over the card. Works with any style.") },
+        { k: "showSkipButtons", type: "switch", label: noop("Previous & next") },
+        { k: "showShuffleRepeat", type: "switch", label: noop("Shuffle & repeat"), desc: noop("For players that support them.") }
     ]),
-    tab("buttons", "Button colours", [
-        { id: "ctlSrc", type: "seg", label: "Icon colour", desc: "Colour mode follows the visualizer. System adapts to light cards.", opts: [["system", "System"], ["accent", "Accent"], ["visualizer", "Colour mode"], ["custom", "Custom"]], get: function (s) { return s.controlsColorSource && s.controlsColorSource !== "legacy" ? s.controlsColorSource : s.useSystemControls ? "system" : "custom"; }, set: function (v) { return { controlsColorSource: v === "system" || v === "custom" ? "legacy" : v, useSystemControls: v !== "custom" }; } },
-        { k: "customControlColor", type: "color", label: "Custom icon colour", swatches: SWATCHES, when: function (s) { return (!s.controlsColorSource || s.controlsColorSource === "legacy") && !s.useSystemControls; } },
-        { id: "dockSrc", type: "seg", label: "Background colour", desc: "Applies to pill styles. Tinted uses your accent when set to Automatic.", opts: [[true, "Automatic"], [false, "Custom"]], get: function (s) { return s.useSystemDockBg; }, set: function (v) { return { useSystemDockBg: v }; } },
-        { k: "customDockBgColor", type: "color", label: "Custom background", swatches: BGSWATCHES.concat(SWATCHES), when: function (s) { return !s.useSystemDockBg; } }
+    tab("buttons", noop("Button colours"), [
+        { id: "ctlSrc", type: "seg", label: noop("Icon colour"), desc: noop("Colour mode follows the visualizer. System adapts to light cards."), opts: [["system", noop("System")], ["accent", noop("Accent")], ["visualizer", noop("Colour mode")], ["custom", noop("Custom")]], get: function (s) { return s.controlsColorSource && s.controlsColorSource !== "legacy" ? s.controlsColorSource : s.useSystemControls ? "system" : "custom"; }, set: function (v) { return { controlsColorSource: v === "system" || v === "custom" ? "legacy" : v, useSystemControls: v !== "custom" }; } },
+        { k: "customControlColor", type: "color", label: noop("Custom icon colour"), swatches: SWATCHES, when: function (s) { return (!s.controlsColorSource || s.controlsColorSource === "legacy") && !s.useSystemControls; } },
+        { id: "dockSrc", type: "seg", label: noop("Background colour"), desc: noop("Applies to pill styles. Tinted uses your accent when set to Automatic."), opts: [[true, noop("Automatic")], [false, noop("Custom")]], get: function (s) { return s.useSystemDockBg; }, set: function (v) { return { useSystemDockBg: v }; } },
+        { k: "customDockBgColor", type: "color", label: noop("Custom background"), swatches: BGSWATCHES.concat(SWATCHES), when: function (s) { return !s.useSystemDockBg; } }
     ]),
-    tab("layout", "Arrangement", [
-        { k: "layoutMode", type: "tiles", full: true, label: "Layout", desc: "Visualizer only fills a transparent widget with the selected effect. Lyrics only shows a scrollable verse with the current line highlighted. Uses online lyrics from LRCLIB.", tw: 104,
+    tab("layout", noop("Arrangement"), [
+        { k: "layoutMode", type: "tiles", full: true, label: noop("Layout"), desc: noop("Visualizer only fills a transparent widget with the selected effect. Lyrics only shows a scrollable verse with the current line highlighted. Uses online lyrics from LRCLIB."), tw: 104,
           get: layoutValue,
           set: function (v) { return v === "compact" ? { showMpris: false, layoutMode: "classic" } : { layoutMode: v, showMpris: true }; },
-          opts: [["visualizer", "Visualizer only"], ["classic", "Classic"], ["mirrored", "Mirrored"], ["inline", "Inline"], ["hero", "Hero wave"], ["stacked", "Stacked"], ["orbit", "Orbit"], ["lyrics", "Lyrics only"], ["poster", "Poster"], ["strip", "Slim strip"], ["pill", "Panel pill"], ["pillicon", "Panel icon"], ["compact", "No art"]]
+          opts: [["visualizer", noop("Visualizer only")], ["classic", noop("Classic")], ["mirrored", noop("Mirrored")], ["inline", noop("Inline")], ["hero", noop("Hero wave")], ["stacked", noop("Stacked")], ["orbit", noop("Orbit")], ["lyrics", noop("Lyrics only")], ["poster", noop("Poster")], ["strip", noop("Slim strip")], ["pill", noop("Panel pill")], ["pillicon", noop("Panel icon")], ["compact", noop("No art")]]
               .map(function (o) { return { v: o[0], label: o[1], pv: "diagram" }; }) }
     ]),
-    tab("layout", "Panel pill", [
+    tab("layout", noop("Panel pill"), [
         { id: "pillNote", type: "note", full: true, note: "pill" },
-        { k: "pillContent", type: "seg", label: "Text", opts: [["title", "Title"], ["title-artist", "Title · Artist"], ["artist-title", "Artist — Title"], ["none", "None (visualizer only)"]], when: function (s) { return s.layoutMode === "pill"; } },
-        { k: "pillArt", type: "switch", label: "Cover thumbnail", when: function (s) { return s.layoutMode === "pill"; } },
-        { k: "pillEq", type: "seg", label: "Motion", desc: "Mini visualizer follows the music using your selected visualizer style. Choose Static for still bars.", opts: [["off", "Off"], ["static", "Static"], ["live", "Bouncing"], ["wave", "Mini visualizer"]] },
-        { k: "pillProgress", type: "seg", label: "Progress", opts: [["off", "Off"], ["underline", "Underline"], ["ring", "Cover ring"], ["bar", "Styled bar"]] },
-        { k: "pillMaxWidth", type: "range", label: "Maximum width", min: 140, max: 420, step: 10, fmt: "px", when: function (s) { return s.layoutMode === "pill"; } },
-        { k: "pillPopupTrigger", type: "seg", label: "Open popup", desc: "Hover closes when you leave the pill and card. Click toggles it. Both lets a click pin the hovered card; click again to close.", opts: [["hover", "Hover"], ["click", "Click"], ["both", "Both"]], when: function (s, env) { return env === "kde"; }, set: function (v) { return { pillPopupTrigger: v, pillClick: "popup" }; } },
-        { k: "pillClick", type: "seg", label: "Click", opts: [["popup", "Open card"], ["toggle", "Play / pause"]], when: function (s, env) { return env !== "kde" || s.pillPopupTrigger === "hover"; } }
+        { k: "pillContent", type: "seg", label: noop("Text"), opts: [["title", noop("Title")], ["title-artist", noop("Title · Artist")], ["artist-title", noop("Artist — Title")], ["none", noop("None (visualizer only)")]], when: function (s) { return s.layoutMode === "pill"; } },
+        { k: "pillArt", type: "switch", label: noop("Cover thumbnail"), when: function (s) { return s.layoutMode === "pill"; } },
+        { k: "pillEq", type: "seg", label: noop("Motion"), desc: noop("Mini visualizer follows the music using your selected visualizer style. Choose Static for still bars."), opts: [["off", noop("Off")], ["static", noop("Static")], ["live", noop("Bouncing")], ["wave", noop("Mini visualizer")]] },
+        { k: "pillProgress", type: "seg", label: noop("Progress"), opts: [["off", noop("Off")], ["underline", noop("Underline")], ["ring", noop("Cover ring")], ["bar", noop("Styled bar")]] },
+        { k: "pillMaxWidth", type: "range", label: noop("Maximum width"), min: 140, max: 420, step: 10, fmt: "px", when: function (s) { return s.layoutMode === "pill"; } },
+        { k: "pillPopupTrigger", type: "seg", label: noop("Open popup"), desc: noop("Hover closes when you leave the pill and card. Click toggles it. Both lets a click pin the hovered card; click again to close."), opts: [["hover", noop("Hover")], ["click", noop("Click")], ["both", noop("Both")]], when: function (s, env) { return env === "kde"; }, set: function (v) { return { pillPopupTrigger: v, pillClick: "popup" }; } },
+        { k: "pillClick", type: "seg", label: noop("Click"), opts: [["popup", noop("Open card")], ["toggle", noop("Play / pause")]], when: function (s, env) { return env !== "kde" || s.pillPopupTrigger === "hover"; } }
     ], isPill),
-    tab("layout", "Poster", [
-        { k: "posterAlign", type: "seg", label: "Alignment", opts: [["left", "Left"], ["center", "Centre"]] },
-        { k: "posterLines", type: "seg", label: "Title lines", desc: "Let long titles wrap onto a second line.", opts: [[1, "One"], [2, "Two"]] },
-        { k: "posterVizBehind", type: "switch", label: "Visualizer behind the title", desc: "A soft texture under the text; style and direction follow the Visualizer tab." },
-        { k: "posterVizOpacity", type: "range", label: "Texture strength", min: .1, max: .8, step: .05, fmt: "pct", when: function (s) { return s.posterVizBehind; } },
-        { k: "posterClock", type: "switch", label: "Large clock", desc: "Elapsed time set big beside the progress line." },
-        { k: "showAlbum", type: "switch", label: "Album in the top line" }
+    tab("layout", noop("Poster"), [
+        { k: "posterAlign", type: "seg", label: noop("Alignment"), opts: [["left", noop("Left")], ["center", noop("Centre")]] },
+        { k: "posterLines", type: "seg", label: noop("Title lines"), desc: noop("Let long titles wrap onto a second line."), opts: [[1, noop("One")], [2, noop("Two")]] },
+        { k: "posterVizBehind", type: "switch", label: noop("Visualizer behind the title"), desc: noop("A soft texture under the text; style and direction follow the Visualizer tab.") },
+        { k: "posterVizOpacity", type: "range", label: noop("Texture strength"), min: .1, max: .8, step: .05, fmt: "pct", when: function (s) { return s.posterVizBehind; } },
+        { k: "posterClock", type: "switch", label: noop("Large clock"), desc: noop("Elapsed time set big beside the progress line.") },
+        { k: "showAlbum", type: "switch", label: noop("Album in the top line") }
     ], function (s) { return s.layoutMode === "poster"; }),
-    tab("layout", "Track text", [
-        { k: "titleSize", when: notPill, type: "range", label: "Text size", desc: "Artist and album follow the title.", min: 9, max: 32, step: 1, fmt: "px" },
-        { k: "textAlign", when: notPill, type: "seg", label: "Alignment", opts: [["left", "Left"], ["center", "Centre"], ["right", "Right"]] },
-        { k: "marquee", type: "switch", label: "Scroll long titles", desc: "Scroll overflowing titles, including the panel pill. Disabled by Reduced motion." }
+    tab("layout", noop("Track text"), [
+        { k: "titleSize", when: notPill, type: "range", label: noop("Text size"), desc: noop("Artist and album follow the title."), min: 9, max: 32, step: 1, fmt: "px" },
+        { k: "textAlign", when: notPill, type: "seg", label: noop("Alignment"), opts: [["left", noop("Left")], ["center", noop("Centre")], ["right", noop("Right")]] },
+        { k: "marquee", type: "switch", label: noop("Scroll long titles"), desc: noop("Scroll overflowing titles, including the panel pill. Disabled by Reduced motion.") }
     ], function (s) { return s.layoutMode !== "pillicon"; }),
-    tab("art", "Cover", [
-        { k: "showArtThumb", type: "switch", label: "Show artwork", desc: "Falls back to the player’s icon when a track has no cover.", disabled: function (s) { return layoutValue(s) === "compact"; } },
-        { k: "artShape", type: "tiles", full: true, label: "Shape", desc: "Vinyl and CD spin while music plays.", tw: 84,
-          opts: [["sharp", "Sharp"], ["rounded", "Rounded"], ["squircle", "Squircle"], ["circle", "Circle"], ["vinyl", "Vinyl"], ["cd", "CD"]].map(function (o) { return { v: o[0], label: o[1], pv: "shape" }; }) },
-        { k: "artFormat", type: "seg", full: true, label: "Format", desc: "Square always crops the art. Auto keeps square art cropped, switches the cover to 16:9 for wide art, and fits tall art whole with blurred edges. The two whole options fit the full image in the square: over a dimmed copy, or filled with its blurred edges. Wide 16:9 makes the cover a widescreen box (not for circle, vinyl or CD).", opts: [["square", "Square"], ["auto", "Auto"], ["squareWhole", "Whole, dimmed"], ["squareEdges", "Whole, edges"], ["wide", "Wide 16:9"]] },
-        { k: "artScale", type: "range", label: "Size", desc: "Capped by the layout height.", min: 60, max: 130, step: 5, fmt: "percent", when: notPill },
-        { k: "artBorder", type: "seg", label: "Border", opts: [["none", "None"], ["subtle", "Subtle"], ["accent", "Accent"]] }
+    tab("art", noop("Cover"), [
+        { k: "showArtThumb", type: "switch", label: noop("Show artwork"), desc: noop("Falls back to the player’s icon when a track has no cover."), disabled: function (s) { return layoutValue(s) === "compact"; } },
+        { k: "artShape", type: "tiles", full: true, label: noop("Shape"), desc: noop("Vinyl and CD spin while music plays."), tw: 84,
+          opts: [["sharp", noop("Sharp")], ["rounded", noop("Rounded")], ["squircle", noop("Squircle")], ["circle", noop("Circle")], ["vinyl", noop("Vinyl")], ["cd", noop("CD")]].map(function (o) { return { v: o[0], label: o[1], pv: "shape" }; }) },
+        { k: "artFormat", type: "seg", full: true, label: noop("Format"), desc: noop("Square always crops the art. Auto keeps square art cropped, switches the cover to 16:9 for wide art, and fits tall art whole with blurred edges. The two whole options fit the full image in the square: over a dimmed copy, or filled with its blurred edges. Wide 16:9 makes the cover a widescreen box (not for circle, vinyl or CD)."), opts: [["square", noop("Square")], ["auto", noop("Auto")], ["squareWhole", noop("Whole, dimmed")], ["squareEdges", noop("Whole, edges")], ["wide", noop("Wide 16:9")]] },
+        { k: "artScale", type: "range", label: noop("Size"), desc: noop("Capped by the layout height."), min: 60, max: 130, step: 5, fmt: "percent", when: notPill },
+        { k: "artBorder", type: "seg", label: noop("Border"), opts: [["none", noop("None")], ["subtle", noop("Subtle")], ["accent", noop("Accent")]] }
     ]),
-    tab("art", "Effects", [
-        { k: "artGlow", type: "switch", label: "Colour glow", desc: "A shadow tinted with the cover’s own colour." },
-        { k: "artTilt", type: "switch", label: "Cover tilt on hover", desc: "A gentle tilt after hovering the cover. Click targets stay fixed; reduced motion disables it." },
-        { k: "artReflect", type: "switch", label: "Reflection", desc: "A faint mirror image under the cover.", when: notPill },
-        { k: "artGrayPaused", type: "switch", label: "Greyscale while paused" }
+    tab("art", noop("Effects"), [
+        { k: "artGlow", type: "switch", label: noop("Colour glow"), desc: noop("A shadow tinted with the cover’s own colour.") },
+        { k: "artTilt", type: "switch", label: noop("Cover tilt on hover"), desc: noop("A gentle tilt after hovering the cover. Click targets stay fixed; reduced motion disables it.") },
+        { k: "artReflect", type: "switch", label: noop("Reflection"), desc: noop("A faint mirror image under the cover."), when: notPill },
+        { k: "artGrayPaused", type: "switch", label: noop("Greyscale while paused") }
     ]),
-    tab("art", "When there is no cover", [
-        { k: "artFallback", type: "seg", label: "Placeholder", desc: "Try the “No metadata” state.", opts: [["icon", "Player icon"], ["gradient", "Gradient"], ["letters", "Initials"]] },
-        { k: "artClick", type: "seg", label: "Clicking the cover", opts: [["none", "Nothing"], ["zoom", "Show large"], ["raise", "Open player"]] }
+    tab("art", noop("When there is no cover"), [
+        { k: "artFallback", type: "seg", label: noop("Placeholder"), desc: noop("Try the “No metadata” state."), opts: [["icon", noop("Player icon")], ["gradient", noop("Gradient")], ["letters", noop("Initials")]] },
+        { k: "artClick", type: "seg", label: noop("Clicking the cover"), opts: [["none", noop("Nothing")], ["zoom", noop("Show large")], ["raise", noop("Open player")]] }
     ]),
-    tab("info", "On the card", [
-        { k: "showAlbum", type: "switch", label: "Album name", desc: "A quiet third line with album and year.", when: notPill },
-        { k: "showSource", type: "switch", label: "Player name", desc: "Where the music is coming from.", when: notPill },
-        { k: "showPlayerSwitch", type: "switch", label: "Player switcher", desc: "Pick which of several running players the widget follows.", when: notPill },
-        { k: "showLyrics", type: "switch", label: "Synced lyrics line", desc: "Online lookup (LRCLIB). Sends title, artist, album and length. For a full verse, choose the Lyrics only layout.", when: function (s) { return s.layoutMode !== "lyrics"; } }
+    tab("info", noop("On the card"), [
+        { k: "showAlbum", type: "switch", label: noop("Album name"), desc: noop("A quiet third line with album and year."), when: notPill },
+        { k: "showSource", type: "switch", label: noop("Player name"), desc: noop("Where the music is coming from."), when: notPill },
+        { k: "showPlayerSwitch", type: "switch", label: noop("Player switcher"), desc: noop("Pick which of several running players the widget follows."), when: notPill },
+        { k: "showLyrics", type: "switch", label: noop("Synced lyrics line"), desc: noop("Online lookup (LRCLIB). Sends title, artist, album and length. For a full verse, choose the Lyrics only layout."), when: function (s) { return s.layoutMode !== "lyrics"; } }
     ]),
-    tab("lyrics", "Display", [
-        { id: "lyricsMode", type: "seg", full: true, label: "Lyrics display", desc: "Local sidecars and ID3 lyrics first, then LRCLIB. The online lookup sends the song title, artist, album and length. Card backgrounds are in the Card tab.",
+    tab("lyrics", noop("Display"), [
+        { id: "lyricsMode", type: "seg", full: true, label: noop("Lyrics display"), desc: noop("Local sidecars and ID3 lyrics first, then LRCLIB. The online lookup sends the song title, artist, album and length. Card backgrounds are in the Card tab."),
           get: function (s) { return s.layoutMode === "lyrics" ? "full" : s.showLyrics ? "line" : "off"; },
           set: function (v, s) { return v === "full" ? { layoutMode: "lyrics", showMpris: true, showLyrics: true } : { layoutMode: s && s.layoutMode !== "lyrics" ? s.layoutMode : "stacked", showMpris: true, showLyrics: v === "line" }; },
-          opts: [["off", "Off"], ["line", "Line on card"], ["full", "Lyrics only"]] },
-        { k: "lyricsLanguage", type: "seg", label: "Reading language", desc: "Automatic detects Japanese kana. Select Japanese or Chinese for Han-only text. Requires Python pykakasi / pypinyin.", opts: [["auto", "Automatic"], ["ja", "Japanese"], ["zh", "Chinese"]] },
-        { k: "lyricsReading", type: "seg", label: "Pronunciation subtitle", opts: [["off", "Off"], ["romaji", "Romaji / Pinyin"], ["kana", "Kana"]] },
-        { k: "lyricsOffset", type: "range", label: "Timing offset (seconds)", desc: "Positive values show lyrics earlier; negative values delay them. Applies to both lyrics displays.", min: -10, max: 10, step: .1, fmt: "fixed1" }
+          opts: [["off", noop("Off")], ["line", noop("Line on card")], ["full", noop("Lyrics only")]] },
+        { k: "lyricsLanguage", type: "seg", label: noop("Reading language"), desc: noop("Automatic detects Japanese kana. Select Japanese or Chinese for Han-only text. Requires Python pykakasi / pypinyin."), opts: [["auto", noop("Automatic")], ["ja", noop("Japanese")], ["zh", noop("Chinese")]] },
+        { k: "lyricsReading", type: "seg", label: noop("Pronunciation subtitle"), opts: [["off", noop("Off")], ["romaji", noop("Romaji / Pinyin")], ["kana", noop("Kana")]] },
+        { k: "lyricsOffset", type: "range", label: noop("Timing offset (seconds)"), desc: noop("Positive values show lyrics earlier; negative values delay them. Applies to both lyrics displays."), min: -10, max: 10, step: .1, fmt: "fixed1" }
     ]),
-    tab("lyrics", "Typography", [
-        { k: "lyricsFontFamily", type: "select", label: "Font", opts: [["", "System font"], ["sans-serif", "Sans serif"], ["serif", "Serif"], ["monospace", "Monospace"]] },
-        { k: "lyricsFontSize", type: "range", label: "Font size", min: 12, max: 48, step: 1, fmt: "px", when: function (s) { return s.layoutMode === "lyrics"; } },
-        { k: "lyricsInlineFontSize", type: "range", label: "Card line size", min: 10, max: 24, step: 1, fmt: "px", when: function (s) { return s.layoutMode !== "lyrics"; } },
-        { k: "lyricsFontWeight", when: function (s) { return s.layoutMode === "lyrics"; }, type: "select", label: "Text weight", opts: [[300, "Light"], [400, "Regular"], [500, "Medium"], [600, "Semibold"], [700, "Bold"]] },
-        { k: "lyricsCurrentWeight", type: "select", label: "Current line weight", opts: [[400, "Regular"], [500, "Medium"], [600, "Semibold"], [700, "Bold"], [800, "Extra bold"]] },
-        { k: "lyricsItalic", type: "switch", label: "Italic" },
-        { k: "lyricsLetterSpacing", type: "range", label: "Letter spacing", min: 0, max: 4, step: .2, fmt: "fixed1" },
-        { k: "lyricsLineHeight", when: function (s) { return s.layoutMode === "lyrics"; }, type: "range", label: "Wrapped line height", desc: "Spacing within a verse that wraps across multiple lines.", min: 1, max: 2, step: .05, fmt: "fixed2" },
-        { k: "lyricsAlign", type: "seg", label: "Alignment", opts: [["left", "Left"], ["center", "Centre"], ["right", "Right"]] }
+    tab("lyrics", noop("Typography"), [
+        { k: "lyricsFontFamily", type: "select", label: noop("Font"), opts: [["", noop("System font")], ["sans-serif", noop("Sans serif")], ["serif", noop("Serif")], ["monospace", noop("Monospace")]] },
+        { k: "lyricsFontSize", type: "range", label: noop("Font size"), min: 12, max: 48, step: 1, fmt: "px", when: function (s) { return s.layoutMode === "lyrics"; } },
+        { k: "lyricsInlineFontSize", type: "range", label: noop("Card line size"), min: 10, max: 24, step: 1, fmt: "px", when: function (s) { return s.layoutMode !== "lyrics"; } },
+        { k: "lyricsFontWeight", when: function (s) { return s.layoutMode === "lyrics"; }, type: "select", label: noop("Text weight"), opts: [[300, noop("Light")], [400, noop("Regular")], [500, noop("Medium")], [600, noop("Semibold")], [700, noop("Bold")]] },
+        { k: "lyricsCurrentWeight", type: "select", label: noop("Current line weight"), opts: [[400, noop("Regular")], [500, noop("Medium")], [600, noop("Semibold")], [700, noop("Bold")], [800, noop("Extra bold")]] },
+        { k: "lyricsItalic", type: "switch", label: noop("Italic") },
+        { k: "lyricsLetterSpacing", type: "range", label: noop("Letter spacing"), min: 0, max: 4, step: .2, fmt: "fixed1" },
+        { k: "lyricsLineHeight", when: function (s) { return s.layoutMode === "lyrics"; }, type: "range", label: noop("Wrapped line height"), desc: noop("Spacing within a verse that wraps across multiple lines."), min: 1, max: 2, step: .05, fmt: "fixed2" },
+        { k: "lyricsAlign", type: "seg", label: noop("Alignment"), opts: [["left", noop("Left")], ["center", noop("Centre")], ["right", noop("Right")]] }
     ], function (s) { return s.layoutMode === "lyrics" || s.showLyrics; }),
-    tab("lyrics", "Highlight and contrast", [
-        { k: "lyricsHighlight", type: "seg", label: "Current line colour", opts: [["text", "Text"], ["accent", "Accent"], ["custom", "Custom"]] },
-        { k: "lyricsHighlightColor", type: "color", label: "Highlight colour", swatches: SWATCHES, when: function (s) { return s.lyricsHighlight === "custom"; } },
-        { k: "lyricsPastOpacity", when: function (s) { return s.layoutMode === "lyrics"; }, type: "range", label: "Past lines", min: .1, max: 1, step: .05, fmt: "pct" },
-        { k: "lyricsFutureOpacity", when: function (s) { return s.layoutMode === "lyrics"; }, type: "range", label: "Upcoming lines", min: .1, max: 1, step: .05, fmt: "pct" },
-        { k: "lyricsTextStyle", type: "seg", label: "Text edge", desc: "Extra contrast on busy wallpapers.", opts: [["none", "None"], ["outline", "Outline"], ["shadow", "Shadow"]] },
-        { k: "lyricsTextStyleColor", type: "color", label: "Edge colour", swatches: BGSWATCHES, when: function (s) { return s.lyricsTextStyle !== "none"; } }
+    tab("lyrics", noop("Highlight and contrast"), [
+        { k: "lyricsHighlight", type: "seg", label: noop("Current line colour"), opts: [["text", noop("Text")], ["accent", noop("Accent")], ["custom", noop("Custom")]] },
+        { k: "lyricsHighlightColor", type: "color", label: noop("Highlight colour"), swatches: SWATCHES, when: function (s) { return s.lyricsHighlight === "custom"; } },
+        { k: "lyricsPastOpacity", when: function (s) { return s.layoutMode === "lyrics"; }, type: "range", label: noop("Past lines"), min: .1, max: 1, step: .05, fmt: "pct" },
+        { k: "lyricsFutureOpacity", when: function (s) { return s.layoutMode === "lyrics"; }, type: "range", label: noop("Upcoming lines"), min: .1, max: 1, step: .05, fmt: "pct" },
+        { k: "lyricsTextStyle", type: "seg", label: noop("Text edge"), desc: noop("Extra contrast on busy wallpapers."), opts: [["none", noop("None")], ["outline", noop("Outline")], ["shadow", noop("Shadow")]] },
+        { k: "lyricsTextStyleColor", type: "color", label: noop("Edge colour"), swatches: BGSWATCHES, when: function (s) { return s.lyricsTextStyle !== "none"; } }
     ], function (s) { return s.layoutMode === "lyrics" || s.showLyrics; }),
-    tab("lyrics", "Reading layout", [
-        { k: "lyricsWidth", type: "range", label: "Preferred width", desc: "Desktop hosts can override the preferred size by resizing the widget.", min: 240, max: 900, step: 10, fmt: "px" },
-        { k: "lyricsHeight", type: "range", label: "Preferred height", min: 180, max: 800, step: 10, fmt: "px" },
-        { k: "lyricsPadding", type: "range", label: "Card padding", min: 0, max: 48, step: 2, fmt: "px" },
-        { k: "lyricsMaxWidth", type: "range", label: "Maximum text width", desc: "Keep verses easy to read on a wide card.", min: 160, max: 800, step: 20, fmt: "px" },
-        { k: "lyricsLineSpacing", type: "range", label: "Space between verses", min: 0, max: 40, step: 2, fmt: "px" },
-        { k: "lyricsShowHeader", type: "switch", label: "Song title and artist" },
-        { k: "lyricsShowScrollbar", type: "switch", label: "Show scrollbar" }
+    tab("lyrics", noop("Reading layout"), [
+        { k: "lyricsWidth", type: "range", label: noop("Preferred width"), desc: noop("Desktop hosts can override the preferred size by resizing the widget."), min: 240, max: 900, step: 10, fmt: "px" },
+        { k: "lyricsHeight", type: "range", label: noop("Preferred height"), min: 180, max: 800, step: 10, fmt: "px" },
+        { k: "lyricsPadding", type: "range", label: noop("Card padding"), min: 0, max: 48, step: 2, fmt: "px" },
+        { k: "lyricsMaxWidth", type: "range", label: noop("Maximum text width"), desc: noop("Keep verses easy to read on a wide card."), min: 160, max: 800, step: 20, fmt: "px" },
+        { k: "lyricsLineSpacing", type: "range", label: noop("Space between verses"), min: 0, max: 40, step: 2, fmt: "px" },
+        { k: "lyricsShowHeader", type: "switch", label: noop("Song title and artist") },
+        { k: "lyricsShowScrollbar", type: "switch", label: noop("Show scrollbar") }
     ], function (s) { return s.layoutMode === "lyrics"; }),
-    tab("lyrics", "Following playback", [
-        { k: "lyricsFollow", type: "switch", label: "Follow current line", desc: "Scrolling pauses following so you can read ahead. Use the button on the card to resume." },
-        { k: "lyricsFollowPosition", type: "seg", label: "Current line position", opts: [["top", "Top"], ["center", "Centre"], ["bottom", "Bottom"]] }
+    tab("lyrics", noop("Following playback"), [
+        { k: "lyricsFollow", type: "switch", label: noop("Follow current line"), desc: noop("Scrolling pauses following so you can read ahead. Use the button on the card to resume.") },
+        { k: "lyricsFollowPosition", type: "seg", label: noop("Current line position"), opts: [["top", noop("Top")], ["center", noop("Centre")], ["bottom", noop("Bottom")]] }
     ], function (s) { return s.layoutMode === "lyrics"; }),
-    tab("info", "On hover", [
-        { k: "onlineTrackInfo", type: "switch", label: "Online track information", desc: "Off by default. Sends song title, artist, album and length to MusicBrainz, and artist name to English Wikipedia when details open. Adds recording credits when available. Results are cached for 24 hours." },
-        { k: "appleTrackInfo", type: "switch", label: "Apple catalog fallback", desc: "Off by default. If MusicBrainz cannot match the song, send its title and artist to Apple’s public catalog. Requires online track information.", when: function (s) { return s.onlineTrackInfo; } },
-        { k: "hoverDetails", type: "seg", label: "Details", desc: "Tooltip is a compact preview near the pointer; drawer is a wider panel below the widget. Flip opens after hovering over the cover or song title for a moment. Playback buttons and seeking never trigger it. Leave the card, press Escape or use × to return.", opts: [["off", "Off"], ["tooltip", "Tooltip"], ["drawer", "Drawer"], ["flip", "Flip card"]] },
-        { k: "flipInfoButton", type: "switch", label: "Show flip info button", desc: "Keep a click target alongside cover and title hover. The return button remains available while flipped.", when: function (s) { return s.hoverDetails === "flip"; } },
-        { id: "detailProfile", type: "seg", full: true, label: "What to show", desc: "Choose a set in one click, or customize the fields below. Missing information stays hidden. These choices survive Surprise me and daily looks.", when: function (s) { return s.hoverDetails !== "off"; },
-          opts: [["essentials", "Essentials"], ["credits", "Credits"], ["all", "All details"], ["custom", "Customize"]], get: detailProfile, set: detailProfilePatch }
+    tab("info", noop("On hover"), [
+        { k: "onlineTrackInfo", type: "switch", label: noop("Online track information"), desc: noop("Off by default. Sends song title, artist, album and length to MusicBrainz, and artist name to English Wikipedia when details open. Adds recording credits when available. Results are cached for 24 hours.") },
+        { k: "appleTrackInfo", type: "switch", label: noop("Apple catalog fallback"), desc: noop("Off by default. If MusicBrainz cannot match the song, send its title and artist to Apple’s public catalog. Requires online track information."), when: function (s) { return s.onlineTrackInfo; } },
+        { k: "hoverDetails", type: "seg", label: noop("Details"), desc: noop("Tooltip is a compact preview near the pointer; drawer is a wider panel below the widget. Flip opens after hovering over the cover or song title for a moment. Playback buttons and seeking never trigger it. Leave the card, press Escape or use × to return."), opts: [["off", noop("Off")], ["tooltip", noop("Tooltip")], ["drawer", noop("Drawer")], ["flip", noop("Flip card")]] },
+        { k: "flipInfoButton", type: "switch", label: noop("Show flip info button"), desc: noop("Keep a click target alongside cover and title hover. The return button remains available while flipped."), when: function (s) { return s.hoverDetails === "flip"; } },
+        { id: "detailProfile", type: "seg", full: true, label: noop("What to show"), desc: noop("Choose a set in one click, or customize the fields below. Missing information stays hidden. These choices survive Surprise me and daily looks."), when: function (s) { return s.hoverDetails !== "off"; },
+          opts: [["essentials", noop("Essentials")], ["credits", noop("Credits")], ["all", noop("All details")], ["custom", noop("Customize")]], get: detailProfile, set: detailProfilePatch }
     ].concat(DETAIL_FIELD_GROUPS.map(detailFieldGroup))),
-    tab("card", "Background", [
-        { k: "showBg", type: "switch", label: "Show a card", desc: "Off: the widget floats directly on the wallpaper (current default)." },
-        { k: "surfaceStyle", type: "tiles", full: true, label: "Material", tw: 84, when: function (s) { return s.showBg; },
+    tab("card", noop("Background"), [
+        { k: "showBg", type: "switch", label: noop("Show a card"), desc: noop("Off: the widget floats directly on the wallpaper (current default).") },
+        { k: "surfaceStyle", type: "tiles", full: true, label: noop("Material"), tw: 84, when: function (s) { return s.showBg; },
           get: surfaceValue,
           set: function (v) { return v === "art" ? { artBg: true } : { artBg: false, surfaceStyle: v }; },
-          opts: [["color", "Tint"], ["art", "Cover"], ["glass", "Glass"], ["liquid", "Liquid"], ["solid", "Solid"], ["atmosphere", "Atmosphere"]].map(function (o) { return { v: o[0], label: o[1], pv: "material" }; }) },
+          opts: [["color", noop("Tint")], ["art", noop("Cover")], ["glass", noop("Glass")], ["liquid", noop("Liquid")], ["solid", noop("Solid")], ["atmosphere", noop("Atmosphere")]].map(function (o) { return { v: o[0], label: o[1], pv: "material" }; }) },
         { id: "cardNote", type: "note", full: true, note: "card", when: function (s) { return s.showBg; } },
-        { k: "bgColor", type: "color", label: "Tint colour", swatches: BGSWATCHES, when: function (s) { return s.showBg && surfaceValue(s) === "color"; } },
-        { k: "compositorGlass", type: "switch", label: "Compositor glass", desc: "Requests the Plasma translucent background; Hyprland needs the supplied layer blur rule.", when: function (s) { return s.showBg && ["glass", "liquid"].includes(s.surfaceStyle); } },
-        { k: "glassBlur", type: "range", label: "Wallpaper blur", desc: "Choose how frosted the glass looks. 0% turns blur off; text and artwork stay sharp.", min: 0, max: 1, step: .01, fmt: "pct", when: function (s) { return s.showBg && !s.artBg && ["glass", "liquid"].indexOf(s.surfaceStyle) !== -1; } },
-        { k: "artBgBlur", type: "range", label: "Cover blur", desc: "0 keeps the art crisp.", min: 0, max: 1, step: .02, fmt: "pct", when: function (s) { return s.showBg && s.artBg; } },
-        { k: "artBgDim", type: "range", label: "Cover darkness", desc: "Keeps text readable on bright covers.", min: 0, max: 1, step: .02, fmt: "pct", when: function (s) { return s.showBg && s.artBg; } },
-        { k: "artBgKeepThumb", type: "switch", label: "Keep sharp thumbnail", when: function (s) { return s.showBg && s.artBg; }, disabled: function (s) { return !s.showArtThumb || layoutValue(s) === "compact"; } },
-        { k: "artBgTransparency", type: "range", label: "Card opacity", desc: "Only the card fades; text and wave stay solid.", min: 0, max: 1, step: .02, fmt: "pct", when: function (s) { return s.showBg; } },
-        { k: "bgRadius", type: "range", label: "Corner radius", min: 0, max: 30, step: 1, fmt: "px", when: function (s) { return s.showBg && notPill(s); } }
+        { k: "bgColor", type: "color", label: noop("Tint colour"), swatches: BGSWATCHES, when: function (s) { return s.showBg && surfaceValue(s) === "color"; } },
+        { k: "compositorGlass", type: "switch", label: noop("Compositor glass"), desc: noop("Requests the Plasma translucent background; Hyprland needs the supplied layer blur rule."), when: function (s) { return s.showBg && ["glass", noop("liquid")].includes(s.surfaceStyle); } },
+        { k: "glassBlur", type: "range", label: noop("Wallpaper blur"), desc: noop("Choose how frosted the glass looks. 0% turns blur off; text and artwork stay sharp."), min: 0, max: 1, step: .01, fmt: "pct", when: function (s) { return s.showBg && !s.artBg && ["glass", noop("liquid")].indexOf(s.surfaceStyle) !== -1; } },
+        { k: "artBgBlur", type: "range", label: noop("Cover blur"), desc: noop("0 keeps the art crisp."), min: 0, max: 1, step: .02, fmt: "pct", when: function (s) { return s.showBg && s.artBg; } },
+        { k: "artBgDim", type: "range", label: noop("Cover darkness"), desc: noop("Keeps text readable on bright covers."), min: 0, max: 1, step: .02, fmt: "pct", when: function (s) { return s.showBg && s.artBg; } },
+        { k: "artBgKeepThumb", type: "switch", label: noop("Keep sharp thumbnail"), when: function (s) { return s.showBg && s.artBg; }, disabled: function (s) { return !s.showArtThumb || layoutValue(s) === "compact"; } },
+        { k: "artBgTransparency", type: "range", label: noop("Card opacity"), desc: noop("Only the card fades; text and wave stay solid."), min: 0, max: 1, step: .02, fmt: "pct", when: function (s) { return s.showBg; } },
+        { k: "bgRadius", type: "range", label: noop("Corner radius"), min: 0, max: 30, step: 1, fmt: "px", when: function (s) { return s.showBg && notPill(s); } }
     ]),
-    tab("card", "Glass colour", [
-        { k: "glassTint", type: "seg", label: "Glass tint", opts: [["clear", "Clear"], ["frost", "Frost"], ["smoke", "Smoke"], ["cover", "Cover colour"], ["custom", "Custom"]] },
-        { k: "glassTintColor", type: "color", label: "Custom glass colour", swatches: BGSWATCHES.concat(SWATCHES), when: function (s) { return s.glassTint === "custom"; } }
-    ], function (s) { return s.showBg && !s.artBg && ["glass", "liquid"].includes(s.surfaceStyle); }),
-    tab("card", "Liquid glass", [
-        { k: "glassRefraction", type: "range", label: "Refraction", desc: "Bends the sampled wallpaper with a subtle colour fringe.", min: 0, max: 1, step: .05, fmt: "pct" },
-        { k: "glassSpecular", type: "switch", label: "Light follows pointer", desc: "A soft specular highlight tracks the mouse." }
+    tab("card", noop("Glass colour"), [
+        { k: "glassTint", type: "seg", label: noop("Glass tint"), opts: [["clear", noop("Clear")], ["frost", noop("Frost")], ["smoke", noop("Smoke")], ["cover", noop("Cover colour")], ["custom", noop("Custom")]] },
+        { k: "glassTintColor", type: "color", label: noop("Custom glass colour"), swatches: BGSWATCHES.concat(SWATCHES), when: function (s) { return s.glassTint === "custom"; } }
+    ], function (s) { return s.showBg && !s.artBg && ["glass", noop("liquid")].includes(s.surfaceStyle); }),
+    tab("card", noop("Liquid glass"), [
+        { k: "glassRefraction", type: "range", label: noop("Refraction"), desc: noop("Bends the sampled wallpaper with a subtle colour fringe."), min: 0, max: 1, step: .05, fmt: "pct" },
+        { k: "glassSpecular", type: "switch", label: noop("Light follows pointer"), desc: noop("A soft specular highlight tracks the mouse.") }
     ], function (s) { return s.showBg && surfaceValue(s) === "liquid"; }),
-    tab("card", "Depth & finish", [
-        { k: "cardShadow", type: "seg", label: "Shadow", opts: [["none", "None"], ["soft", "Soft"], ["lifted", "Lifted"]] },
-        { k: "edgeHighlight", type: "switch", label: "Edge highlight", desc: "A thin line of light along the top edge." },
-        { k: "grain", type: "switch", label: "Film grain", desc: "Stops gradients from banding." },
-        { k: "bassPulse", type: "switch", label: "Bass pulse", desc: "The edge glows in the accent colour on every kick." },
-        { k: "ambientGlow", type: "switch", label: "Ambient desktop glow", desc: "Project a soft, sound-reactive ambient glow onto the wallpaper or panel edges." }
+    tab("card", noop("Depth & finish"), [
+        { k: "cardShadow", type: "seg", label: noop("Shadow"), opts: [["none", noop("None")], ["soft", noop("Soft")], ["lifted", noop("Lifted")]] },
+        { k: "edgeHighlight", type: "switch", label: noop("Edge highlight"), desc: noop("A thin line of light along the top edge.") },
+        { k: "grain", type: "switch", label: noop("Film grain"), desc: noop("Stops gradients from banding.") },
+        { k: "bassPulse", type: "switch", label: noop("Bass pulse"), desc: noop("The edge glows in the accent colour on every kick.") },
+        { k: "ambientGlow", type: "switch", label: noop("Ambient desktop glow"), desc: noop("Project a soft, sound-reactive ambient glow onto the wallpaper or panel edges.") }
     ], function (s) { return s.showBg; }),
-    tab("colors", "Accent", [
-        { id: "waveSrc", type: "seg", label: "Accent colour", desc: "Drives the wave, progress and play button. System follows your desktop accent.",
-          opts: [["system", "System"], ["art", "From cover"], ["custom", "Custom"]],
+    tab("colors", noop("Accent"), [
+        { id: "waveSrc", type: "seg", label: noop("Accent colour"), desc: noop("Drives the wave, progress and play button. System follows your desktop accent."),
+          opts: [["system", noop("System")], ["art", noop("From cover")], ["custom", noop("Custom")]],
           get: function (s) { return s.accentFromArt ? "art" : s.useSystemAccent ? "system" : "custom"; },
           set: function (v) { return { accentFromArt: v === "art", useSystemAccent: v !== "custom" }; } },
-        { k: "customColor", type: "color", label: "Custom colour", swatches: SWATCHES, when: function (s) { return !s.accentFromArt && !s.useSystemAccent; } }
+        { k: "customColor", type: "color", label: noop("Custom colour"), swatches: SWATCHES, when: function (s) { return !s.accentFromArt && !s.useSystemAccent; } }
     ]),
-    tab("colors", "Colour mode & visualizer light", [
-        { k: "vizColorMode", type: "seg", label: "Colour mode", desc: "Used by the visualizer. Choose Colour mode for progress and controls below to share its palette or animated rainbow.", opts: [["solid", "Solid"], ["gradient", "Gradient"], ["cover", "Cover"], ["palette", "Palette"], ["custom", "Custom"], ["rainbow", "Rainbow"]] },
-        { k: "vizCustomColors", type: "colorlist", full: true, label: "Your colour range", desc: "Any number of colours, blended left to right. Click a colour to change it, × removes it, + adds one. The glow takes the middle of the range.",
+    tab("colors", noop("Colour mode & visualizer light"), [
+        { k: "vizColorMode", type: "seg", label: noop("Colour mode"), desc: noop("Used by the visualizer. Choose Colour mode for progress and controls below to share its palette or animated rainbow."), opts: [["solid", noop("Solid")], ["gradient", noop("Gradient")], ["cover", noop("Cover")], ["palette", noop("Palette")], ["custom", noop("Custom")], ["rainbow", noop("Rainbow")]] },
+        { k: "vizCustomColors", type: "colorlist", full: true, label: noop("Your colour range"), desc: noop("Any number of colours, blended left to right. Click a colour to change it, × removes it, + adds one. The glow takes the middle of the range."),
           when: function (s) { return s.vizColorMode === "custom"; } },
-        { k: "vizPalette", type: "tiles", full: true, label: "Palette", desc: "Curated palettes with bounded hues, so they never turn muddy.", tw: 84,
+        { k: "vizPalette", type: "tiles", full: true, label: noop("Palette"), desc: noop("Curated palettes with bounded hues, so they never turn muddy."), tw: 84,
           when: function (s) { return s.vizColorMode === "palette"; },
           opts: Object.keys(PALETTES).map(function (k) { return { v: k, label: k[0].toUpperCase() + k.slice(1), pv: "palette" }; }) },
-        { k: "hueReactive", type: "switch", label: "Music-reactive hue", desc: "Colours drift slowly with the bass / treble balance." },
-        { k: "glowWave", type: "switch", label: "Glow", desc: "Soft light around the visualizer." },
-        { k: "glowColorMode", type: "seg", label: "Glow colour", desc: "Same uses the middle of your colour range. Custom gives the glow a range of its own, which it drifts slowly through.", opts: [["same", "Same as colours"], ["custom", "Custom range"]], when: function (s) { return s.glowWave; } },
-        { k: "glowCustomColors", type: "colorlist", full: true, label: "Your glow range", desc: "Any number of colours. Click one to change it, × removes it, + adds one.",
+        { k: "hueReactive", type: "switch", label: noop("Music-reactive hue"), desc: noop("Colours drift slowly with the bass / treble balance.") },
+        { k: "glowWave", type: "switch", label: noop("Glow"), desc: noop("Soft light around the visualizer.") },
+        { k: "glowColorMode", type: "seg", label: noop("Glow colour"), desc: noop("Same uses the middle of your colour range. Custom gives the glow a range of its own, which it drifts slowly through."), opts: [["same", noop("Same as colours")], ["custom", noop("Custom range")]], when: function (s) { return s.glowWave; } },
+        { k: "glowCustomColors", type: "colorlist", full: true, label: noop("Your glow range"), desc: noop("Any number of colours. Click one to change it, × removes it, + adds one."),
           when: function (s) { return s.glowWave && s.glowColorMode === "custom"; } },
-        { k: "bloom", type: "range", label: "Bloom", desc: "How far the glow spreads.", min: 0, max: 1.5, step: .05, fmt: "pct", when: function (s) { return s.glowWave; } }
+        { k: "bloom", type: "range", label: noop("Bloom"), desc: noop("How far the glow spreads."), min: 0, max: 1.5, step: .05, fmt: "pct", when: function (s) { return s.glowWave; } }
     ]),
-    tab("colors", "Progress colour", [
-        { k: "progressColorSource", type: "seg", label: "Progress bar & cover ring", desc: "Colour mode shares the visualizer’s palette, gradient or rainbow. Automatic keeps the original controls-based colours.", opts: [["legacy", "Automatic"], ["accent", "Accent"], ["visualizer", "Colour mode"], ["custom", "Custom"]] },
-        { k: "customProgressColor", type: "color", label: "Custom progress colour", swatches: SWATCHES, when: function (s) { return s.progressColorSource === "custom"; } }
+    tab("colors", noop("Progress colour"), [
+        { k: "progressColorSource", type: "seg", label: noop("Progress bar & cover ring"), desc: noop("Colour mode shares the visualizer’s palette, gradient or rainbow. Automatic keeps the original controls-based colours."), opts: [["legacy", noop("Automatic")], ["accent", noop("Accent")], ["visualizer", noop("Colour mode")], ["custom", noop("Custom")]] },
+        { k: "customProgressColor", type: "color", label: noop("Custom progress colour"), swatches: SWATCHES, when: function (s) { return s.progressColorSource === "custom"; } }
     ]),
-    tab("colors", "Text", [
-        { id: "textSrc", type: "seg", label: "Text colour", opts: [[true, "System"], [false, "Custom"]], get: function (s) { return s.useSystemText; }, set: function (v) { return { useSystemText: v }; } },
-        { k: "customTextColor", type: "color", label: "Custom text colour", swatches: SWATCHES, when: function (s) { return !s.useSystemText; } },
-        { k: "autoContrast", type: "switch", label: "Adapt to light cards", desc: "Dark text and icons on the Solid material.", when: function (s) { return s.useSystemText || s.useSystemControls; } }
+    tab("colors", noop("Text"), [
+        { id: "textSrc", type: "seg", label: noop("Text colour"), opts: [[true, noop("System")], [false, noop("Custom")]], get: function (s) { return s.useSystemText; }, set: function (v) { return { useSystemText: v }; } },
+        { k: "customTextColor", type: "color", label: noop("Custom text colour"), swatches: SWATCHES, when: function (s) { return !s.useSystemText; } },
+        { k: "autoContrast", type: "switch", label: noop("Adapt to light cards"), desc: noop("Dark text and icons on the Solid material."), when: function (s) { return s.useSystemText || s.useSystemControls; } }
     ]),
-    tab("behavior", "Panel placement", [
-        { k: "panelDisplayMode", type: "seg", label: "Display", desc: "Automatic shows the full card when it fits and your pill or icon design otherwise. Card or Pill / icon forces one at any panel size.", opts: [["adaptive", "Automatic"], ["card", "Card"], ["pill", "Pill / icon"]] },
-        { k: "panelCardSizing", type: "seg", label: "Card size", desc: "Fit grows the card to fill the panel's thickness. Fixed uses the scale below.", opts: [["fit", "Fit panel"], ["fixed", "Fixed"]] },
-        { k: "panelCardScale", type: "range", label: "Card scale", desc: "Scales the card in the panel; the panel must have room for it.", min: .5, max: 3, step: .05, fmt: "pct", when: function (s) { return s.panelCardSizing === "fixed"; } },
-        { k: "panelOrientation", type: "seg", label: "Direction", desc: "Automatic follows the panel edge. Upright uses an icon in narrow side panels.", opts: [["auto", "Automatic"], ["normal", "Upright"], ["left", "Rotate left"], ["right", "Rotate right"]] }
+    tab("behavior", noop("Panel placement"), [
+        { k: "panelDisplayMode", type: "seg", label: noop("Display"), desc: noop("Automatic shows the full card when it fits and your pill or icon design otherwise. Card or Pill / icon forces one at any panel size."), opts: [["adaptive", noop("Automatic")], ["card", noop("Card")], ["pill", noop("Pill / icon")]] },
+        { k: "panelCardSizing", type: "seg", label: noop("Card size"), desc: noop("Fit grows the card to fill the panel's thickness. Fixed uses the scale below."), opts: [["fit", noop("Fit panel")], ["fixed", noop("Fixed")]] },
+        { k: "panelCardScale", type: "range", label: noop("Card scale"), desc: noop("Scales the card in the panel; the panel must have room for it."), min: .5, max: 3, step: .05, fmt: "pct", when: function (s) { return s.panelCardSizing === "fixed"; } },
+        { k: "panelOrientation", type: "seg", label: noop("Direction"), desc: noop("Automatic follows the panel edge. Upright uses an icon in narrow side panels."), opts: [["auto", noop("Automatic")], ["normal", noop("Upright")], ["left", noop("Rotate left")], ["right", noop("Rotate right")]] }
     ], function (s, env) { return env === "kde"; }),
-    tab("behavior", "When nothing plays", [
-        { k: "alwaysVisible", type: "switch", label: "Keep visible", desc: "Off hides the widget until a player appears. Try the “Nothing playing” state." },
-        { k: "idleText", type: "switch", label: "Friendly idle message", when: function (s) { return s.alwaysVisible; } },
-        { k: "idleAmbient", type: "switch", label: "Ambient idle wave", desc: "A slow, quiet movement instead of a flat line.", when: function (s) { return s.alwaysVisible; } }
+    tab("behavior", noop("When nothing plays"), [
+        { k: "alwaysVisible", type: "switch", label: noop("Keep visible"), desc: noop("Off hides the widget until a player appears. Try the “Nothing playing” state.") },
+        { k: "idleText", type: "switch", label: noop("Friendly idle message"), when: function (s) { return s.alwaysVisible; } },
+        { k: "idleAmbient", type: "switch", label: noop("Ambient idle wave"), desc: noop("A slow, quiet movement instead of a flat line."), when: function (s) { return s.alwaysVisible; } }
     ]),
-    tab("behavior", "When paused", [
-        { k: "dimWhenPaused", type: "switch", label: "Dim the widget" },
-        { k: "fadeVizWhenPaused", type: "switch", label: "Fade the visualizer" }
+    tab("behavior", noop("When paused"), [
+        { k: "dimWhenPaused", type: "switch", label: noop("Dim the widget") },
+        { k: "fadeVizWhenPaused", type: "switch", label: noop("Fade the visualizer") }
     ]),
-    tab("behavior", "Interaction", [
-        { k: "hoverLift", type: "switch", label: "Lift on hover" },
-        { k: "scrollVolume", type: "switch", label: "Scroll to change volume", desc: "Adjusts the system output volume, not the player’s own." }
+    tab("behavior", noop("Interaction"), [
+        { k: "hoverLift", type: "switch", label: noop("Lift on hover") },
+        { k: "scrollVolume", type: "switch", label: noop("Scroll to change volume"), desc: noop("Adjusts the system output volume, not the player’s own.") }
     ]),
-    tab("behavior", "Comfort & power", [
-        { k: "followSystemFont", type: "switch", label: "Follow system font size", desc: "Scale text with Appearance > Fonts. Off keeps the original sizes." },
-        { k: "reducedMotion", type: "switch", label: "Reduced motion", desc: "No ripples, sweeps, spins or scrolling text; the wave still reacts." },
-        { k: "batterySaver", type: "switch", label: "Battery saver", desc: "On battery: 20 Hz and no glow." },
-        { k: "simpleRender", type: "switch", label: "Simple rendering", desc: "Lightweight Canvas path — also the automatic fallback if shaders fail." }
+    tab("behavior", noop("Comfort & power"), [
+        { k: "language", type: "select", nativeOnly: true, label: noop("Language"), opts: "languages" },
+        { k: "followSystemFont", type: "switch", label: noop("Follow system font size"), desc: noop("Scale text with Appearance > Fonts. Off keeps the original sizes.") },
+        { k: "reducedMotion", type: "switch", label: noop("Reduced motion"), desc: noop("No ripples, sweeps, spins or scrolling text; the wave still reacts.") },
+        { k: "batterySaver", type: "switch", label: noop("Battery saver"), desc: noop("On battery: 20 Hz and no glow.") },
+        { k: "simpleRender", type: "switch", label: noop("Simple rendering"), desc: noop("Lightweight Canvas path — also the automatic fallback if shaders fail.") }
     ]),
-    tab("behavior", "Position", [
-        { id: "placeNote", type: "note", full: true, note: "place" },
-        { id: "anchor", type: "anchor", full: true, label: "Screen position", when: function (s, env) { return env === "hypr"; } },
-        { k: "verticalPosition", type: "range", label: "Vertical position", min: 0, max: 1, step: .01, fmt: "pct", when: function (s, env) { return env === "hypr"; } },
-        { k: "monitor", type: "select", label: "Monitor", opts: "screens", when: function (s, env) { return env === "hypr"; } },
-        { k: "desktopLayer", type: "seg", label: "Layer", opts: [[true, "Behind windows"], [false, "Above windows"]], when: function (s, env) { return env === "hypr"; } },
-        { k: "pauseWhenCovered", type: "switch", label: "Pause when covered", desc: "Stops drawing while a window hides the widget — saves real power.", when: function (s, env) { return env === "hypr" && s.desktopLayer; } },
-        { k: "widgetWidth", type: "range", label: "Width", desc: "360 × 104 follows the chosen layout.", min: 160, max: 1600, step: 10, fmt: "px", when: function (s, env) { return env === "hypr"; } },
-        { k: "widgetHeight", type: "range", label: "Height", min: 64, max: 600, step: 2, fmt: "px", when: function (s, env) { return env === "hypr"; } }
+    tab("behavior", noop("Position"), [
+        { id: "placeNote", type: "note", full: true, note: noop("place") },
+        { id: "anchor", type: "anchor", full: true, label: noop("Screen position"), when: function (s, env) { return env === "hypr"; } },
+        { k: "verticalPosition", type: "range", label: noop("Vertical position"), min: 0, max: 1, step: .01, fmt: "pct", when: function (s, env) { return env === "hypr"; } },
+        { k: "monitor", type: "select", label: noop("Monitor"), opts: "screens", when: function (s, env) { return env === "hypr"; } },
+        { k: "desktopLayer", type: "seg", label: noop("Layer"), opts: [[true, noop("Behind windows")], [false, noop("Above windows")]], when: function (s, env) { return env === "hypr"; } },
+        { k: "pauseWhenCovered", type: "switch", label: noop("Pause when covered"), desc: noop("Stops drawing while a window hides the widget — saves real power."), when: function (s, env) { return env === "hypr" && s.desktopLayer; } },
+        { k: "widgetWidth", type: "range", label: noop("Width"), desc: noop("360 × 104 follows the chosen layout."), min: 160, max: 1600, step: 10, fmt: "px", when: function (s, env) { return env === "hypr"; } },
+        { k: "widgetHeight", type: "range", label: noop("Height"), min: 64, max: 600, step: 2, fmt: "px", when: function (s, env) { return env === "hypr"; } }
     ], function (s, env) { return env === "hypr"; }),
-    tab("audio", "Connection", [
-        { id: "diag", type: "diagnostics", full: true, label: "Status" }
+    tab("audio", noop("Connection"), [
+        { id: "diag", type: "diagnostics", full: true, label: noop("Status") }
     ]),
-    tab("audio", "Capture", [
-        { k: "inputMethod", type: "select", label: "Audio input", desc: "Auto-detect tries PipeWire, then PulseAudio, then ALSA.", opts: [["auto", "Auto-detect"], ["pipewire", "PipeWire"], ["pulse", "PulseAudio"], ["alsa", "ALSA (snd_aloop)"]] },
-        { k: "inputSource", type: "select", label: "Capture source", desc: "Live devices and applications. Start playback to list a stream. Explicit sources override the backend; unavailable sources never fall back.", opts: "audioSources" },
-        { k: "lowCutoff", type: "range", label: "Low cutoff", min: 20, max: 2000, step: 10, fmt: "hz" },
-        { k: "highCutoff", type: "range", label: "High cutoff", desc: "Must exceed low cutoff; invalid ranges use 50–10000 Hz.", min: 200, max: 20000, step: 100, fmt: "hz" },
-        { k: "frequencyScale", type: "select", label: "Frequency spacing", opts: [["log", "Logarithmic"], ["mel", "Mel (resampled)"]] },
-        { k: "bassWeight", type: "range", label: "Bass weight", min: 0, max: 3, step: .1, fmt: "fixed1" },
-        { k: "trebleWeight", type: "range", label: "Treble weight", min: 0, max: 3, step: .1, fmt: "fixed1" },
-        { k: "silenceDecay", type: "range", label: "Silence release", desc: "Time constant for fading into silence or the idle ambient wave.", min: 0, max: 1500, step: 50, fmt: "ms" },
-        { k: "numBars", type: "range", label: "Detail", desc: "More bars look finer, fewer look bolder.", min: 8, max: 128, step: 2, fmt: "bars" },
-        { k: "sensitivity", type: "range", label: "Sensitivity", desc: "Raise it if quiet music barely moves the wave.", min: 10, max: 300, step: 5, fmt: "percent" },
-        { k: "noiseReduction", type: "range", label: "Smoothing", desc: "Higher glides gently; lower snaps to every beat.", min: 0, max: 1, step: .05, fmt: "fixed2" },
-        { k: "framerate", type: "range", label: "Frame rate", desc: "Lower saves power. 30 Hz already looks smooth.", min: 15, max: 144, step: 5, fmt: "hz" }
+    tab("audio", noop("Capture"), [
+        { k: "inputMethod", type: "select", label: noop("Audio input"), desc: noop("Auto-detect tries PipeWire, then PulseAudio, then ALSA."), opts: [["auto", noop("Auto-detect")], ["pipewire", noop("PipeWire")], ["pulse", noop("PulseAudio")], ["alsa", noop("ALSA (snd_aloop)")]] },
+        { k: "inputSource", type: "select", label: noop("Capture source"), desc: noop("Live devices and applications. Start playback to list a stream. Explicit sources override the backend; unavailable sources never fall back."), opts: "audioSources" },
+        { k: "lowCutoff", type: "range", label: noop("Low cutoff"), min: 20, max: 2000, step: 10, fmt: "hz" },
+        { k: "highCutoff", type: "range", label: noop("High cutoff"), desc: noop("Must exceed low cutoff; invalid ranges use 50–10000 Hz."), min: 200, max: 20000, step: 100, fmt: "hz" },
+        { k: "frequencyScale", type: "select", label: noop("Frequency spacing"), opts: [["log", noop("Logarithmic")], ["mel", noop("Mel (resampled)")]] },
+        { k: "bassWeight", type: "range", label: noop("Bass weight"), min: 0, max: 3, step: .1, fmt: "fixed1" },
+        { k: "trebleWeight", type: "range", label: noop("Treble weight"), min: 0, max: 3, step: .1, fmt: "fixed1" },
+        { k: "silenceDecay", type: "range", label: noop("Silence release"), desc: noop("Time constant for fading into silence or the idle ambient wave."), min: 0, max: 1500, step: 50, fmt: "ms" },
+        { k: "numBars", type: "range", label: noop("Detail"), desc: noop("More bars look finer, fewer look bolder."), min: 8, max: 128, step: 2, fmt: "bars" },
+        { k: "sensitivity", type: "range", label: noop("Sensitivity"), desc: noop("Raise it if quiet music barely moves the wave."), min: 10, max: 300, step: 5, fmt: "percent" },
+        { k: "noiseReduction", type: "range", label: noop("Smoothing"), desc: noop("Higher glides gently; lower snaps to every beat."), min: 0, max: 1, step: .05, fmt: "fixed2" },
+        { k: "framerate", type: "range", label: noop("Frame rate"), desc: noop("Lower saves power. 30 Hz already looks smooth."), min: 15, max: 144, step: 5, fmt: "hz" }
     ]),
-    tab("about", "About the project", [{id: "projectInfo", type: "projectInfo", full: true, label: "", desc: "Muddyblack GitHub OpenDesktop KDE Store downloads stars support project"}])
+    tab("about", noop("About the project"), [{id: "projectInfo", type: "projectInfo", full: true, label: "", desc: noop("Muddyblack GitHub OpenDesktop KDE Store downloads stars support project")}])
 ];
 
 var NOTES = {
     card: {
-        kde: "Glass and Liquid blur the desktop wallpaper when it is available, with tint and highlights above it. Text and artwork stay sharp. Wallpaper blur requires GPU rendering; panels and hosts without a wallpaper source keep the translucent tint.",
-        hypr: "Glass and Liquid are drawn by the widget. Add a blur layer rule for the audio-wave-visualizer namespace to blur behind them — on a Bottom-layer surface this re-blurs the whole monitor on every frame, so keep the frame rate low."
+        kde: noop("Glass and Liquid blur the desktop wallpaper when it is available, with tint and highlights above it. Text and artwork stay sharp. Wallpaper blur requires GPU rendering; panels and hosts without a wallpaper source keep the translucent tint."),
+        hypr: noop("Glass and Liquid are drawn by the widget. Add a blur layer rule for the audio-wave-visualizer namespace to blur behind them — on a Bottom-layer surface this re-blurs the whole monitor on every frame, so keep the frame rate low.")
     },
     pill: {
-        kde: "In a panel the widget shows this pill; clicking it opens the full card as a popup.",
-        hypr: "Add hyprland/PanelPill.qml to a Quickshell bar, or use run.sh --waybar for a Waybar custom module."
+        kde: noop("In a panel the widget shows this pill; clicking it opens the full card as a popup."),
+        hypr: noop("Add hyprland/PanelPill.qml to a Quickshell bar, or use run.sh --waybar for a Waybar custom module.")
     },
     place: {
-        kde: "Plasma places desktop widgets by dragging them in edit mode, and panel widgets inside the panel, so there is nothing to set here.",
-        hypr: "Where the desktop widget sits on your screens."
+        kde: noop("Plasma places desktop widgets by dragging them in edit mode, and panel widgets inside the panel, so there is nothing to set here."),
+        hypr: noop("Where the desktop widget sits on your screens.")
     }
 };
 
-function format(kind, v) {
+// `translate(pattern, value)` (optional) localizes unit patterns like "%1 bars".
+function format(kind, v, translate) {
+    function unit(pattern, value) {
+        return typeof translate === "function" ? translate(pattern, value) : pattern.replace("%1", value);
+    }
     switch (kind) {
     case "pct": return pct(v);
     case "px": return Math.round(v) + " px";
     case "percent": return Math.round(v) + "%";
     case "fixed1": return Number(v).toFixed(1);
     case "fixed2": return Number(v).toFixed(2);
-    case "bars": return Math.round(v) + " bars";
+    case "bars": return unit(noop("%1 bars"), Math.round(v));
     case "ms": return Math.round(v) + " ms";
     case "hz": return Math.round(v) + " Hz";
-    case "s": return Number(v) + " s";
+    case "s": return unit(noop("%1 s"), Number(v));
     default: return String(v);
     }
 }
@@ -467,54 +476,67 @@ function rowPatch(row, value, state) {
 function optionLabels(row) {
     return Array.isArray(row.opts) ? row.opts.map(function (o) { return Array.isArray(o) ? o[1] : o.label; }).join(" ") : "";
 }
-function searchText(row) {
-    return [row.label || "", row.desc || "", row.k || "", optionLabels(row)].join(" ").toLowerCase();
+// Case-folds for search. Turkish dotless/dotted i fold to plain "i" so that
+// "ışık", "Işık" and "IŞIK" all match whatever the host's lowercasing does.
+function foldSearch(text) {
+    return String(text || "").toLowerCase().replace(/\u0131/g, "i").replace(/i\u0307/g, "i");
 }
-function rowVisible(row, section, s, env, query) {
+// `translate` (optional) maps an English label to the displayed one, so
+// localized hosts match both the English and the translated wording.
+function searchText(row, translate) {
+    var parts = [row.label || "", row.desc || "", row.k || "", optionLabels(row)];
+    if (typeof translate === "function") {
+        parts.push(translate(row.label || ""), translate(row.desc || ""));
+        if (Array.isArray(row.opts))
+            row.opts.forEach(function (o) { parts.push(translate(Array.isArray(o) ? o[1] : o.label)); });
+    }
+    return foldSearch(parts.join(" "));
+}
+function rowVisible(row, section, s, env, query, translate) {
     if (section.when && !section.when(s, env))
         return false;
     if (row.when && !row.when(s, env))
         return false;
-    return query === "" || searchText(row).indexOf(query) !== -1;
+    return !query || searchText(row, translate).indexOf(foldSearch(query)) !== -1;
 }
 
-var FILTERS = [["all", "All"], ["current", "Classic"], ["desktop", "Desktop"], ["panel", "Panel"], ["glass", "Glass"], ["adaptive", "Adaptive colour"]];
+var FILTERS = [["all", noop("All")], ["current", noop("Classic")], ["desktop", noop("Desktop")], ["panel", noop("Panel")], ["glass", noop("Glass")], ["adaptive", noop("Adaptive colour")]];
 
 function preset(id, cat, name, note, bd, s, env) {
     return { id: id, cat: cat, name: name, note: note, bd: bd, s: normalize(s), env: env || "" };
 }
 
 var PRESETS = [
-    preset("classic", ["current", "desktop"], "Classic", "Exactly today’s defaults — nothing changes for current users.", "dusk", {}),
-    preset("glass", ["desktop", "glass"], "Glass Classic", "The layout people know, on a frosted card with a soft lift.", "neon", { showBg: true, surfaceStyle: "glass", bgRadius: 16, cardShadow: "soft", edgeHighlight: true }),
-    preset("liquid", ["desktop", "glass"], "Liquid Glass", "Clear glass, a light rim that follows your pointer, colour from the cover.", "sea", { layoutMode: "stacked", showBg: true, surfaceStyle: "liquid", glassTint: "clear", glassRefraction: .5, bgRadius: 28, accentFromArt: true, artShape: "squircle", artGlow: true, dockStyle: "accent", showSource: true, progressBarStyle: 8, titleSize: 12, cardShadow: "soft", visualizerType: 0, fillWave: true }),
-    preset("poster", ["desktop"], "Poster", "The title set big, the music as a soft texture behind it, and a large clock.", "dusk", { layoutMode: "poster", showAlbum: true, visualizerType: 2, vizColorMode: "gradient", glowWave: false, dockStyle: "bare", progressBarStyle: 1 }),
-    preset("posterhang", ["desktop"], "Poster · Hanging bars", "A centred two-line title with bars hanging from the top edge behind it.", "olive", { layoutMode: "poster", posterAlign: "center", posterLines: 2, posterClock: false, posterVizOpacity: .5, visualizerType: 1, vizDirection: "down", glowWave: false, useSystemAccent: false, customColor: "#d1e5bd", dockStyle: "bare", progressBarStyle: 6 }),
-    preset("stalactite", ["desktop", "adaptive"], "Stalactites", "Peak bars hang from the top edge and drip toward the title. Ice palette.", "breeze", { layoutMode: "hero", visualizerType: 6, vizDirection: "down", vizColorMode: "palette", vizPalette: "ice", showBg: true, surfaceStyle: "glass", bgRadius: 18, cardShadow: "soft", showTimes: false, dockStyle: "bare" }),
-    preset("orbit", ["desktop", "adaptive"], "Orbit", "The cover is the centre; bars circle it, rotate slowly, and the cover breathes with the bass.", "neon", { layoutMode: "orbit", orbitStyle: "bars", artShape: "circle", showBg: true, surfaceStyle: "glass", bgRadius: 28, vizColorMode: "cover", accentFromArt: true, cardShadow: "soft", edgeHighlight: true, dockStyle: "accent", progressBarStyle: 1, showTimes: false }),
-    preset("halo", ["desktop", "adaptive"], "Halo", "A spinning record inside a soft ribbon halo, with a progress ring. Iris palette.", "dusk", { layoutMode: "orbit", orbitStyle: "ribbon", artShape: "vinyl", vizColorMode: "palette", vizPalette: "iris", hueReactive: true, bloom: 1.2, dockStyle: "bare", progressBarStyle: 10, showSource: true }),
-    preset("sunburst", ["desktop"], "Sunburst", "Sparks fly off the cover on every beat. Ember palette on a dark tint.", "sea", { layoutMode: "orbit", orbitStyle: "sparks", artShape: "squircle", vizColorMode: "palette", vizPalette: "ember", showBg: true, bgColor: "#0a0b10", artBgTransparency: .75, bgRadius: 24, progressBarStyle: 5, showTimes: false }),
-    preset("dothalo", ["desktop", "adaptive"], "Dot Halo", "A dotted neon ring spikes outward on every beat. Swap the custom colour for any glow.", "neon", { layoutMode: "orbit", orbitStyle: "dots", artShape: "circle", vizColorMode: "solid", useSystemAccent: false, customColor: "#39ff14", bloom: 1.4, orbitReach: 1.15, showBg: true, bgColor: "#05070a", artBgTransparency: .8, bgRadius: 24, progressBarStyle: 1, showTimes: false, dockStyle: "bare" }),
-    preset("orbiticon", ["panel"], "Orbit Icon", "A tiny radial ring around the cover, living in the bar.", "breeze", { layoutMode: "pillicon", pillEq: "wave", artShape: "circle", vizColorMode: "palette", vizPalette: "aurora", hoverDetails: "tooltip" }, "hypr"),
-    preset("quiet", ["desktop", "glass"], "Quiet Glass", "Title leads, calm mirror bars, one soft accent, round play button.", "olive", { layoutMode: "stacked", showBg: true, surfaceStyle: "glass", bgRadius: 22, useSystemAccent: false, customColor: "#d1e5bd", visualizerType: 2, glowWave: false, progressBarStyle: 1, dockStyle: "accent", showSource: true, showAlbum: true, cardShadow: "soft", edgeHighlight: true, titleSize: 12 }),
-    preset("panelpill", ["panel"], "Panel Pill", "Text pill for Plasma panels with a mini visualizer that follows the music.", "breeze", { layoutMode: "pill", pillEq: "wave", pillProgress: "underline", pillControls: "play", hoverDetails: "tooltip" }, "kde"),
-    preset("baricon", ["panel"], "Bar Icon", "Just the cover with a progress ring, for a Hyprland bar.", "neon", { layoutMode: "pillicon", artShape: "circle", pillProgress: "ring", pillEq: "live", hoverDetails: "tooltip" }, "hypr"),
-    preset("ribbonpill", ["panel", "adaptive"], "Ribbon Pill", "A glowing silk ribbon living in the panel, Aurora palette.", "dusk", { layoutMode: "pill", pillEq: "wave", visualizerType: 15, vizColorMode: "palette", vizPalette: "aurora", hueReactive: true, pillArt: false, pillContent: "title", showBg: true, surfaceStyle: "glass" }, "kde"),
-    preset("ribbon", ["desktop", "adaptive"], "Silk Ribbon", "Bass thickens it, mids bend it, highs light the filaments. Ember palette.", "breeze", { layoutMode: "hero", visualizerType: 15, vizColorMode: "palette", vizPalette: "ember", hueReactive: true, bloom: 1.3, showBg: true, surfaceStyle: "color", bgColor: "#0a0b10", artBgTransparency: .7, bgRadius: 20, progressBarStyle: 1, showTimes: false, dockStyle: "bare", artShape: "circle" }),
-    preset("cover", ["current", "desktop"], "Cover Art", "Album art fills the card; the sharp thumbnail stays on top.", "neon", { showBg: true, surfaceStyle: "art", artBgBlur: .44, artBgDim: .3, bgRadius: 22, artBgKeepThumb: true }),
-    preset("atmos", ["desktop", "adaptive"], "Album Atmosphere", "Cover colours bleed into the card and drive the accent.", "breeze", { layoutMode: "stacked", showBg: true, surfaceStyle: "atmosphere", artShape: "circle", accentFromArt: true, bgRadius: 26, fillWave: true, dockStyle: "accent", showSource: true, cardShadow: "lifted", titleSize: 12, edgeHighlight: true, vizColorMode: "cover" }),
-    preset("lyricsonly", ["desktop"], "Lyrics only", "Room to read: surrounding lines, a clear current line, and automatic scrolling. Online lyrics from LRCLIB.", "sea", { layoutMode: "lyrics", showLyrics: true, showBg: true, surfaceStyle: "color", bgColor: "#101318", artBgTransparency: .92, bgRadius: 22, titleSize: 14, showArtThumb: false, hoverDetails: "off", cardShadow: "soft" }),
-    preset("lyrics", ["desktop", "adaptive"], "Lyrics Card", "Synced lyric line under the artist, Ribbon wave, cover palette.", "sea", { layoutMode: "stacked", showBg: true, surfaceStyle: "atmosphere", showLyrics: true, accentFromArt: true, visualizerType: 10, vizColorMode: "cover", bgRadius: 22, dockStyle: "accent", progressBarStyle: 5, showTimes: false, cardShadow: "soft" }),
-    preset("cd", ["desktop"], "CD Player", "Spinning disc art, squiggle seek bar, flips over for track details.", "day", { layoutMode: "inline", artShape: "cd", showBg: true, surfaceStyle: "glass", bgRadius: 18, progressBarStyle: 5, hoverDetails: "flip", detailFields: "album,track,genre,format", cardShadow: "soft", dockStyle: "bare", visualizerType: 9 }),
-    preset("solid", ["desktop"], "Soft Solid", "Warm mineral surface and crisp dark text. No blur needed.", "day", { layoutMode: "inline", showBg: true, surfaceStyle: "solid", bgRadius: 14, useSystemAccent: false, customColor: "#5c734c", glowWave: false, progressBarStyle: 6, dockStyle: "bare", visualizerType: 6, cardShadow: "soft", showTimes: false }),
-    preset("neon", ["current", "desktop"], "Neon Night", "Dark tint, mirror bars and the glowing pulse bar.", "neon", { showBg: true, bgColor: "#0a0b10", bgRadius: 12, useSystemAccent: false, customColor: "#c084fc", visualizerType: 2, progressBarStyle: 2, artBgTransparency: .82 }),
-    preset("arcade", ["desktop"], "Arcade", "LED meter with hot peaks, pixel-sharp art, time-only readout.", "breeze", { visualizerType: 7, glowWave: false, artShape: "sharp", progressBarStyle: 9, showBg: true, bgColor: "#0b0d0c", bgRadius: 4, useSystemAccent: false, customColor: "#5dff9e", artBorder: "accent", dockStyle: "bare", grain: true }),
-    preset("vinyl", ["desktop", "adaptive"], "Vinyl", "A record that spins while playing, sparkles, colour from the cover.", "dusk", { layoutMode: "inline", artShape: "vinyl", showBg: true, surfaceStyle: "glass", bgRadius: 18, visualizerType: 14, accentFromArt: true, progressBarStyle: 4, showTimes: false, dockStyle: "accent", cardShadow: "soft", grain: true }),
-    preset("hero", ["desktop"], "Hero Wave", "The visualizer takes the stage; track info tucks underneath.", "breeze", { layoutMode: "hero", showBg: true, surfaceStyle: "glass", bgRadius: 18, fillWave: true, lineWidth: 2.2, dockStyle: "bare", cardShadow: "soft", artShape: "squircle", showTimes: false, vizColorMode: "gradient" }),
-    preset("strip", ["desktop"], "Slim Strip", "A wide, low bar for the bottom of the screen.", "dusk", { layoutMode: "strip", showBg: true, surfaceStyle: "glass", bgRadius: 23, visualizerType: 3, dockStyle: "bare", lineWidth: 1.4, artShape: "circle" }),
-    preset("mirror", ["desktop"], "Mirrored Minimal", "Art on the right, dotted progress, no card, controls on hover.", "olive", { layoutMode: "mirrored", visualizerType: 12, progressBarStyle: 7, dockStyle: "glass", controlsOnHover: true, textAlign: "right" }),
-    preset("visualizer", ["desktop"], "Visualizer only", "Transparent Neon Terrain for an audio-reactive desktop. Choose any effect in Visualizer.", "neon", { layoutMode: "visualizer", visualizerType: 16, showBg: false, alwaysVisible: true, useSystemAccent: false, customColor: "#c084fc", vizColorMode: "palette", vizPalette: "iris" }),
-    preset("compact", ["current", "desktop"], "Compact", "No art column — visualizer, progress and title only.", "breeze", { layoutMode: "compact", visualizerType: 4 })
+    preset("classic", ["current", "desktop"], noop("Classic"), noop("Exactly today’s defaults — nothing changes for current users."), "dusk", {}),
+    preset("glass", ["desktop", "glass"], noop("Glass Classic"), noop("The layout people know, on a frosted card with a soft lift."), "neon", { showBg: true, surfaceStyle: "glass", bgRadius: 16, cardShadow: "soft", edgeHighlight: true }),
+    preset("liquid", ["desktop", "glass"], noop("Liquid Glass"), noop("Clear glass, a light rim that follows your pointer, colour from the cover."), "sea", { layoutMode: "stacked", showBg: true, surfaceStyle: "liquid", glassTint: "clear", glassRefraction: .5, bgRadius: 28, accentFromArt: true, artShape: "squircle", artGlow: true, dockStyle: "accent", showSource: true, progressBarStyle: 8, titleSize: 12, cardShadow: "soft", visualizerType: 0, fillWave: true }),
+    preset("poster", ["desktop"], noop("Poster"), noop("The title set big, the music as a soft texture behind it, and a large clock."), "dusk", { layoutMode: "poster", showAlbum: true, visualizerType: 2, vizColorMode: "gradient", glowWave: false, dockStyle: "bare", progressBarStyle: 1 }),
+    preset("posterhang", ["desktop"], noop("Poster · Hanging bars"), noop("A centred two-line title with bars hanging from the top edge behind it."), "olive", { layoutMode: "poster", posterAlign: "center", posterLines: 2, posterClock: false, posterVizOpacity: .5, visualizerType: 1, vizDirection: "down", glowWave: false, useSystemAccent: false, customColor: "#d1e5bd", dockStyle: "bare", progressBarStyle: 6 }),
+    preset("stalactite", ["desktop", "adaptive"], noop("Stalactites"), noop("Peak bars hang from the top edge and drip toward the title. Ice palette."), "breeze", { layoutMode: "hero", visualizerType: 6, vizDirection: "down", vizColorMode: "palette", vizPalette: "ice", showBg: true, surfaceStyle: "glass", bgRadius: 18, cardShadow: "soft", showTimes: false, dockStyle: "bare" }),
+    preset("orbit", ["desktop", "adaptive"], noop("Orbit"), noop("The cover is the centre; bars circle it, rotate slowly, and the cover breathes with the bass."), "neon", { layoutMode: "orbit", orbitStyle: "bars", artShape: "circle", showBg: true, surfaceStyle: "glass", bgRadius: 28, vizColorMode: "cover", accentFromArt: true, cardShadow: "soft", edgeHighlight: true, dockStyle: "accent", progressBarStyle: 1, showTimes: false }),
+    preset("halo", ["desktop", "adaptive"], noop("Halo"), noop("A spinning record inside a soft ribbon halo, with a progress ring. Iris palette."), "dusk", { layoutMode: "orbit", orbitStyle: "ribbon", artShape: "vinyl", vizColorMode: "palette", vizPalette: "iris", hueReactive: true, bloom: 1.2, dockStyle: "bare", progressBarStyle: 10, showSource: true }),
+    preset("sunburst", ["desktop"], noop("Sunburst"), noop("Sparks fly off the cover on every beat. Ember palette on a dark tint."), "sea", { layoutMode: "orbit", orbitStyle: "sparks", artShape: "squircle", vizColorMode: "palette", vizPalette: "ember", showBg: true, bgColor: "#0a0b10", artBgTransparency: .75, bgRadius: 24, progressBarStyle: 5, showTimes: false }),
+    preset("dothalo", ["desktop", "adaptive"], noop("Dot Halo"), noop("A dotted neon ring spikes outward on every beat. Swap the custom colour for any glow."), "neon", { layoutMode: "orbit", orbitStyle: "dots", artShape: "circle", vizColorMode: "solid", useSystemAccent: false, customColor: "#39ff14", bloom: 1.4, orbitReach: 1.15, showBg: true, bgColor: "#05070a", artBgTransparency: .8, bgRadius: 24, progressBarStyle: 1, showTimes: false, dockStyle: "bare" }),
+    preset("orbiticon", ["panel"], noop("Orbit Icon"), noop("A tiny radial ring around the cover, living in the bar."), "breeze", { layoutMode: "pillicon", pillEq: "wave", artShape: "circle", vizColorMode: "palette", vizPalette: "aurora", hoverDetails: "tooltip" }, "hypr"),
+    preset("quiet", ["desktop", "glass"], noop("Quiet Glass"), noop("Title leads, calm mirror bars, one soft accent, round play button."), "olive", { layoutMode: "stacked", showBg: true, surfaceStyle: "glass", bgRadius: 22, useSystemAccent: false, customColor: "#d1e5bd", visualizerType: 2, glowWave: false, progressBarStyle: 1, dockStyle: "accent", showSource: true, showAlbum: true, cardShadow: "soft", edgeHighlight: true, titleSize: 12 }),
+    preset("panelpill", ["panel"], noop("Panel Pill"), noop("Text pill for Plasma panels with a mini visualizer that follows the music."), "breeze", { layoutMode: "pill", pillEq: "wave", pillProgress: "underline", pillControls: "play", hoverDetails: "tooltip" }, "kde"),
+    preset("baricon", ["panel"], noop("Bar Icon"), noop("Just the cover with a progress ring, for a Hyprland bar."), "neon", { layoutMode: "pillicon", artShape: "circle", pillProgress: "ring", pillEq: "live", hoverDetails: "tooltip" }, "hypr"),
+    preset("ribbonpill", ["panel", "adaptive"], noop("Ribbon Pill"), noop("A glowing silk ribbon living in the panel, Aurora palette."), "dusk", { layoutMode: "pill", pillEq: "wave", visualizerType: 15, vizColorMode: "palette", vizPalette: "aurora", hueReactive: true, pillArt: false, pillContent: "title", showBg: true, surfaceStyle: "glass" }, "kde"),
+    preset("ribbon", ["desktop", "adaptive"], noop("Silk Ribbon"), noop("Bass thickens it, mids bend it, highs light the filaments. Ember palette."), "breeze", { layoutMode: "hero", visualizerType: 15, vizColorMode: "palette", vizPalette: "ember", hueReactive: true, bloom: 1.3, showBg: true, surfaceStyle: "color", bgColor: "#0a0b10", artBgTransparency: .7, bgRadius: 20, progressBarStyle: 1, showTimes: false, dockStyle: "bare", artShape: "circle" }),
+    preset("cover", ["current", "desktop"], noop("Cover Art"), noop("Album art fills the card; the sharp thumbnail stays on top."), "neon", { showBg: true, surfaceStyle: "art", artBgBlur: .44, artBgDim: .3, bgRadius: 22, artBgKeepThumb: true }),
+    preset("atmos", ["desktop", "adaptive"], noop("Album Atmosphere"), noop("Cover colours bleed into the card and drive the accent."), "breeze", { layoutMode: "stacked", showBg: true, surfaceStyle: "atmosphere", artShape: "circle", accentFromArt: true, bgRadius: 26, fillWave: true, dockStyle: "accent", showSource: true, cardShadow: "lifted", titleSize: 12, edgeHighlight: true, vizColorMode: "cover" }),
+    preset("lyricsonly", ["desktop"], noop("Lyrics only"), noop("Room to read: surrounding lines, a clear current line, and automatic scrolling. Online lyrics from LRCLIB."), "sea", { layoutMode: "lyrics", showLyrics: true, showBg: true, surfaceStyle: "color", bgColor: "#101318", artBgTransparency: .92, bgRadius: 22, titleSize: 14, showArtThumb: false, hoverDetails: "off", cardShadow: "soft" }),
+    preset("lyrics", ["desktop", "adaptive"], noop("Lyrics Card"), noop("Synced lyric line under the artist, Ribbon wave, cover palette."), "sea", { layoutMode: "stacked", showBg: true, surfaceStyle: "atmosphere", showLyrics: true, accentFromArt: true, visualizerType: 10, vizColorMode: "cover", bgRadius: 22, dockStyle: "accent", progressBarStyle: 5, showTimes: false, cardShadow: "soft" }),
+    preset("cd", ["desktop"], noop("CD Player"), noop("Spinning disc art, squiggle seek bar, flips over for track details."), "day", { layoutMode: "inline", artShape: "cd", showBg: true, surfaceStyle: "glass", bgRadius: 18, progressBarStyle: 5, hoverDetails: "flip", detailFields: "album,track,genre,format", cardShadow: "soft", dockStyle: "bare", visualizerType: 9 }),
+    preset("solid", ["desktop"], noop("Soft Solid"), noop("Warm mineral surface and crisp dark text. No blur needed."), "day", { layoutMode: "inline", showBg: true, surfaceStyle: "solid", bgRadius: 14, useSystemAccent: false, customColor: "#5c734c", glowWave: false, progressBarStyle: 6, dockStyle: "bare", visualizerType: 6, cardShadow: "soft", showTimes: false }),
+    preset("neon", ["current", "desktop"], noop("Neon Night"), noop("Dark tint, mirror bars and the glowing pulse bar."), "neon", { showBg: true, bgColor: "#0a0b10", bgRadius: 12, useSystemAccent: false, customColor: "#c084fc", visualizerType: 2, progressBarStyle: 2, artBgTransparency: .82 }),
+    preset("arcade", ["desktop"], noop("Arcade"), noop("LED meter with hot peaks, pixel-sharp art, time-only readout."), "breeze", { visualizerType: 7, glowWave: false, artShape: "sharp", progressBarStyle: 9, showBg: true, bgColor: "#0b0d0c", bgRadius: 4, useSystemAccent: false, customColor: "#5dff9e", artBorder: "accent", dockStyle: "bare", grain: true }),
+    preset("vinyl", ["desktop", "adaptive"], noop("Vinyl"), noop("A record that spins while playing, sparkles, colour from the cover."), "dusk", { layoutMode: "inline", artShape: "vinyl", showBg: true, surfaceStyle: "glass", bgRadius: 18, visualizerType: 14, accentFromArt: true, progressBarStyle: 4, showTimes: false, dockStyle: "accent", cardShadow: "soft", grain: true }),
+    preset("hero", ["desktop"], noop("Hero Wave"), noop("The visualizer takes the stage; track info tucks underneath."), "breeze", { layoutMode: "hero", showBg: true, surfaceStyle: "glass", bgRadius: 18, fillWave: true, lineWidth: 2.2, dockStyle: "bare", cardShadow: "soft", artShape: "squircle", showTimes: false, vizColorMode: "gradient" }),
+    preset("strip", ["desktop"], noop("Slim Strip"), noop("A wide, low bar for the bottom of the screen."), "dusk", { layoutMode: "strip", showBg: true, surfaceStyle: "glass", bgRadius: 23, visualizerType: 3, dockStyle: "bare", lineWidth: 1.4, artShape: "circle" }),
+    preset("mirror", ["desktop"], noop("Mirrored Minimal"), noop("Art on the right, dotted progress, no card, controls on hover."), "olive", { layoutMode: "mirrored", visualizerType: 12, progressBarStyle: 7, dockStyle: "glass", controlsOnHover: true, textAlign: "right" }),
+    preset("visualizer", ["desktop"], noop("Visualizer only"), noop("Transparent Neon Terrain for an audio-reactive desktop. Choose any effect in Visualizer."), "neon", { layoutMode: "visualizer", visualizerType: 16, showBg: false, alwaysVisible: true, useSystemAccent: false, customColor: "#c084fc", vizColorMode: "palette", vizPalette: "iris" }),
+    preset("compact", ["current", "desktop"], noop("Compact"), noop("No art column — visualizer, progress and title only."), "breeze", { layoutMode: "compact", visualizerType: 4 })
 ];
 
 function copy(object) {
@@ -590,7 +612,7 @@ function surprise(defaults, current, extraLayouts) {
         showBg: coin(.8), surfaceStyle: pick(["color", "art", "glass", "liquid", "atmosphere", "solid"]), bgRadius: pick([10, 14, 18, 22, 26]),
         artShape: pick(["sharp", "rounded", "squircle", "circle", "vinyl", "cd"]), dockStyle: pick(["glass", "bare", "accent"]),
         accentFromArt: coin(.5), vizColorMode: pick(["solid", "gradient", "cover", "palette", "rainbow"]), vizPalette: pick(Object.keys(PALETTES)),
-        fillWave: coin(.5), glowWave: coin(.6), cardShadow: pick(["none", "soft", "lifted"]), edgeHighlight: coin(.5), artGlow: coin(.4),
+        fillWave: coin(.5), glowWave: coin(.6), cardShadow: pick(["none", noop("soft"), "lifted"]), edgeHighlight: coin(.5), artGlow: coin(.4),
         showSource: coin(.4), showAlbum: coin(.4), pillEq: pick(["static", "live", "wave"]), pillProgress: pick(["off", "underline", "ring"])
     }), false);
     return preserveTrackInfo(next, current);

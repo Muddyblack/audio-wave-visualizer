@@ -1,39 +1,42 @@
 // Shared by QML and the browser. Publish with tools/sync_studio_assets.py.
+
+// Marks display text for Messages.sh; returns it unchanged.
+function noop(text) { return text; }
 var StudioCatalog = {
     "wallpapers": [
         {
             "id": "dusk",
-            "label": "Pine lake",
+            "label": noop("Pine lake"),
             "file": "pine-lake.png",
             "color": "#15233d"
         },
         {
             "id": "neon",
-            "label": "Afterglow",
+            "label": noop("Afterglow"),
             "file": "afterglow.png",
             "color": "#142c49"
         },
         {
             "id": "sea",
-            "label": "Midnight marina",
+            "label": noop("Midnight marina"),
             "file": "midnight-marina.svg",
             "color": "#071b28"
         },
         {
             "id": "breeze",
-            "label": "Aurora sound",
+            "label": noop("Aurora sound"),
             "file": "aurora-sound.svg",
             "color": "#0a2035"
         },
         {
             "id": "olive",
-            "label": "Moss & mist",
+            "label": noop("Moss & mist"),
             "file": "moss-mist.svg",
             "color": "#152e2d"
         },
         {
             "id": "day",
-            "label": "Silver tide",
+            "label": noop("Silver tide"),
             "file": "silver-tide.svg",
             "color": "#c2d4db"
         }
@@ -41,73 +44,73 @@ var StudioCatalog = {
     "tabs": [
         {
             "id": "presets",
-            "label": "Presets",
+            "label": noop("Presets"),
             "icon": "M3 5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM13 5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2zM3 15a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2zM17 13v8M13 17h8"
         },
         {
             "id": "saved",
-            "label": "My presets",
+            "label": noop("My presets"),
             "icon": "M5 3h14v18l-7-4-7 4zM9 8h6M9 11h6"
         },
         {
             "id": "viz",
-            "label": "Visualizer",
+            "label": noop("Visualizer"),
             "icon": "M3 12h2l2-6 3 12 3-9 2 5 2-2h4"
         },
         {
             "id": "controls",
-            "label": "Progress",
+            "label": noop("Progress"),
             "icon": "M3 12h18M3 12h10M13 9v6M3 18h18"
         },
         {
             "id": "buttons",
-            "label": "Buttons",
+            "label": noop("Buttons"),
             "icon": "M4 12h4m8 0h4M10 8l5 4-5 4zM2 5h20v14H2z"
         },
         {
             "id": "layout",
-            "label": "Layout",
+            "label": noop("Layout"),
             "icon": "M6 4h12a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3H6a3 3 0 0 1-3-3V7a3 3 0 0 1 3-3zM9 4v16M9 12h12"
         },
         {
             "id": "art",
-            "label": "Artwork",
+            "label": noop("Artwork"),
             "icon": "M7 3h10a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4V7a4 4 0 0 1 4-4zM11 9a2 2 0 1 1-4 0 2 2 0 0 1 4 0zM21 15l-5-5L5 21"
         },
         {
             "id": "info",
-            "label": "Track info",
+            "label": noop("Track info"),
             "icon": "M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 11v6M12 7.5v.5"
         },
         {
             "id": "lyrics",
-            "label": "Lyrics",
+            "label": noop("Lyrics"),
             "nativeOnly": true,
             "icon": "M4 5h16M4 10h12M4 15h16M4 20h9"
         },
         {
             "id": "card",
-            "label": "Card",
+            "label": noop("Card"),
             "icon": "M7 6h10a4 4 0 0 1 4 4v4a4 4 0 0 1-4 4H7a4 4 0 0 1-4-4v-4a4 4 0 0 1 4-4zM7 10h6"
         },
         {
             "id": "colors",
-            "label": "Colours",
+            "label": noop("Colours"),
             "icon": "M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 3a9 9 0 0 0 0 18z"
         },
         {
             "id": "behavior",
-            "label": "Behaviour",
+            "label": noop("Behaviour"),
             "icon": "M15 12a3 3 0 1 1-6 0 3 3 0 0 1 6 0zM12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1 7 17M17 7l2.1-2.1"
         },
         {
             "id": "audio",
-            "label": "Audio",
+            "label": noop("Audio"),
             "icon": "M4 10v4M8 7v10M12 4v16M16 8v8M20 11v2"
         },
         {
             "id": "about",
-            "label": "Info",
+            "label": noop("Info"),
             "icon": "M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0zM12 11v6M12 7.5v.5"
         }
     ],

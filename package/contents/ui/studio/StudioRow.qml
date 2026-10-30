@@ -1,4 +1,5 @@
 import QtQuick
+import "../text"
 import "Theme.js" as Theme
 import "Schema.js" as Schema
 
@@ -51,7 +52,7 @@ Item {
             spacing: 2
             Text {
                 width: parent.width
-                text: row.rowData.label || ""
+                text: I18n.i18n(row.rowData.label)
                 color: Theme.text
                 font.family: Theme.fontFamily
                 font.pixelSize: 12
@@ -61,7 +62,7 @@ Item {
             Text {
                 width: parent.width
                 visible: !!row.rowData.desc
-                text: row.rowData.desc || ""
+                text: I18n.i18n(row.rowData.desc)
                 color: Theme.muted
                 font.family: Theme.fontFamily
                 font.pixelSize: 11
@@ -125,7 +126,7 @@ Item {
             to: row.rowData.max
             stepSize: row.rowData.step
             value: Number(row.value)
-            display: Schema.format(row.rowData.fmt, Number(row.value))
+            display: Schema.format(row.rowData.fmt, Number(row.value), (pattern, value) => I18n.i18n(pattern, value))
             onMoved: value => row.commit(value)
         }
     }
@@ -176,7 +177,7 @@ Item {
             StudioSelect {
                 id: select
                 anchors.right: row.stacked ? undefined : parent.right
-                options: row.rowData.opts === "audioSources" ? row.studio.audioSourceOptions : row.rowData.opts === "screens" ? row.studio.monitorOptions : row.rowData.opts
+                options: row.rowData.opts === "languages" ? I18n.languageOptions : row.rowData.opts === "audioSources" ? row.studio.audioSourceOptions : row.rowData.opts === "screens" ? row.studio.monitorOptions : row.rowData.opts
                 value: row.value
                 onChosen: value => row.commit(value)
             }
@@ -194,8 +195,8 @@ Item {
     Component {
         id: noteComponent
         StudioNote {
-            title: row.studio.env === "kde" ? "On Plasma" : "On Hyprland"
-            text: Schema.NOTES[row.rowData.note][row.studio.env] || ""
+            title: row.studio.env === "kde" ? I18n.i18n("On Plasma") : I18n.i18n("On Hyprland")
+            text: I18n.i18n(Schema.NOTES[row.rowData.note][row.studio.env])
         }
     }
     Component {

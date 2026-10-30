@@ -124,27 +124,27 @@ Item {
     readonly property var lyricLines: samplePlayback && lyricsEnabled ? [
         {
             time: 0,
-            text: "The light falls softly on the water"
+            text: I18n.i18n("The light falls softly on the water")
         },
         {
             time: 8,
-            text: "And the city fades to blue"
+            text: I18n.i18n("And the city fades to blue")
         },
         {
             time: 16,
-            text: "Let the evening drift away"
+            text: I18n.i18n("Let the evening drift away")
         },
         {
             time: 24,
-            text: "There is nothing left to hurry"
+            text: I18n.i18n("There is nothing left to hurry")
         },
         {
             time: 32,
-            text: "Just a little room to stay"
+            text: I18n.i18n("Just a little room to stay")
         },
         {
             time: 40,
-            text: "With the rhythm of the rain"
+            text: I18n.i18n("With the rhythm of the rain")
         }
     ] : lyricsLoader.item?.lines ?? []
     readonly property real lyricPosition: lyricsLoader.item?.positionSeconds ?? 0
@@ -297,9 +297,9 @@ Item {
         let name = urlParts ? urlParts[2] : s.split("?")[0];
         try {
             name = decodeURIComponent(name);
-        } catch (e) {
-            // malformed %-escape: keep the raw form
-        }
+        } catch (e)
+        // malformed %-escape: keep the raw form
+        {}
         name = (name.split("/").filter(part => part !== "").pop() || "").replace(/\.[a-z0-9]{1,5}$/i, "").replace(/[_+]+/g, " ").trim();
         // A filename carries information; a generic stream endpoint does not.
         return /^(videoplayback|playback|stream|index|master|manifest|playlist)$/i.test(name) ? "" : name;
@@ -312,10 +312,10 @@ Item {
         const host = (s.match(/^[a-z][a-z0-9+.-]*:\/\/([^/?#]*)/i) || ["", ""])[1].toLowerCase();
         // googlevideo params survive even when the host got chopped off
         if (host.endsWith("googlevideo.com") || /(^|&)(itag|clen|gir|lmt|fvip|ratebypass|sparams)=/i.test(s))
-            return qsTr("Direct YouTube stream");
+            return I18n.i18n("Direct YouTube stream");
         if (host !== "")
             return host.replace(/^www\./, "");
-        return qsTr("Player published no title");
+        return I18n.i18n("Player published no title");
     }
 
     property string artUrl: ""
@@ -705,7 +705,7 @@ Item {
         visible: root.flipEnabled && (root.flipped || (root.configuration.flipInfoButton ?? true)) && root.shouldShow && !root.zoomOpen
         focusPolicy: Qt.StrongFocus
         text: root.flipped ? "×" : "i"
-        Accessible.name: root.flipped ? "Return to playback controls" : "Show track details"
+        Accessible.name: root.flipped ? I18n.i18n("Return to playback controls") : I18n.i18n("Show track details")
         Controls.ToolTip.visible: hovered
         Controls.ToolTip.text: Accessible.name
         Controls.ToolTip.delay: 500

@@ -496,6 +496,9 @@
         <entry name="gpuDebug" type="String">
             <default></default>
         </entry>
+        <entry name="language" type="String">
+            <default></default>
+        </entry>
         <entry name="followSystemFont" type="Bool">
             <default>true</default>
         </entry>

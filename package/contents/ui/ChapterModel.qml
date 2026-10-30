@@ -1,4 +1,5 @@
 import QtQuick
+import "text"
 
 QtObject {
     property var localChapters: []
@@ -11,7 +12,7 @@ QtObject {
             return [];
         const result = Array.from(source).filter(c => c && typeof c === "object").map((c, i) => ({
                     start: Number(c.start ?? c.start_time),
-                    title: String(c.title || "Chapter " + (i + 1)).slice(0, 160)
+                    title: String(c.title || I18n.i18n("Chapter %1", i + 1)).slice(0, 160)
                 })).filter(c => Number.isFinite(c.start) && c.start >= 0 && (duration <= 0 || c.start < duration)).sort((a, b) => a.start - b.start);
         return result.filter((c, i) => !i || c.start !== result[i - 1].start).slice(0, 512);
     }

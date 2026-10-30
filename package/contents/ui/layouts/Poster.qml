@@ -71,7 +71,7 @@ Item {
                 renderType: Text.CurveRendering ?? Text.QtRendering
                 objectName: "posterTitle"
                 Layout.fillWidth: true
-                text: root.view.idleMessage ? qsTr("Nothing playing") : root.view.trackUnknown ? qsTr("No track metadata") : (root.view.displayTrack || " ")
+                text: root.view.idleMessage ? I18n.i18n("Nothing playing") : root.view.trackUnknown ? I18n.i18n("No track metadata") : (root.view.displayTrack || " ")
                 horizontalAlignment: root.centered ? Text.AlignHCenter : Text.AlignLeft
                 font.pixelSize: SystemText.px(Math.round(root.ts * 2.1))
                 font.weight: root.view.trackUnknown || root.view.idleMessage ? Font.Normal : Font.ExtraBold

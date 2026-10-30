@@ -52,53 +52,53 @@ Item {
     function rowFor(key) {
         switch (key) {
         case "albumArtist":
-            return detail(qsTr("Album artist"), metadataText("xesam:albumArtist"));
+            return detail(I18n.i18n("Album artist"), metadataText("xesam:albumArtist"));
         case "composer":
-            return detail(qsTr("Composer"), metadataText("xesam:composer") || lookup.result.composer || "");
+            return detail(I18n.i18n("Composer"), metadataText("xesam:composer") || lookup.result.composer || "");
         case "lyricist":
-            return detail(qsTr("Lyricist"), metadataText("xesam:lyricist") || lookup.result.lyricist || "");
+            return detail(I18n.i18n("Lyricist"), metadataText("xesam:lyricist") || lookup.result.lyricist || "");
         case "writers":
-            return detail(qsTr("Writers"), lookup.result.writers || "");
+            return detail(I18n.i18n("Writers"), lookup.result.writers || "");
         case "producers":
-            return detail(qsTr("Producers"), lookup.result.producers || "");
+            return detail(I18n.i18n("Producers"), lookup.result.producers || "");
         case "performers":
-            return detail(qsTr("Performers"), lookup.result.performers || "");
+            return detail(I18n.i18n("Performers"), lookup.result.performers || "");
         case "arrangers":
-            return detail(qsTr("Arrangers"), lookup.result.arrangers || "");
+            return detail(I18n.i18n("Arrangers"), lookup.result.arrangers || "");
         case "label":
-            return detail(qsTr("Label"), lookup.result.label || "");
+            return detail(I18n.i18n("Label"), lookup.result.label || "");
         case "country":
-            return detail(qsTr("Country"), lookup.result.country || "");
+            return detail(I18n.i18n("Country"), lookup.result.country || "");
         case "editionDate":
-            return detail(qsTr("Edition date"), lookup.result.editionDate || "");
+            return detail(I18n.i18n("Edition date"), lookup.result.editionDate || "");
         case "recordingNote":
-            return detail(qsTr("Version"), lookup.result.recordingNote || "");
+            return detail(I18n.i18n("Version"), lookup.result.recordingNote || "");
         case "isrc":
-            return detail(qsTr("ISRC"), lookup.result.isrc || "");
+            return detail(I18n.i18n("ISRC"), lookup.result.isrc || "");
         case "trackCount":
-            return detail(qsTr("Album tracks"), lookup.result.trackCount ? String(lookup.result.trackCount) : "");
+            return detail(I18n.i18n("Album tracks"), lookup.result.trackCount ? String(lookup.result.trackCount) : "");
         case "disc":
-            return detail(qsTr("Disc"), Number(metadataText("xesam:discNumber")) > 0 ? metadataText("xesam:discNumber") : lookup.result.discNumber ? String(lookup.result.discNumber) : "");
+            return detail(I18n.i18n("Disc"), Number(metadataText("xesam:discNumber")) > 0 ? metadataText("xesam:discNumber") : lookup.result.discNumber ? String(lookup.result.discNumber) : "");
         case "bpm":
-            return detail(qsTr("BPM"), Number(metadataText("xesam:audioBPM")) > 0 ? metadataText("xesam:audioBPM") : "");
+            return detail(I18n.i18n("BPM"), Number(metadataText("xesam:audioBPM")) > 0 ? metadataText("xesam:audioBPM") : "");
         case "comment":
-            return detail(qsTr("Comment"), metadataText("xesam:comment"));
+            return detail(I18n.i18n("Comment"), metadataText("xesam:comment"));
         case "date":
-            return detail(qsTr("Released"), metadataText("xesam:contentCreated").slice(0, 10) || lookup.result.releaseDate || "");
+            return detail(I18n.i18n("Released"), metadataText("xesam:contentCreated").slice(0, 10) || lookup.result.releaseDate || "");
         case "releaseType":
-            return detail(qsTr("Type"), lookup.result.releaseType || "");
+            return detail(I18n.i18n("Type"), lookup.result.releaseType || "");
         case "format":
-            return (view.formatBadges ?? []).length ? [qsTr("Format"), view.formatBadges.join(" · ")] : null;
+            return (view.formatBadges ?? []).length ? [I18n.i18n("Format"), view.formatBadges.join(" · ")] : null;
         case "album":
-            return detailAlbum !== "" ? [qsTr("Album"), detailAlbum + (detailYear !== "" ? " (" + detailYear + ")" : "")] : null;
+            return detailAlbum !== "" ? [I18n.i18n("Album"), detailAlbum + (detailYear !== "" ? " (" + detailYear + ")" : "")] : null;
         case "track":
-            return view.trackNumber > 0 ? [qsTr("Track"), String(view.trackNumber)] : lookup.result.trackNumber ? [qsTr("Track"), String(lookup.result.trackNumber)] : null;
+            return view.trackNumber > 0 ? [I18n.i18n("Track"), String(view.trackNumber)] : lookup.result.trackNumber ? [I18n.i18n("Track"), String(lookup.result.trackNumber)] : null;
         case "genre":
-            return detail(qsTr("Genre"), view.genre || (lookup.result.genres ?? []).join(", "));
+            return detail(I18n.i18n("Genre"), view.genre || (lookup.result.genres ?? []).join(", "));
         case "length":
-            return !!view.lengthText ? [qsTr("Length"), view.lengthText] : null;
+            return !!view.lengthText ? [I18n.i18n("Length"), view.lengthText] : null;
         case "player":
-            return !!view.sourceName ? [qsTr("Source"), view.sourceName] : null;
+            return !!view.sourceName ? [I18n.i18n("Source"), view.sourceName] : null;
         default:
             return null;
         }
@@ -106,19 +106,19 @@ Item {
     readonly property var rows: fieldList().map(rowFor).filter(Boolean)
     readonly property var sections: [
         {
-            title: qsTr("Song"),
+            title: I18n.i18n("Song"),
             keys: ["genre", "length", "bpm", "recordingNote", "comment"]
         },
         {
-            title: qsTr("Credits"),
+            title: I18n.i18n("Credits"),
             keys: ["albumArtist", "composer", "lyricist", "writers", "producers", "performers", "arrangers"]
         },
         {
-            title: qsTr("Release"),
+            title: I18n.i18n("Release"),
             keys: ["album", "date", "releaseType", "track", "disc", "trackCount", "label", "country", "editionDate", "isrc"]
         },
         {
-            title: qsTr("Playback"),
+            title: I18n.i18n("Playback"),
             keys: ["format", "player"]
         }
     ].map(section => ({
@@ -300,12 +300,12 @@ Item {
                 model: lookup.result.candidates || []
                 textRole: "label"
                 currentIndex: -1
-                displayText: qsTr("Choose a recording…")
+                displayText: I18n.i18n("Choose a recording…")
                 onActivated: index => root.selectedRecordingId = model[index].id
             }
             Controls.Button {
                 visible: lookup.status === "error" || !!lookup.result.partial
-                text: qsTr("Retry lookup")
+                text: I18n.i18n("Retry lookup")
                 onClicked: lookup.reset()
             }
             Text {

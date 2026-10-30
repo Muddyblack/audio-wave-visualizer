@@ -3,6 +3,7 @@ import QtQuick.Controls.Basic as Controls
 import ".." as Shared
 import "Theme.js" as Theme
 import "Schema.js" as Schema
+import "../text"
 
 // The shared settings studio for Plasma and Hyprland,
 // styled after the HTML studio. Hosts own the draft: every change is emitted
@@ -29,13 +30,14 @@ Rectangle {
             return "";
         const missing = [];
         if (/^python3: missing$/m.test(dependencyReport))
-            missing.push("Python 3");
+            missing.push(I18n.i18n("Python 3"));
         if (/^busctl: missing$/m.test(dependencyReport))
-            missing.push("busctl");
+            missing.push(I18n.i18n("busctl"));
         if (!missing.length)
             return "";
-        const install = /^distro: (nixos|nix)$/m.test(dependencyReport) ? "On NixOS, add pkgs.python3 and pkgs.systemd to environment.systemPackages, rebuild, then sign out and in." : "Install the missing tools with your distribution's package manager, then restart Plasma.";
-        return "Browser site names and media details need " + missing.join(" and ") + ". " + install;
+        const install = /^distro: (nixos|nix)$/m.test(dependencyReport) ? I18n.i18n("On NixOS, add pkgs.python3 and pkgs.systemd to environment.systemPackages, rebuild, then sign out and in.") : I18n.i18n("Install the missing tools with your distribution’s package manager, then restart Plasma.");
+        const tools = missing.length > 1 ? I18n.i18n("%1 and %2", missing[0], missing[1]) : missing.join(" and ");
+        return I18n.i18n("Browser site names and media details need %1. %2", tools, install);
     }
     Shared.CommandSource {
         id: dependencyCheck
@@ -57,8 +59,8 @@ Rectangle {
             dependencyCheck.connectSource("'" + path.replace(/'/g, "'\\''") + "' --check");
         }
     }
-    property var discoveredSources: [["auto", "Default output monitor"]]
-    readonly property var audioSourceOptions: discoveredSources.some(o => o[0] === (draft.inputSource || "auto")) ? discoveredSources : discoveredSources.concat([[draft.inputSource, "Unavailable: " + draft.inputSource]])
+    property var discoveredSources: [["auto", I18n.noop("Default output monitor")]]
+    readonly property var audioSourceOptions: discoveredSources.some(o => o[0] === (draft.inputSource || "auto")) ? discoveredSources : discoveredSources.concat([[draft.inputSource, I18n.i18n("Unavailable: %1", draft.inputSource)]])
     Shared.CommandSource {
         id: sourceDiscovery
         sourceComponent: studioRoot.commandSourceComponent
@@ -68,7 +70,7 @@ Rectangle {
                 const choices = JSON.parse(data["stdout"] || "[]");
                 if (choices.length)
                     studioRoot.discoveredSources = choices;
-            } catch (error) { /* Keep the saved selection during discovery failures. */ }
+            } catch (error) {}
         }
     }
     Timer {
@@ -149,7 +151,7 @@ Rectangle {
     // Previews animate only while the settings window is actually shown.
     readonly property bool onScreen: visible && !!Window.window && Window.window.visible
     readonly property color accent: draft.useSystemAccent === false ? draft.customColor : previewAccent
-    readonly property var monitorOptions: [["", "First available display"], ["all", "Every monitor"]].concat(screenNames.map(name => [name, name]))
+    readonly property var monitorOptions: [["", I18n.noop("First available display")], ["all", I18n.noop("Every monitor")]].concat(screenNames.map(name => [name, name]))
     // Keep the layout from bouncing between modes while the dialog is dragged
     // near a breakpoint. Width and height can move in opposite directions as
     // the host negotiates the page's size.
@@ -199,27 +201,34 @@ Rectangle {
             if (section.tab === "buttons" && ["dockSrc", "customDockBgColor"].includes(row.id || row.k))
                 return false;
         }
-        return Schema.rowVisible(row, section, draft, env, query.trim().toLowerCase());
+        return Schema.rowVisible(row, section, draft, env, query.trim().toLowerCase(), studioRoot.translateText);
     }
+    // Lets search match the labels the user actually sees, not only English.
+    function translateText(text) {
+        if (!text)
+            return "";
+        return I18n.i18n(text);
+    }
+    // English source strings; StudioRow translates label and desc when drawing.
     function rowDefinition(row) {
         if (env === "kde" && presentationTarget === "popup" && row.k === "glassBlur")
             return Object.assign({}, row, {
-                label: "Preview wallpaper blur",
-                desc: "Adjusts wallpaper blur in this preview. Actual popup blur strength is set in KDE System Settings → Desktop Effects → Blur."
+                label: I18n.noop("Preview wallpaper blur"),
+                desc: I18n.noop("Adjusts wallpaper blur in this preview. Actual popup blur strength is set in KDE System Settings → Desktop Effects → Blur.")
             });
         if (env === "kde" && presentationTarget === "popup" && row.k === "compositorGlass")
             return Object.assign({}, row, {
-                label: "Blur behind card",
-                desc: "Blur application windows behind the rounded card. Requires KWin’s Blur effect."
+                label: I18n.noop("Blur behind card"),
+                desc: I18n.noop("Blur application windows behind the rounded card. Requires KWin’s Blur effect.")
             });
         if (row.k === "pillClick" && env === "kde")
             return Object.assign({}, row, {
-                label: "Click action",
-                opts: [["popup", "Nothing"], ["toggle", "Play / pause"]]
+                label: I18n.noop("Click action"),
+                opts: [["popup", I18n.noop("Nothing")], ["toggle", I18n.noop("Play / pause")]]
             });
         if (row.k === "pillEq" && draft.layoutMode === "pillicon")
             return Object.assign({}, row, {
-                opts: [["off", "Off"], ["static", "Static"], ["live", "Bouncing"], ["wave", "Orbit"], ["visualizer", "Mini visualizer"]]
+                opts: [["off", I18n.noop("Off")], ["static", I18n.noop("Static")], ["live", I18n.noop("Bouncing")], ["wave", I18n.noop("Orbit")], ["visualizer", I18n.noop("Mini visualizer")]]
             });
         if (row.k !== "layoutMode" || presentationTarget === "desktop")
             return row;
@@ -404,7 +413,7 @@ Rectangle {
                         anchors.fill: searchInput
                         verticalAlignment: Text.AlignVCenter
                         visible: searchInput.text === ""
-                        text: "Search settings…"
+                        text: I18n.i18n("Search settings…")
                         color: Theme.dim
                         font: searchInput.font
                     }
@@ -442,8 +451,8 @@ Rectangle {
                 StudioButton {
                     id: discardBtn
                     enabled: studioRoot.canDiscard
-                    text: (typeof i18n === "function" ? i18n("Discard") : "Discard")
-                    tooltip: "Discard unapplied changes (Verwerfen)"
+                    text: I18n.i18n("Discard")
+                    tooltip: I18n.i18n("Discard unapplied changes")
                     areaName: "discardSettings"
                     onClicked: studioRoot.discard()
                 }
@@ -451,8 +460,8 @@ Rectangle {
                     id: resetAll
                     // Hyprland's footer already has its own Reset.
                     visible: studioRoot.env === "kde"
-                    text: "Reset"
-                    tooltip: "Restore every setting to its default. Apply to keep it; Discard undoes it. Saved presets are kept."
+                    text: I18n.i18n("Reset")
+                    tooltip: I18n.i18n("Restore every setting to its default. Apply to keep it; Discard undoes it. Saved presets are kept.")
                     areaName: "resetToDefaults"
                     onClicked: studioRoot.edited(Object.assign({}, studioRoot.defaults, {
                         userPresets: studioRoot.draft.userPresets ?? ""
@@ -460,7 +469,7 @@ Rectangle {
                 }
                 StudioButton {
                     id: surprise
-                    text: "Surprise me"
+                    text: I18n.i18n("Surprise me")
                     onClicked: {
                         const next = Schema.surprise(studioRoot.defaults, studioRoot.draft);
                         if (studioRoot.presentationTarget === "panel")
@@ -531,7 +540,7 @@ Rectangle {
                                     }
                                     Text {
                                         anchors.verticalCenter: parent.verticalCenter
-                                        text: tab.modelData.label
+                                        text: I18n.i18n(tab.modelData.label)
                                         color: tab.selected || tabArea.containsMouse ? Theme.text : Theme.muted
                                         font.family: Theme.fontFamily
                                         font.pixelSize: 12
@@ -613,7 +622,7 @@ Rectangle {
                             model: studioRoot.appearanceTabs
                             StudioButton {
                                 required property var modelData
-                                text: modelData.label
+                                text: I18n.i18n(modelData.label)
                                 icon: modelData.icon
                                 compact: true
                                 primary: studioRoot.currentTab === modelData.id
@@ -706,7 +715,7 @@ Rectangle {
                         visible: studioRoot.ready && !studioRoot.anyResults
                         topPadding: 30
                         horizontalAlignment: Text.AlignHCenter
-                        text: studioRoot.query.trim() !== "" ? "No settings match that search." : "No settings are available for this design."
+                        text: studioRoot.query.trim() !== "" ? I18n.i18n("No settings match that search.") : I18n.i18n("No settings are available for this design.")
                         wrapMode: Text.WordWrap
                         color: Theme.dim
                         font.family: Theme.fontFamily
