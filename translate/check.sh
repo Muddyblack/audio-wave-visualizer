@@ -6,7 +6,7 @@
 # forms, syntax). A language listed in translate/complete-languages must also
 # be complete — an untranslated or fuzzy entry there is a string that would
 # silently fall back to English. Any other language (one still being
-# translated, e.g. on Weblate) only reports how far along it is: a partial
+# translated) only reports how far along it is: a partial
 # catalog is fine, the missing strings show in English.
 set -euo pipefail
 

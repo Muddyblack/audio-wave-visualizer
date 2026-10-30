@@ -39,4 +39,4 @@ jobs:
       - name: i18n catalogs in sync with sources
         run: |
           nix develop --command ./translate/Messages.sh
-          git diff --exit-code -- translate/
+          git diff --exit-code -- 'translate/*.po'
