@@ -30,9 +30,9 @@ repos:
         language: system
         types: [python]
 
-      # CI fails when translate/template.pot or a .po is stale, so regenerate
-      # them whenever source that can hold an i18n() string changes. The hook
-      # fails once if it rewrote anything: stage the result and commit again.
+      # CI fails when a translate/*.po is stale, so regenerate them whenever
+      # source that can hold an i18n() string changes. The hook fails once if it
+      # rewrote anything: stage the result and commit again.
       - id: i18n-catalogs
         name: i18n catalogs
         entry: tools/dev-tool.sh ./translate/Messages.sh

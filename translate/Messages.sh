@@ -5,8 +5,8 @@
 #
 # The widget ships its own translations inside the .plasmoid archive, in
 # package/contents/locale/<lang>/LC_MESSAGES/plasma_applet_<Id>.mo. This script
-# only produces the sources of truth: translate/template.pot and translate/*.po.
-# build.sh compiles the .mo files; they are git-ignored build output.
+# only updates the sources of truth, translate/*.po, through template.pot. The
+# template, and the .mo files build.sh compiles, are git-ignored build output.
 #
 # Requires gettext (xgettext, msgmerge).
 set -euo pipefail

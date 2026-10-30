@@ -1,9 +1,9 @@
 .pragma library
 .import "StudioCatalog.js" as Catalog
 .import "PresetCodec.js" as PresetCodec
+.import "I18n.js" as I18n
 
-// Marks display text for Messages.sh; returns it unchanged.
-function N_(text) { return text; }
+var N_ = I18n.N_;
 
 
 // Shared settings, presets and navigation for desktop and web. Hosts pass `env`
