@@ -2,7 +2,8 @@ import QtQuick
 import QtQuick.Layouts
 import "../../code/Layouts.js" as Layouts
 
-// [cover 64][large title / artist]; a 40 px wave; progress; dock centred.
+// [cover 64][large title / artist]; a wave of up to 40 px, which gives way when
+// the text grows; progress; dock centred.
 Item {
     id: root
     required property var view
@@ -42,7 +43,9 @@ Item {
         LayoutWave {
             view: root.view
             Layout.fillWidth: true
+            Layout.fillHeight: true
             Layout.preferredHeight: 40
+            Layout.maximumHeight: 40
         }
         ColumnLayout {
             Layout.fillWidth: true
@@ -60,6 +63,7 @@ Item {
         }
         Item {
             Layout.fillHeight: true
+            Layout.preferredHeight: 0
         }
     }
 }

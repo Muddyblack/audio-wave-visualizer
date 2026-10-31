@@ -10,14 +10,15 @@ Item {
     required property var view
     readonly property var cfg: view.configuration
     readonly property bool bg: cfg.showBg
-    // The ring stays square in a taller or wider host; the design height
-    // leaves (height - width) for the texts, progress and dock below it.
-    readonly property real box: Math.max(0, Math.min(width, height - (Layouts.size(cfg)[1] - Layouts.size(cfg)[0])) - (bg ? 60 : 28))
+    // The ring stays square in a taller or wider host and gives way to whatever
+    // the texts, progress and dock below it need.
+    readonly property real box: Math.max(0, Math.min(width - (bg ? 60 : 28), height - (bg ? 26 : 8) - column.spacing * 3 - texts.implicitHeight - progress.implicitHeight - dock.implicitHeight))
     readonly property real coverSize: Math.round(Math.min(box * 0.56, box * 0.38 * (cfg.artScale ?? 100) / 100))
     implicitWidth: Layouts.size(cfg)[0]
     implicitHeight: Layouts.size(cfg)[1]
 
     ColumnLayout {
+        id: column
         anchors.fill: parent
         anchors.leftMargin: root.bg ? 16 : 4
         anchors.rightMargin: root.bg ? 16 : 4
@@ -72,6 +73,7 @@ Item {
             }
         }
         LayoutTexts {
+            id: texts
             view: root.view
             titleFactor: 1.3
             artistSize: 0.95
@@ -79,12 +81,14 @@ Item {
             Layout.fillWidth: true
         }
         LayoutProgress {
+            id: progress
             view: root.view
             artShown: art.visible
             Layout.fillWidth: true
             Layout.preferredHeight: implicitHeight
         }
         LayoutDock {
+            id: dock
             view: root.view
             Layout.alignment: Qt.AlignHCenter
         }

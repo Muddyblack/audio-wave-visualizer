@@ -1455,7 +1455,7 @@ TestCase {
             layoutMode: "poster",
             posterLines: 2
         });
-        compare(subject.implicitHeight, 138);
+        compare(subject.implicitHeight, 144);
         compare(findChild(subject, "posterClock").text, "1:00");
         verify(!findChild(subject, "totalTimeLabel").visible, "The large clock replaces the bar's labels");
         compare(findChild(subject, "posterMeta").text, "ARTIST");

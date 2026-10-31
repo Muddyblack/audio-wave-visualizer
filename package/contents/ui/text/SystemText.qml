@@ -1,18 +1,21 @@
 pragma Singleton
 import QtQuick
 
-// Hardcoded pixel sizes are designed for Plasma's default 10pt font. px()
-// scales them by how far the user's system font is from that, so the card
-// and the settings follow Appearance > Fonts like other Qt apps.
+// Hardcoded pixel sizes are designed around an 11 px title. px() scales them so
+// that title matches the user's system font, as other Qt apps' text does; the
+// display scale then applies to both alike.
 QtObject {
     // The "Follow system font size" setting; main.qml and the studio set it.
     property bool follow: true
+    // Read through here so tests can try other system fonts.
+    property real points: Qt.application.font.pointSize
 
     readonly property real factor: {
-        if (!follow)
+        if (!follow || !(points > 0))
             return 1;
-        const pt = Qt.application.font.pointSize;
-        return pt > 0 ? Math.min(2, Math.max(0.75, pt / 10)) : 1;
+        // A point is 4/3 of Qt's logical pixel. Fixed-size cards hold up to a
+        // 14 px title (tst_textfit); past that, resizing the widget scales them.
+        return Math.min(14 / 11, Math.max(0.75, points * 4 / 3 / 11));
     }
 
     // `limit` caps the result for text that sits in fixed-height chrome (pill,

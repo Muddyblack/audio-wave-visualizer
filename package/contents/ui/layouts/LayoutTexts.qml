@@ -32,6 +32,8 @@ ColumnLayout {
     property real albumSize: 0.72
     property real lyricSize: 1
     property int sourceSize: 7
+    // Strip's height holds two lines: the title and either the source or the artist.
+    property bool twoLines: false
     // Orbit always centres its texts.
     property int alignmentOverride: -1
     readonly property var cfg: view.configuration
@@ -49,6 +51,7 @@ ColumnLayout {
     spacing: 0
 
     RowLayout {
+        id: sourceRow
         objectName: "sourceRow"
         visible: ((root.cfg.showSource ?? false) || (root.cfg.showPlayerSwitch ?? false)) && root.view.hasPlayer
         Layout.alignment: root.layoutAlignment
@@ -162,6 +165,7 @@ ColumnLayout {
 
     TrackText {
         objectName: "artistLine"
+        visible: !(root.twoLines && sourceRow.visible)
         Layout.fillWidth: true
         Layout.minimumWidth: 0
         secondary: true
@@ -182,7 +186,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.minimumWidth: 0
         Layout.topMargin: 1
-        visible: (root.cfg.showAlbum ?? false) && root.view.album !== ""
+        visible: !root.twoLines && (root.cfg.showAlbum ?? false) && root.view.album !== ""
         text: root.view.album + (root.view.year !== "" ? " · " + root.view.year : "")
         horizontalAlignment: root.alignment
         color: root.view.textColor
@@ -196,7 +200,7 @@ ColumnLayout {
         Layout.fillWidth: true
         Layout.minimumWidth: 0
         Layout.topMargin: 1
-        visible: (root.cfg.showLyrics ?? false) && root.view.lyricDisplayLine !== ""
+        visible: !root.twoLines && (root.cfg.showLyrics ?? false) && root.view.lyricDisplayLine !== ""
         text: root.view.lyricDisplayLine
         horizontalAlignment: root.cfg.lyricsAlign === "center" ? Text.AlignHCenter : root.cfg.lyricsAlign === "right" ? Text.AlignRight : Text.AlignLeft
         color: root.cfg.lyricsHighlight === "custom" ? root.cfg.lyricsHighlightColor : root.cfg.lyricsHighlight === "accent" ? root.view.waveColor : root.view.textColor
@@ -214,7 +218,7 @@ ColumnLayout {
     Text {
         objectName: "lyricDependencyNotice"
         Layout.fillWidth: true
-        visible: (root.cfg.showLyrics ?? false) && root.view.lyricLine !== "" && root.view.lyricNotice !== ""
+        visible: !root.twoLines && (root.cfg.showLyrics ?? false) && root.view.lyricLine !== "" && root.view.lyricNotice !== ""
         text: root.view.lyricNotice
         textFormat: Text.PlainText
         wrapMode: Text.Wrap

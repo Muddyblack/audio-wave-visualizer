@@ -29,6 +29,7 @@ Item {
         }
         LayoutTexts {
             view: root.view
+            twoLines: true
             Layout.preferredWidth: 120
             Layout.minimumWidth: 120
             Layout.maximumWidth: 120
