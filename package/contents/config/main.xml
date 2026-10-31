@@ -511,6 +511,9 @@
         <entry name="simpleRender" type="Bool">
             <default>false</default>
         </entry>
+        <entry name="liveApply" type="Bool">
+            <default>true</default>
+        </entry>
         <entry name="autoDailyLook" type="Bool">
             <default>false</default>
         </entry>

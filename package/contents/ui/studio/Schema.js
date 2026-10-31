@@ -69,6 +69,8 @@ var STATES = [["normal", noop("Playing")], ["paused", noop("Paused")], ["long", 
 // Colour keys "Keep my colours" preserves; placement is never part of a look.
 var COLOR_KEYS = ["controlsColorSource", "progressColorSource", "customProgressColor", "useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "vizCustomColors", "glowColorMode", "glowCustomColors", "hueReactive", "bgColor", "glassTintColor", "lyricsHighlightColor", "lyricsTextStyleColor"];
 var PLACEMENT_KEYS = ["monitor", "verticalPosition", "desktopLayer", "pauseWhenCovered", "hAnchor", "widgetWidth", "widgetHeight", "panelDisplayMode", "panelOrientation", "panelCardSizing", "panelCardScale"];
+// About the settings window, not the look: nothing but their own controls changes them.
+var PREFERENCE_KEYS = ["language", "liveApply"];
 var TRACK_INFO_KEYS = ["hoverDetails", "detailFields", "detailCustomize", "flipInfoButton", "onlineTrackInfo", "appleTrackInfo"];
 var DETAIL_FIELD_GROUPS = [
     {id: "detailSong", label: noop("Song"), opts: [["genre", noop("Genre")], ["length", noop("Length")], ["bpm", noop("BPM")], ["recordingNote", noop("Version")], ["comment", noop("Comment")]]},
@@ -98,6 +100,11 @@ function detailFieldGroup(group) {
         set: function (value) { return {detailFields: fields(value)}; },
         when: function (state) { return state.hoverDetails !== "off" && detailProfile(state) === "custom"; }};
 }
+function preservePreferences(next, current) {
+    PREFERENCE_KEYS.forEach(function (key) { if (current[key] !== undefined) next[key] = current[key]; });
+    return next;
+}
+
 function preserveTrackInfo(next, current) {
     TRACK_INFO_KEYS.forEach(function (key) { if (current[key] !== undefined) next[key] = current[key]; });
     return next;
@@ -518,7 +525,7 @@ var PRESETS = [
     preset("sunburst", ["desktop"], noop("Sunburst"), noop("Sparks fly off the cover on every beat. Ember palette on a dark tint."), "sea", { layoutMode: "orbit", orbitStyle: "sparks", artShape: "squircle", vizColorMode: "palette", vizPalette: "ember", showBg: true, bgColor: "#0a0b10", artBgTransparency: .75, bgRadius: 24, progressBarStyle: 5, showTimes: false }),
     preset("dothalo", ["desktop", "adaptive"], noop("Dot Halo"), noop("A dotted neon ring spikes outward on every beat. Swap the custom colour for any glow."), "neon", { layoutMode: "orbit", orbitStyle: "dots", artShape: "circle", vizColorMode: "solid", useSystemAccent: false, customColor: "#39ff14", bloom: 1.4, orbitReach: 1.15, showBg: true, bgColor: "#05070a", artBgTransparency: .8, bgRadius: 24, progressBarStyle: 1, showTimes: false, dockStyle: "bare" }),
     preset("orbiticon", ["panel"], noop("Orbit Icon"), noop("A tiny radial ring around the cover, living in the bar."), "breeze", { layoutMode: "pillicon", pillEq: "wave", artShape: "circle", vizColorMode: "palette", vizPalette: "aurora", hoverDetails: "tooltip" }, "hypr"),
-    preset("quiet", ["desktop", "glass"], noop("Quiet Glass"), noop("Title leads, calm mirror bars, one soft accent, round play button."), "olive", { layoutMode: "stacked", showBg: true, surfaceStyle: "glass", bgRadius: 22, useSystemAccent: false, customColor: "#d1e5bd", visualizerType: 2, glowWave: false, progressBarStyle: 1, dockStyle: "accent", showSource: true, showAlbum: true, cardShadow: "soft", edgeHighlight: true, titleSize: 12 }),
+    preset("quiet", ["desktop", "glass"], noop("Quiet Glass"), noop("Title leads, calm mirror bars, one soft accent, round play button."), "olive", { layoutMode: "stacked", showBg: true, surfaceStyle: "glass", bgRadius: 22, useSystemAccent: false, customColor: "#d1e5bd", visualizerType: 2, glowWave: false, progressBarStyle: 1, dockStyle: "accent", showSource: true, cardShadow: "soft", edgeHighlight: true, titleSize: 12 }),
     preset("panelpill", ["panel"], noop("Panel Pill"), noop("Text pill for Plasma panels with a mini visualizer that follows the music."), "breeze", { layoutMode: "pill", pillEq: "wave", pillProgress: "underline", pillControls: "play", hoverDetails: "tooltip" }, "kde"),
     preset("baricon", ["panel"], noop("Bar Icon"), noop("Just the cover with a progress ring, for a Hyprland bar."), "neon", { layoutMode: "pillicon", artShape: "circle", pillProgress: "ring", pillEq: "live", hoverDetails: "tooltip" }, "hypr"),
     preset("ribbonpill", ["panel", "adaptive"], noop("Ribbon Pill"), noop("A glowing silk ribbon living in the panel, Aurora palette."), "dusk", { layoutMode: "pill", pillEq: "wave", visualizerType: 15, vizColorMode: "palette", vizPalette: "aurora", hueReactive: true, pillArt: false, pillContent: "title", showBg: true, surfaceStyle: "glass" }, "kde"),
@@ -553,8 +560,15 @@ function applyPreset(defaults, current, settings, keepColors) {
         next[key] = settings[key];
     if (keepColors)
         COLOR_KEYS.forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
-    PLACEMENT_KEYS.concat(["panelAppearance", "popupAppearance", "customVisualizers", "customProgressBars", "customButtonStyles", "userPresets", "favoritePresets", "autoDailyLook", "dailyLookApplied"]).forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
+    PLACEMENT_KEYS.concat(PREFERENCE_KEYS, ["panelAppearance", "popupAppearance", "customVisualizers", "customProgressBars", "customButtonStyles", "userPresets", "favoritePresets", "autoDailyLook", "dailyLookApplied"]).forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
     return next;
+}
+
+// The Defaults button: every setting, except saved presets and preferences.
+function restoreDefaults(defaults, current) {
+    var next = copy(defaults);
+    next.userPresets = current.userPresets || "";
+    return preservePreferences(next, current);
 }
 
 function same(a, b) {
@@ -569,7 +583,7 @@ function same(a, b) {
 function changedKeys(defaults, current) {
     var out = {};
     for (var key in current) {
-        if (key === "panelAppearance" || key === "popupAppearance" || key === "autoDailyLook" || key === "dailyLookApplied" || key === "favoritePresets" || key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || key === "customButtonStyles" || PLACEMENT_KEYS.indexOf(key) !== -1 || defaults[key] === undefined)
+        if (key === "panelAppearance" || key === "popupAppearance" || key === "autoDailyLook" || key === "dailyLookApplied" || key === "favoritePresets" || key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || key === "customButtonStyles" || PLACEMENT_KEYS.indexOf(key) !== -1 || PREFERENCE_KEYS.indexOf(key) !== -1 || defaults[key] === undefined)
             continue;
         if (!same(current[key], defaults[key]))
             out[key] = current[key];

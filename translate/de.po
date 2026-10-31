@@ -25,19 +25,44 @@ msgstr "Einstellungen konnten nicht in %1 gespeichert werden"
 msgid "Audio Visualizer Settings"
 msgstr "Audio-Visualizer-Einstellungen"
 
-msgid "Apply saves local overrides. Reset returns to your configured defaults."
-msgstr ""
-"„Anwenden“ speichert lokale Anpassungen. „Zurücksetzen“ stellt die "
-"konfigurierten Standardwerte wieder her."
+msgid "Defaults"
+msgstr "Standard"
 
+msgid ""
+"Restore every setting to its default. Apply to keep it; Reset undoes it. "
+"Saved presets are kept."
+msgstr ""
+"Alle Einstellungen auf ihre Standardwerte zurücksetzen. „Anwenden“ übernimmt "
+"sie; „Zurücksetzen“ macht dies rückgängig. Gespeicherte Vorlagen bleiben "
+"erhalten."
+
+msgctxt "undo the changes that are not applied yet"
 msgid "Reset"
 msgstr "Zurücksetzen"
+
+msgid "Discard unapplied changes"
+msgstr "Nicht angewendete Änderungen verwerfen"
+
+msgid "Apply instantly"
+msgstr "Sofort anwenden"
 
 msgid "Close"
 msgstr "Schließen"
 
 msgid "Apply"
 msgstr "Anwenden"
+
+msgid ""
+"The current page has unsaved changes. Apply the changes or discard them?"
+msgstr ""
+"Die aktuelle Seite enthält nicht gespeicherte Änderungen. Änderungen "
+"anwenden oder verwerfen?"
+
+msgid "Discard"
+msgstr "Verwerfen"
+
+msgid "Cancel"
+msgstr "Abbrechen"
 
 msgid "General"
 msgstr "Allgemein"
@@ -379,12 +404,12 @@ msgstr "Popup-Design verwenden"
 msgid ""
 "Copy the other design into this one: colours, artwork, visualizer and "
 "progress styles. The pill enables the copied effects. Each view keeps its "
-"layout and playback controls. Apply saves; Discard undoes."
+"layout and playback controls. Apply saves; Reset undoes."
 msgstr ""
 "Das andere Design in dieses kopieren: Farben, Cover, Visualisierungs- und "
 "Fortschrittsstile. Die Kapsel aktiviert die kopierten Effekte. Jede Ansicht "
 "behält ihr Layout und ihre Wiedergabesteuerung. „Anwenden“ speichert; "
-"„Verwerfen“ macht die Änderungen rückgängig."
+"„Zurücksetzen“ macht die Änderungen rückgängig."
 
 msgid "Copy to all widgets"
 msgstr "Auf alle Widgets kopieren"
@@ -399,6 +424,13 @@ msgstr ""
 "Instanzen dieses Widgets kopieren, etwa eine pro Monitor. Jede behält ihren "
 "Monitor und ihre Position. Zuerst hier anwenden; die anderen ändern sich "
 "sofort und können nicht zurückgesetzt werden."
+
+msgid ""
+"Apply every change as you make it, without pressing Apply. Reset goes back "
+"to how it was when you opened this window."
+msgstr ""
+"Jede Änderung sofort anwenden, ohne „Anwenden“ zu drücken. „Zurücksetzen“ "
+"geht zurück zum Stand beim Öffnen dieses Fensters."
 
 msgid "Nothing playing"
 msgstr "Keine Wiedergabe"
@@ -2736,20 +2768,6 @@ msgstr "Klickaktion"
 
 msgid "Search settings…"
 msgstr "Einstellungen durchsuchen…"
-
-msgid "Discard"
-msgstr "Verwerfen"
-
-msgid "Discard unapplied changes"
-msgstr "Nicht angewendete Änderungen verwerfen"
-
-msgid ""
-"Restore every setting to its default. Apply to keep it; Discard undoes it. "
-"Saved presets are kept."
-msgstr ""
-"Alle Einstellungen auf ihre Standardwerte zurücksetzen. „Anwenden“ übernimmt "
-"sie; „Verwerfen“ macht dies rückgängig. Gespeicherte Vorlagen bleiben "
-"erhalten."
 
 msgid "Surprise me"
 msgstr "Überrasch mich"
