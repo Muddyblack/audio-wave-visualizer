@@ -69,6 +69,8 @@ var STATES = [["normal", noop("Playing")], ["paused", noop("Paused")], ["long", 
 // Colour keys "Keep my colours" preserves; placement is never part of a look.
 var COLOR_KEYS = ["controlsColorSource", "progressColorSource", "customProgressColor", "useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "vizCustomColors", "glowColorMode", "glowCustomColors", "hueReactive", "bgColor", "glassTintColor", "lyricsHighlightColor", "lyricsTextStyleColor"];
 var PLACEMENT_KEYS = ["monitor", "verticalPosition", "desktopLayer", "pauseWhenCovered", "hAnchor", "widgetWidth", "widgetHeight", "panelDisplayMode", "panelOrientation", "panelCardSizing", "panelCardScale"];
+// About the settings window, not the look: nothing but their own controls changes them.
+var PREFERENCE_KEYS = ["language", "liveApply"];
 var TRACK_INFO_KEYS = ["hoverDetails", "detailFields", "detailCustomize", "flipInfoButton", "onlineTrackInfo", "appleTrackInfo"];
 var DETAIL_FIELD_GROUPS = [
     {id: "detailSong", label: noop("Song"), opts: [["genre", noop("Genre")], ["length", noop("Length")], ["bpm", noop("BPM")], ["recordingNote", noop("Version")], ["comment", noop("Comment")]]},
@@ -98,6 +100,11 @@ function detailFieldGroup(group) {
         set: function (value) { return {detailFields: fields(value)}; },
         when: function (state) { return state.hoverDetails !== "off" && detailProfile(state) === "custom"; }};
 }
+function preservePreferences(next, current) {
+    PREFERENCE_KEYS.forEach(function (key) { if (current[key] !== undefined) next[key] = current[key]; });
+    return next;
+}
+
 function preserveTrackInfo(next, current) {
     TRACK_INFO_KEYS.forEach(function (key) { if (current[key] !== undefined) next[key] = current[key]; });
     return next;
@@ -553,8 +560,15 @@ function applyPreset(defaults, current, settings, keepColors) {
         next[key] = settings[key];
     if (keepColors)
         COLOR_KEYS.forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
-    PLACEMENT_KEYS.concat(["panelAppearance", "popupAppearance", "customVisualizers", "customProgressBars", "customButtonStyles", "userPresets", "favoritePresets", "autoDailyLook", "dailyLookApplied"]).forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
+    PLACEMENT_KEYS.concat(PREFERENCE_KEYS, ["panelAppearance", "popupAppearance", "customVisualizers", "customProgressBars", "customButtonStyles", "userPresets", "favoritePresets", "autoDailyLook", "dailyLookApplied"]).forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
     return next;
+}
+
+// The Defaults button: every setting, except saved presets and preferences.
+function restoreDefaults(defaults, current) {
+    var next = copy(defaults);
+    next.userPresets = current.userPresets || "";
+    return preservePreferences(next, current);
 }
 
 function same(a, b) {
@@ -569,7 +583,7 @@ function same(a, b) {
 function changedKeys(defaults, current) {
     var out = {};
     for (var key in current) {
-        if (key === "panelAppearance" || key === "popupAppearance" || key === "autoDailyLook" || key === "dailyLookApplied" || key === "favoritePresets" || key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || key === "customButtonStyles" || PLACEMENT_KEYS.indexOf(key) !== -1 || defaults[key] === undefined)
+        if (key === "panelAppearance" || key === "popupAppearance" || key === "autoDailyLook" || key === "dailyLookApplied" || key === "favoritePresets" || key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || key === "customButtonStyles" || PLACEMENT_KEYS.indexOf(key) !== -1 || PREFERENCE_KEYS.indexOf(key) !== -1 || defaults[key] === undefined)
             continue;
         if (!same(current[key], defaults[key]))
             out[key] = current[key];

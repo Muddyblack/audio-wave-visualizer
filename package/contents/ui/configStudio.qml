@@ -1,4 +1,6 @@
 import QtQuick
+import QtQuick.Controls as QQC2
+import QtQuick.Layouts
 import org.kde.plasma.core as PlasmaCore
 import org.kde.kirigami as Kirigami
 import org.kde.plasma.private.mpris as Mpris
@@ -364,6 +366,8 @@ Kirigami.Page {
     property bool cfg_batterySaverDefault
     property bool cfg_simpleRender
     property bool cfg_simpleRenderDefault
+    property bool cfg_liveApply
+    property bool cfg_liveApplyDefault
     property bool cfg_autoDailyLook
     property bool cfg_autoDailyLookDefault
     property string cfg_dailyLookApplied
@@ -424,8 +428,7 @@ Kirigami.Page {
         return false;
     }
 
-    // Previews the choice in the studio; Apply saves it for the widget, and
-    // closing without saving hands the catalog back to the widget's choice.
+    // Shows the choice in the studio; closing hands the catalog back to the widget.
     CatalogLoader {
         preview: true
         language: root.cfg_language
@@ -464,6 +467,31 @@ Kirigami.Page {
         }
     }
 
+    // Plasma's footer wording: Defaults restores the shipped values, Reset
+    // undoes what Apply has not saved yet.
+    function restoreDefaults() {
+        root.assign(Presentations.edit(root.draft, Schema.restoreDefaults(root.editingDefaults, root.editingDraft), root.editingTarget));
+    }
+
+    // Apply instantly: every change is written to the widget's settings for
+    // real, as if Apply had been pressed. Reset goes back to how the window
+    // was when it opened (savedDraft), and Cancel keeps what was applied.
+    function applyInstantly() {
+        for (const key in root.draft) {
+            const current = plasmoid.configuration[key];
+            if (current !== undefined && !root.sameValue(root.draft[key], current))
+                plasmoid.configuration[key] = root.draft[key];
+        }
+        root.savedInstantly();
+    }
+    // Plasma rechecks its Apply button and its unsaved changes prompt when a cfg_
+    // value changes, which is before the save above, and when this changes.
+    property bool unsavedChanges: false
+    function savedInstantly() {
+        plasmoid.configuration.writeConfig?.();
+        root.unsavedChangesChanged();
+    }
+
     function undo() {
         if (root.history.length > 0) {
             root.isReverting = true;
@@ -473,6 +501,10 @@ Kirigami.Page {
         } else if (root.savedDraft) {
             discard();
         }
+    }
+
+    function sameValue(a, b) {
+        return Array.isArray(a) || Array.isArray(b) ? JSON.stringify(a) === JSON.stringify(b) : String(a) === String(b);
     }
 
     function assign(next) {
@@ -488,16 +520,26 @@ Kirigami.Page {
             const property = "cfg_" + key;
             if (root[property] === undefined)
                 continue;
-            const value = next[key];
-            const current = root[property];
-            const same = Array.isArray(value) || Array.isArray(current) ? JSON.stringify(value) === JSON.stringify(current) : String(value) === String(current);
-            if (!same)
-                root[property] = value;
+            if (!root.sameValue(next[key], root[property]))
+                root[property] = next[key];
         }
     }
 
     // Diagnostics only: see debug/GpuDebug.qml.
     onCfg_gpuDebugChanged: GpuDebug.apply(cfg_gpuDebug ?? "")
+    // Schema.PREFERENCE_KEYS save at once, so they never count as unsaved.
+    function savePreference(key, value) {
+        if (plasmoid.configuration[key] !== value) {
+            plasmoid.configuration[key] = value;
+            savedInstantly();
+        }
+        if (savedDraft && savedDraft[key] !== value)
+            savedDraft = Object.assign({}, savedDraft, {
+                [key]: value
+            });
+    }
+    onCfg_languageChanged: savePreference("language", cfg_language)
+    onCfg_liveApplyChanged: savePreference("liveApply", cfg_liveApply)
     onCfg_followSystemFontChanged: SystemText.follow = cfg_followSystemFont
 
     PlasmaCommandSource {
@@ -569,7 +611,7 @@ Kirigami.Page {
                 objectName: "syncAppearance"
                 compact: true
                 text: root.editingPopup ? I18n.i18n("Use pill look") : I18n.i18n("Use popup look")
-                tooltip: I18n.i18n("Copy the other design into this one: colours, artwork, visualizer and progress styles. The pill enables the copied effects. Each view keeps its layout and playback controls. Apply saves; Discard undoes.")
+                tooltip: I18n.i18n("Copy the other design into this one: colours, artwork, visualizer and progress styles. The pill enables the copied effects. Each view keeps its layout and playback controls. Apply saves; Reset undoes.")
                 onClicked: root.assign(Presentations.syncAppearance(root.draft, root.editingPopup ? "panel" : "popup"))
             }
             Studio.StudioButton {
@@ -582,10 +624,57 @@ Kirigami.Page {
         }
     }
 
+    // Plasma draws OK, Apply and Cancel below the page; this adds what it lacks.
+    QQC2.ToolBar {
+        id: footerBar
+        objectName: "settingsFooter"
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.bottom: parent.bottom
+        position: QQC2.ToolBar.Footer
+        contentItem: RowLayout {
+            spacing: Kirigami.Units.smallSpacing
+            QQC2.Button {
+                objectName: "resetToDefaults"
+                icon.name: "kt-restore-defaults"
+                text: I18n.i18n("Defaults")
+                QQC2.ToolTip.visible: hovered
+                QQC2.ToolTip.delay: 500
+                QQC2.ToolTip.text: I18n.i18n("Restore every setting to its default. Apply to keep it; Reset undoes it. Saved presets are kept.")
+                onClicked: root.restoreDefaults()
+            }
+            QQC2.Button {
+                objectName: "discardSettings"
+                icon.name: "edit-undo"
+                text: I18n.i18nc("undo the changes that are not applied yet", "Reset")
+                enabled: root.hasChanges
+                QQC2.ToolTip.visible: hovered
+                QQC2.ToolTip.delay: 500
+                QQC2.ToolTip.text: I18n.i18n("Discard unapplied changes")
+                onClicked: root.discard()
+            }
+            Item {
+                Layout.fillWidth: true
+            }
+            QQC2.Switch {
+                objectName: "liveApplySwitch"
+                text: I18n.i18n("Apply instantly")
+                checked: root.cfg_liveApply
+                QQC2.ToolTip.visible: hovered
+                QQC2.ToolTip.delay: 500
+                QQC2.ToolTip.text: I18n.i18n("Apply every change as you make it, without pressing Apply. Reset goes back to how it was when you opened this window.")
+                onToggled: root.cfg_liveApply = checked
+            }
+        }
+    }
+
     Studio.Studio {
         id: studio
         objectName: "settingsStudio"
-        anchors.fill: parent
+        anchors.left: parent.left
+        anchors.right: parent.right
+        anchors.top: parent.top
+        anchors.bottom: footerBar.top
         presentationTarget: root.editingTarget
         toolbarExtra: presentationTools
 
@@ -607,7 +696,8 @@ Kirigami.Page {
         }
         onPreviewPopupRequested: root.editingPopup = true
         onEdited: next => root.assign(Presentations.edit(root.draft, next, root.editingTarget))
-        onDiscard: root.discard()
         onUndo: root.undo()
+        onDraftSettled: if (root.cfg_liveApply)
+            root.applyInstantly()
     }
 }

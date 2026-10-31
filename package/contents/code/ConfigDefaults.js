@@ -177,6 +177,7 @@ var values = {
   "reducedMotion": false,
   "batterySaver": false,
   "simpleRender": false,
+  "liveApply": true,
   "autoDailyLook": false,
   "dailyLookApplied": "",
   "favoritePresets": "",

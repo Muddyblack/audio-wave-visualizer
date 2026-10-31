@@ -106,8 +106,11 @@ Rectangle {
     readonly property var favorites: library.favorites
     onReadyChanged: if (ready)
         library.migrate(draft.favoritePresets, draft.userPresets)
-    onDraftChanged: if (ready)
-        library.migrate(draft.favoritePresets, draft.userPresets)
+    onDraftChanged: {
+        settleTimer.restart();
+        if (ready)
+            library.migrate(draft.favoritePresets, draft.userPresets);
+    }
     function toggleFavorite(id) {
         library.refresh();
         const current = library.favorites;
@@ -142,8 +145,15 @@ Rectangle {
     property Component toolbarExtra: null
     signal previewPopupRequested
     signal edited(var draft)
-    signal discard
     signal undo
+    // A burst of edits has ended. Hosts apply here rather than in a draft change
+    // handler, where bindings on the draft can still hold their old values.
+    signal draftSettled
+    Timer {
+        id: settleTimer
+        interval: 200
+        onTriggered: studioRoot.draftSettled()
+    }
 
     readonly property string currentTab: Schema.TABS[currentTabIndex].id
     // Nothing renders until the host has supplied a draft.
@@ -372,7 +382,7 @@ Rectangle {
                 width: parent.width - 36
                 spacing: 8
                 Rectangle {
-                    width: Math.max(80, parent.width - surprise.width - (discardBtn.visible ? discardBtn.width + header.spacing : 0) - (extraSlot.hasExtra ? extraSlot.width + header.spacing : 0) - header.spacing)
+                    width: Math.max(80, parent.width - surprise.width - (extraSlot.hasExtra ? extraSlot.width + header.spacing : 0) - header.spacing)
                     height: 36
                     radius: 10
                     color: Theme.sunk
@@ -447,25 +457,6 @@ Rectangle {
                         anchors.centerIn: parent
                         sourceComponent: studioRoot.toolbarExtra
                     }
-                }
-                StudioButton {
-                    id: discardBtn
-                    enabled: studioRoot.canDiscard
-                    text: I18n.i18n("Discard")
-                    tooltip: I18n.i18n("Discard unapplied changes")
-                    areaName: "discardSettings"
-                    onClicked: studioRoot.discard()
-                }
-                StudioButton {
-                    id: resetAll
-                    // Hyprland's footer already has its own Reset.
-                    visible: studioRoot.env === "kde"
-                    text: I18n.i18n("Reset")
-                    tooltip: I18n.i18n("Restore every setting to its default. Apply to keep it; Discard undoes it. Saved presets are kept.")
-                    areaName: "resetToDefaults"
-                    onClicked: studioRoot.edited(Object.assign({}, studioRoot.defaults, {
-                        userPresets: studioRoot.draft.userPresets ?? ""
-                    }))
                 }
                 StudioButton {
                     id: surprise

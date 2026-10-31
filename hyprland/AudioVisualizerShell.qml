@@ -401,10 +401,6 @@ ShellRoot {
                     onApply: draft => {
                         root.saveSettings(Configuration.overrides(root.baseline, draft));
                     }
-                    onReset: {
-                        root.saveSettings({});
-                        draft = Object.assign({}, root.baseline);
-                    }
                     onClose: root.settingsOpen = false
                 }
             }

@@ -24,17 +24,15 @@ TestCase {
         target: page
         signalName: "close"
     }
-    SignalSpy {
-        id: reset
-        target: page
-        signalName: "reset"
-    }
     function initTestCase() {
         failOnWarning(/undefined|TypeError|ReferenceError|Binding loop/);
         const request = new XMLHttpRequest();
         request.open("GET", Qt.resolvedUrl("../package/contents/config/main.xml"), false);
         request.send();
-        page.draft = Object.assign(Configuration.defaults(request.responseText), {
+        const shipped = Configuration.defaults(request.responseText);
+        page.defaults = shipped;
+        page.draft = Object.assign({}, shipped, {
+            liveApply: false,
             widgetWidth: 360,
             widgetHeight: 104,
             verticalPosition: 0.6,
@@ -44,11 +42,11 @@ TestCase {
             waveColor: "#b4befe",
             textColor: "#cdd6f4"
         });
+        page.savedDraft = page.draft;
     }
     function test_discardKeepsSettingsOpen() {
         applied.clear();
         closed.clear();
-        reset.clear();
         page.savedDraft = Object.assign({}, page.draft, {
             sensitivity: 130,
             detailFields: ["player", "album"]
@@ -66,7 +64,6 @@ TestCase {
         compare(page.draft.detailFields, ["player", "album"]);
         verify(!button.enabled);
         compare(applied.count, 0);
-        compare(reset.count, 0);
         compare(closed.count, 0);
     }
 
@@ -82,10 +79,36 @@ TestCase {
         compare(applied.signalArguments[0][0].sensitivity, 175);
         compare(applied.signalArguments[0][0].detailFields, ["player", "album"]);
         compare(applied.signalArguments[0][0].layoutMode, "poster");
-        mouseClick(findChild(page, "resetSettings"));
-        compare(reset.count, 1);
+        page.setValue("language", "de");
+        mouseClick(findChild(page, "resetToDefaults"));
+        compare(page.draft.sensitivity, page.defaults.sensitivity);
+        compare(page.draft.language, "de", "Defaults keeps the language");
+        compare(applied.count, 1, "Defaults edits the draft until Apply");
+        page.setValue("language", "");
+        page.setValue("sensitivity", 111);
         mouseClick(findChild(page, "closeSettings"));
+        compare(closed.count, 0, "Unsaved changes ask first");
+        const prompt = findChild(page, "closePrompt");
+        verify(prompt.visible);
+        mouseClick(findChild(page, "promptCancel"));
+        verify(!prompt.visible);
+        compare(closed.count, 0);
+        mouseClick(findChild(page, "closeSettings"));
+        verify(prompt.visible);
+        applied.clear();
+        mouseClick(findChild(page, "promptApply"));
+        compare(applied.count, 1);
+        compare(applied.signalArguments[0][0].sensitivity, 111);
         compare(closed.count, 1);
+        page.savedDraft = page.draft;
+        mouseClick(findChild(page, "closeSettings"));
+        verify(!prompt.visible, "Nothing unsaved closes straight away");
+        compare(closed.count, 2);
+        page.setValue("sensitivity", 112);
+        mouseClick(findChild(page, "closeSettings"));
+        mouseClick(findChild(page, "promptDiscard"));
+        compare(closed.count, 3);
+        page.draft = Object.assign({}, page.savedDraft);
     }
     function test_previewAccentIsIncludedWhenApplied() {
         applied.clear();

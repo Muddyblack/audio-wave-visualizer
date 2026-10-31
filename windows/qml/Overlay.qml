@@ -218,7 +218,14 @@ Item {
         color: "#1e1e2e"
         onVisibleChanged: if (!visible)
             root.settingsOpen = false
+        onClosing: close => {
+            if (settingsLoader.item) {
+                close.accepted = false;
+                settingsLoader.item.requestClose();
+            }
+        }
         Loader {
+            id: settingsLoader
             anchors.fill: parent
             active: root.settingsOpen
             sourceComponent: Component {
@@ -235,10 +242,6 @@ Item {
                     liveIsPlaying: root.player?.isPlaying ?? false
                     errorMessage: root.host ? root.host.settingsError : ""
                     onApply: draft => root.saveSettings(Configuration.overrides(root.settingsBaseline, draft))
-                    onReset: {
-                        root.saveSettings({});
-                        draft = Object.assign({}, root.settingsBaseline);
-                    }
                     onClose: root.settingsOpen = false
                 }
             }

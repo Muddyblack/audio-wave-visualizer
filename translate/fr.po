@@ -25,19 +25,43 @@ msgstr "Impossible d’enregistrer les paramètres dans %1"
 msgid "Audio Visualizer Settings"
 msgstr "Paramètres du visualiseur audio"
 
-msgid "Apply saves local overrides. Reset returns to your configured defaults."
-msgstr ""
-"Appliquer enregistre les modifications locales. Réinitialiser rétablit vos "
-"valeurs par défaut configurées."
+msgid "Defaults"
+msgstr "Valeurs par défaut"
 
+msgid ""
+"Restore every setting to its default. Apply to keep it; Reset undoes it. "
+"Saved presets are kept."
+msgstr ""
+"Rétablir tous les paramètres par défaut. « Appliquer » les conserve ; "
+"« Réinitialiser » annule. Les préréglages enregistrés sont conservés."
+
+msgctxt "undo the changes that are not applied yet"
 msgid "Reset"
 msgstr "Réinitialiser"
+
+msgid "Discard unapplied changes"
+msgstr "Abandonner les modifications non appliquées"
+
+msgid "Apply instantly"
+msgstr "Appliquer instantanément"
 
 msgid "Close"
 msgstr "Fermer"
 
 msgid "Apply"
 msgstr "Appliquer"
+
+msgid ""
+"The current page has unsaved changes. Apply the changes or discard them?"
+msgstr ""
+"La page actuelle contient des modifications non enregistrées. Appliquer les "
+"modifications ou les abandonner ?"
+
+msgid "Discard"
+msgstr "Abandonner"
+
+msgid "Cancel"
+msgstr "Annuler"
 
 msgid "General"
 msgstr "Général"
@@ -380,12 +404,12 @@ msgstr "Utiliser l’apparence de la fenêtre contextuelle"
 msgid ""
 "Copy the other design into this one: colours, artwork, visualizer and "
 "progress styles. The pill enables the copied effects. Each view keeps its "
-"layout and playback controls. Apply saves; Discard undoes."
+"layout and playback controls. Apply saves; Reset undoes."
 msgstr ""
 "Copier l’autre apparence dans celle-ci : couleurs, pochette, styles de "
 "visualisation et de progression. La capsule active les effets copiés. Chaque "
 "vue conserve sa disposition et ses commandes de lecture. Appliquer "
-"enregistre ; Abandonner annule."
+"enregistre ; Réinitialiser annule."
 
 msgid "Copy to all widgets"
 msgstr "Copier vers tous les composants"
@@ -400,6 +424,13 @@ msgstr ""
 "les autres instances de ce composant, par exemple une par écran. Chacune "
 "conserve son écran et sa position. Appliquez d’abord ici ; les autres "
 "changent immédiatement et cette action est irréversible."
+
+msgid ""
+"Apply every change as you make it, without pressing Apply. Reset goes back "
+"to how it was when you opened this window."
+msgstr ""
+"Applique chaque modification immédiatement, sans cliquer sur « Appliquer ». "
+"« Réinitialiser » revient à l’état à l’ouverture de cette fenêtre."
 
 msgid "Nothing playing"
 msgstr "Aucune lecture en cours"
@@ -2768,19 +2799,6 @@ msgstr "Action au clic"
 
 msgid "Search settings…"
 msgstr "Rechercher dans les paramètres…"
-
-msgid "Discard"
-msgstr "Abandonner"
-
-msgid "Discard unapplied changes"
-msgstr "Abandonner les modifications non appliquées"
-
-msgid ""
-"Restore every setting to its default. Apply to keep it; Discard undoes it. "
-"Saved presets are kept."
-msgstr ""
-"Rétablir tous les paramètres par défaut. Appliquer les conserve ; Abandonner "
-"annule. Les préréglages enregistrés sont conservés."
 
 msgid "Surprise me"
 msgstr "Surprenez-moi"

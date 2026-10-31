@@ -23,19 +23,43 @@ msgstr "Ayarlar %1 konumuna kaydedilemedi"
 msgid "Audio Visualizer Settings"
 msgstr "Ses Görselleştirici Ayarları"
 
-msgid "Apply saves local overrides. Reset returns to your configured defaults."
-msgstr ""
-"Uygula, yerel geçersiz kılmaları kaydeder. Sıfırla, yapılandırılmış "
-"varsayılanlara döner."
+msgid "Defaults"
+msgstr "Varsayılanlar"
 
+msgid ""
+"Restore every setting to its default. Apply to keep it; Reset undoes it. "
+"Saved presets are kept."
+msgstr ""
+"Her ayarı varsayılanına döndürür. Korumak için Uygula'ya basın; Sıfırla bunu "
+"geri alır. Kayıtlı ön ayarlar korunur."
+
+msgctxt "undo the changes that are not applied yet"
 msgid "Reset"
 msgstr "Sıfırla"
+
+msgid "Discard unapplied changes"
+msgstr "Uygulanmamış değişiklikleri at"
+
+msgid "Apply instantly"
+msgstr "Anında uygula"
 
 msgid "Close"
 msgstr "Kapat"
 
 msgid "Apply"
 msgstr "Uygula"
+
+msgid ""
+"The current page has unsaved changes. Apply the changes or discard them?"
+msgstr ""
+"Geçerli sayfada kaydedilmemiş değişiklikler var. Değişiklikleri uygulamak mı "
+"yoksa atmak mı istiyorsunuz?"
+
+msgid "Discard"
+msgstr "Değişiklikleri At"
+
+msgid "Cancel"
+msgstr "İptal"
 
 msgid "General"
 msgstr "Genel"
@@ -374,12 +398,12 @@ msgstr "Açılır pencere görünümünü kullan"
 msgid ""
 "Copy the other design into this one: colours, artwork, visualizer and "
 "progress styles. The pill enables the copied effects. Each view keeps its "
-"layout and playback controls. Apply saves; Discard undoes."
+"layout and playback controls. Apply saves; Reset undoes."
 msgstr ""
 "Diğer tasarımın renklerini, kapak görselini, görselleştiricisini ve ilerleme "
 "stillerini buna kopyalar. Kapsül, kopyalanan efektleri etkinleştirir. Her "
 "görünüm kendi düzenini ve oynatma denetimlerini korur. Uygula kaydeder; "
-"Değişiklikleri At geri alır."
+"Sıfırla geri alır."
 
 msgid "Copy to all widgets"
 msgstr "Tüm widget'lara kopyala"
@@ -394,6 +418,13 @@ msgstr ""
 "kopyalarına (örneğin her monitördeki kopyaya) uygular. Her kopya kendi "
 "monitörünü ve konumunu korur. Önce burada Uygula'ya basın; diğer kopyalar "
 "hemen değişir ve bu işlem geri alınamaz."
+
+msgid ""
+"Apply every change as you make it, without pressing Apply. Reset goes back "
+"to how it was when you opened this window."
+msgstr ""
+"Her değişikliği Uygula'ya basmadan hemen uygular. Sıfırla, bu pencereyi "
+"açtığınız andaki duruma döner."
 
 msgid "Nothing playing"
 msgstr "Çalan bir şey yok"
@@ -2718,20 +2749,6 @@ msgstr "Tıklama eylemi"
 
 msgid "Search settings…"
 msgstr "Ayarlarda ara…"
-
-msgid "Discard"
-msgstr "Değişiklikleri At"
-
-msgid "Discard unapplied changes"
-msgstr "Uygulanmamış değişiklikleri at"
-
-msgid ""
-"Restore every setting to its default. Apply to keep it; Discard undoes it. "
-"Saved presets are kept."
-msgstr ""
-"Tüm ayarları varsayılan değerlerine döndürür. Değişiklikleri korumak için "
-"Uygula’yı seçin; Değişiklikleri At işlemi geri alır. Kaydedilmiş önayarlar "
-"korunur."
 
 msgid "Surprise me"
 msgstr "Beni şaşırt"

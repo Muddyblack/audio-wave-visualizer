@@ -17,6 +17,8 @@ TestCase {
             property string inputMethod: "auto"
             property string inputSource: "auto"
             property int visualizerType: 0
+            property string language: ""
+            property bool liveApply: true
         }
     }
     property var defaults
@@ -117,6 +119,70 @@ TestCase {
 
     function cleanup() {
         plasmoid.formFactor = 0;
+        plasmoid.configuration.sensitivity = 100;
+        plasmoid.configuration.language = "";
+        plasmoid.configuration.liveApply = true;
+    }
+
+    function createPage() {
+        const properties = {
+            title: "General"
+        };
+        for (const key of Object.keys(defaults)) {
+            properties["cfg_" + key] = defaults[key];
+            properties["cfg_" + key + "Default"] = defaults[key];
+        }
+        return createTemporaryObject(pageComponent, this, properties);
+    }
+
+    function test_applyInstantlyWritesEveryChange() {
+        const page = createPage();
+        let rechecks = 0;
+        page.unsavedChangesChanged.connect(() => ++rechecks);
+        for (let round = 1; round <= 3; ++round) {
+            page.assign({
+                sensitivity: 100 + round
+            });
+            tryCompare(plasmoid.configuration, "sensitivity", 100 + round, 1000);
+            verify(rechecks >= round, "Plasma must recheck its Apply button after each save");
+        }
+        page.discard();
+        tryCompare(plasmoid.configuration, "sensitivity", defaults.sensitivity, 1000);
+    }
+
+    function test_applyInstantlyOffWaitsForApply() {
+        const page = createPage();
+        findChild(page, "liveApplySwitch").toggle();
+        findChild(page, "liveApplySwitch").toggled();
+        compare(plasmoid.configuration.liveApply, false);
+        verify(!page.hasChanges, "The switch is not an unsaved change");
+        page.assign({
+            sensitivity: 130
+        });
+        wait(300);
+        compare(plasmoid.configuration.sensitivity, 100);
+        verify(page.hasChanges);
+    }
+
+    function test_defaultsAndResetKeepPreferences() {
+        const page = createPage();
+        page.cfg_language = "de";
+        page.cfg_liveApply = false;
+        verify(!page.hasChanges);
+        page.assign({
+            glassBlur: 0.17
+        });
+        findChild(page, "resetToDefaults").clicked();
+        compare(page.cfg_glassBlur, defaults.glassBlur);
+        compare(page.cfg_language, "de");
+        compare(page.cfg_liveApply, false);
+        page.assign({
+            glassBlur: 0.17
+        });
+        page.discard();
+        compare(page.cfg_language, "de");
+        compare(page.cfg_liveApply, false);
+        verify(!page.hasChanges);
     }
 
     function test_plasmaRoundTrip() {
@@ -180,7 +246,7 @@ TestCase {
         const discardButton = findChild(page, "discardSettings");
         verify(discardButton !== null);
         verify(discardButton.enabled);
-        discardButton.clicked(null);
+        discardButton.clicked();
         compare(page.cfg_glassBlur, 0.42);
         compare(page.cfg_detailFields, ["player", "album"]);
         verify(!page.hasChanges);
