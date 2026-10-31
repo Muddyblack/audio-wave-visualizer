@@ -1394,11 +1394,22 @@ TestCase {
         });
         compare(subject.implicitWidth, 30);
         compare(subject.implicitHeight, 30);
-        verify(findChild(subject, "pillIconArt") !== null);
+        verify(findChild(subject, "pillIconArt").visible);
         subject.configuration = Object.assign({}, defaults, {
             pillEq: "wave"
         });
         verify(findChild(subject, "pillOrbit").visible, "The mini orbit ring surrounds the cover");
+        subject.configuration = Object.assign({}, defaults, {
+            pillEq: "visualizer",
+            showArtThumb: false
+        });
+        verify(!findChild(subject, "pillIconArt").visible, "Show artwork off leaves only the visualizer");
+        verify(findChild(subject, "pillIconWave").visible);
+        subject.configuration = Object.assign({}, defaults, {
+            pillEq: "live",
+            showArtThumb: false
+        });
+        verify(findChild(subject, "pillIconArt").visible, "The icon never goes blank without a visualizer");
     }
     function test_defaultCardLoadsNoMaterialLayers() {
         subject.configuration = Object.assign({}, defaults, {

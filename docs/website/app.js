@@ -177,8 +177,10 @@ function widgetHTML(s, status, opt = {}) {
     const ring = s.pillProgress === 'ring' && d.hasPlayer;
     const eq = s.pillEq === 'off' || !d.hasPlayer ? '' : s.pillEq === 'wave' ? `<span style="position:relative;width:${mode === 'pillicon' ? 0 : 64}px;height:20px;flex-shrink:0"><canvas data-c="wave" style="position:absolute;inset:0;width:100%;height:100%"></canvas></span>` : `<span class="eq ${s.pillEq === 'live' && d.playing ? 'live' : ''} ${d.playing ? '' : 'paused'}"><i></i><i></i><i></i><i></i></span>`;
     let body;
-    if (mode === 'pillicon' && s.pillEq === 'wave') {
-      body = `<div class="picon"><canvas data-c="orbit" data-r=".45"></canvas>${artHTML(s, d, 18, { coverOK, title, ring, small: true })}</div>`;
+    if (mode === 'pillicon' && d.hasPlayer && (s.pillEq === 'wave' || s.pillEq === 'visualizer')) {
+      const orbit = s.pillEq === 'wave';
+      const canvas = orbit ? '<canvas data-c="orbit" data-r=".45"></canvas>' : '<canvas data-c="wave" style="inset:0;width:100%;height:100%"></canvas>';
+      body = `<div class="picon">${canvas}${s.showArtThumb ? artHTML(s, d, orbit ? 18 : 22, { coverOK, title, ring, small: true }) : ''}</div>`;
     } else if (mode === 'pillicon') {
       body = `<div style="position:relative;display:flex">${artHTML(s, d, 22, { coverOK, title, ring, small: true })}${eq}</div>`;
     } else {

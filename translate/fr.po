@@ -976,6 +976,16 @@ msgstr "Lecteur"
 msgid "Artist summary"
 msgstr "Présentation de l’artiste"
 
+msgid "Motion"
+msgstr "Mouvement"
+
+msgid ""
+"Mini visualizer follows the music using your selected visualizer style. "
+"Choose Static for still bars."
+msgstr ""
+"Le mini-visualiseur suit la musique avec le style sélectionné. Choisissez "
+"Statique pour des barres immobiles."
+
 msgid "Looks"
 msgstr "Apparences"
 
@@ -1336,16 +1346,6 @@ msgstr "Aucun (visualiseur uniquement)"
 
 msgid "Cover thumbnail"
 msgstr "Miniature de la pochette"
-
-msgid "Motion"
-msgstr "Mouvement"
-
-msgid ""
-"Mini visualizer follows the music using your selected visualizer style. "
-"Choose Static for still bars."
-msgstr ""
-"Le mini-visualiseur suit la musique avec le style sélectionné. Choisissez "
-"Statique pour des barres immobiles."
 
 msgid "Static"
 msgstr "Statique"

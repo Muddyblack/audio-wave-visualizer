@@ -966,6 +966,16 @@ msgstr "Oynatıcı"
 msgid "Artist summary"
 msgstr "Sanatçı Özeti"
 
+msgid "Motion"
+msgstr "Hareket"
+
+msgid ""
+"Mini visualizer follows the music using your selected visualizer style. "
+"Choose Static for still bars."
+msgstr ""
+"Mini görselleştirici, seçtiğiniz stili kullanarak müziği izler. Sabit "
+"çubuklar için Sabit’i seçin."
+
 msgid "Looks"
 msgstr "Görünümler"
 
@@ -1323,16 +1333,6 @@ msgstr "Yok (yalnızca görselleştirici)"
 
 msgid "Cover thumbnail"
 msgstr "Kapak Küçük Resmi"
-
-msgid "Motion"
-msgstr "Hareket"
-
-msgid ""
-"Mini visualizer follows the music using your selected visualizer style. "
-"Choose Static for still bars."
-msgstr ""
-"Mini görselleştirici, seçtiğiniz stili kullanarak müziği izler. Sabit "
-"çubuklar için Sabit’i seçin."
 
 msgid "Static"
 msgstr "Sabit"

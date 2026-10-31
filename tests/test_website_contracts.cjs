@@ -54,6 +54,13 @@ vm.runInContext(`
     const state = {...DEFAULTS, ...PresetCodec.browser(Schema.rowPatch(layoutRow, mode, nativeState(DEFAULTS)))};
     assert.equal(Schema.rowValue(layoutRow, nativeState(state)), mode);
   }
+  const panelIcon = {...DEFAULTS, layoutMode:'pillicon', pillEq:'visualizer'};
+  assert(widgetHTML(panelIcon, 'normal').includes('class="art'));
+  const artless = widgetHTML({...panelIcon, showArtThumb:false}, 'normal');
+  assert(artless.includes('data-c="wave"') && !artless.includes('class="art'), 'Show artwork off leaves only the visualizer');
+  assert(widgetHTML({...panelIcon, pillEq:'live', showArtThumb:false}, 'normal').includes('class="art'), 'The icon never goes blank without a visualizer');
+  const motion = layout => Schema.SECTIONS.flatMap(s => s.rows).find(r => r.k === 'pillEq' && r.when({layoutMode:layout})).opts.map(o => o[0]);
+  assert(motion('pillicon').includes('visualizer') && !motion('pill').includes('visualizer'));
   const d = derive(DEFAULTS, 'normal');
   for (const mode of ['solid', 'gradient', 'cover', 'palette', 'rainbow']) {
     const stops = colorStops({...DEFAULTS, vizColorMode:mode}, d, 2);

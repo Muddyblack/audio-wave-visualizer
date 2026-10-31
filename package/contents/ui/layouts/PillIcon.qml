@@ -64,6 +64,8 @@ Item {
     ArtView {
         id: art
         objectName: "pillIconArt"
+        // Without a visualizer in its place, hiding the cover would blank the icon.
+        visible: (root.cfg.showArtThumb ?? true) || !(root.orbit || root.eqMode === "visualizer")
         anchors.centerIn: parent
         width: root.orbit ? 18 : 22
         height: width
