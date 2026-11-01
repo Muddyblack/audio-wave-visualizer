@@ -42,6 +42,8 @@ Item {
                 id: texts
                 view: root.view
                 Layout.fillWidth: true
+                // Keep clear of the floating details button in the card corner.
+                Layout.rightMargin: root.view.flipEnabled && (root.cfg.flipInfoButton ?? true) ? 22 : 0
             }
             LayoutWave {
                 view: root.view
