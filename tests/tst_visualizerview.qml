@@ -1154,7 +1154,9 @@ TestCase {
         subject.configuration = Object.assign({}, defaults, {
             scrollVolume: true
         });
-        mouseWheel(subject, 100, 50, 0, 120);
+        // Stay in the card margin: font scaling can move the seek bar over
+        // the old fixed point in the middle of the layout.
+        mouseWheel(subject, subject.width - 5, 5, 0, 120);
         compare(volumeCommands.length, 1);
         verify(volumeCommands[0].includes("system_volume.sh"));
         verify(volumeCommands[0].includes(" 0.0400 "));
@@ -1188,9 +1190,9 @@ TestCase {
         verify(subject.scrollSystemVolume(0, 10));
         compare(volumeCommands.length, 1);
         verify(volumeCommands[0].includes(" 0.0100 "));
-        mouseWheel(subject, 100, 50, 120, 0);
+        mouseWheel(subject, subject.width - 5, 5, 120, 0);
         compare(volumeCommands.length, 1, "Horizontal scroll must not change volume");
-        mouseWheel(subject, 100, 50, 0, -120);
+        mouseWheel(subject, subject.width - 5, 5, 0, -120);
         compare(volumeCommands.length, 1, "Steps wait for the active command");
         const worker = findChild(subject, "volumeWorker");
         worker.item.newData(volumeCommands[0], {
@@ -1394,11 +1396,22 @@ TestCase {
         });
         compare(subject.implicitWidth, 30);
         compare(subject.implicitHeight, 30);
-        verify(findChild(subject, "pillIconArt") !== null);
+        verify(findChild(subject, "pillIconArt").visible);
         subject.configuration = Object.assign({}, defaults, {
             pillEq: "wave"
         });
         verify(findChild(subject, "pillOrbit").visible, "The mini orbit ring surrounds the cover");
+        subject.configuration = Object.assign({}, defaults, {
+            pillEq: "visualizer",
+            showArtThumb: false
+        });
+        verify(!findChild(subject, "pillIconArt").visible, "Show artwork off leaves only the visualizer");
+        verify(findChild(subject, "pillIconWave").visible);
+        subject.configuration = Object.assign({}, defaults, {
+            pillEq: "live",
+            showArtThumb: false
+        });
+        verify(findChild(subject, "pillIconArt").visible, "The icon never goes blank without a visualizer");
     }
     function test_defaultCardLoadsNoMaterialLayers() {
         subject.configuration = Object.assign({}, defaults, {

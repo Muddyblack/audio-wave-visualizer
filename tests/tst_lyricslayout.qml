@@ -1,6 +1,7 @@
 import QtQuick
 import QtTest
 import "../package/contents/ui/layouts" as Layouts
+import "../package/contents/ui/text"
 
 TestCase {
     id: testCase
@@ -120,8 +121,8 @@ TestCase {
         waitForRendering(subject);
         const first = findChild(subject, "lyricsVerse_0");
         verify(first !== null);
-        // Sizes follow the system font relative to Plasma's 10pt default.
-        compare(first.font.pixelSize, Math.round(30 * Qt.application.font.pointSize / 10));
+        // Lyrics use the shared system-font scaling, including its bounds.
+        compare(first.font.pixelSize, SystemText.px(30));
         compare(first.font.weight, 700);
         compare(first.font.italic, true);
         compare(first.horizontalAlignment, Text.AlignRight);

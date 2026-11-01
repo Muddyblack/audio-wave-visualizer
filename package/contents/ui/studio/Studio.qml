@@ -236,10 +236,6 @@ Rectangle {
                 label: I18n.noop("Click action"),
                 opts: [["popup", I18n.noop("Nothing")], ["toggle", I18n.noop("Play / pause")]]
             });
-        if (row.k === "pillEq" && draft.layoutMode === "pillicon")
-            return Object.assign({}, row, {
-                opts: [["off", I18n.noop("Off")], ["static", I18n.noop("Static")], ["live", I18n.noop("Bouncing")], ["wave", I18n.noop("Orbit")], ["visualizer", I18n.noop("Mini visualizer")]]
-            });
         if (row.k !== "layoutMode" || presentationTarget === "desktop")
             return row;
         return Object.assign({}, row, {

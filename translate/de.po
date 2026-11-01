@@ -974,6 +974,16 @@ msgstr "Player"
 msgid "Artist summary"
 msgstr "Interpretenübersicht"
 
+msgid "Motion"
+msgstr "Bewegung"
+
+msgid ""
+"Mini visualizer follows the music using your selected visualizer style. "
+"Choose Static for still bars."
+msgstr ""
+"Die Minivisualisierung folgt der Musik im ausgewählten Visualisierungsstil. "
+"„Statisch“ zeigt unbewegte Balken."
+
 msgid "Looks"
 msgstr "Designs"
 
@@ -1331,16 +1341,6 @@ msgstr "Keine (nur Visualisierung)"
 
 msgid "Cover thumbnail"
 msgstr "Coverminiatur"
-
-msgid "Motion"
-msgstr "Bewegung"
-
-msgid ""
-"Mini visualizer follows the music using your selected visualizer style. "
-"Choose Static for still bars."
-msgstr ""
-"Die Minivisualisierung folgt der Musik im ausgewählten Visualisierungsstil. "
-"„Statisch“ zeigt unbewegte Balken."
 
 msgid "Static"
 msgstr "Statisch"

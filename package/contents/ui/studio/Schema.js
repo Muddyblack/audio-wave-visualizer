@@ -117,6 +117,9 @@ function isPill(s) {
 function notPill(s) {
     return !isPill(s);
 }
+function pillEqRow(layout, opts) {
+    return { k: "pillEq", type: "seg", label: noop("Motion"), desc: noop("Mini visualizer follows the music using your selected visualizer style. Choose Static for still bars."), opts: opts, when: function (s) { return s.layoutMode === layout; } };
+}
 function pct(v) {
     return Math.round(v * 100) + "%";
 }
@@ -224,7 +227,8 @@ var SECTIONS = [
         { id: "pillNote", type: "note", full: true, note: "pill" },
         { k: "pillContent", type: "seg", label: noop("Text"), opts: [["title", noop("Title")], ["title-artist", noop("Title · Artist")], ["artist-title", noop("Artist — Title")], ["none", noop("None (visualizer only)")]], when: function (s) { return s.layoutMode === "pill"; } },
         { k: "pillArt", type: "switch", label: noop("Cover thumbnail"), when: function (s) { return s.layoutMode === "pill"; } },
-        { k: "pillEq", type: "seg", label: noop("Motion"), desc: noop("Mini visualizer follows the music using your selected visualizer style. Choose Static for still bars."), opts: [["off", noop("Off")], ["static", noop("Static")], ["live", noop("Bouncing")], ["wave", noop("Mini visualizer")]] },
+        pillEqRow("pill", [["off", noop("Off")], ["static", noop("Static")], ["live", noop("Bouncing")], ["wave", noop("Mini visualizer")]]),
+        pillEqRow("pillicon", [["off", noop("Off")], ["static", noop("Static")], ["live", noop("Bouncing")], ["wave", noop("Orbit")], ["visualizer", noop("Mini visualizer")]]),
         { k: "pillProgress", type: "seg", label: noop("Progress"), opts: [["off", noop("Off")], ["underline", noop("Underline")], ["ring", noop("Cover ring")], ["bar", noop("Styled bar")]] },
         { k: "pillMaxWidth", type: "range", label: noop("Maximum width"), min: 140, max: 420, step: 10, fmt: "px", when: function (s) { return s.layoutMode === "pill"; } },
         { k: "pillPopupTrigger", type: "seg", label: noop("Open popup"), desc: noop("Hover closes when you leave the pill and card. Click toggles it. Both lets a click pin the hovered card; click again to close."), opts: [["hover", noop("Hover")], ["click", noop("Click")], ["both", noop("Both")]], when: function (s, env) { return env === "kde"; }, set: function (v) { return { pillPopupTrigger: v, pillClick: "popup" }; } },
