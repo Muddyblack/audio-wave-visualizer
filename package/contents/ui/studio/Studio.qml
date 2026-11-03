@@ -208,7 +208,7 @@ Rectangle {
         if (presentationTarget === "panel") {
             if (section.tab === "lyrics" || (section.tab === "buttons" && section.title === "Playback buttons"))
                 return false;
-            if (section.tab === "buttons" && ["dockSrc", "customDockBgColor"].includes(row.id || row.k))
+            if (section.tab === "buttons" && row.id === "dockBg")
                 return false;
         }
         return Schema.rowVisible(row, section, draft, env, query.trim().toLowerCase(), studioRoot.translateText);

@@ -18,6 +18,8 @@ Item {
         visible: root.labels
         text: root.timeOnly ? bar.elapsedText + " / " + bar.totalLabel : bar.elapsedText
         color: root.view.textColor
+        style: root.view.textStyle ?? Text.Normal
+        styleColor: root.view.textStyleColor ?? "#101318"
         font.pixelSize: SystemText.px(8, 10)
         opacity: 0.8
     }
@@ -28,6 +30,8 @@ Item {
         visible: root.labels && !root.timeOnly
         text: bar.totalLabel
         color: root.view.textColor
+        style: root.view.textStyle ?? Text.Normal
+        styleColor: root.view.textStyleColor ?? "#101318"
         font.pixelSize: SystemText.px(8, 10)
         opacity: 0.65
     }

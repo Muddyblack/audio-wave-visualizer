@@ -169,8 +169,8 @@ function widgetHTML(s, status, opt = {}) {
   const vol = s.scrollVolume ? `<div class="vol" data-vol><i style="--v:${P.volume}"></i></div>` : '';
   const cls = ['w', `L-${mode}`, bg && s.cardShadow !== 'none' ? `sh-${s.cardShadow}` : '', s.hoverLift ? 'lift' : '',
     s.dimWhenPaused && d.hasPlayer && !d.playing ? 'dim' : '', pill && !bg ? 'nobg' : '', s.bassPulse || (mode === 'orbit' && (s.orbitCoverPulse || s.orbitGlowRing)) ? 'bass' : '',
-    s.surfaceStyle === 'liquid' && s.glassSpecular ? 'specular' : ''];
-  const vars = `${base}${colorVars(d)}--ts:${s.titleSize}px;--cover:${coverOK ? d.t.cover : 'none'};--p1:${d.t.pal.p1};--p2:${d.t.pal.p2};--p3:${d.t.pal.p3}`;
+    s.surfaceStyle === 'liquid' && s.glassSpecular ? 'specular' : '', s.textStyle !== 'none' ? `edge-${s.textStyle}` : ''];
+  const vars = `${base}${colorVars(d)}--edge:${s.textStyleColor};--solid:${s.solidColor};--ts:${s.titleSize}px;--cover:${coverOK ? d.t.cover : 'none'};--p1:${d.t.pal.p1};--p2:${d.t.pal.p2};--p3:${d.t.pal.p3}`;
 
   /* ── panel pill ── */
   if (pill) {
@@ -1070,11 +1070,11 @@ function buildRow(r) {
     sync = s => { sel.value = get(s); };
   } else if (r.type === 'color') {
     const sws = r.swatches || SWATCHES;
-    el.innerHTML = head + `<div class="rc swatches">${sws.map(c => `<button class="sw" data-c="${c}" style="background:${c}" aria-label="${c}"></button>`).join('')}<label class="swc" title="Pick any colour"><input type="color" aria-label="${r.label}"></label></div>`;
+    el.innerHTML = head + `<div class="rc swatches">${r.auto ? `<button class="sw sw-auto" data-c="" title="${r.auto}" aria-label="${r.auto}"></button>` : ''}${sws.map(c => `<button class="sw" data-c="${c}" style="background:${c}" aria-label="${c}"></button>`).join('')}<label class="swc" title="Pick any colour"><input type="color" aria-label="${r.label}"></label></div>`;
     const btns = $$('.sw', el), inp = $('input', el);
     btns.forEach(b => b.onclick = () => update(set(b.dataset.c)));
     inp.oninput = () => update(set(inp.value));
-    sync = s => { const v = String(get(s) || '').toLowerCase(); btns.forEach(b => b.setAttribute('aria-pressed', b.dataset.c === v)); if (document.activeElement !== inp) inp.value = v; };
+    sync = s => { const v = String(get(s) || '').toLowerCase(); btns.forEach(b => b.setAttribute('aria-pressed', b.dataset.c === v)); if (document.activeElement !== inp) inp.value = v || '#ffffff'; };
   } else if (r.type === 'tiles') {
     const opts = r.opts.map((o, i) => {
       const v = typeof o === 'object' ? o.v : o[0];
@@ -1090,6 +1090,7 @@ function buildRow(r) {
       else if (pvKind === 'viz') pvHtml = `<canvas data-c="wave" data-i="${v}"></canvas>`;
       else if (pvKind === 'progress') pvHtml = v === 10 ? '<div class="artwrap" style="--a:32px"><div class="art" style="--a:32px"></div><i class="rg"></i></div>' : `<div class="pbwrap">${pbHTML(v, { showTimes: true, timeFormat: 'total' }, v === 0 || v === 2, 238, .58)}</div>`;
       else if (pvKind === 'orbit') pvHtml = `<canvas data-c="orbit" data-i="${v}"></canvas>`;
+      else if (pvKind === 'textEdge') pvHtml = `<span class="edgepv edge-${v}" data-key="${o.colorKey}">Aa</span>`;
       else pvHtml = o.pv || '';
       return { v, label, pvHtml, isNew: o.isNew };
     });
@@ -1111,6 +1112,7 @@ function buildRow(r) {
     });
     sync = s => {
       btns.forEach(b => b.setAttribute('aria-pressed', opts[b.dataset.i].v === get(s)));
+      $$('.edgepv', el).forEach(ep => { ep.style.setProperty('--edge', s[ep.dataset.key]); ep.style.color = s.useSystemText ? '#ffffff' : s.customTextColor; });
       $$('.dockpv', el).forEach(dp => { const html = dockHTML({ ...s, dockStyle: dp.dataset.v }, true); if (dp.innerHTML !== html) dp.innerHTML = html; });
     };
   } else if (r.type === 'presets') {

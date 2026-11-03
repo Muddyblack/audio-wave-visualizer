@@ -976,6 +976,15 @@ msgstr ""
 "Mini görselleştirici, seçtiğiniz stili kullanarak müziği izler. Sabit "
 "çubuklar için Sabit’i seçin."
 
+msgid "None"
+msgstr "Yok"
+
+msgid "Outline"
+msgstr "Anahat"
+
+msgid "Shadow"
+msgstr "Gölge"
+
 msgid "Looks"
 msgstr "Görünümler"
 
@@ -1132,9 +1141,6 @@ msgstr ""
 msgid "Click anywhere on it in the widget to seek."
 msgstr ""
 "Parçada ilgili konuma gitmek için bileşenin herhangi bir yerine tıklayın."
-
-msgid "None"
-msgstr "Yok"
 
 msgid "Seek preview"
 msgstr "Konum Önizlemesi"
@@ -1293,9 +1299,6 @@ msgstr ""
 
 msgid "Automatic"
 msgstr "Otomatik"
-
-msgid "Custom background"
-msgstr "Özel Arka Plan"
 
 msgid "Arrangement"
 msgstr "Yerleşim"
@@ -1783,12 +1786,6 @@ msgstr "Metin Kenarlığı"
 msgid "Extra contrast on busy wallpapers."
 msgstr "Hareketli duvar kâğıtlarında ek karşıtlık sağlar."
 
-msgid "Outline"
-msgstr "Anahat"
-
-msgid "Shadow"
-msgstr "Gölge"
-
 msgid "Edge colour"
 msgstr "Kenar Rengi"
 
@@ -1955,6 +1952,30 @@ msgstr "Atmosfer"
 msgid "Tint colour"
 msgstr "Ton Rengi"
 
+msgid "Glass tint"
+msgstr "Cam Tonu"
+
+msgid "Clear"
+msgstr "Berrak"
+
+msgid "Frost"
+msgstr "Buzlu Cam"
+
+msgid "Smoke"
+msgstr "Duman"
+
+msgid "Cover colour"
+msgstr "Kapak Rengi"
+
+msgid "Custom glass colour"
+msgstr "Özel Cam Rengi"
+
+msgid "Solid colour"
+msgstr "Düz Renk"
+
+msgid "Light colours take dark text, dark ones keep light text."
+msgstr "Açık renklerde koyu metin, koyu renklerde açık metin kullanılır."
+
 msgid "Compositor glass"
 msgstr "Birleştirici Cam Efekti"
 
@@ -2001,27 +2022,6 @@ msgstr "Yalnızca kart saydamlaşır; metin ve dalga opak kalır."
 
 msgid "Corner radius"
 msgstr "Köşe Yarıçapı"
-
-msgid "Glass colour"
-msgstr "Cam Rengi"
-
-msgid "Glass tint"
-msgstr "Cam Tonu"
-
-msgid "Clear"
-msgstr "Berrak"
-
-msgid "Frost"
-msgstr "Buzlu Cam"
-
-msgid "Smoke"
-msgstr "Duman"
-
-msgid "Cover colour"
-msgstr "Kapak Rengi"
-
-msgid "Custom glass colour"
-msgstr "Özel Cam Rengi"
 
 msgid "Liquid glass"
 msgstr "Sıvı Cam"
@@ -2184,9 +2184,6 @@ msgstr "Özel İlerleme Rengi"
 
 msgid "Text colour"
 msgstr "Metin Rengi"
-
-msgid "Custom text colour"
-msgstr "Özel Metin Rengi"
 
 msgid "Adapt to light cards"
 msgstr "Açık Renkli Kartlara Uyum Sağla"
@@ -2858,6 +2855,11 @@ msgstr "Plasma’da"
 
 msgid "On Hyprland"
 msgstr "Hyprland’da"
+
+#. TRANSLATORS: two sample letters, an upper and a lower case one, in your script.
+msgctxt "text edge preview"
+msgid "Aa"
+msgstr "Aa"
 
 msgid "No saved looks yet."
 msgstr "Henüz kaydedilmiş görünüm yok."

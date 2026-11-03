@@ -70,6 +70,7 @@ Flow {
                         anchors.fill: parent
                         kind: tile.option.pv
                         value: tile.option.v
+                        colorKey: tile.option.colorKey ?? ""
                         studio: tiles.studio
                         ink: tile.pressed ? Theme.text : Theme.muted
                     }

@@ -984,6 +984,15 @@ msgstr ""
 "Die Minivisualisierung folgt der Musik im ausgewählten Visualisierungsstil. "
 "„Statisch“ zeigt unbewegte Balken."
 
+msgid "None"
+msgstr "Keine"
+
+msgid "Outline"
+msgstr "Kontur"
+
+msgid "Shadow"
+msgstr "Schatten"
+
 msgid "Looks"
 msgstr "Designs"
 
@@ -1144,9 +1153,6 @@ msgstr ""
 "Im Widget auf eine beliebige Stelle des Balkens klicken, um dorthin zu "
 "springen."
 
-msgid "None"
-msgstr "Keine"
-
 msgid "Seek preview"
 msgstr "Sprungvorschau"
 
@@ -1301,9 +1307,6 @@ msgstr ""
 
 msgid "Automatic"
 msgstr "Automatisch"
-
-msgid "Custom background"
-msgstr "Eigener Hintergrund"
 
 msgid "Arrangement"
 msgstr "Anordnung"
@@ -1791,12 +1794,6 @@ msgstr "Textkante"
 msgid "Extra contrast on busy wallpapers."
 msgstr "Zusätzlicher Kontrast auf unruhigen Hintergrundbildern."
 
-msgid "Outline"
-msgstr "Kontur"
-
-msgid "Shadow"
-msgstr "Schatten"
-
 msgid "Edge colour"
 msgstr "Kantenfarbe"
 
@@ -1963,6 +1960,30 @@ msgstr "Atmosphäre"
 msgid "Tint colour"
 msgstr "Tönungsfarbe"
 
+msgid "Glass tint"
+msgstr "Glastönung"
+
+msgid "Clear"
+msgstr "Klar"
+
+msgid "Frost"
+msgstr "Frost"
+
+msgid "Smoke"
+msgstr "Rauch"
+
+msgid "Cover colour"
+msgstr "Coverfarbe"
+
+msgid "Custom glass colour"
+msgstr "Eigene Glasfarbe"
+
+msgid "Solid colour"
+msgstr "Deckende Farbe"
+
+msgid "Light colours take dark text, dark ones keep light text."
+msgstr "Helle Farben bekommen dunklen Text, dunkle behalten hellen Text."
+
 msgid "Compositor glass"
 msgstr "Compositor-Glas"
 
@@ -2009,27 +2030,6 @@ msgstr "Nur die Karte wird transparent; Text und Welle bleiben deckend."
 
 msgid "Corner radius"
 msgstr "Eckenradius"
-
-msgid "Glass colour"
-msgstr "Glasfarbe"
-
-msgid "Glass tint"
-msgstr "Glastönung"
-
-msgid "Clear"
-msgstr "Klar"
-
-msgid "Frost"
-msgstr "Frost"
-
-msgid "Smoke"
-msgstr "Rauch"
-
-msgid "Cover colour"
-msgstr "Coverfarbe"
-
-msgid "Custom glass colour"
-msgstr "Eigene Glasfarbe"
 
 msgid "Liquid glass"
 msgstr "Flüssiges Glas"
@@ -2192,9 +2192,6 @@ msgstr "Eigene Fortschrittsfarbe"
 
 msgid "Text colour"
 msgstr "Textfarbe"
-
-msgid "Custom text colour"
-msgstr "Eigene Textfarbe"
 
 msgid "Adapt to light cards"
 msgstr "An helle Karten anpassen"
@@ -2879,6 +2876,11 @@ msgstr "Unter Plasma"
 
 msgid "On Hyprland"
 msgstr "Unter Hyprland"
+
+#. TRANSLATORS: two sample letters, an upper and a lower case one, in your script.
+msgctxt "text edge preview"
+msgid "Aa"
+msgstr "Aa"
 
 msgid "No saved looks yet."
 msgstr "Noch keine gespeicherten Designs."

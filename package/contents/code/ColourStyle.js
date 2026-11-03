@@ -23,9 +23,16 @@ function resolve(s, accent, control, start, end, stops) {
         start: colors.length ? sample(colors, 0) : start, end: colors.length ? sample(colors, 1) : end};
 }
 
+// Relative luminance, 0 (black) to 1 (white).
+function luminance(value) {
+    var c = WaveMath.color(value);
+    return 0.2126 * c.r + 0.7152 * c.g + 0.0722 * c.b;
+}
+
 // Host adapters provide system colours and the extracted/sample cover palette.
 function appearance(s, systemAccent, systemText, coverAccent, hasCover) {
-    var light = s.showBg && s.surfaceStyle === "solid"
+    // A light Solid card takes dark ink; a dark one keeps light text.
+    var light = s.showBg && s.surfaceStyle === "solid" && luminance(s.solidColor || "#d8dece") > 0.5
         && !(s.showMpris && s.artBg && hasCover) && (s.autoContrast ?? true);
     var base = s.useSystemAccent ? systemAccent : s.customColor;
     return {

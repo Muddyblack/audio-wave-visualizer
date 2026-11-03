@@ -89,6 +89,8 @@ ColumnLayout {
             Layout.minimumWidth: 0
             text: root.view.sourceName.toUpperCase()
             color: root.view.textColor
+            style: root.view.textStyle ?? Text.Normal
+            styleColor: root.view.textStyleColor ?? "#101318"
             font.pixelSize: SystemText.px(root.sourceSize)
             font.letterSpacing: 1.3
             elide: Text.ElideRight
@@ -105,6 +107,8 @@ ColumnLayout {
                 anchors.centerIn: parent
                 text: root.view.playerCount + " ▾"
                 color: root.view.textColor
+                style: root.view.textStyle ?? Text.Normal
+                styleColor: root.view.textStyleColor ?? "#101318"
                 font.pixelSize: SystemText.px(root.sourceSize)
                 font.letterSpacing: 0.5
             }
@@ -149,6 +153,8 @@ ColumnLayout {
             trackUnknown: root.view.trackUnknown
             rawTrack: root.view.track
             color: root.view.textColor
+            style: root.view.textStyle ?? Text.Normal
+            styleColor: root.view.textStyleColor ?? "#101318"
         }
         TrackText {
             visible: root.marquee
@@ -160,6 +166,8 @@ ColumnLayout {
             trackUnknown: root.view.trackUnknown
             rawTrack: root.view.track
             color: root.view.textColor
+            style: root.view.textStyle ?? Text.Normal
+            styleColor: root.view.textStyleColor ?? "#101318"
         }
     }
 
@@ -177,6 +185,8 @@ ColumnLayout {
         artist: root.view.idleMessage ? I18n.i18n("Start music in any player") : root.view.artist
         sourceHint: root.view.sourceHint
         color: root.view.textColor
+        style: root.view.textStyle ?? Text.Normal
+        styleColor: root.view.textStyleColor ?? "#101318"
     }
 
     Text {
@@ -190,6 +200,8 @@ ColumnLayout {
         text: root.view.album + (root.view.year !== "" ? " · " + root.view.year : "")
         horizontalAlignment: root.alignment
         color: root.view.textColor
+        style: root.view.textStyle ?? Text.Normal
+        styleColor: root.view.textStyleColor ?? "#101318"
         opacity: 0.4
         font.pixelSize: SystemText.px(Math.max(1, Math.round(root.ts * root.albumSize)))
         elide: Text.ElideRight
@@ -223,6 +235,8 @@ ColumnLayout {
         textFormat: Text.PlainText
         wrapMode: Text.Wrap
         color: root.view.textColor
+        style: root.view.textStyle ?? Text.Normal
+        styleColor: root.view.textStyleColor ?? "#101318"
         opacity: 0.75
         font.family: root.cfg.lyricsFontFamily || root.view.defaultFontFamily
         font.pixelSize: SystemText.px(10)

@@ -257,6 +257,9 @@ Item {
     readonly property var appearance: ColourStyle.appearance(configuration, accentColor, systemTextColor, coverAccent, artUrl !== "")
     readonly property bool lightCard: appearance.light
     readonly property color textColor: appearance.text
+    // An outline or 1 px shadow keeps track text legible on busy wallpapers.
+    readonly property int textStyle: configuration.textStyle === "outline" ? Text.Outline : configuration.textStyle === "shadow" ? Text.Raised : Text.Normal
+    readonly property color textStyleColor: configuration.textStyleColor ?? "#101318"
     readonly property color waveColor: appearance.wave
     readonly property color baseControlColor: appearance.control
     readonly property var linkedColors: ColourStyle.linked(configuration, waveColor, baseControlColor, accentColor, coverColor1, coverColor2, visualizer.high ?? 0, visualFrameTime / 1000)

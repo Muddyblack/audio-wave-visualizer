@@ -64,6 +64,8 @@ Item {
                     font.letterSpacing: 1.6
                     font.italic: root.view.artist === "" && root.view.sourceHint !== ""
                     color: root.view.textColor
+                    style: root.view.textStyle ?? Text.Normal
+                    styleColor: root.view.textStyleColor ?? "#101318"
                     elide: Text.ElideRight
                 }
             }
@@ -83,6 +85,8 @@ Item {
                 maximumLineCount: root.cfg.posterLines === 2 ? 2 : 1
                 elide: Text.ElideRight
                 color: root.view.textColor
+                style: root.view.textStyle ?? Text.Normal
+                styleColor: root.view.textStyleColor ?? "#101318"
             }
             RowLayout {
                 Layout.fillWidth: true
@@ -109,6 +113,8 @@ Item {
                     }
                     opacity: 0.85
                     color: root.view.textColor
+                    style: root.view.textStyle ?? Text.Normal
+                    styleColor: root.view.textStyleColor ?? "#101318"
                 }
                 LayoutDock {
                     view: root.view

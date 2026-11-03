@@ -352,6 +352,44 @@ TestCase {
         compare(findChild(subject, "timeOnlyTotal").text, "3:00");
     }
 
+    function test_textEdgeReachesTrackTextAndTimes_data() {
+        return [
+            {
+                tag: "none",
+                value: "none",
+                style: Text.Normal
+            },
+            {
+                tag: "outline",
+                value: "outline",
+                style: Text.Outline
+            },
+            {
+                tag: "shadow",
+                value: "shadow",
+                style: Text.Raised
+            }
+        ];
+    }
+    function test_textEdgeReachesTrackTextAndTimes(data) {
+        subject.configuration = Object.assign({}, defaults, {
+            showSource: true,
+            textStyle: data.value,
+            textStyleColor: "#123456"
+        });
+        compare(defaults.textStyle, "none");
+        for (const name of ["artistLine", "sourceChip", "elapsedTimeLabel", "totalTimeLabel"]) {
+            const label = findChild(subject, name);
+            compare(label.style, data.style, name);
+            if (data.style !== Text.Normal)
+                compare(String(label.styleColor), "#123456", name);
+        }
+        subject.configuration = Object.assign({}, subject.configuration, {
+            layoutMode: "pill"
+        });
+        compare(findChild(subject, "pillPrimary").style, data.style);
+    }
+
     function test_squiggleSettlesWhenPausedOrReduced() {
         subject.configuration = Object.assign({}, defaults, {
             progressBarStyle: 5
@@ -1462,6 +1500,23 @@ TestCase {
                 verify(waitForRendering(layer));
             }
         }
+    }
+    function test_solidColourSetsCardAndInk() {
+        subject.configuration = Object.assign({}, defaults, {
+            showBg: true,
+            surfaceStyle: "solid"
+        });
+        const layer = findChild(subject, "cardMaterial");
+        compare(layer.solidColor.toString(), defaults.solidColor);
+        verify(subject.lightCard);
+        // A dark solid card keeps the light system text and icons.
+        subject.configuration = Object.assign({}, subject.configuration, {
+            solidColor: "#2a2e33"
+        });
+        compare(layer.solidColor.toString(), "#2a2e33");
+        verify(!subject.lightCard);
+        verify(!Qt.colorEqual(subject.textColor, "#1e241d"));
+        verify(waitForRendering(layer));
     }
     function test_posterClockReplacesTimeLabels() {
         subject.configuration = Object.assign({}, defaults, {

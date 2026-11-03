@@ -155,10 +155,18 @@ Item {
     }
     Component {
         id: colorComponent
-        StudioSwatches {
-            swatches: row.rowData.swatches
-            value: String(row.value)
-            onActivated: value => row.commit(value)
+        // One row wide, so an unstacked row does not wrap after every swatch.
+        Item {
+            implicitWidth: (row.rowData.swatches.length + (row.rowData.auto ? 2 : 1)) * 29 - 7
+            implicitHeight: swatches.implicitHeight
+            StudioSwatches {
+                id: swatches
+                width: parent.width
+                swatches: row.rowData.swatches
+                autoLabel: row.rowData.auto ? I18n.i18n(row.rowData.auto) : ""
+                value: String(row.value ?? "")
+                onActivated: value => row.commit(value)
+            }
         }
     }
     Component {

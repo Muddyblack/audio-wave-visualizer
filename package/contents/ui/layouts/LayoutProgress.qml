@@ -33,6 +33,8 @@ ProgressBar {
     track: view.trackIdentity
     artist: view.artist
     textColor: view.textColor
+    textStyle: view.textStyle ?? Text.Normal
+    textStyleColor: view.textStyleColor ?? "#101318"
     waveColor: view.progressWaveColor
     colorStops: view.progressColors
     controlColor: view.controlColor

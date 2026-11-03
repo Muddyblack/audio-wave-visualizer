@@ -63,11 +63,13 @@ var PALETTES = {
 };
 var SWATCHES = ["#3daee9", "#a855f7", "#ff6fb0", "#f5b26b", "#d1e5bd", "#34d399", "#ffffff", "#1e241d"];
 var BGSWATCHES = ["#0a0b10", "#1b1e21", "#231a33", "#10231d", "#2b1d14", "#f4f1ea"];
+// Mineral tones for the Solid card: the light default first, then dark ones.
+var SOLIDSWATCHES = ["#d8dece", "#f4f1ea", "#e6d9c6", "#cfd9e4", "#e8d3dc", "#2a2e33", "#1d2b24", "#2e2238"];
 var BACKDROPS = Catalog.StudioCatalog.wallpapers.map(function (wallpaper) { return [wallpaper.id, wallpaper.label]; });
 var STATES = [["normal", noop("Playing")], ["paused", noop("Paused")], ["long", noop("Long title")], ["nometa", noop("No metadata")], ["idle", noop("Nothing playing")], ["backend", noop("cava missing")]];
 
 // Colour keys "Keep my colours" preserves; placement is never part of a look.
-var COLOR_KEYS = ["controlsColorSource", "progressColorSource", "customProgressColor", "useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "vizCustomColors", "glowColorMode", "glowCustomColors", "hueReactive", "bgColor", "glassTintColor", "lyricsHighlightColor", "lyricsTextStyleColor"];
+var COLOR_KEYS = ["controlsColorSource", "progressColorSource", "customProgressColor", "useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "vizCustomColors", "glowColorMode", "glowCustomColors", "hueReactive", "bgColor", "glassTintColor", "solidColor", "lyricsHighlightColor", "lyricsTextStyleColor", "textStyle", "textStyleColor"];
 var PLACEMENT_KEYS = ["monitor", "verticalPosition", "desktopLayer", "pauseWhenCovered", "hAnchor", "widgetWidth", "widgetHeight", "panelDisplayMode", "panelOrientation", "panelCardSizing", "panelCardScale"];
 // About the settings window, not the look: nothing but their own controls changes them.
 var PREFERENCE_KEYS = ["language", "liveApply"];
@@ -131,6 +133,13 @@ function layoutValue(s) {
 }
 function surfaceValue(s) {
     return s.artBg ? "art" : s.surfaceStyle;
+}
+// Text edge tiles preview "Aa" on a light-to-dark strip in the row's edge colour.
+function edgeTiles(colorKey) {
+    return [["none", noop("None")], ["outline", noop("Outline")], ["shadow", noop("Shadow")]].map(function (o) { return { v: o[0], label: o[1], pv: "textEdge", colorKey: colorKey }; });
+}
+function glassCard(s) {
+    return s.showBg && ["glass", "liquid"].indexOf(surfaceValue(s)) !== -1;
 }
 
 // The HTML uses "compact" and "art" as picker values; on disk they are
@@ -216,8 +225,9 @@ var SECTIONS = [
     tab("buttons", noop("Button colours"), [
         { id: "ctlSrc", type: "seg", label: noop("Icon colour"), desc: noop("Colour mode follows the visualizer. System adapts to light cards."), opts: [["system", noop("System")], ["accent", noop("Accent")], ["visualizer", noop("Colour mode")], ["custom", noop("Custom")]], get: function (s) { return s.controlsColorSource && s.controlsColorSource !== "legacy" ? s.controlsColorSource : s.useSystemControls ? "system" : "custom"; }, set: function (v) { return { controlsColorSource: v === "system" || v === "custom" ? "legacy" : v, useSystemControls: v !== "custom" }; } },
         { k: "customControlColor", type: "color", label: noop("Custom icon colour"), swatches: SWATCHES, when: function (s) { return (!s.controlsColorSource || s.controlsColorSource === "legacy") && !s.useSystemControls; } },
-        { id: "dockSrc", type: "seg", label: noop("Background colour"), desc: noop("Applies to pill styles. Tinted uses your accent when set to Automatic."), opts: [[true, noop("Automatic")], [false, noop("Custom")]], get: function (s) { return s.useSystemDockBg; }, set: function (v) { return { useSystemDockBg: v }; } },
-        { k: "customDockBgColor", type: "color", label: noop("Custom background"), swatches: BGSWATCHES.concat(SWATCHES), when: function (s) { return !s.useSystemDockBg; } }
+        { id: "dockBg", type: "color", label: noop("Background colour"), desc: noop("Applies to pill styles. Tinted uses your accent when set to Automatic."), auto: noop("Automatic"), swatches: BGSWATCHES.concat(SWATCHES),
+          get: function (s) { return s.useSystemDockBg ? "" : s.customDockBgColor; },
+          set: function (v) { return v ? { useSystemDockBg: false, customDockBgColor: v } : { useSystemDockBg: true }; } }
     ]),
     tab("layout", noop("Arrangement"), [
         { k: "layoutMode", type: "tiles", full: true, label: noop("Layout"), desc: noop("Visualizer only fills a transparent widget with the selected effect. Lyrics only shows a scrollable verse with the current line highlighted. Uses online lyrics from LRCLIB."), tw: 104,
@@ -301,7 +311,7 @@ var SECTIONS = [
         { k: "lyricsHighlightColor", type: "color", label: noop("Highlight colour"), swatches: SWATCHES, when: function (s) { return s.lyricsHighlight === "custom"; } },
         { k: "lyricsPastOpacity", when: function (s) { return s.layoutMode === "lyrics"; }, type: "range", label: noop("Past lines"), min: .1, max: 1, step: .05, fmt: "pct" },
         { k: "lyricsFutureOpacity", when: function (s) { return s.layoutMode === "lyrics"; }, type: "range", label: noop("Upcoming lines"), min: .1, max: 1, step: .05, fmt: "pct" },
-        { k: "lyricsTextStyle", type: "seg", label: noop("Text edge"), desc: noop("Extra contrast on busy wallpapers."), opts: [["none", noop("None")], ["outline", noop("Outline")], ["shadow", noop("Shadow")]] },
+        { k: "lyricsTextStyle", type: "tiles", full: true, label: noop("Text edge"), desc: noop("Extra contrast on busy wallpapers."), tw: 84, opts: edgeTiles("lyricsTextStyleColor") },
         { k: "lyricsTextStyleColor", type: "color", label: noop("Edge colour"), swatches: BGSWATCHES, when: function (s) { return s.lyricsTextStyle !== "none"; } }
     ], function (s) { return s.layoutMode === "lyrics" || s.showLyrics; }),
     tab("lyrics", noop("Reading layout"), [
@@ -333,6 +343,9 @@ var SECTIONS = [
           opts: [["color", noop("Tint")], ["art", noop("Cover")], ["glass", noop("Glass")], ["liquid", noop("Liquid")], ["solid", noop("Solid")], ["atmosphere", noop("Atmosphere")]].map(function (o) { return { v: o[0], label: o[1], pv: "material" }; }) },
         { id: "cardNote", type: "note", full: true, note: "card", when: function (s) { return s.showBg; } },
         { k: "bgColor", type: "color", label: noop("Tint colour"), swatches: BGSWATCHES, when: function (s) { return s.showBg && surfaceValue(s) === "color"; } },
+        { k: "glassTint", type: "seg", label: noop("Glass tint"), opts: [["clear", noop("Clear")], ["frost", noop("Frost")], ["smoke", noop("Smoke")], ["cover", noop("Cover colour")], ["custom", noop("Custom")]], when: glassCard },
+        { k: "glassTintColor", type: "color", label: noop("Custom glass colour"), swatches: BGSWATCHES.concat(SWATCHES), when: function (s) { return glassCard(s) && s.glassTint === "custom"; } },
+        { k: "solidColor", type: "color", label: noop("Solid colour"), desc: noop("Light colours take dark text, dark ones keep light text."), swatches: SOLIDSWATCHES, when: function (s) { return s.showBg && surfaceValue(s) === "solid"; } },
         { k: "compositorGlass", type: "switch", label: noop("Compositor glass"), desc: noop("Requests the Plasma translucent background; Hyprland needs the supplied layer blur rule."), when: function (s) { return s.showBg && ["glass", noop("liquid")].includes(s.surfaceStyle); } },
         { k: "glassBlur", type: "range", label: noop("Wallpaper blur"), desc: noop("Choose how frosted the glass looks. 0% turns blur off; text and artwork stay sharp."), min: 0, max: 1, step: .01, fmt: "pct", when: function (s) { return s.showBg && !s.artBg && ["glass", noop("liquid")].indexOf(s.surfaceStyle) !== -1; } },
         { k: "artBgBlur", type: "range", label: noop("Cover blur"), desc: noop("0 keeps the art crisp."), min: 0, max: 1, step: .02, fmt: "pct", when: function (s) { return s.showBg && s.artBg; } },
@@ -341,10 +354,6 @@ var SECTIONS = [
         { k: "artBgTransparency", type: "range", label: noop("Card opacity"), desc: noop("Only the card fades; text and wave stay solid."), min: 0, max: 1, step: .02, fmt: "pct", when: function (s) { return s.showBg; } },
         { k: "bgRadius", type: "range", label: noop("Corner radius"), min: 0, max: 30, step: 1, fmt: "px", when: function (s) { return s.showBg && notPill(s); } }
     ]),
-    tab("card", noop("Glass colour"), [
-        { k: "glassTint", type: "seg", label: noop("Glass tint"), opts: [["clear", noop("Clear")], ["frost", noop("Frost")], ["smoke", noop("Smoke")], ["cover", noop("Cover colour")], ["custom", noop("Custom")]] },
-        { k: "glassTintColor", type: "color", label: noop("Custom glass colour"), swatches: BGSWATCHES.concat(SWATCHES), when: function (s) { return s.glassTint === "custom"; } }
-    ], function (s) { return s.showBg && !s.artBg && ["glass", noop("liquid")].includes(s.surfaceStyle); }),
     tab("card", noop("Liquid glass"), [
         { k: "glassRefraction", type: "range", label: noop("Refraction"), desc: noop("Bends the sampled wallpaper with a subtle colour fringe."), min: 0, max: 1, step: .05, fmt: "pct" },
         { k: "glassSpecular", type: "switch", label: noop("Light follows pointer"), desc: noop("A soft specular highlight tracks the mouse.") }
@@ -382,8 +391,11 @@ var SECTIONS = [
         { k: "customProgressColor", type: "color", label: noop("Custom progress colour"), swatches: SWATCHES, when: function (s) { return s.progressColorSource === "custom"; } }
     ]),
     tab("colors", noop("Text"), [
-        { id: "textSrc", type: "seg", label: noop("Text colour"), opts: [[true, noop("System")], [false, noop("Custom")]], get: function (s) { return s.useSystemText; }, set: function (v) { return { useSystemText: v }; } },
-        { k: "customTextColor", type: "color", label: noop("Custom text colour"), swatches: SWATCHES, when: function (s) { return !s.useSystemText; } },
+        { id: "textColor", type: "color", label: noop("Text colour"), auto: noop("System"), swatches: SWATCHES,
+          get: function (s) { return s.useSystemText ? "" : s.customTextColor; },
+          set: function (v) { return v ? { useSystemText: false, customTextColor: v } : { useSystemText: true }; } },
+        { k: "textStyle", type: "tiles", full: true, label: noop("Text edge"), desc: noop("Extra contrast on busy wallpapers."), tw: 84, opts: edgeTiles("textStyleColor") },
+        { k: "textStyleColor", type: "color", label: noop("Edge colour"), swatches: BGSWATCHES, when: function (s) { return s.textStyle !== "none"; } },
         { k: "autoContrast", type: "switch", label: noop("Adapt to light cards"), desc: noop("Dark text and icons on the Solid material."), when: function (s) { return s.useSystemText || s.useSystemControls; } }
     ]),
     tab("behavior", noop("Panel placement"), [

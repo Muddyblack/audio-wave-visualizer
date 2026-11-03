@@ -482,6 +482,78 @@ TestCase {
         verify(customRow === null || !customRow.visible);
     }
 
+    function test_everyMaterialColourSitsUnderTheTiles() {
+        studio.selectTab("card");
+        studio.update({
+            showBg: true,
+            artBg: false,
+            surfaceStyle: "solid"
+        });
+        verify(waitForRendering(studio));
+        verify(findChild(studio, "row_solidColor").visible);
+        const glass = findChild(studio, "row_glassTint");
+        verify(glass === null || !glass.visible);
+        // Each material's colour lives in the Background group with its tiles.
+        const background = Schema.SECTIONS.find(t => t.tab === "card" && t.title === "Background").rows.map(r => r.k || r.id);
+        for (const key of ["bgColor", "glassTint", "glassTintColor", "solidColor"])
+            verify(background.indexOf(key) !== -1, key);
+        verify(!Schema.SECTIONS.some(t => t.title === "Glass colour"));
+        studio.update({
+            solidColor: "#2a2e33"
+        });
+        studio.saveUserPreset("Dark solid");
+        compare(studio.userPresetList()[0].settings.solidColor, "#2a2e33");
+    }
+
+    function test_textEdgeTilesPreviewTheEdge() {
+        studio.selectTab("colors");
+        studio.update({
+            textStyle: "none",
+            textStyleColor: "#123456"
+        });
+        verify(waitForRendering(studio));
+        const row = findChild(studio, "row_textStyle");
+        verify(row.visible);
+        const previews = [];
+        const walk = item => {
+            for (const child of item.children) {
+                if (child.objectName === "textEdgePreview")
+                    previews.push(child);
+                walk(child);
+            }
+        };
+        walk(row);
+        compare(previews.length, 3);
+        compare(previews.map(p => p.style), [Text.Normal, Text.Outline, Text.Raised]);
+        compare(String(previews[1].styleColor), "#123456");
+        // Lyrics use the same tiles with their own edge colour.
+        const lyrics = Schema.SECTIONS.find(s => s.rows.some(r => r.k === "lyricsTextStyle")).rows.find(r => r.k === "lyricsTextStyle");
+        compare(lyrics.opts[1].colorKey, "lyricsTextStyleColor");
+    }
+
+    function test_crossedOutSwatchFollowsTheSystem() {
+        studio.selectTab("colors");
+        studio.update({
+            useSystemText: true
+        });
+        verify(waitForRendering(studio));
+        const row = findChild(studio, "row_textColor");
+        verify(row.visible);
+        const auto = findChild(row, "swatchAuto");
+        verify(auto.visible && auto.pressed);
+        studio.update(Schema.rowPatch(row.rowData, "#ff6fb0", studio.draft));
+        compare(studio.draft.useSystemText, false);
+        compare(studio.draft.customTextColor, "#ff6fb0");
+        verify(!auto.pressed);
+        const body = findChild(studio, "studioBody");
+        body.contentY = row.mapToItem(body.contentItem, 0, 0).y - body.height + row.height;
+        verify(waitForRendering(studio));
+        mouseClick(auto);
+        compare(studio.draft.useSystemText, true);
+        // The old toggle and hidden row are gone.
+        verify(findChild(studio, "row_customTextColor") === null);
+    }
+
     function test_renameSavedPreset() {
         studio.saveUserPreset("Original");
         const before = studio.userPresetList()[0];

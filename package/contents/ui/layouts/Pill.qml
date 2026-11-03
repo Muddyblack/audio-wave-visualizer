@@ -119,6 +119,8 @@ Item {
                     Layout.minimumWidth: 0
                     text: root.content === "artist-title" && root.withArtist ? root.view.artist : root.titleText
                     color: root.view.textColor
+                    style: root.view.textStyle ?? Text.Normal
+                    styleColor: root.view.textStyleColor ?? "#101318"
                     font.pixelSize: SystemText.px(12, 18)
                     font.weight: Font.DemiBold
                     font.italic: root.view.trackUnknown
@@ -129,6 +131,8 @@ Item {
                     visible: root.withArtist
                     text: root.content === "artist-title" ? "—" : "·"
                     color: root.view.textColor
+                    style: root.view.textStyle ?? Text.Normal
+                    styleColor: root.view.textStyleColor ?? "#101318"
                     opacity: 0.35
                     font.pixelSize: SystemText.px(12, 18)
                 }
@@ -141,6 +145,8 @@ Item {
                     Layout.minimumWidth: 0
                     text: root.content === "artist-title" ? root.titleText : root.view.artist
                     color: root.view.textColor
+                    style: root.view.textStyle ?? Text.Normal
+                    styleColor: root.view.textStyleColor ?? "#101318"
                     opacity: 0.6
                     font.pixelSize: SystemText.px(12, 18)
                     elide: root.scrollText ? Text.ElideNone : Text.ElideRight

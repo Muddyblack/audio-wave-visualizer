@@ -100,6 +100,10 @@ Kirigami.Page {
     property bool cfg_useSystemTextDefault
     property string cfg_customTextColor
     property string cfg_customTextColorDefault
+    property string cfg_textStyle
+    property string cfg_textStyleDefault
+    property string cfg_textStyleColor
+    property string cfg_textStyleColorDefault
     property string cfg_controlsColorSource
     property string cfg_controlsColorSourceDefault
     property string cfg_progressColorSource
@@ -208,6 +212,8 @@ Kirigami.Page {
     property string cfg_glassTintDefault
     property string cfg_glassTintColor
     property string cfg_glassTintColorDefault
+    property string cfg_solidColor
+    property string cfg_solidColorDefault
     property bool cfg_compositorGlass
     property bool cfg_compositorGlassDefault
     property real cfg_glassRefraction
