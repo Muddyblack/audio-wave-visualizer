@@ -62,6 +62,11 @@ vm.runInContext(`
   assert(!widgetHTML(DEFAULTS, 'normal').includes('edge-'), 'No text edge by default');
   const edged = widgetHTML({...DEFAULTS, textStyle:'outline', textStyleColor:'#123456'}, 'normal');
   assert(edged.includes('edge-outline') && edged.includes('--edge:#123456'), 'Text edge reaches the preview');
+  assert(widgetHTML({...DEFAULTS, showBg:true, surfaceStyle:'solid', solidColor:'#2a2e33'}, 'normal').includes('--solid:#2a2e33'), 'Solid colour reaches the preview');
+  const textRow = Schema.SECTIONS.flatMap(s => s.rows).find(r => r.id === 'textColor');
+  assert.equal(textRow.auto, 'System');
+  assert.deepEqual({...Schema.rowPatch(textRow, '', nativeState(DEFAULTS))}, {useSystemText: true});
+  assert.deepEqual({...Schema.rowPatch(textRow, '#ff6fb0', nativeState(DEFAULTS))}, {useSystemText: false, customTextColor: '#ff6fb0'});
   assert(widgetHTML({...panelIcon, pillEq:'live', showArtThumb:false}, 'normal').includes('class="art'), 'The icon never goes blank without a visualizer');
   const motion = layout => Schema.SECTIONS.flatMap(s => s.rows).find(r => r.k === 'pillEq' && r.when({layoutMode:layout})).opts.map(o => o[0]);
   assert(motion('pillicon').includes('visualizer') && !motion('pill').includes('visualizer'));

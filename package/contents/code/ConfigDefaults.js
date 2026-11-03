@@ -95,6 +95,7 @@ var values = {
   "glassBlur": 0.85,
   "glassTint": "clear",
   "glassTintColor": "#3daee9",
+  "solidColor": "#d8dece",
   "compositorGlass": false,
   "glassRefraction": 0.45,
   "glassSpecular": true,

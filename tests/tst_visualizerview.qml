@@ -1501,6 +1501,23 @@ TestCase {
             }
         }
     }
+    function test_solidColourSetsCardAndInk() {
+        subject.configuration = Object.assign({}, defaults, {
+            showBg: true,
+            surfaceStyle: "solid"
+        });
+        const layer = findChild(subject, "cardMaterial");
+        compare(layer.solidColor.toString(), defaults.solidColor);
+        verify(subject.lightCard);
+        // A dark solid card keeps the light system text and icons.
+        subject.configuration = Object.assign({}, subject.configuration, {
+            solidColor: "#2a2e33"
+        });
+        compare(layer.solidColor.toString(), "#2a2e33");
+        verify(!subject.lightCard);
+        verify(!Qt.colorEqual(subject.textColor, "#1e241d"));
+        verify(waitForRendering(layer));
+    }
     function test_posterClockReplacesTimeLabels() {
         subject.configuration = Object.assign({}, defaults, {
             layoutMode: "poster",

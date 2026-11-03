@@ -157,7 +157,8 @@ Item {
         id: colorComponent
         StudioSwatches {
             swatches: row.rowData.swatches
-            value: String(row.value)
+            autoLabel: row.rowData.auto ? I18n.i18n(row.rowData.auto) : ""
+            value: String(row.value ?? "")
             onActivated: value => row.commit(value)
         }
     }

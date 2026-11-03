@@ -1302,9 +1302,6 @@ msgstr ""
 msgid "Automatic"
 msgstr "Automatisch"
 
-msgid "Custom background"
-msgstr "Eigener Hintergrund"
-
 msgid "Arrangement"
 msgstr "Anordnung"
 
@@ -1963,6 +1960,30 @@ msgstr "Atmosphäre"
 msgid "Tint colour"
 msgstr "Tönungsfarbe"
 
+msgid "Glass tint"
+msgstr "Glastönung"
+
+msgid "Clear"
+msgstr "Klar"
+
+msgid "Frost"
+msgstr "Frost"
+
+msgid "Smoke"
+msgstr "Rauch"
+
+msgid "Cover colour"
+msgstr "Coverfarbe"
+
+msgid "Custom glass colour"
+msgstr "Eigene Glasfarbe"
+
+msgid "Solid colour"
+msgstr "Deckende Farbe"
+
+msgid "Light colours take dark text, dark ones keep light text."
+msgstr "Helle Farben bekommen dunklen Text, dunkle behalten hellen Text."
+
 msgid "Compositor glass"
 msgstr "Compositor-Glas"
 
@@ -2009,27 +2030,6 @@ msgstr "Nur die Karte wird transparent; Text und Welle bleiben deckend."
 
 msgid "Corner radius"
 msgstr "Eckenradius"
-
-msgid "Glass colour"
-msgstr "Glasfarbe"
-
-msgid "Glass tint"
-msgstr "Glastönung"
-
-msgid "Clear"
-msgstr "Klar"
-
-msgid "Frost"
-msgstr "Frost"
-
-msgid "Smoke"
-msgstr "Rauch"
-
-msgid "Cover colour"
-msgstr "Coverfarbe"
-
-msgid "Custom glass colour"
-msgstr "Eigene Glasfarbe"
 
 msgid "Liquid glass"
 msgstr "Flüssiges Glas"
@@ -2192,9 +2192,6 @@ msgstr "Eigene Fortschrittsfarbe"
 
 msgid "Text colour"
 msgstr "Textfarbe"
-
-msgid "Custom text colour"
-msgstr "Eigene Textfarbe"
 
 msgid "Adapt to light cards"
 msgstr "An helle Karten anpassen"

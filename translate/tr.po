@@ -1294,9 +1294,6 @@ msgstr ""
 msgid "Automatic"
 msgstr "Otomatik"
 
-msgid "Custom background"
-msgstr "Özel Arka Plan"
-
 msgid "Arrangement"
 msgstr "Yerleşim"
 
@@ -1955,6 +1952,30 @@ msgstr "Atmosfer"
 msgid "Tint colour"
 msgstr "Ton Rengi"
 
+msgid "Glass tint"
+msgstr "Cam Tonu"
+
+msgid "Clear"
+msgstr "Berrak"
+
+msgid "Frost"
+msgstr "Buzlu Cam"
+
+msgid "Smoke"
+msgstr "Duman"
+
+msgid "Cover colour"
+msgstr "Kapak Rengi"
+
+msgid "Custom glass colour"
+msgstr "Özel Cam Rengi"
+
+msgid "Solid colour"
+msgstr "Düz Renk"
+
+msgid "Light colours take dark text, dark ones keep light text."
+msgstr "Açık renklerde koyu metin, koyu renklerde açık metin kullanılır."
+
 msgid "Compositor glass"
 msgstr "Birleştirici Cam Efekti"
 
@@ -2001,27 +2022,6 @@ msgstr "Yalnızca kart saydamlaşır; metin ve dalga opak kalır."
 
 msgid "Corner radius"
 msgstr "Köşe Yarıçapı"
-
-msgid "Glass colour"
-msgstr "Cam Rengi"
-
-msgid "Glass tint"
-msgstr "Cam Tonu"
-
-msgid "Clear"
-msgstr "Berrak"
-
-msgid "Frost"
-msgstr "Buzlu Cam"
-
-msgid "Smoke"
-msgstr "Duman"
-
-msgid "Cover colour"
-msgstr "Kapak Rengi"
-
-msgid "Custom glass colour"
-msgstr "Özel Cam Rengi"
 
 msgid "Liquid glass"
 msgstr "Sıvı Cam"
@@ -2184,9 +2184,6 @@ msgstr "Özel İlerleme Rengi"
 
 msgid "Text colour"
 msgstr "Metin Rengi"
-
-msgid "Custom text colour"
-msgstr "Özel Metin Rengi"
 
 msgid "Adapt to light cards"
 msgstr "Açık Renkli Kartlara Uyum Sağla"

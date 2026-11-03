@@ -1308,9 +1308,6 @@ msgstr ""
 msgid "Automatic"
 msgstr "Automatique"
 
-msgid "Custom background"
-msgstr "Arrière-plan personnalisé"
-
 msgid "Arrangement"
 msgstr "Agencement"
 
@@ -1971,6 +1968,32 @@ msgstr "Atmosphère"
 msgid "Tint colour"
 msgstr "Couleur de teinte"
 
+msgid "Glass tint"
+msgstr "Teinte du verre"
+
+msgid "Clear"
+msgstr "Transparent"
+
+msgid "Frost"
+msgstr "Givré"
+
+msgid "Smoke"
+msgstr "Fumé"
+
+msgid "Cover colour"
+msgstr "Couleur de la pochette"
+
+msgid "Custom glass colour"
+msgstr "Couleur personnalisée du verre"
+
+msgid "Solid colour"
+msgstr "Couleur unie"
+
+msgid "Light colours take dark text, dark ones keep light text."
+msgstr ""
+"Les couleurs claires prennent un texte sombre, les foncées gardent un texte "
+"clair."
+
 msgid "Compositor glass"
 msgstr "Verre du compositeur"
 
@@ -2017,27 +2040,6 @@ msgstr "Seule la carte s’estompe ; le texte et l’onde restent opaques."
 
 msgid "Corner radius"
 msgstr "Rayon des coins"
-
-msgid "Glass colour"
-msgstr "Couleur du verre"
-
-msgid "Glass tint"
-msgstr "Teinte du verre"
-
-msgid "Clear"
-msgstr "Transparent"
-
-msgid "Frost"
-msgstr "Givré"
-
-msgid "Smoke"
-msgstr "Fumé"
-
-msgid "Cover colour"
-msgstr "Couleur de la pochette"
-
-msgid "Custom glass colour"
-msgstr "Couleur personnalisée du verre"
 
 msgid "Liquid glass"
 msgstr "Verre liquide"
@@ -2204,9 +2206,6 @@ msgstr "Couleur personnalisée de progression"
 
 msgid "Text colour"
 msgstr "Couleur du texte"
-
-msgid "Custom text colour"
-msgstr "Couleur personnalisée du texte"
 
 msgid "Adapt to light cards"
 msgstr "Adapter aux cartes claires"

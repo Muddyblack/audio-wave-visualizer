@@ -1,4 +1,5 @@
 import QtQuick
+import QtQuick.Controls
 import QtQuick.Dialogs
 import "Theme.js" as Theme
 
@@ -7,9 +8,57 @@ Flow {
     id: control
     property var swatches: []
     property string value: ""
+    // When set, a crossed-out first swatch stands for "" (follow the system);
+    // this is its name, shown on hover.
+    property string autoLabel: ""
     signal activated(string value)
 
     spacing: 7
+
+    Item {
+        id: autoSwatch
+        objectName: "swatchAuto"
+        visible: control.autoLabel !== ""
+        width: 22
+        height: 22
+        readonly property bool pressed: control.value === ""
+        Rectangle {
+            anchors.centerIn: parent
+            width: 30
+            height: 30
+            radius: 15
+            visible: autoSwatch.pressed
+            color: "transparent"
+            border.width: 2
+            border.color: "#e9efe4"
+        }
+        Rectangle {
+            anchors.fill: parent
+            radius: 11
+            color: "transparent"
+            border.width: 1
+            border.color: "#80ffffff"
+            clip: true
+            Rectangle {
+                anchors.centerIn: parent
+                width: 1.5
+                height: 26
+                rotation: 45
+                color: "#c0ff6b6b"
+                antialiasing: true
+            }
+        }
+        MouseArea {
+            anchors.fill: parent
+            cursorShape: Qt.PointingHandCursor
+            hoverEnabled: true
+            Accessible.role: Accessible.Button
+            Accessible.name: control.autoLabel
+            ToolTip.visible: containsMouse
+            ToolTip.text: control.autoLabel
+            onClicked: control.activated("")
+        }
+    }
 
     Repeater {
         model: control.swatches
