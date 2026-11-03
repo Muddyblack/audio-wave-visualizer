@@ -134,6 +134,10 @@ function layoutValue(s) {
 function surfaceValue(s) {
     return s.artBg ? "art" : s.surfaceStyle;
 }
+// Text edge tiles preview "Aa" on a light-to-dark strip in the row's edge colour.
+function edgeTiles(colorKey) {
+    return [["none", noop("None")], ["outline", noop("Outline")], ["shadow", noop("Shadow")]].map(function (o) { return { v: o[0], label: o[1], pv: "textEdge", colorKey: colorKey }; });
+}
 function glassCard(s) {
     return s.showBg && ["glass", "liquid"].indexOf(surfaceValue(s)) !== -1;
 }
@@ -307,7 +311,7 @@ var SECTIONS = [
         { k: "lyricsHighlightColor", type: "color", label: noop("Highlight colour"), swatches: SWATCHES, when: function (s) { return s.lyricsHighlight === "custom"; } },
         { k: "lyricsPastOpacity", when: function (s) { return s.layoutMode === "lyrics"; }, type: "range", label: noop("Past lines"), min: .1, max: 1, step: .05, fmt: "pct" },
         { k: "lyricsFutureOpacity", when: function (s) { return s.layoutMode === "lyrics"; }, type: "range", label: noop("Upcoming lines"), min: .1, max: 1, step: .05, fmt: "pct" },
-        { k: "lyricsTextStyle", type: "seg", label: noop("Text edge"), desc: noop("Extra contrast on busy wallpapers."), opts: [["none", noop("None")], ["outline", noop("Outline")], ["shadow", noop("Shadow")]] },
+        { k: "lyricsTextStyle", type: "tiles", full: true, label: noop("Text edge"), desc: noop("Extra contrast on busy wallpapers."), tw: 84, opts: edgeTiles("lyricsTextStyleColor") },
         { k: "lyricsTextStyleColor", type: "color", label: noop("Edge colour"), swatches: BGSWATCHES, when: function (s) { return s.lyricsTextStyle !== "none"; } }
     ], function (s) { return s.layoutMode === "lyrics" || s.showLyrics; }),
     tab("lyrics", noop("Reading layout"), [
@@ -390,7 +394,7 @@ var SECTIONS = [
         { id: "textColor", type: "color", label: noop("Text colour"), auto: noop("System"), swatches: SWATCHES,
           get: function (s) { return s.useSystemText ? "" : s.customTextColor; },
           set: function (v) { return v ? { useSystemText: false, customTextColor: v } : { useSystemText: true }; } },
-        { k: "textStyle", type: "seg", label: noop("Text edge"), desc: noop("Extra contrast on busy wallpapers."), opts: [["none", noop("None")], ["outline", noop("Outline")], ["shadow", noop("Shadow")]] },
+        { k: "textStyle", type: "tiles", full: true, label: noop("Text edge"), desc: noop("Extra contrast on busy wallpapers."), tw: 84, opts: edgeTiles("textStyleColor") },
         { k: "textStyleColor", type: "color", label: noop("Edge colour"), swatches: BGSWATCHES, when: function (s) { return s.textStyle !== "none"; } },
         { k: "autoContrast", type: "switch", label: noop("Adapt to light cards"), desc: noop("Dark text and icons on the Solid material."), when: function (s) { return s.useSystemText || s.useSystemControls; } }
     ]),

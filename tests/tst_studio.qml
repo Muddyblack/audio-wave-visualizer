@@ -505,6 +505,32 @@ TestCase {
         compare(studio.userPresetList()[0].settings.solidColor, "#2a2e33");
     }
 
+    function test_textEdgeTilesPreviewTheEdge() {
+        studio.selectTab("colors");
+        studio.update({
+            textStyle: "none",
+            textStyleColor: "#123456"
+        });
+        verify(waitForRendering(studio));
+        const row = findChild(studio, "row_textStyle");
+        verify(row.visible);
+        const previews = [];
+        const walk = item => {
+            for (const child of item.children) {
+                if (child.objectName === "textEdgePreview")
+                    previews.push(child);
+                walk(child);
+            }
+        };
+        walk(row);
+        compare(previews.length, 3);
+        compare(previews.map(p => p.style), [Text.Normal, Text.Outline, Text.Raised]);
+        compare(String(previews[1].styleColor), "#123456");
+        // Lyrics use the same tiles with their own edge colour.
+        const lyrics = Schema.SECTIONS.find(s => s.rows.some(r => r.k === "lyricsTextStyle")).rows.find(r => r.k === "lyricsTextStyle");
+        compare(lyrics.opts[1].colorKey, "lyricsTextStyleColor");
+    }
+
     function test_crossedOutSwatchFollowsTheSystem() {
         studio.selectTab("colors");
         studio.update({

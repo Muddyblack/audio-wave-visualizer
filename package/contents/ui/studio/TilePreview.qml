@@ -4,6 +4,7 @@ import ".."
 import "Theme.js" as Theme
 import "Schema.js" as Schema
 import "Diagrams.js" as Diagrams
+import "../text"
 
 // Live previews inside settings tiles.
 Item {
@@ -12,6 +13,8 @@ Item {
     property var value
     required property var studio
     property color ink: Theme.muted
+    // The draft key holding this option's colour (Text edge tiles).
+    property string colorKey: ""
     readonly property var draft: studio.draft
 
     Loader {
@@ -25,7 +28,8 @@ Item {
                 material: materialComponent,
                 shape: shapeComponent,
                 format: formatComponent,
-                palette: paletteComponent
+                palette: paletteComponent,
+                textEdge: textEdgeComponent
             })[preview.kind] ?? null
     }
 
@@ -305,6 +309,45 @@ Item {
                     ctx.roundedRect(0, 0, width, height, 9, 9);
                     ctx.fill();
                 }
+            }
+        }
+    }
+
+    Component {
+        id: textEdgeComponent
+        Item {
+            // A wallpaper that turns from light to dark under the sample text.
+            Rectangle {
+                anchors.centerIn: parent
+                width: parent.width * 0.84
+                height: 34
+                radius: 8
+                gradient: Gradient {
+                    orientation: Gradient.Horizontal
+                    GradientStop {
+                        position: 0
+                        color: "#f4f1ea"
+                    }
+                    GradientStop {
+                        position: 0.5
+                        color: "#8fa3b8"
+                    }
+                    GradientStop {
+                        position: 1
+                        color: "#1b1e21"
+                    }
+                }
+            }
+            Text {
+                objectName: "textEdgePreview"
+                anchors.centerIn: parent
+                // TRANSLATORS: two sample letters, an upper and a lower case one, in your script.
+                text: I18n.i18nc("text edge preview", "Aa")
+                font.pixelSize: 20
+                font.bold: true
+                color: (preview.draft.useSystemText ?? true) ? "#ffffff" : preview.draft.customTextColor
+                style: preview.value === "outline" ? Text.Outline : preview.value === "shadow" ? Text.Raised : Text.Normal
+                styleColor: preview.draft[preview.colorKey] ?? "#101318"
             }
         }
     }

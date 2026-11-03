@@ -986,6 +986,15 @@ msgstr ""
 "Le mini-visualiseur suit la musique avec le style sélectionné. Choisissez "
 "Statique pour des barres immobiles."
 
+msgid "None"
+msgstr "Aucun"
+
+msgid "Outline"
+msgstr "Contour"
+
+msgid "Shadow"
+msgstr "Ombre"
+
 msgid "Looks"
 msgstr "Apparences"
 
@@ -1148,9 +1157,6 @@ msgid "Click anywhere on it in the widget to seek."
 msgstr ""
 "Cliquez n’importe où sur la barre du composant pour vous déplacer dans la "
 "lecture."
-
-msgid "None"
-msgstr "Aucun"
 
 msgid "Seek preview"
 msgstr "Aperçu du déplacement"
@@ -1794,12 +1800,6 @@ msgstr "Contour du texte"
 
 msgid "Extra contrast on busy wallpapers."
 msgstr "Davantage de contraste sur les fonds d’écran chargés."
-
-msgid "Outline"
-msgstr "Contour"
-
-msgid "Shadow"
-msgstr "Ombre"
 
 msgid "Edge colour"
 msgstr "Couleur du contour"
@@ -2909,6 +2909,11 @@ msgstr "Sur Plasma"
 
 msgid "On Hyprland"
 msgstr "Sur Hyprland"
+
+#. TRANSLATORS: two sample letters, an upper and a lower case one, in your script.
+msgctxt "text edge preview"
+msgid "Aa"
+msgstr "Aa"
 
 msgid "No saved looks yet."
 msgstr "Aucune apparence enregistrée pour le moment."

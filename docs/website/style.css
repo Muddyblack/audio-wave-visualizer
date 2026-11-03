@@ -373,8 +373,9 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:20px 32px;max-wi
 /* text */
 .texts{min-width:0;display:flex;flex-direction:column}
 /* Text edge, as Qt draws it: Outline rings each glyph, Shadow (Raised) sits 1 px below. */
-.edge-outline :is(.texts>:not(.ly),.ptxt,.po-meta,.po-title,.po-clock,.times){text-shadow:-1px 0 var(--edge),1px 0 var(--edge),0 -1px var(--edge),0 1px var(--edge)}
-.edge-shadow :is(.texts>:not(.ly),.ptxt,.po-meta,.po-title,.po-clock,.times){text-shadow:0 1px var(--edge)}
+.edgepv{display:grid;place-items:center;width:84%;height:34px;border-radius:8px;background:linear-gradient(90deg,#f4f1ea,#8fa3b8,#1b1e21);font-size:20px;font-weight:700}
+.edgepv.edge-outline,.edge-outline :is(.texts>:not(.ly),.ptxt,.po-meta,.po-title,.po-clock,.times){text-shadow:-1px 0 var(--edge),1px 0 var(--edge),0 -1px var(--edge),0 1px var(--edge)}
+.edgepv.edge-shadow,.edge-shadow :is(.texts>:not(.ly),.ptxt,.po-meta,.po-title,.po-clock,.times){text-shadow:0 1px var(--edge)}
 .texts.center{text-align:center;align-items:center}
 .texts.right{text-align:right;align-items:flex-end}
 .tt{font-size:var(--ts);font-weight:700;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}

@@ -1090,6 +1090,7 @@ function buildRow(r) {
       else if (pvKind === 'viz') pvHtml = `<canvas data-c="wave" data-i="${v}"></canvas>`;
       else if (pvKind === 'progress') pvHtml = v === 10 ? '<div class="artwrap" style="--a:32px"><div class="art" style="--a:32px"></div><i class="rg"></i></div>' : `<div class="pbwrap">${pbHTML(v, { showTimes: true, timeFormat: 'total' }, v === 0 || v === 2, 238, .58)}</div>`;
       else if (pvKind === 'orbit') pvHtml = `<canvas data-c="orbit" data-i="${v}"></canvas>`;
+      else if (pvKind === 'textEdge') pvHtml = `<span class="edgepv edge-${v}" data-key="${o.colorKey}">Aa</span>`;
       else pvHtml = o.pv || '';
       return { v, label, pvHtml, isNew: o.isNew };
     });
@@ -1111,6 +1112,7 @@ function buildRow(r) {
     });
     sync = s => {
       btns.forEach(b => b.setAttribute('aria-pressed', opts[b.dataset.i].v === get(s)));
+      $$('.edgepv', el).forEach(ep => { ep.style.setProperty('--edge', s[ep.dataset.key]); ep.style.color = s.useSystemText ? '#ffffff' : s.customTextColor; });
       $$('.dockpv', el).forEach(dp => { const html = dockHTML({ ...s, dockStyle: dp.dataset.v }, true); if (dp.innerHTML !== html) dp.innerHTML = html; });
     };
   } else if (r.type === 'presets') {

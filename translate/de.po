@@ -984,6 +984,15 @@ msgstr ""
 "Die Minivisualisierung folgt der Musik im ausgewählten Visualisierungsstil. "
 "„Statisch“ zeigt unbewegte Balken."
 
+msgid "None"
+msgstr "Keine"
+
+msgid "Outline"
+msgstr "Kontur"
+
+msgid "Shadow"
+msgstr "Schatten"
+
 msgid "Looks"
 msgstr "Designs"
 
@@ -1143,9 +1152,6 @@ msgid "Click anywhere on it in the widget to seek."
 msgstr ""
 "Im Widget auf eine beliebige Stelle des Balkens klicken, um dorthin zu "
 "springen."
-
-msgid "None"
-msgstr "Keine"
 
 msgid "Seek preview"
 msgstr "Sprungvorschau"
@@ -1787,12 +1793,6 @@ msgstr "Textkante"
 
 msgid "Extra contrast on busy wallpapers."
 msgstr "Zusätzlicher Kontrast auf unruhigen Hintergrundbildern."
-
-msgid "Outline"
-msgstr "Kontur"
-
-msgid "Shadow"
-msgstr "Schatten"
 
 msgid "Edge colour"
 msgstr "Kantenfarbe"
@@ -2876,6 +2876,11 @@ msgstr "Unter Plasma"
 
 msgid "On Hyprland"
 msgstr "Unter Hyprland"
+
+#. TRANSLATORS: two sample letters, an upper and a lower case one, in your script.
+msgctxt "text edge preview"
+msgid "Aa"
+msgstr "Aa"
 
 msgid "No saved looks yet."
 msgstr "Noch keine gespeicherten Designs."

@@ -976,6 +976,15 @@ msgstr ""
 "Mini görselleştirici, seçtiğiniz stili kullanarak müziği izler. Sabit "
 "çubuklar için Sabit’i seçin."
 
+msgid "None"
+msgstr "Yok"
+
+msgid "Outline"
+msgstr "Anahat"
+
+msgid "Shadow"
+msgstr "Gölge"
+
 msgid "Looks"
 msgstr "Görünümler"
 
@@ -1132,9 +1141,6 @@ msgstr ""
 msgid "Click anywhere on it in the widget to seek."
 msgstr ""
 "Parçada ilgili konuma gitmek için bileşenin herhangi bir yerine tıklayın."
-
-msgid "None"
-msgstr "Yok"
 
 msgid "Seek preview"
 msgstr "Konum Önizlemesi"
@@ -1779,12 +1785,6 @@ msgstr "Metin Kenarlığı"
 
 msgid "Extra contrast on busy wallpapers."
 msgstr "Hareketli duvar kâğıtlarında ek karşıtlık sağlar."
-
-msgid "Outline"
-msgstr "Anahat"
-
-msgid "Shadow"
-msgstr "Gölge"
 
 msgid "Edge colour"
 msgstr "Kenar Rengi"
@@ -2855,6 +2855,11 @@ msgstr "Plasma’da"
 
 msgid "On Hyprland"
 msgstr "Hyprland’da"
+
+#. TRANSLATORS: two sample letters, an upper and a lower case one, in your script.
+msgctxt "text edge preview"
+msgid "Aa"
+msgstr "Aa"
 
 msgid "No saved looks yet."
 msgstr "Henüz kaydedilmiş görünüm yok."
