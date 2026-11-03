@@ -52,3 +52,19 @@ function canSkip(player, flag) {
         return player.canControl !== false;
     return flag !== false;
 }
+
+// The video ID of a YouTube or YouTube Music page, or "".
+function youtubeId(url) {
+    const match = String(url ?? "").match(/^https?:\/\/(?:www\.|m\.|music\.)?(?:youtube\.com\/(?:watch\?(?:[^#]*&)?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([A-Za-z0-9_-]{11})(?![A-Za-z0-9_-])/i);
+    return match ? match[1] : "";
+}
+
+// YouTube Music hands the browser a zoomed-in crop of the video thumbnail,
+// so text at its top and bottom is lost. YouTube's own thumbnails, largest
+// first: maxresdefault (1280x720) is missing for some videos; mqdefault
+// (320x180) always exists. Both are 16:9 without the black bars hqdefault and
+// sddefault add.
+function youtubeThumbnails(url) {
+    const id = youtubeId(url);
+    return id ? ["maxresdefault", "mqdefault"].map(name => "https://i.ytimg.com/vi/" + id + "/" + name + ".jpg") : [];
+}

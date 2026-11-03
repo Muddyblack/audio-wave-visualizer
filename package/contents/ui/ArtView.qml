@@ -66,6 +66,8 @@ Item {
     readonly property bool edges: format === "squareEdges" || format === "auto"
     readonly property bool letterbox: coverReady && nonSquare && !disc && (format === "squareWhole" || format === "squareEdges" || (format === "auto" && ratio === 1))
     readonly property bool disc: shape === "vinyl" || shape === "cd"
+    // "Whole, stretched" squeezes the whole image into the box, distorting it.
+    readonly property bool stretched: format === "squareStretch" && nonSquare && !disc
     readonly property real cornerRadius: shape === "sharp" ? 2 : shape === "squircle" ? width * 0.3 : (shape === "circle" || disc) ? width / 2 : roundedRadius
     // Radius for the progress ring drawn 4 px outside (HTML `.artwrap .rg`).
     readonly property real ringRadius: (shape === "circle" || disc) ? (width + 8) / 2 : shape === "squircle" ? (width + 8) * 0.32 : 14
@@ -347,7 +349,7 @@ Item {
                 anchors.fill: parent
                 opacity: root.letterbox && root.edges ? 0 : 1
                 source: root.artUrl
-                fillMode: Image.PreserveAspectCrop
+                fillMode: root.stretched ? Image.Stretch : Image.PreserveAspectCrop
                 // Keep at least 2x samples for small covers and respect HiDPI screens.
                 sourceSize: Qt.size(Math.min(2048, Math.ceil(width * root.sampleScale)), Math.min(2048, Math.ceil(height * root.sampleScale)))
                 smooth: true
@@ -532,6 +534,7 @@ Item {
                 radius: root.cornerRadius
                 letterbox: root.letterbox
                 edges: root.edges
+                stretched: root.stretched
                 naturalSize: naturalArt.sourceSize
                 grayed: root.grayed
             }

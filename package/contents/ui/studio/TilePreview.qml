@@ -24,6 +24,7 @@ Item {
                 diagram: diagramComponent,
                 material: materialComponent,
                 shape: shapeComponent,
+                format: formatComponent,
                 palette: paletteComponent
             })[preview.kind] ?? null
     }
@@ -245,6 +246,41 @@ Item {
                 height: 36
                 view: sampleView
                 artUrl: preview.studio.livePreview && preview.studio.liveVisualizer ? (preview.studio.livePlayer?.trackArtUrl ?? preview.studio.livePlayer?.artUrl ?? "") : preview.studio.samplePlayer.artUrl
+            }
+        }
+    }
+
+    // A wide sample cover in each artwork format, in the chosen shape (discs
+    // fall back to rounded: formats do not apply to them).
+    Component {
+        id: formatComponent
+        Item {
+            QtObject {
+                id: formatView
+                readonly property string shape: preview.draft.artShape ?? "rounded"
+                property var configuration: ({
+                        artShape: shape === "vinyl" || shape === "cd" ? "rounded" : shape,
+                        artFormat: preview.value
+                    })
+                property string displayTrack: ""
+                property bool isPlaying: false
+                property bool hasPlayer: true
+                property bool cardHovered: false
+                property bool zoomOpen: false
+                property var player: null
+                property color textColor: Theme.text
+                property color waveColor: preview.studio.accent
+                property color coverColor1: preview.studio.accent
+                property real visualFrameTime: 0
+            }
+            ArtView {
+                objectName: "formatPreviewArtwork"
+                anchors.centerIn: parent
+                height: 36
+                width: Math.round(height * ratio)
+                roundedRadius: 7
+                view: formatView
+                artUrl: Qt.resolvedUrl("sample-wide-cover.svg")
             }
         }
     }

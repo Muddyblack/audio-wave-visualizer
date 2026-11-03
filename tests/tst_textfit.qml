@@ -98,6 +98,16 @@ TestCase {
                         layoutMode: mode
                     }, extras[extra])
                 });
+        // Orbit can hold the title inside its ring instead of below it.
+        for (const center of ["coverText", "text"])
+            for (const extra in extras)
+                rows.push({
+                    tag: "orbit " + center + "+" + extra,
+                    settings: Object.assign({
+                        layoutMode: "orbit",
+                        orbitCenter: center
+                    }, extras[extra])
+                });
         // Lyrics scrolls its lines past its own clip by design.
         for (const preset of Schema.PRESETS.filter(preset => preset.id !== "lyricsonly"))
             rows.push({

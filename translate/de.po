@@ -1029,6 +1029,38 @@ msgstr "Wie weit der Ring über das Cover hinausragt."
 msgid "Slow rotation"
 msgstr "Langsame Drehung"
 
+msgid "Centre"
+msgstr "Mitte"
+
+msgid ""
+"What sits inside the ring. With the title inside, the ring opens up to hold "
+"it and only progress and controls stay below."
+msgstr ""
+"Was im Ring sitzt. Mit dem Titel darin öffnet sich der Ring, um ihn "
+"aufzunehmen; darunter bleiben nur Fortschritt und Steuerung."
+
+msgid "Cover"
+msgstr "Cover"
+
+msgid "Cover and title"
+msgstr "Cover und Titel"
+
+msgid "Title"
+msgstr "Titel"
+
+msgid "Empty"
+msgstr "Leer"
+
+msgid "Glow ring"
+msgstr "Leuchtring"
+
+msgid ""
+"A soft circle of light where the bars start, in the visualizer colour. It "
+"brightens with the bass."
+msgstr ""
+"Ein weicher Lichtkreis, wo die Balken beginnen, in der Farbe des "
+"Visualizers. Er wird mit dem Bass heller."
+
 msgid "Cover breathes with the bass"
 msgstr "Cover atmet mit dem Bass"
 
@@ -1327,9 +1359,6 @@ msgstr "Ohne Cover"
 msgid "Text"
 msgstr "Text"
 
-msgid "Title"
-msgstr "Titel"
-
 msgid "Title · Artist"
 msgstr "Titel · Interpret"
 
@@ -1392,9 +1421,6 @@ msgstr "Ausrichtung"
 msgid "Left"
 msgstr "Links"
 
-msgid "Centre"
-msgstr "Mitte"
-
 msgid "Title lines"
 msgstr "Titelzeilen"
 
@@ -1450,9 +1476,6 @@ msgstr ""
 "Überlange Titel scrollen, auch in der Leistenkapsel. Durch „Reduzierte "
 "Bewegung“ deaktiviert."
 
-msgid "Cover"
-msgstr "Cover"
-
 msgid "Show artwork"
 msgstr "Cover anzeigen"
 
@@ -1485,17 +1508,20 @@ msgstr "CD"
 
 msgid ""
 "Square always crops the art. Auto keeps square art cropped, switches the "
-"cover to 16:9 for wide art, and fits tall art whole with blurred edges. The "
-"two whole options fit the full image in the square: over a dimmed copy, or "
-"filled with its blurred edges. Wide 16:9 makes the cover a widescreen box "
-"(not for circle, vinyl or CD)."
+"cover to 16:9 for wide art, and fits tall art whole with extended edges. The "
+"whole options fit the full image in the square: over a dimmed copy, extended "
+"from its own blurred edges so the picture seems to continue, or stretched to "
+"fill it (distorted, nothing cut off). Wide 16:9 makes the cover a widescreen "
+"box (not for circle, vinyl or CD)."
 msgstr ""
 "„Quadratisch“ beschneidet das Bild immer. „Automatisch“ behält quadratische "
 "Bilder beschnitten, schaltet bei breiten Bildern auf 16:9 um und zeigt hohe "
-"Bilder vollständig mit unscharfen Rändern. Die beiden Optionen „Vollständig“ "
-"passen das ganze Bild in das Quadrat ein: über einer abgedunkelten Kopie "
-"oder mit unscharfen Rändern aufgefüllt. „Breit 16:9“ macht das Cover zu "
-"einem Breitbildrechteck (nicht für Kreis, Vinyl oder CD)."
+"Bilder vollständig mit erweiterten Rändern. Die Optionen „Vollständig“ "
+"passen das ganze Bild in das Quadrat ein: über einer abgedunkelten Kopie, "
+"aus den eigenen unscharfen Rändern erweitert, sodass das Bild weiterzulaufen "
+"scheint, oder gestreckt, bis es das Quadrat füllt (verzerrt, aber nichts "
+"abgeschnitten). „Breit 16:9“ macht das Cover zu einem Breitbildrechteck "
+"(nicht für Kreis, Vinyl oder CD)."
 
 msgid "Square"
 msgstr "Quadratisch"
@@ -1506,11 +1532,29 @@ msgstr "Automatisch"
 msgid "Whole, dimmed"
 msgstr "Vollständig, abgedunkelt"
 
-msgid "Whole, edges"
-msgstr "Vollständig, mit Rändern"
+msgid "Whole, extended"
+msgstr "Vollständig, erweitert"
+
+msgid "Whole, stretched"
+msgstr "Vollständig, gestreckt"
 
 msgid "Wide 16:9"
 msgstr "Breit 16:9"
+
+msgid "Full YouTube thumbnails"
+msgstr "Vollständige YouTube-Vorschaubilder"
+
+msgid ""
+"YouTube Music passes on a zoomed-in crop of the video thumbnail, cutting off "
+"text at the top and bottom. Load the full thumbnail from YouTube instead; "
+"only the video ID is sent, to YouTube. Not used with Square, which crops the "
+"cover anyway."
+msgstr ""
+"YouTube Music gibt nur einen vergrößerten Ausschnitt des Video-Vorschaubilds "
+"weiter, bei dem Text oben und unten abgeschnitten ist. Stattdessen das "
+"vollständige Vorschaubild von YouTube laden; nur die Video-ID wird gesendet, "
+"an YouTube. Wird bei „Quadratisch“ nicht verwendet, da das Cover dort "
+"ohnehin beschnitten wird."
 
 msgid "Size"
 msgstr "Größe"
@@ -2564,6 +2608,16 @@ msgid ""
 msgstr ""
 "Ein gepunkteter Neonring schlägt bei jedem Takt nach außen aus. Die eigene "
 "Farbe bestimmt das Leuchten."
+
+msgid "Circular Spectrum"
+msgstr "Kreisspektrum"
+
+msgid ""
+"Thin bars around a glowing circle with the cover and title inside. No card, "
+"so it sits on any wallpaper."
+msgstr ""
+"Dünne Balken um einen leuchtenden Kreis, darin Cover und Titel. Ohne Karte, "
+"passt also auf jedes Hintergrundbild."
 
 msgid "Orbit Icon"
 msgstr "Umlaufbahnsymbol"

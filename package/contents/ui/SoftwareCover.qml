@@ -12,6 +12,8 @@ Item {
     property bool letterbox: false
     // With letterbox: fill the bands with stretched edges, not a dimmed copy.
     property bool edges: false
+    // Squeeze the whole image into the box instead of cropping it.
+    property bool stretched: false
     // Source pixel size, for the 1 px edge slices.
     property size naturalSize: Qt.size(1, 1)
     property bool ready: false
@@ -65,6 +67,9 @@ Item {
             function onLetterboxChanged() {
                 painter.requestPaint();
             }
+            function onStretchedChanged() {
+                painter.requestPaint();
+            }
             function onEdgesChanged() {
                 painter.requestPaint();
             }
@@ -88,7 +93,9 @@ Item {
             // The cropped cover; the edge variant paints its bands over nothing,
             // as the slide show does.
             const fill = Math.max(w / iw, h / ih);
-            if (!(cover.letterbox && cover.edges))
+            if (cover.stretched)
+                ctx.drawImage(cover.source, 0, 0, w, h);
+            else if (!(cover.letterbox && cover.edges))
                 ctx.drawImage(cover.source, (w - iw * fill) / 2, (h - ih * fill) / 2, iw * fill, ih * fill);
             if (cover.letterbox && !cover.edges) {
                 ctx.fillStyle = "rgba(0,0,0,0.55)";

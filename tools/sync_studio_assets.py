@@ -257,6 +257,9 @@ def outputs():
     result = {"icon.png": (ROOT / "package/icon.png").read_bytes()}
     for icon in (SOURCE_STUDIO / "icons").glob("*.svg"):
         result["icons/" + icon.name] = icon.read_bytes()
+    result["sample-wide-cover.svg"] = (
+        SOURCE_STUDIO / "sample-wide-cover.svg"
+    ).read_bytes()
 
     # Configuration schema from main.xml
     schema = parse_kcfg(SOURCE_CONFIG / "main.xml")

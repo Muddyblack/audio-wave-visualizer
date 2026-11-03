@@ -11,6 +11,8 @@ Item {
     readonly property bool ringMode: !view.configuration.customProgressBar && (view.configuration.progressBarStyle ?? 0) === 10
     readonly property bool shown: view.configuration.showMpris && view.configuration.showArtThumb && (!view.artIsBackground || view.configuration.artBgKeepThumb)
     readonly property real artSize: Math.max(0, Math.round(size - (ringMode ? ringShrink : 0)))
+    // Width over height of the cover box (16:9 for the wide formats).
+    readonly property alias ratio: artView.ratio
 
     visible: shown
     implicitWidth: shown ? Math.round(artSize * artView.ratio) : 0

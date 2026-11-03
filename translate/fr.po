@@ -1031,6 +1031,39 @@ msgstr "Distance jusqu’à laquelle l’anneau s’étend autour de la pochette
 msgid "Slow rotation"
 msgstr "Rotation lente"
 
+msgid "Centre"
+msgstr "Centre"
+
+msgid ""
+"What sits inside the ring. With the title inside, the ring opens up to hold "
+"it and only progress and controls stay below."
+msgstr ""
+"Ce qui se trouve dans l’anneau. Avec le titre à l’intérieur, l’anneau "
+"s’agrandit pour le contenir ; seuls la progression et les commandes restent "
+"en dessous."
+
+msgid "Cover"
+msgstr "Pochette"
+
+msgid "Cover and title"
+msgstr "Pochette et titre"
+
+msgid "Title"
+msgstr "Titre"
+
+msgid "Empty"
+msgstr "Vide"
+
+msgid "Glow ring"
+msgstr "Anneau lumineux"
+
+msgid ""
+"A soft circle of light where the bars start, in the visualizer colour. It "
+"brightens with the bass."
+msgstr ""
+"Un doux cercle de lumière à la base des barres, dans la couleur du "
+"visualiseur. Il s’illumine avec les basses."
+
 msgid "Cover breathes with the bass"
 msgstr "La pochette respire au rythme des basses"
 
@@ -1332,9 +1365,6 @@ msgstr "Sans pochette"
 msgid "Text"
 msgstr "Texte"
 
-msgid "Title"
-msgstr "Titre"
-
 msgid "Title · Artist"
 msgstr "Titre · Artiste"
 
@@ -1397,9 +1427,6 @@ msgstr "Alignement"
 msgid "Left"
 msgstr "Gauche"
 
-msgid "Centre"
-msgstr "Centre"
-
 msgid "Title lines"
 msgstr "Lignes du titre"
 
@@ -1455,9 +1482,6 @@ msgstr ""
 "Faire défiler les titres qui débordent, y compris dans la capsule du "
 "panneau. Désactivé par la réduction des animations."
 
-msgid "Cover"
-msgstr "Pochette"
-
 msgid "Show artwork"
 msgstr "Afficher la pochette"
 
@@ -1490,16 +1514,19 @@ msgstr "CD"
 
 msgid ""
 "Square always crops the art. Auto keeps square art cropped, switches the "
-"cover to 16:9 for wide art, and fits tall art whole with blurred edges. The "
-"two whole options fit the full image in the square: over a dimmed copy, or "
-"filled with its blurred edges. Wide 16:9 makes the cover a widescreen box "
-"(not for circle, vinyl or CD)."
+"cover to 16:9 for wide art, and fits tall art whole with extended edges. The "
+"whole options fit the full image in the square: over a dimmed copy, extended "
+"from its own blurred edges so the picture seems to continue, or stretched to "
+"fill it (distorted, nothing cut off). Wide 16:9 makes the cover a widescreen "
+"box (not for circle, vinyl or CD)."
 msgstr ""
 "Carré recadre toujours l’image. Auto recadre les images carrées, passe en "
 "16:9 pour les images larges et affiche entièrement les images hautes avec "
-"des bords floutés. Les deux options d’image entière affichent toute l’image "
-"dans le carré, sur une copie assombrie ou avec des bords floutés. Large 16:9 "
-"donne un cadre panoramique à la pochette (sauf pour Cercle, Vinyle et CD)."
+"des bords prolongés. Les options d’image entière affichent toute l’image "
+"dans le carré : sur une copie assombrie, prolongée par ses propres bords "
+"floutés pour que l’image semble continuer, ou étirée pour le remplir "
+"(déformée, mais rien n’est coupé). Large 16:9 donne un cadre panoramique à "
+"la pochette (sauf pour Cercle, Vinyle et CD)."
 
 msgid "Square"
 msgstr "Carré"
@@ -1510,11 +1537,28 @@ msgstr "Auto"
 msgid "Whole, dimmed"
 msgstr "Entière, fond sombre"
 
-msgid "Whole, edges"
-msgstr "Entière, bords floutés"
+msgid "Whole, extended"
+msgstr "Entière, prolongée"
+
+msgid "Whole, stretched"
+msgstr "Entière, étirée"
 
 msgid "Wide 16:9"
 msgstr "Large 16:9"
+
+msgid "Full YouTube thumbnails"
+msgstr "Miniatures YouTube complètes"
+
+msgid ""
+"YouTube Music passes on a zoomed-in crop of the video thumbnail, cutting off "
+"text at the top and bottom. Load the full thumbnail from YouTube instead; "
+"only the video ID is sent, to YouTube. Not used with Square, which crops the "
+"cover anyway."
+msgstr ""
+"YouTube Music ne transmet qu’un recadrage agrandi de la miniature de la "
+"vidéo, ce qui coupe le texte en haut et en bas. Charger plutôt la miniature "
+"complète depuis YouTube ; seul l’identifiant de la vidéo est envoyé, à "
+"YouTube. Non utilisé avec Carré, qui recadre la pochette de toute façon."
 
 msgid "Size"
 msgstr "Taille"
@@ -2583,6 +2627,16 @@ msgid ""
 msgstr ""
 "Un anneau néon en pointillés jaillit vers l’extérieur à chaque battement. "
 "Changez la couleur personnalisée pour varier la lueur."
+
+msgid "Circular Spectrum"
+msgstr "Spectre circulaire"
+
+msgid ""
+"Thin bars around a glowing circle with the cover and title inside. No card, "
+"so it sits on any wallpaper."
+msgstr ""
+"Des barres fines autour d’un cercle lumineux, avec la pochette et le titre à "
+"l’intérieur. Sans carte, il s’accorde à tout fond d’écran."
 
 msgid "Orbit Icon"
 msgstr "Icône orbitale"

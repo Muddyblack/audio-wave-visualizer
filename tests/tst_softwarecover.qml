@@ -74,4 +74,23 @@ TestCase {
         cover.letterbox = false;
         cover.source = '';
     }
+    function test_stretchedShowsTheBlueQuarter() {
+        cover.rasterScale = 1;
+        cover.grayed = false;
+        cover.source = Qt.resolvedUrl('fixtures/cover-red-blue.ppm');
+        tryVerify(() => painter.isImageLoaded(cover.source));
+        wait(40);
+        // Cropped, the middle two red columns fill the square.
+        verify(grabImage(cover).red(70, 40) > 240);
+        const count = paints.count;
+        cover.stretched = true;
+        tryVerify(() => paints.count > count);
+        wait(40);
+        // Squeezed, the blue last column covers the right quarter.
+        const picture = grabImage(cover);
+        verify(picture.blue(70, 40) > 240 && picture.red(70, 40) < 40);
+        verify(picture.red(20, 40) > 240);
+        cover.stretched = false;
+        cover.source = '';
+    }
 }

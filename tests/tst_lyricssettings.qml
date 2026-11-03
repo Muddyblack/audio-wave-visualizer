@@ -1,5 +1,7 @@
 import QtQuick
 import QtTest
+import QtQuick.Controls as QQC2
+import QtQuick.Layouts
 import org.kde.kirigami as Kirigami
 import "../hyprland/Configuration.js" as Configuration
 
@@ -53,6 +55,75 @@ TestCase {
         compare(page.title, "General");
         verify(page.parent !== null);
         stack.clear();
+    }
+
+    // Plasma's applet dialog: a page stack over a footer with OK, Apply and Cancel.
+    Component {
+        id: plasmaDialogComponent
+        Kirigami.ApplicationItem {
+            width: 900
+            height: 600
+            footer: QQC2.Pane {
+                padding: 6
+                contentItem: RowLayout {
+                    Item {
+                        Layout.fillWidth: true
+                    }
+                    QQC2.Button {
+                        objectName: "hostOk"
+                        icon.name: "dialog-ok"
+                        text: "OK"
+                    }
+                    QQC2.Button {
+                        icon.name: "dialog-cancel"
+                        text: "Cancel"
+                    }
+                }
+            }
+        }
+    }
+    function test_footerSharesPlasmasButtonRow() {
+        const dialog = createTemporaryObject(plasmaDialogComponent, this);
+        const properties = {
+            title: "General"
+        };
+        for (const key of Object.keys(defaults))
+            properties["cfg_" + key] = defaults[key];
+        const page = dialog.pageStack.push(pageComponent, properties);
+        const pane = dialog.footer, row = findChild(page, "settingsFooterRow");
+        tryCompare(row, "parent", pane);
+        verify(!findChild(page, "settingsFooter").visible, "No second button row");
+        waitForRendering(dialog);
+        const ok = findChild(pane, "hostOk");
+        const rowRight = row.mapToItem(dialog, row.width, 0).x;
+        verify(rowRight < ok.mapToItem(dialog, 0, 0).x, "Defaults, Reset and Apply instantly sit left of OK");
+        compare(row.mapToItem(dialog, 0, row.height / 2).y, pane.mapToItem(dialog, 0, pane.height / 2).y, "Same line");
+        verify(findChild(page, "liveApplySwitch").width >= findChild(page, "liveApplySwitch").implicitWidth, "Label not cut off");
+        dialog.pageStack.clear();
+        tryCompare(pane, "leftPadding", 6, 1000, "Plasma's padding comes back with the page gone");
+    }
+
+    // Narrow windows wrap the toolbar instead of squeezing the search field
+    // under its icons or pushing buttons off the edge.
+    function test_toolbarFitsAnyWidth_data() {
+        return [500, 640, 820, 1000, 1400].map(width => ({
+                    tag: width + "px",
+                    width: width
+                }));
+    }
+    function test_toolbarFitsAnyWidth(data) {
+        const page = createPage();
+        page.width = data.width;
+        page.height = 700;
+        const header = findChild(page, "studioHeader"), search = findChild(page, "studioSearchBox");
+        waitForRendering(page);
+        verify(header.width > 0);
+        verify(search.width >= 220, "Search keeps room for its placeholder: " + search.width);
+        for (const child of header.children)
+            if (child.visible)
+                verify(child.x + child.width <= header.width + 0.5, child.objectName + " ends at " + (child.x + child.width) + " of " + header.width);
+        if (!header.wrapped)
+            compare(header.height, 36, "One line when everything fits");
     }
 
     function test_panelAndPopupDraftsPreviewAndDiscardTogether() {

@@ -51,6 +51,15 @@ TestCase {
             "bitsPerSample": 999
         }), []);
     }
+    function test_youtubeThumbnails() {
+        const id = "Bi9TTUkCETY";
+        for (const url of ["https://music.youtube.com/watch?v=" + id + "&list=RDAMVMc9yfSUdQdkc", "https://www.youtube.com/watch?v=" + id, "https://m.youtube.com/watch?feature=share&v=" + id, "https://youtu.be/" + id + "?t=42", "https://www.youtube.com/shorts/" + id, "https://www.youtube.com/embed/" + id])
+            compare(MediaSource.youtubeId(url), id, url);
+        for (const url of ["", "file:///music/song.flac", "https://open.spotify.com/track/" + id, "https://www.youtube.com/watch?v=short", "https://notyoutube.com/watch?v=" + id, "https://www.youtube.com/watch?v=" + id + "x"])
+            compare(MediaSource.youtubeId(url), "", url);
+        compare(MediaSource.youtubeThumbnails("https://youtu.be/" + id), ["https://i.ytimg.com/vi/" + id + "/maxresdefault.jpg", "https://i.ytimg.com/vi/" + id + "/mqdefault.jpg"]);
+        compare(MediaSource.youtubeThumbnails("https://example.org/"), []);
+    }
     function test_browserSourceName() {
         compare(MediaSource.displayName("Mozilla Zen", "zen", "", {
             "xesam:url": "https://music.youtube.com/watch?v=abc"
