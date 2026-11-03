@@ -221,6 +221,12 @@
         <entry name="orbitCoverPulse" type="Bool">
             <default>true</default>
         </entry>
+        <entry name="orbitCenter" type="String">
+            <default>cover</default>
+        </entry>
+        <entry name="orbitGlowRing" type="Bool">
+            <default>false</default>
+        </entry>
         <entry name="vizVerticalOffset" type="Double">
             <default>0.0</default>
             <min>-1.0</min>
@@ -306,6 +312,9 @@
         </entry>
         <entry name="artFormat" type="String">
             <default>square</default>
+        </entry>
+        <entry name="artYouTubeThumbnail" type="Bool">
+            <default>true</default>
         </entry>
         <entry name="artScale" type="Int">
             <default>100</default>

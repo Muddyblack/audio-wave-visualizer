@@ -1021,6 +1021,38 @@ msgstr "Halkanın kapaktan ne kadar uzağa uzanacağını belirler."
 msgid "Slow rotation"
 msgstr "Yavaş Dönüş"
 
+msgid "Centre"
+msgstr "Orta"
+
+msgid ""
+"What sits inside the ring. With the title inside, the ring opens up to hold "
+"it and only progress and controls stay below."
+msgstr ""
+"Halkanın içinde ne duracağı. Başlık içerideyken halka onu alacak kadar "
+"genişler; altta yalnızca ilerleme ve denetimler kalır."
+
+msgid "Cover"
+msgstr "Kapak"
+
+msgid "Cover and title"
+msgstr "Kapak ve başlık"
+
+msgid "Title"
+msgstr "Başlık"
+
+msgid "Empty"
+msgstr "Boş"
+
+msgid "Glow ring"
+msgstr "Parlayan halka"
+
+msgid ""
+"A soft circle of light where the bars start, in the visualizer colour. It "
+"brightens with the bass."
+msgstr ""
+"Çubukların başladığı yerde, görselleştirici renginde yumuşak bir ışık "
+"çemberi. Baslarla parlar."
+
 msgid "Cover breathes with the bass"
 msgstr "Kapak Basla Birlikte Nefes Alsın"
 
@@ -1319,9 +1351,6 @@ msgstr "Kapak Görseli Yok"
 msgid "Text"
 msgstr "Metin"
 
-msgid "Title"
-msgstr "Başlık"
-
 msgid "Title · Artist"
 msgstr "Başlık · Sanatçı"
 
@@ -1384,9 +1413,6 @@ msgstr "Hizalama"
 msgid "Left"
 msgstr "Sol"
 
-msgid "Centre"
-msgstr "Orta"
-
 msgid "Title lines"
 msgstr "Başlık Satırları"
 
@@ -1441,9 +1467,6 @@ msgid ""
 msgstr ""
 "Panel hapı dahil taşan başlıkları kaydırır. Hareketi Azalt etkinse kapatılır."
 
-msgid "Cover"
-msgstr "Kapak"
-
 msgid "Show artwork"
 msgstr "Kapak Görselini Göster"
 
@@ -1476,17 +1499,19 @@ msgstr "CD"
 
 msgid ""
 "Square always crops the art. Auto keeps square art cropped, switches the "
-"cover to 16:9 for wide art, and fits tall art whole with blurred edges. The "
-"two whole options fit the full image in the square: over a dimmed copy, or "
-"filled with its blurred edges. Wide 16:9 makes the cover a widescreen box "
-"(not for circle, vinyl or CD)."
+"cover to 16:9 for wide art, and fits tall art whole with extended edges. The "
+"whole options fit the full image in the square: over a dimmed copy, extended "
+"from its own blurred edges so the picture seems to continue, or stretched to "
+"fill it (distorted, nothing cut off). Wide 16:9 makes the cover a widescreen "
+"box (not for circle, vinyl or CD)."
 msgstr ""
 "Kare seçeneği kapak görselini her zaman kırpar. Otomatik, kare görselleri "
-"kırpar; geniş görsellerde kapağı 16:9 yapar, uzun görselleri ise bulanık "
-"kenarlarla bütünüyle sığdırır. Bütünüyle sığdıran iki seçenek, görselin "
-"tamamını karartılmış bir kopyanın üzerine veya bulanık kenarlarla "
-"doldurulmuş bir kareye yerleştirir. Geniş 16:9, kapağı geniş ekran biçiminde "
-"gösterir; daire, plak ve CD için kullanılamaz."
+"kırpar; geniş görsellerde kapağı 16:9 yapar, uzun görselleri ise kenarlarını "
+"uzatarak bütünüyle sığdırır. Bütünüyle sığdıran seçenekler görselin tamamını "
+"kareye yerleştirir: karartılmış bir kopyanın üzerine, görsel devam ediyormuş "
+"gibi kendi bulanık kenarlarından uzatarak ya da kareyi dolduracak şekilde "
+"esneterek (bozulur ama hiçbir yeri kesilmez). Geniş 16:9, kapağı geniş ekran "
+"biçiminde gösterir; daire, plak ve CD için kullanılamaz."
 
 msgid "Square"
 msgstr "Kare"
@@ -1497,11 +1522,28 @@ msgstr "Otomatik"
 msgid "Whole, dimmed"
 msgstr "Tamamı, karartılmış"
 
-msgid "Whole, edges"
-msgstr "Tamamı, bulanık kenarlarla"
+msgid "Whole, extended"
+msgstr "Tamamı, uzatılmış"
+
+msgid "Whole, stretched"
+msgstr "Tamamı, esnetilmiş"
 
 msgid "Wide 16:9"
 msgstr "Geniş 16:9"
+
+msgid "Full YouTube thumbnails"
+msgstr "Tam YouTube küçük resimleri"
+
+msgid ""
+"YouTube Music passes on a zoomed-in crop of the video thumbnail, cutting off "
+"text at the top and bottom. Load the full thumbnail from YouTube instead; "
+"only the video ID is sent, to YouTube. Not used with Square, which crops the "
+"cover anyway."
+msgstr ""
+"YouTube Music, video küçük resminin yakınlaştırılmış bir kesitini iletir; "
+"üstteki ve alttaki yazılar kesilir. Bunun yerine tam küçük resmi YouTube’dan "
+"yükle; yalnızca video kimliği YouTube’a gönderilir. Kapağı zaten kırpan Kare "
+"seçeneğinde kullanılmaz."
 
 msgid "Size"
 msgstr "Boyut"
@@ -2554,6 +2596,16 @@ msgid ""
 msgstr ""
 "Noktalı neon halka her vuruşta dışa doğru sıçrar. Özel rengi istediğiniz "
 "parlamayla değiştirin."
+
+msgid "Circular Spectrum"
+msgstr "Dairesel Spektrum"
+
+msgid ""
+"Thin bars around a glowing circle with the cover and title inside. No card, "
+"so it sits on any wallpaper."
+msgstr ""
+"Parlayan bir çemberin çevresinde ince çubuklar, içinde kapak ve başlık. Kart "
+"yok, bu yüzden her duvar kağıdına uyar."
 
 msgid "Orbit Icon"
 msgstr "Yörünge Simgesi"

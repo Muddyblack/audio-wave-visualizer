@@ -168,7 +168,7 @@ function widgetHTML(s, status, opt = {}) {
     ? `<div class="hc ${hoverMode === 'drawer' ? 'drawer' : ''} ${opt.hcAbove ? 'above' : ''}"><div class="hc-head">${artHTML(s, d, 40, { coverOK, title, small: true })}<div><b>${esc(title)}</b><span>${esc(artist)}</span></div></div><dl>${detailRows(s, d)}</dl>${s.showLyrics ? `<div class="ly" data-ly style="margin-top:8px;font-size:10.5px">${esc(lyricAt(d.t))}</div>` : ''}</div>` : '';
   const vol = s.scrollVolume ? `<div class="vol" data-vol><i style="--v:${P.volume}"></i></div>` : '';
   const cls = ['w', `L-${mode}`, bg && s.cardShadow !== 'none' ? `sh-${s.cardShadow}` : '', s.hoverLift ? 'lift' : '',
-    s.dimWhenPaused && d.hasPlayer && !d.playing ? 'dim' : '', pill && !bg ? 'nobg' : '', s.bassPulse || (mode === 'orbit' && s.orbitCoverPulse) ? 'bass' : '',
+    s.dimWhenPaused && d.hasPlayer && !d.playing ? 'dim' : '', pill && !bg ? 'nobg' : '', s.bassPulse || (mode === 'orbit' && (s.orbitCoverPulse || s.orbitGlowRing)) ? 'bass' : '',
     s.surfaceStyle === 'liquid' && s.glassSpecular ? 'specular' : ''];
   const vars = `${base}${colorVars(d)}--ts:${s.titleSize}px;--cover:${coverOK ? d.t.cover : 'none'};--p1:${d.t.pal.p1};--p2:${d.t.pal.p2};--p3:${d.t.pal.p3}`;
 
@@ -251,8 +251,14 @@ function widgetHTML(s, status, opt = {}) {
     case 'orbit': {
       pad = bg ? '14px 16px 12px' : '4px';
       const box = W - (bg ? 60 : 28);
-      const a = Math.round(Math.min(box * .56, box * .38 * s.artScale / 100)) - (ringMode ? 8 : 0);
-      body = `<div class="L col" style="gap:8px"><div class="orbit ${s.orbitCoverPulse ? 'pulse' : ''}" style="width:${box}px;height:${box}px"><canvas data-c="orbit" data-r="${((a + (ringMode ? 8 : 0)) / box).toFixed(3)}"></canvas>${showArt ? art(a) : ''}</div>${texts}<div class="pbx">${pb}</div>${dock()}</div>`;
+      const center = s.orbitCenter || 'cover', inside = center === 'coverText' || center === 'text';
+      const cover = Math.round(Math.min(box * .56, box * .38 * s.artScale / 100));
+      // With the title inside, the hole opens to 60 % of the ring box.
+      const hole = center === 'cover' ? cover : Math.round(box * .6);
+      const a = (inside ? Math.round(hole * .36) : cover) - (ringMode ? 8 : 0);
+      const glow = s.orbitGlowRing ? `<i class="oglow" style="--gr:${(hole / 2 + 4).toFixed(1)}px"></i>` : '';
+      const centre = `<div class="ocentre ${inside ? 'inside' : ''}" style="--in:${Math.floor(hole * Math.SQRT1_2)}px">${center !== 'text' && center !== 'empty' ? art(a) : ''}${inside ? texts : ''}</div>`;
+      body = `<div class="L col" style="gap:8px"><div class="orbit ${s.orbitCoverPulse ? 'pulse' : ''}" style="width:${box}px;height:${box}px">${glow}<canvas data-c="orbit" data-r="${(hole / box).toFixed(3)}"></canvas>${centre}</div>${inside ? '' : texts}<div class="pbx">${pb}</div>${dock()}</div>`;
       break;
     }
     case 'strip':
@@ -1078,6 +1084,7 @@ function buildRow(r) {
       if (pvKind === 'dock') pvHtml = `<span class="dockpv" data-v="${v}"></span>`;
       else if (pvKind === 'material') pvHtml = `<canvas data-c="material" data-material="${v}"></canvas>`;
       else if (pvKind === 'shape') pvHtml = `<span style="--cover:${TRACKS[P.track].cover}">${artHTML({...DEFAULTS, artShape:v}, derive(DEFAULTS, 'demo'), 32, {coverOK:true, small:true})}</span>`;
+      else if (pvKind === 'format') pvHtml = `<span class="formatpv ${v}"></span>`;
       else if (pvKind === 'palette') pvHtml = `<span class="palette-preview" style="background:linear-gradient(90deg,${PALETTES[v].join(',')})"></span>`;
       else if (pvKind === 'diagram') pvHtml = diag(v);
       else if (pvKind === 'viz') pvHtml = `<canvas data-c="wave" data-i="${v}"></canvas>`;

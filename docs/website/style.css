@@ -449,8 +449,11 @@ footer{border-top:1px solid var(--line);margin-top:50px;padding:20px 32px;max-wi
 .L-orbit .L{align-items:center}
 .orbit{position:relative;flex-shrink:0;display:grid;place-items:center}
 .orbit>canvas{position:absolute;inset:0;width:100%;height:100%}
-.orbit>.art,.orbit>.artwrap{position:relative;z-index:1;transition:transform .09s linear}
-.orbit.pulse>.art,.orbit.pulse>.artwrap{transform:scale(calc(1 + var(--bass,0)*.07))}
+.orbit>.ocentre{position:relative;z-index:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.orbit>.ocentre.inside{width:var(--in)}
+.orbit>.ocentre .art,.orbit>.ocentre .artwrap{transition:transform .09s linear}
+.orbit.pulse>.ocentre>.art,.orbit.pulse>.ocentre>.artwrap{transform:scale(calc(1 + var(--bass,0)*.07))}
+.orbit>.oglow{position:absolute;inset:0;pointer-events:none;opacity:calc(.6 + var(--bass,0)*.4);background:radial-gradient(circle closest-side at center,transparent calc(var(--gr)*.72),color-mix(in srgb,var(--accent) 55%,transparent) calc(var(--gr) - 2px),color-mix(in srgb,var(--accent) 95%,transparent) var(--gr),color-mix(in srgb,var(--accent) 45%,transparent) calc(var(--gr) + 2px),transparent calc(var(--gr)*1.28))}
 .L-orbit .texts{align-items:center;text-align:center;width:100%}
 .L-orbit .tt{font-size:calc(var(--ts)*1.3)}
 .L-orbit .ta{font-size:calc(var(--ts)*.95)}
@@ -656,3 +659,9 @@ footer a:hover{color:var(--text);text-decoration:underline}
 .project-funding-links img{width:26px;height:26px;flex:none;object-fit:contain}
 .project-actions{display:flex;flex-wrap:wrap;gap:8px;padding-top:12px;border-top:1px solid var(--line)}
 .palette-preview{width:74%;height:16px;border-radius:8px}
+/* Artwork format tiles: the wide sample cover as each format shows it. */
+.formatpv{--img:url(assets/studio/sample-wide-cover.svg);display:block;width:32px;height:32px;border-radius:7px;background:var(--img) center/cover no-repeat}
+.formatpv.wide,.formatpv.auto{width:57px}
+.formatpv.squareWhole{background:var(--img) center/contain no-repeat,linear-gradient(#0008,#0008),var(--img) center/cover no-repeat}
+.formatpv.squareEdges{background:var(--img) center/contain no-repeat,linear-gradient(#0004,#0004),var(--img) center/1px 100% repeat-x}
+.formatpv.squareStretch{background-size:100% 100%}

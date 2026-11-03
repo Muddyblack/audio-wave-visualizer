@@ -2,7 +2,7 @@
 
 // Each panel presentation stores a complete look. Audio capture, accessibility,
 // libraries and placement remain shared with the widget.
-var sharedKeys = ["appleTrackInfo", "onlineTrackInfo", "panelAppearance", "popupAppearance", "inputSource", "inputMethod",
+var sharedKeys = ["appleTrackInfo", "onlineTrackInfo", "artYouTubeThumbnail", "panelAppearance", "popupAppearance", "inputSource", "inputMethod",
     "sensitivity", "noiseReduction", "lowCutoff", "highCutoff", "frequencyScale",
     "bassWeight", "trebleWeight", "silenceDecay", "framerate", "alwaysVisible",
     "gpuDebug", "language", "followSystemFont", "reducedMotion", "batterySaver", "simpleRender", "autoPillInPanel", "panelDisplayMode", "panelOrientation", "panelCardSizing", "panelCardScale",

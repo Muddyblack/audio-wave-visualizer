@@ -168,7 +168,10 @@ var SECTIONS = [
           opts: ORBITS.map(function (l) { return { v: l.toLowerCase(), label: l, pv: "orbit" }; }) },
         { k: "orbitReach", type: "range", label: noop("Reach"), desc: noop("How far the ring extends from the cover."), min: .5, max: 1.3, step: .05, fmt: "pct" },
         { k: "orbitRotate", type: "switch", label: noop("Slow rotation") },
-        { k: "orbitCoverPulse", type: "switch", label: noop("Cover breathes with the bass") }
+        { k: "orbitCenter", type: "seg", full: true, label: noop("Centre"), desc: noop("What sits inside the ring. With the title inside, the ring opens up to hold it and only progress and controls stay below."),
+          opts: [["cover", noop("Cover")], ["coverText", noop("Cover and title")], ["text", noop("Title")], ["empty", noop("Empty")]] },
+        { k: "orbitGlowRing", type: "switch", label: noop("Glow ring"), desc: noop("A soft circle of light where the bars start, in the visualizer colour. It brightens with the bass.") },
+        { k: "orbitCoverPulse", type: "switch", label: noop("Cover breathes with the bass"), when: function (s) { return s.orbitCenter !== "text" && s.orbitCenter !== "empty"; } }
     ], function (s) { return s.layoutMode === "orbit"; }),
     tab("viz", noop("Style"), [
         { id: "customVisualizers", type: "customStyle", full: true, label: noop("Custom visualizers"), desc: noop("Import a trusted QML style and use it in the waveform area. Orbit and lyrics-only layouts use their own visuals."), docs: CUSTOM_QML_DOCS },
@@ -251,7 +254,9 @@ var SECTIONS = [
         { k: "showArtThumb", type: "switch", label: noop("Show artwork"), desc: noop("Falls back to the player’s icon when a track has no cover."), disabled: function (s) { return layoutValue(s) === "compact"; } },
         { k: "artShape", type: "tiles", full: true, label: noop("Shape"), desc: noop("Vinyl and CD spin while music plays."), tw: 84,
           opts: [["sharp", noop("Sharp")], ["rounded", noop("Rounded")], ["squircle", noop("Squircle")], ["circle", noop("Circle")], ["vinyl", noop("Vinyl")], ["cd", noop("CD")]].map(function (o) { return { v: o[0], label: o[1], pv: "shape" }; }) },
-        { k: "artFormat", type: "seg", full: true, label: noop("Format"), desc: noop("Square always crops the art. Auto keeps square art cropped, switches the cover to 16:9 for wide art, and fits tall art whole with blurred edges. The two whole options fit the full image in the square: over a dimmed copy, or filled with its blurred edges. Wide 16:9 makes the cover a widescreen box (not for circle, vinyl or CD)."), opts: [["square", noop("Square")], ["auto", noop("Auto")], ["squareWhole", noop("Whole, dimmed")], ["squareEdges", noop("Whole, edges")], ["wide", noop("Wide 16:9")]] },
+        { k: "artFormat", type: "tiles", full: true, label: noop("Format"), desc: noop("Square always crops the art. Auto keeps square art cropped, switches the cover to 16:9 for wide art, and fits tall art whole with extended edges. The whole options fit the full image in the square: over a dimmed copy, extended from its own blurred edges so the picture seems to continue, or stretched to fill it (distorted, nothing cut off). Wide 16:9 makes the cover a widescreen box (not for circle, vinyl or CD)."), tw: 96,
+          opts: [["square", noop("Square")], ["auto", noop("Auto")], ["squareWhole", noop("Whole, dimmed")], ["squareEdges", noop("Whole, extended")], ["squareStretch", noop("Whole, stretched")], ["wide", noop("Wide 16:9")]].map(function (o) { return { v: o[0], label: o[1], pv: "format" }; }) },
+        { k: "artYouTubeThumbnail", type: "switch", label: noop("Full YouTube thumbnails"), desc: noop("YouTube Music passes on a zoomed-in crop of the video thumbnail, cutting off text at the top and bottom. Load the full thumbnail from YouTube instead; only the video ID is sent, to YouTube. Not used with Square, which crops the cover anyway."), when: function (s) { return (s.artFormat || "square") !== "square"; } },
         { k: "artScale", type: "range", label: noop("Size"), desc: noop("Capped by the layout height."), min: 60, max: 130, step: 5, fmt: "percent", when: notPill },
         { k: "artBorder", type: "seg", label: noop("Border"), opts: [["none", noop("None")], ["subtle", noop("Subtle")], ["accent", noop("Accent")]] }
     ]),
@@ -528,6 +533,7 @@ var PRESETS = [
     preset("halo", ["desktop", "adaptive"], noop("Halo"), noop("A spinning record inside a soft ribbon halo, with a progress ring. Iris palette."), "dusk", { layoutMode: "orbit", orbitStyle: "ribbon", artShape: "vinyl", vizColorMode: "palette", vizPalette: "iris", hueReactive: true, bloom: 1.2, dockStyle: "bare", progressBarStyle: 10, showSource: true }),
     preset("sunburst", ["desktop"], noop("Sunburst"), noop("Sparks fly off the cover on every beat. Ember palette on a dark tint."), "sea", { layoutMode: "orbit", orbitStyle: "sparks", artShape: "squircle", vizColorMode: "palette", vizPalette: "ember", showBg: true, bgColor: "#0a0b10", artBgTransparency: .75, bgRadius: 24, progressBarStyle: 5, showTimes: false }),
     preset("dothalo", ["desktop", "adaptive"], noop("Dot Halo"), noop("A dotted neon ring spikes outward on every beat. Swap the custom colour for any glow."), "neon", { layoutMode: "orbit", orbitStyle: "dots", artShape: "circle", vizColorMode: "solid", useSystemAccent: false, customColor: "#39ff14", bloom: 1.4, orbitReach: 1.15, showBg: true, bgColor: "#05070a", artBgTransparency: .8, bgRadius: 24, progressBarStyle: 1, showTimes: false, dockStyle: "bare" }),
+    preset("spectrum", ["desktop"], noop("Circular Spectrum"), noop("Thin bars around a glowing circle with the cover and title inside. No card, so it sits on any wallpaper."), "neon", { layoutMode: "orbit", orbitStyle: "bars", orbitCenter: "coverText", orbitGlowRing: true, orbitRotate: false, orbitCoverPulse: false, orbitReach: .9, lineWidth: 1.2, artShape: "circle", vizColorMode: "solid", useSystemAccent: false, customColor: "#3fb8ff", bloom: 1.3, showBg: false, progressBarStyle: 10, showTimes: false, dockStyle: "bare", controlsOnHover: true }),
     preset("orbiticon", ["panel"], noop("Orbit Icon"), noop("A tiny radial ring around the cover, living in the bar."), "breeze", { layoutMode: "pillicon", pillEq: "wave", artShape: "circle", vizColorMode: "palette", vizPalette: "aurora", hoverDetails: "tooltip" }, "hypr"),
     preset("quiet", ["desktop", "glass"], noop("Quiet Glass"), noop("Title leads, calm mirror bars, one soft accent, round play button."), "olive", { layoutMode: "stacked", showBg: true, surfaceStyle: "glass", bgRadius: 22, useSystemAccent: false, customColor: "#d1e5bd", visualizerType: 2, glowWave: false, progressBarStyle: 1, dockStyle: "accent", showSource: true, cardShadow: "soft", edgeHighlight: true, titleSize: 12 }),
     preset("panelpill", ["panel"], noop("Panel Pill"), noop("Text pill for Plasma panels with a mini visualizer that follows the music."), "breeze", { layoutMode: "pill", pillEq: "wave", pillProgress: "underline", pillControls: "play", hoverDetails: "tooltip" }, "kde"),
@@ -557,14 +563,18 @@ function copy(object) {
     return out;
 }
 
-// next = { ...defaults, ...preset } with placement kept and, optionally, colours.
+// How the user's own covers are shown, not part of any look.
+var ARTWORK_KEYS = ["artFormat", "artYouTubeThumbnail"];
+
+// next = { ...defaults, ...preset } with placement and artwork format kept and,
+// optionally, colours.
 function applyPreset(defaults, current, settings, keepColors) {
     var next = copy(defaults);
     for (var key in settings)
         next[key] = settings[key];
     if (keepColors)
         COLOR_KEYS.forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
-    PLACEMENT_KEYS.concat(PREFERENCE_KEYS, ["panelAppearance", "popupAppearance", "customVisualizers", "customProgressBars", "customButtonStyles", "userPresets", "favoritePresets", "autoDailyLook", "dailyLookApplied"]).forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
+    PLACEMENT_KEYS.concat(PREFERENCE_KEYS, ARTWORK_KEYS, ["panelAppearance", "popupAppearance", "customVisualizers", "customProgressBars", "customButtonStyles", "userPresets", "favoritePresets", "autoDailyLook", "dailyLookApplied"]).forEach(function (k) { if (current[k] !== undefined) next[k] = current[k]; });
     return next;
 }
 
@@ -583,11 +593,11 @@ function same(a, b) {
     return String(a).toLowerCase() === String(b).toLowerCase();
 }
 
-// Keys differing from the defaults (placement excluded), for user presets.
+// Keys differing from the defaults (placement and artwork format excluded), for user presets.
 function changedKeys(defaults, current) {
     var out = {};
     for (var key in current) {
-        if (key === "panelAppearance" || key === "popupAppearance" || key === "autoDailyLook" || key === "dailyLookApplied" || key === "favoritePresets" || key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || key === "customButtonStyles" || PLACEMENT_KEYS.indexOf(key) !== -1 || PREFERENCE_KEYS.indexOf(key) !== -1 || defaults[key] === undefined)
+        if (key === "panelAppearance" || key === "popupAppearance" || key === "autoDailyLook" || key === "dailyLookApplied" || key === "favoritePresets" || key === "userPresets" || key === "customVisualizers" || key === "customProgressBars" || key === "customButtonStyles" || PLACEMENT_KEYS.indexOf(key) !== -1 || PREFERENCE_KEYS.indexOf(key) !== -1 || ARTWORK_KEYS.indexOf(key) !== -1 || defaults[key] === undefined)
             continue;
         if (!same(current[key], defaults[key]))
             out[key] = current[key];

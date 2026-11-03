@@ -96,4 +96,24 @@ TestCase {
         art.artUrl = "";
         art.view = null;
     }
+    function test_stretchKeepsTheWholeImage() {
+        art.view = {
+            configuration: {
+                artFormat: "squareStretch"
+            }
+        };
+        // The fixture is three red columns and one blue one. Cropped, the
+        // square shows only red; stretched, the blue quarter reaches the
+        // right edge and nothing is dimmed.
+        art.artUrl = Qt.resolvedUrl("fixtures/cover-red-blue.ppm");
+        tryVerify(() => art.coverReady && art.stretched);
+        verify(!art.letterbox);
+        compare(art.ratio, 1);
+        tryVerify(() => grabImage(this).blue(74, 40) > 200 && grabImage(this).red(74, 40) < 60, 3000, "Blue quarter on the right");
+        tryVerify(() => grabImage(this).red(10, 40) > 200, 3000, "Red, undimmed, on the left");
+        art.artUrl = Qt.resolvedUrl("fixtures/cover-white.ppm");
+        tryVerify(() => art.coverReady && !art.stretched, 3000, "Square art is left alone");
+        art.artUrl = "";
+        art.view = null;
+    }
 }

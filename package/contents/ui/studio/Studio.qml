@@ -371,14 +371,21 @@ Rectangle {
                 }
             }
 
-            Row {
+            // Search and buttons share one line while the search keeps a usable
+            // width; in a narrower window the search takes the whole first line
+            // and the buttons wrap below it instead of running off the edge.
+            Flow {
                 id: header
+                objectName: "studioHeader"
                 x: 18
                 y: studioRoot.compact ? 8 : 16
                 width: parent.width - 36
                 spacing: 8
+                readonly property real toolsWidth: surprise.width + (extraSlot.hasExtra ? extraSlot.width + spacing : 0)
+                readonly property bool wrapped: width - toolsWidth - spacing < 220
                 Rectangle {
-                    width: Math.max(80, parent.width - surprise.width - (extraSlot.hasExtra ? extraSlot.width + header.spacing : 0) - header.spacing)
+                    objectName: "studioSearchBox"
+                    width: header.wrapped ? header.width : header.width - header.toolsWidth - header.spacing
                     height: 36
                     radius: 10
                     color: Theme.sunk

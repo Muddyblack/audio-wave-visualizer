@@ -332,9 +332,34 @@ Item {
             artUrl = "";
             return;
         }
+        if (youtubeArt.status === Image.Ready && youtubeArt.source.toString() !== "") {
+            artUrl = youtubeArt.source;
+            return;
+        }
         const url = root.playerArtUrl;
         if (url !== "")
             artUrl = url;
+    }
+
+    // The full YouTube thumbnail replaces the player's cover once it has
+    // loaded; until then, or if none loads, the player's cover stays. Square
+    // crops the cover anyway, so it keeps the player's cover and fetches nothing.
+    readonly property var youtubeThumbnails: hasPlayer && !samplePlayback && (configuration.artYouTubeThumbnail ?? true) && (configuration.artFormat ?? "square") !== "square" ? MediaSource.youtubeThumbnails(mediaUrl) : []
+    property int _youtubeAttempt: 0
+    onYoutubeThumbnailsChanged: _youtubeAttempt = 0
+    Image {
+        id: youtubeArt
+        visible: false
+        asynchronous: true
+        cache: true
+        sourceSize: Qt.size(4, 4)
+        source: root._youtubeAttempt < root.youtubeThumbnails.length ? root.youtubeThumbnails[root._youtubeAttempt] : ""
+        onStatusChanged: {
+            if (status === Image.Error)
+                ++root._youtubeAttempt;
+            root._refreshArtUrl();
+        }
+        onSourceChanged: root._refreshArtUrl()
     }
 
     // Artwork click opens a transient lightbox outside the card bounds.

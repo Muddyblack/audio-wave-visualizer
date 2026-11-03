@@ -174,6 +174,10 @@ Kirigami.Page {
     property bool cfg_orbitRotateDefault
     property bool cfg_orbitCoverPulse
     property bool cfg_orbitCoverPulseDefault
+    property string cfg_orbitCenter
+    property string cfg_orbitCenterDefault
+    property bool cfg_orbitGlowRing
+    property bool cfg_orbitGlowRingDefault
     property real cfg_vizVerticalOffset
     property real cfg_vizVerticalOffsetDefault
     property string cfg_vizDirection
@@ -230,6 +234,8 @@ Kirigami.Page {
     property string cfg_artShapeDefault
     property string cfg_artFormat
     property string cfg_artFormatDefault
+    property bool cfg_artYouTubeThumbnail
+    property bool cfg_artYouTubeThumbnailDefault
     property int cfg_artScale
     property int cfg_artScaleDefault
     property string cfg_artBorder
@@ -624,47 +630,83 @@ Kirigami.Page {
         }
     }
 
-    // Plasma draws OK, Apply and Cancel below the page; this adds what it lacks.
+    // Plasma draws OK, Apply and Cancel in its own footer row, with empty space
+    // on the left. Defaults, Reset and Apply instantly go into that space, as
+    // in System Settings, so the dialog keeps a single button row. Hosts
+    // without that row (other shells) get them in a bar of their own.
+    readonly property Item hostFooter: Window.window ? findHostFooter() : null
+    function findHostFooter() {
+        for (let item = root.parent; item; item = item.parent) {
+            const pane = item.footer;
+            if (pane?.contentItem && pane.leftPadding !== undefined && Array.from(pane.contentItem.children).some(child => child.icon?.name === "dialog-ok"))
+                return pane;
+        }
+        return null;
+    }
+    // The host's buttons move right by exactly the room these controls take.
+    function reserveHostFooter() {
+        if (hostFooter)
+            hostFooter.leftPadding = hostFooter.padding + footerRow.implicitWidth + Kirigami.Units.largeSpacing;
+    }
+    onHostFooterChanged: reserveHostFooter()
+    Component.onDestruction: if (hostFooter)
+        hostFooter.leftPadding = undefined
+
     QQC2.ToolBar {
         id: footerBar
         objectName: "settingsFooter"
+        visible: !root.hostFooter
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.bottom: parent.bottom
         position: QQC2.ToolBar.Footer
-        contentItem: RowLayout {
-            spacing: Kirigami.Units.smallSpacing
-            QQC2.Button {
-                objectName: "resetToDefaults"
-                icon.name: "kt-restore-defaults"
-                text: I18n.i18n("Defaults")
-                QQC2.ToolTip.visible: hovered
-                QQC2.ToolTip.delay: 500
-                QQC2.ToolTip.text: I18n.i18n("Restore every setting to its default. Apply to keep it; Reset undoes it. Saved presets are kept.")
-                onClicked: root.restoreDefaults()
-            }
-            QQC2.Button {
-                objectName: "discardSettings"
-                icon.name: "edit-undo"
-                text: I18n.i18nc("undo the changes that are not applied yet", "Reset")
-                enabled: root.hasChanges
-                QQC2.ToolTip.visible: hovered
-                QQC2.ToolTip.delay: 500
-                QQC2.ToolTip.text: I18n.i18n("Discard unapplied changes")
-                onClicked: root.discard()
-            }
-            Item {
-                Layout.fillWidth: true
-            }
-            QQC2.Switch {
-                objectName: "liveApplySwitch"
-                text: I18n.i18n("Apply instantly")
-                checked: root.cfg_liveApply
-                QQC2.ToolTip.visible: hovered
-                QQC2.ToolTip.delay: 500
-                QQC2.ToolTip.text: I18n.i18n("Apply every change as you make it, without pressing Apply. Reset goes back to how it was when you opened this window.")
-                onToggled: root.cfg_liveApply = checked
-            }
+        contentItem: Item {
+            implicitHeight: footerRow.implicitHeight
+        }
+    }
+
+    RowLayout {
+        id: footerRow
+        objectName: "settingsFooterRow"
+        parent: root.hostFooter ?? footerBar.contentItem
+        anchors.left: parent.left
+        anchors.leftMargin: root.hostFooter ? root.hostFooter.padding : 0
+        anchors.verticalCenter: parent.verticalCenter
+        width: root.hostFooter ? implicitWidth : parent.width
+        spacing: Kirigami.Units.smallSpacing
+        onImplicitWidthChanged: root.reserveHostFooter()
+
+        QQC2.Button {
+            objectName: "resetToDefaults"
+            icon.name: "kt-restore-defaults"
+            text: I18n.i18n("Defaults")
+            QQC2.ToolTip.visible: hovered
+            QQC2.ToolTip.delay: 500
+            QQC2.ToolTip.text: I18n.i18n("Restore every setting to its default. Apply to keep it; Reset undoes it. Saved presets are kept.")
+            onClicked: root.restoreDefaults()
+        }
+        QQC2.Button {
+            objectName: "discardSettings"
+            icon.name: "edit-undo"
+            text: I18n.i18nc("undo the changes that are not applied yet", "Reset")
+            enabled: root.hasChanges
+            QQC2.ToolTip.visible: hovered
+            QQC2.ToolTip.delay: 500
+            QQC2.ToolTip.text: I18n.i18n("Discard unapplied changes")
+            onClicked: root.discard()
+        }
+        Item {
+            Layout.fillWidth: !root.hostFooter
+            Layout.preferredWidth: root.hostFooter ? Kirigami.Units.largeSpacing : 0
+        }
+        QQC2.Switch {
+            objectName: "liveApplySwitch"
+            text: I18n.i18n("Apply instantly")
+            checked: root.cfg_liveApply
+            QQC2.ToolTip.visible: hovered
+            QQC2.ToolTip.delay: 500
+            QQC2.ToolTip.text: I18n.i18n("Apply every change as you make it, without pressing Apply. Reset goes back to how it was when you opened this window.")
+            onToggled: root.cfg_liveApply = checked
         }
     }
 
@@ -674,7 +716,7 @@ Kirigami.Page {
         anchors.left: parent.left
         anchors.right: parent.right
         anchors.top: parent.top
-        anchors.bottom: footerBar.top
+        anchors.bottom: footerBar.visible ? footerBar.top : parent.bottom
         presentationTarget: root.editingTarget
         toolbarExtra: presentationTools
 
