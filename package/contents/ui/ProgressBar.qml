@@ -22,6 +22,8 @@ Item {
     property string track: ""
     property string artist: ""
     property color textColor: "#ffffff"
+    property int textStyle: Text.Normal
+    property color textStyleColor: "#101318"
     property color waveColor: "#ffffff"
     property color controlColor: "#ffffff"
     property var colorStops: []
@@ -502,6 +504,8 @@ Item {
         visible: !root.customReady && root.showTimes && root.pbStyle !== 9
         text: positionClock.elapsedText
         color: root.textColor
+        style: root.textStyle ?? Text.Normal
+        styleColor: root.textStyleColor ?? "#101318"
         opacity: 0.50
         font.pixelSize: SystemText.px(8)
     }
@@ -515,6 +519,8 @@ Item {
         visible: !root.customReady && root.showTimes && root.pbStyle !== 9
         text: root.totalLabel
         color: root.textColor
+        style: root.textStyle ?? Text.Normal
+        styleColor: root.textStyleColor ?? "#101318"
         opacity: 0.50
         font.pixelSize: SystemText.px(8)
     }
@@ -535,12 +541,16 @@ Item {
                 objectName: "timeOnlyElapsed"
                 text: positionClock.elapsedText
                 color: root.textColor
+                style: root.textStyle ?? Text.Normal
+                styleColor: root.textStyleColor ?? "#101318"
                 font.pixelSize: SystemText.px(9)
             }
             Text {
                 renderType: Text.CurveRendering ?? Text.QtRendering
                 text: " /"
                 color: root.textColor
+                style: root.textStyle ?? Text.Normal
+                styleColor: root.textStyleColor ?? "#101318"
                 opacity: 0.6
                 font.pixelSize: SystemText.px(9)
             }
@@ -550,6 +560,8 @@ Item {
             objectName: "timeOnlyTotal"
             text: root.totalLabel
             color: root.textColor
+            style: root.textStyle ?? Text.Normal
+            styleColor: root.textStyleColor ?? "#101318"
             font.pixelSize: SystemText.px(9)
         }
     }

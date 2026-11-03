@@ -146,6 +146,8 @@ Item {
                 track: root.view.trackIdentity
                 artist: root.view.artist
                 textColor: root.view.textColor
+                textStyle: root.view.textStyle ?? Text.Normal
+                textStyleColor: root.view.textStyleColor ?? "#101318"
                 waveColor: root.view.waveColor
                 controlColor: root.view.controlColor
                 pgStartColor: root.view.pgStartColor

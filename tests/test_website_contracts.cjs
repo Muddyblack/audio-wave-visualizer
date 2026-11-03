@@ -58,6 +58,10 @@ vm.runInContext(`
   assert(widgetHTML(panelIcon, 'normal').includes('class="art'));
   const artless = widgetHTML({...panelIcon, showArtThumb:false}, 'normal');
   assert(artless.includes('data-c="wave"') && !artless.includes('class="art'), 'Show artwork off leaves only the visualizer');
+  assert.equal(DEFAULTS.textStyle, 'none');
+  assert(!widgetHTML(DEFAULTS, 'normal').includes('edge-'), 'No text edge by default');
+  const edged = widgetHTML({...DEFAULTS, textStyle:'outline', textStyleColor:'#123456'}, 'normal');
+  assert(edged.includes('edge-outline') && edged.includes('--edge:#123456'), 'Text edge reaches the preview');
   assert(widgetHTML({...panelIcon, pillEq:'live', showArtThumb:false}, 'normal').includes('class="art'), 'The icon never goes blank without a visualizer');
   const motion = layout => Schema.SECTIONS.flatMap(s => s.rows).find(r => r.k === 'pillEq' && r.when({layoutMode:layout})).opts.map(o => o[0]);
   assert(motion('pillicon').includes('visualizer') && !motion('pill').includes('visualizer'));

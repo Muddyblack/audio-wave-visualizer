@@ -67,7 +67,7 @@ var BACKDROPS = Catalog.StudioCatalog.wallpapers.map(function (wallpaper) { retu
 var STATES = [["normal", noop("Playing")], ["paused", noop("Paused")], ["long", noop("Long title")], ["nometa", noop("No metadata")], ["idle", noop("Nothing playing")], ["backend", noop("cava missing")]];
 
 // Colour keys "Keep my colours" preserves; placement is never part of a look.
-var COLOR_KEYS = ["controlsColorSource", "progressColorSource", "customProgressColor", "useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "vizCustomColors", "glowColorMode", "glowCustomColors", "hueReactive", "bgColor", "glassTintColor", "lyricsHighlightColor", "lyricsTextStyleColor"];
+var COLOR_KEYS = ["controlsColorSource", "progressColorSource", "customProgressColor", "useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "vizCustomColors", "glowColorMode", "glowCustomColors", "hueReactive", "bgColor", "glassTintColor", "lyricsHighlightColor", "lyricsTextStyleColor", "textStyle", "textStyleColor"];
 var PLACEMENT_KEYS = ["monitor", "verticalPosition", "desktopLayer", "pauseWhenCovered", "hAnchor", "widgetWidth", "widgetHeight", "panelDisplayMode", "panelOrientation", "panelCardSizing", "panelCardScale"];
 // About the settings window, not the look: nothing but their own controls changes them.
 var PREFERENCE_KEYS = ["language", "liveApply"];
@@ -384,6 +384,8 @@ var SECTIONS = [
     tab("colors", noop("Text"), [
         { id: "textSrc", type: "seg", label: noop("Text colour"), opts: [[true, noop("System")], [false, noop("Custom")]], get: function (s) { return s.useSystemText; }, set: function (v) { return { useSystemText: v }; } },
         { k: "customTextColor", type: "color", label: noop("Custom text colour"), swatches: SWATCHES, when: function (s) { return !s.useSystemText; } },
+        { k: "textStyle", type: "seg", label: noop("Text edge"), desc: noop("Extra contrast on busy wallpapers."), opts: [["none", noop("None")], ["outline", noop("Outline")], ["shadow", noop("Shadow")]] },
+        { k: "textStyleColor", type: "color", label: noop("Edge colour"), swatches: BGSWATCHES, when: function (s) { return s.textStyle !== "none"; } },
         { k: "autoContrast", type: "switch", label: noop("Adapt to light cards"), desc: noop("Dark text and icons on the Solid material."), when: function (s) { return s.useSystemText || s.useSystemControls; } }
     ]),
     tab("behavior", noop("Panel placement"), [

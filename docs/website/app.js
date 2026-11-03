@@ -169,8 +169,8 @@ function widgetHTML(s, status, opt = {}) {
   const vol = s.scrollVolume ? `<div class="vol" data-vol><i style="--v:${P.volume}"></i></div>` : '';
   const cls = ['w', `L-${mode}`, bg && s.cardShadow !== 'none' ? `sh-${s.cardShadow}` : '', s.hoverLift ? 'lift' : '',
     s.dimWhenPaused && d.hasPlayer && !d.playing ? 'dim' : '', pill && !bg ? 'nobg' : '', s.bassPulse || (mode === 'orbit' && (s.orbitCoverPulse || s.orbitGlowRing)) ? 'bass' : '',
-    s.surfaceStyle === 'liquid' && s.glassSpecular ? 'specular' : ''];
-  const vars = `${base}${colorVars(d)}--ts:${s.titleSize}px;--cover:${coverOK ? d.t.cover : 'none'};--p1:${d.t.pal.p1};--p2:${d.t.pal.p2};--p3:${d.t.pal.p3}`;
+    s.surfaceStyle === 'liquid' && s.glassSpecular ? 'specular' : '', s.textStyle !== 'none' ? `edge-${s.textStyle}` : ''];
+  const vars = `${base}${colorVars(d)}--edge:${s.textStyleColor};--ts:${s.titleSize}px;--cover:${coverOK ? d.t.cover : 'none'};--p1:${d.t.pal.p1};--p2:${d.t.pal.p2};--p3:${d.t.pal.p3}`;
 
   /* ── panel pill ── */
   if (pill) {

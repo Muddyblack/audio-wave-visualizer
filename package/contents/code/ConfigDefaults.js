@@ -37,6 +37,8 @@ var values = {
   "glowWave": true,
   "useSystemText": true,
   "customTextColor": "#ffffff",
+  "textStyle": "none",
+  "textStyleColor": "#101318",
   "controlsColorSource": "legacy",
   "progressColorSource": "legacy",
   "customProgressColor": "#3daee9",

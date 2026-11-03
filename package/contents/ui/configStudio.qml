@@ -100,6 +100,10 @@ Kirigami.Page {
     property bool cfg_useSystemTextDefault
     property string cfg_customTextColor
     property string cfg_customTextColorDefault
+    property string cfg_textStyle
+    property string cfg_textStyleDefault
+    property string cfg_textStyleColor
+    property string cfg_textStyleColorDefault
     property string cfg_controlsColorSource
     property string cfg_controlsColorSourceDefault
     property string cfg_progressColorSource
