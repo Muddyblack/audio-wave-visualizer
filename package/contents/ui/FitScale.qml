@@ -14,4 +14,10 @@ Item {
     }
     // Quarter steps avoid reallocating textures for every small scale change.
     readonly property real steps: Math.max(1, Math.round(value * 4) / 4)
+    // Texture pixels per design unit for an explicit layer.textureSize, which
+    // Qt takes in device pixels and never scales by the screen DPR itself, so
+    // `steps` alone blurs layers on high-DPI screens. (A Canvas does get the
+    // DPR from Qt; CrispCanvas uses `steps`.) ProgressBar's layers still use
+    // `steps`: with texels its gradient fill vanished at 2.5x, cause unknown.
+    readonly property real texels: steps * (Screen.devicePixelRatio || 1)
 }

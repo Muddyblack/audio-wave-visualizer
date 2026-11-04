@@ -158,7 +158,7 @@ Item {
 
         layer.enabled: visible && !GpuDebug.noLayers && root.dockStyle === "glass"
 
-        layer.textureSize: Qt.size(Math.ceil(width * fit.steps), Math.ceil(height * fit.steps))
+        layer.textureSize: Qt.size(Math.ceil(width * fit.texels), Math.ceil(height * fit.texels))
         layer.effect: MultiEffect {
             shadowEnabled: true
             shadowColor: Qt.rgba(0, 0, 0, 0.35)
@@ -261,7 +261,7 @@ Item {
                 radius: width / 2
                 color: root.accentColor
                 layer.enabled: visible && !GpuDebug.noLayers && GraphicsInfo.api !== GraphicsInfo.Software
-                layer.textureSize: Qt.size(Math.ceil(width * fit.steps), Math.ceil(height * fit.steps))
+                layer.textureSize: Qt.size(Math.ceil(width * fit.texels), Math.ceil(height * fit.texels))
                 layer.effect: MultiEffect {
                     shadowEnabled: true
                     shadowColor: root.accentColor
