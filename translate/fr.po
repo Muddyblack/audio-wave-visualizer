@@ -995,6 +995,15 @@ msgstr "Contour"
 msgid "Shadow"
 msgstr "Ombre"
 
+msgid "Frosted"
+msgstr "Givré"
+
+msgid "Edge colour"
+msgstr "Couleur du contour"
+
+msgid "Automatic"
+msgstr "Automatique"
+
 msgid "Looks"
 msgstr "Apparences"
 
@@ -1310,9 +1319,6 @@ msgid "Applies to pill styles. Tinted uses your accent when set to Automatic."
 msgstr ""
 "S’applique aux styles en capsule. Le style teinté utilise votre couleur "
 "d’accentuation en mode Automatique."
-
-msgid "Automatic"
-msgstr "Automatique"
 
 msgid "Arrangement"
 msgstr "Agencement"
@@ -1801,9 +1807,6 @@ msgstr "Contour du texte"
 msgid "Extra contrast on busy wallpapers."
 msgstr "Davantage de contraste sur les fonds d’écran chargés."
 
-msgid "Edge colour"
-msgstr "Couleur du contour"
-
 msgid "Reading layout"
 msgstr "Disposition de lecture"
 
@@ -2206,6 +2209,13 @@ msgstr "Couleur personnalisée de progression"
 
 msgid "Text colour"
 msgstr "Couleur du texte"
+
+msgid ""
+"Extra contrast on busy wallpapers. Frosted sets the track text on a glass "
+"panel."
+msgstr ""
+"Davantage de contraste sur les fonds d’écran chargés. Givré place le texte "
+"du morceau sur un panneau de verre."
 
 msgid "Adapt to light cards"
 msgstr "Adapter aux cartes claires"

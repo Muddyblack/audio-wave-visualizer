@@ -35,6 +35,8 @@ ProgressBar {
     textColor: view.textColor
     textStyle: view.textStyle ?? Text.Normal
     textStyleColor: view.textStyleColor ?? "#101318"
+    textEdge: view.textEdge ?? "none"
+    textEdgeColor: view.textEdgeColor ?? "#101318"
     waveColor: view.progressWaveColor
     colorStops: view.progressColors
     controlColor: view.controlColor

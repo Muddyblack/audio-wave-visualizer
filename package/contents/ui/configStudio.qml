@@ -104,6 +104,8 @@ Kirigami.Page {
     property string cfg_textStyleDefault
     property string cfg_textStyleColor
     property string cfg_textStyleColorDefault
+    property bool cfg_textStyleAutoColor
+    property bool cfg_textStyleAutoColorDefault
     property string cfg_controlsColorSource
     property string cfg_controlsColorSourceDefault
     property string cfg_progressColorSource
@@ -318,6 +320,8 @@ Kirigami.Page {
     property string cfg_lyricsTextStyleDefault
     property string cfg_lyricsTextStyleColor
     property string cfg_lyricsTextStyleColorDefault
+    property bool cfg_lyricsTextStyleAutoColor
+    property bool cfg_lyricsTextStyleAutoColorDefault
     property int cfg_lyricsLineSpacing
     property int cfg_lyricsLineSpacingDefault
     property int cfg_lyricsPadding

@@ -368,6 +368,11 @@ TestCase {
                 tag: "shadow",
                 value: "shadow",
                 style: Text.Raised
+            },
+            {
+                tag: "frosted",
+                value: "frosted",
+                style: Text.Raised
             }
         ];
     }
@@ -375,19 +380,52 @@ TestCase {
         subject.configuration = Object.assign({}, defaults, {
             showSource: true,
             textStyle: data.value,
+            textStyleAutoColor: false,
             textStyleColor: "#123456"
         });
         compare(defaults.textStyle, "none");
+        compare(defaults.textStyleAutoColor, true);
+        compare(findChild(subject, "textPanel").visible, data.value === "frosted");
         for (const name of ["artistLine", "sourceChip", "elapsedTimeLabel", "totalTimeLabel"]) {
             const label = findChild(subject, name);
             compare(label.style, data.style, name);
             if (data.style !== Text.Normal)
-                compare(String(label.styleColor), "#123456", name);
+                compare(String(label.styleColor), "#99123456", name);
         }
         subject.configuration = Object.assign({}, subject.configuration, {
             layoutMode: "pill"
         });
         compare(findChild(subject, "pillPrimary").style, data.style);
+    }
+
+    // Automatic contrasts with the text: dark behind light ink, light behind
+    // dark ink, so a dark edge never thickens dark letters.
+    function test_automaticEdgeContrastsWithTheText() {
+        subject.configuration = Object.assign({}, defaults, {
+            textStyle: "shadow",
+            useSystemText: false,
+            customTextColor: "#f2f2f2"
+        });
+        compare(String(subject.textEdgeColor), "#101318");
+        subject.configuration = Object.assign({}, subject.configuration, {
+            customTextColor: "#2e333a"
+        });
+        compare(String(subject.textEdgeColor), "#f4f6f8");
+        compare(String(subject.lyricsEdgeColor), "#f4f6f8");
+    }
+
+    // Frosted pads the track text onto a panel that hugs it.
+    function test_frostedPanelHugsThePaddedText() {
+        const texts = findChild(subject, "layoutTexts");
+        const plainHeight = texts.implicitHeight;
+        subject.configuration = Object.assign({}, defaults, {
+            textStyle: "frosted"
+        });
+        const panel = findChild(subject, "textPanel");
+        verify(panel.visible);
+        compare(texts.implicitHeight, plainHeight + 16);
+        verify(panel.width <= texts.width);
+        compare(panel.height, texts.height);
     }
 
     function test_squiggleSettlesWhenPausedOrReduced() {
@@ -1160,8 +1198,7 @@ TestCase {
             idleAmbient: true
         });
         backend.hasAudio = false;
-        const texts = findChild(subject, "layoutTexts");
-        compare(texts.children[1].children[0].text, "Nothing playing");
+        compare(findChild(subject, "titleViewport").children[0].text, "Nothing playing");
         const wave = findChild(subject, "canvasLoader").parent;
         verify(wave.ambient && wave.hasAudio, "The ambient wave draws without audio");
         backend.hasAudio = true;

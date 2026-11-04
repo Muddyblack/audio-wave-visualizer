@@ -7,6 +7,7 @@ import "../code/AudioFormat.js" as AudioFormat
 import "../code/ColourStyle.js" as ColourStyle
 import "../code/MediaSource.js" as MediaSource
 import "text"
+import "debug"
 
 Item {
     id: root
@@ -257,9 +258,27 @@ Item {
     readonly property var appearance: ColourStyle.appearance(configuration, accentColor, systemTextColor, coverAccent, artUrl !== "")
     readonly property bool lightCard: appearance.light
     readonly property color textColor: appearance.text
-    // An outline or 1 px shadow keeps track text legible on busy wallpapers.
-    readonly property int textStyle: configuration.textStyle === "outline" ? Text.Outline : configuration.textStyle === "shadow" ? Text.Raised : Text.Normal
-    readonly property color textStyleColor: configuration.textStyleColor ?? "#101318"
+    // Text edge for busy wallpapers. Shadow: TextEdge draws a soft shadow
+    // behind untouched glyphs. Outline: Qt's native halo (offset copies drawn
+    // behind each glyph, crisp, and fading with the text) at partial
+    // strength, plus TextEdge's ambient glow. Frosted: LayoutTexts sets the
+    // track text on a TextPanel; smaller labels elsewhere take the shadow.
+    // The software renderer has no effects, so it keeps Qt's Outline/Raised
+    // a little stronger.
+    readonly property bool softTextEdge: !GpuDebug.noLayers && GraphicsInfo.api !== GraphicsInfo.Software
+    function edgeStyle(mode) {
+        return mode === "outline" ? Text.Outline : (mode === "shadow" || mode === "frosted") && !softTextEdge ? Text.Raised : Text.Normal;
+    }
+    function edgeInk(edgeColor) {
+        return Qt.rgba(edgeColor.r, edgeColor.g, edgeColor.b, (softTextEdge ? 0.35 : 0.6) * edgeColor.a);
+    }
+    readonly property bool textPanel: configuration.textStyle === "frosted"
+    readonly property int textStyle: edgeStyle(configuration.textStyle)
+    readonly property color textEdgeColor: ColourStyle.edge(configuration.textStyleAutoColor ?? true, configuration.textStyleColor ?? "#101318", textColor)
+    readonly property color textStyleColor: edgeInk(textEdgeColor)
+    readonly property color lyricsEdgeColor: ColourStyle.edge(configuration.lyricsTextStyleAutoColor ?? true, configuration.lyricsTextStyleColor ?? "#101318", textColor)
+    // The TextEdge mode with GPU effects: "outline" or "shadow", else "none".
+    readonly property string textEdge: !softTextEdge ? "none" : textPanel ? "shadow" : configuration.textStyle === "outline" || configuration.textStyle === "shadow" ? configuration.textStyle : "none"
     readonly property color waveColor: appearance.wave
     readonly property color baseControlColor: appearance.control
     readonly property var linkedColors: ColourStyle.linked(configuration, waveColor, baseControlColor, accentColor, coverColor1, coverColor2, visualizer.high ?? 0, visualFrameTime / 1000)

@@ -509,6 +509,7 @@ TestCase {
         studio.selectTab("colors");
         studio.update({
             textStyle: "none",
+            textStyleAutoColor: false,
             textStyleColor: "#123456"
         });
         verify(waitForRendering(studio));
@@ -523,12 +524,19 @@ TestCase {
             }
         };
         walk(row);
-        compare(previews.length, 3);
-        compare(previews.map(p => p.style), [Text.Normal, Text.Outline, Text.Raised]);
-        compare(String(previews[1].styleColor), "#123456");
-        // Lyrics use the same tiles with their own edge colour.
+        compare(previews.length, 4);
+        compare(previews.map(p => p.style), [Text.Normal, Text.Outline, Text.Raised, Text.Normal]);
+        compare(String(previews[1].styleColor), "#99123456");
+        // Automatic: the white sample ink gets a dark edge.
+        studio.update({
+            textStyleAutoColor: true
+        });
+        compare(String(previews[1].styleColor), "#99101318");
+        // Lyrics use the same tiles with their own edge colour, without Frosted.
         const lyrics = Schema.SECTIONS.find(s => s.rows.some(r => r.k === "lyricsTextStyle")).rows.find(r => r.k === "lyricsTextStyle");
         compare(lyrics.opts[1].colorKey, "lyricsTextStyleColor");
+        compare(lyrics.opts[1].autoKey, "lyricsTextStyleAutoColor");
+        compare(lyrics.opts.length, 3);
     }
 
     function test_crossedOutSwatchFollowsTheSystem() {

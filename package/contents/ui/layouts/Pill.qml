@@ -102,7 +102,15 @@ Item {
             Layout.alignment: Qt.AlignVCenter
             implicitWidth: textRow.implicitWidth
             implicitHeight: textRow.implicitHeight
-            clip: true
+            // Only a scrolling title needs clipping; a still one elides, and
+            // its soft edge may spill past the viewport.
+            clip: root.scrollText
+
+            TextEdge {
+                target: textRow
+                mode: root.view.textEdge
+                edgeColor: root.view.textEdgeColor
+            }
 
             RowLayout {
                 id: textRow

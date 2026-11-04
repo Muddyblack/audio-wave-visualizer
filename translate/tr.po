@@ -985,6 +985,15 @@ msgstr "Anahat"
 msgid "Shadow"
 msgstr "Gölge"
 
+msgid "Frosted"
+msgstr "Buzlu"
+
+msgid "Edge colour"
+msgstr "Kenar Rengi"
+
+msgid "Automatic"
+msgstr "Otomatik"
+
 msgid "Looks"
 msgstr "Görünümler"
 
@@ -1296,9 +1305,6 @@ msgid "Applies to pill styles. Tinted uses your accent when set to Automatic."
 msgstr ""
 "Hap stillerine uygulanır. Otomatik seçildiğinde Tonlu seçeneği vurgu "
 "renginizi kullanır."
-
-msgid "Automatic"
-msgstr "Otomatik"
 
 msgid "Arrangement"
 msgstr "Yerleşim"
@@ -1786,9 +1792,6 @@ msgstr "Metin Kenarlığı"
 msgid "Extra contrast on busy wallpapers."
 msgstr "Hareketli duvar kâğıtlarında ek karşıtlık sağlar."
 
-msgid "Edge colour"
-msgstr "Kenar Rengi"
-
 msgid "Reading layout"
 msgstr "Okuma Düzeni"
 
@@ -2184,6 +2187,13 @@ msgstr "Özel İlerleme Rengi"
 
 msgid "Text colour"
 msgstr "Metin Rengi"
+
+msgid ""
+"Extra contrast on busy wallpapers. Frosted sets the track text on a glass "
+"panel."
+msgstr ""
+"Hareketli duvar kâğıtlarında ek karşıtlık sağlar. Buzlu, parça metnini cam "
+"bir panelin üzerine yerleştirir."
 
 msgid "Adapt to light cards"
 msgstr "Açık Renkli Kartlara Uyum Sağla"

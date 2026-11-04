@@ -60,8 +60,13 @@ vm.runInContext(`
   assert(artless.includes('data-c="wave"') && !artless.includes('class="art'), 'Show artwork off leaves only the visualizer');
   assert.equal(DEFAULTS.textStyle, 'none');
   assert(!widgetHTML(DEFAULTS, 'normal').includes('edge-'), 'No text edge by default');
-  const edged = widgetHTML({...DEFAULTS, textStyle:'outline', textStyleColor:'#123456'}, 'normal');
+  assert.equal(DEFAULTS.textStyleAutoColor, true);
+  const edged = widgetHTML({...DEFAULTS, textStyle:'outline', textStyleAutoColor:false, textStyleColor:'#123456'}, 'normal');
   assert(edged.includes('edge-outline') && edged.includes('--edge:#123456'), 'Text edge reaches the preview');
+  // Automatic contrasts with the text: light text, dark edge; dark text, light edge.
+  assert(widgetHTML({...DEFAULTS, textStyle:'shadow', useSystemText:false, customTextColor:'#f2f2f2'}, 'normal').includes('--edge:#101318'), 'Automatic edge is dark behind light text');
+  const dark = widgetHTML({...DEFAULTS, textStyle:'frosted', useSystemText:false, customTextColor:'#2e333a'}, 'normal');
+  assert(dark.includes('--edge:#f4f6f8') && dark.includes('edge-frosted') && dark.includes('ink-dark'), 'Frosted with dark ink takes light glass');
   assert(widgetHTML({...DEFAULTS, showBg:true, surfaceStyle:'solid', solidColor:'#2a2e33'}, 'normal').includes('--solid:#2a2e33'), 'Solid colour reaches the preview');
   const textRow = Schema.SECTIONS.flatMap(s => s.rows).find(r => r.id === 'textColor');
   assert.equal(textRow.auto, 'System');

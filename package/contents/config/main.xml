@@ -108,6 +108,9 @@
         <entry name="textStyleColor" type="Color">
             <default>#101318</default>
         </entry>
+        <entry name="textStyleAutoColor" type="Bool">
+            <default>true</default>
+        </entry>
         <entry name="controlsColorSource" type="String">
             <default>legacy</default>
         </entry>
@@ -438,6 +441,9 @@
         </entry>
         <entry name="lyricsTextStyleColor" type="Color">
             <default>#101318</default>
+        </entry>
+        <entry name="lyricsTextStyleAutoColor" type="Bool">
+            <default>true</default>
         </entry>
         <entry name="lyricsLineSpacing" type="Int">
             <default>12</default>

@@ -125,6 +125,11 @@ FocusScope {
             readonly property bool timed: index === lines.currentIndex && (modelData.words || []).length > 0
             readonly property color highlight: root.cfg.lyricsHighlight === "custom" ? root.cfg.lyricsHighlightColor : root.cfg.lyricsHighlight === "accent" ? (root.view.waveColor ?? root.view.textColor) : root.view.textColor
             height: verseText.implicitHeight + (subtitle.visible ? subtitle.implicitHeight + 4 : 0)
+            Shared.TextEdge {
+                target: verseText
+                mode: root.view.softTextEdge ? root.cfg.lyricsTextStyle : "none"
+                edgeColor: root.view.lyricsEdgeColor
+            }
             Text {
                 id: verseText
                 objectName: "lyricsVerse_" + parent.index
@@ -142,8 +147,8 @@ FocusScope {
                 renderType: Text.CurveRendering ?? Text.QtRendering
                 lineHeight: Math.max(1, Math.min(2, root.cfg.lyricsLineHeight ?? 1.25))
                 color: verse.timed ? Qt.rgba(root.view.textColor.r, root.view.textColor.g, root.view.textColor.b, 0.35) : verse.index !== lines.currentIndex ? root.view.textColor : verse.highlight
-                style: root.cfg.lyricsTextStyle === "outline" ? Text.Outline : root.cfg.lyricsTextStyle === "shadow" ? Text.Raised : Text.Normal
-                styleColor: root.cfg.lyricsTextStyleColor ?? "#101318"
+                style: root.view.edgeStyle(root.cfg.lyricsTextStyle)
+                styleColor: root.view.edgeInk(root.view.lyricsEdgeColor)
                 opacity: parent.index === lines.currentIndex ? 1 : Math.max(0.1, Math.min(1, parent.index < lines.currentIndex ? (root.cfg.lyricsPastOpacity ?? 0.55) : (root.cfg.lyricsFutureOpacity ?? 0.55)))
                 onImplicitHeightChanged: reposition.restart()
                 Behavior on opacity {

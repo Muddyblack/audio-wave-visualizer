@@ -69,7 +69,7 @@ var BACKDROPS = Catalog.StudioCatalog.wallpapers.map(function (wallpaper) { retu
 var STATES = [["normal", noop("Playing")], ["paused", noop("Paused")], ["long", noop("Long title")], ["nometa", noop("No metadata")], ["idle", noop("Nothing playing")], ["backend", noop("cava missing")]];
 
 // Colour keys "Keep my colours" preserves; placement is never part of a look.
-var COLOR_KEYS = ["controlsColorSource", "progressColorSource", "customProgressColor", "useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "vizCustomColors", "glowColorMode", "glowCustomColors", "hueReactive", "bgColor", "glassTintColor", "solidColor", "lyricsHighlightColor", "lyricsTextStyleColor", "textStyle", "textStyleColor"];
+var COLOR_KEYS = ["controlsColorSource", "progressColorSource", "customProgressColor", "useSystemAccent", "customColor", "accentFromArt", "useSystemText", "customTextColor", "useSystemControls", "customControlColor", "useSystemDockBg", "customDockBgColor", "vizColorMode", "vizPalette", "vizCustomColors", "glowColorMode", "glowCustomColors", "hueReactive", "bgColor", "glassTintColor", "solidColor", "lyricsHighlightColor", "lyricsTextStyleColor", "lyricsTextStyleAutoColor", "textStyle", "textStyleColor", "textStyleAutoColor"];
 var PLACEMENT_KEYS = ["monitor", "verticalPosition", "desktopLayer", "pauseWhenCovered", "hAnchor", "widgetWidth", "widgetHeight", "panelDisplayMode", "panelOrientation", "panelCardSizing", "panelCardScale"];
 // About the settings window, not the look: nothing but their own controls changes them.
 var PREFERENCE_KEYS = ["language", "liveApply"];
@@ -135,8 +135,18 @@ function surfaceValue(s) {
     return s.artBg ? "art" : s.surfaceStyle;
 }
 // Text edge tiles preview "Aa" on a light-to-dark strip in the row's edge colour.
-function edgeTiles(colorKey) {
-    return [["none", noop("None")], ["outline", noop("Outline")], ["shadow", noop("Shadow")]].map(function (o) { return { v: o[0], label: o[1], pv: "textEdge", colorKey: colorKey }; });
+// Frosted puts a glass panel behind the track text block; lyrics fill the
+// card, so they offer only the glyph edges.
+function edgeTiles(colorKey, autoKey, frosted) {
+    var opts = [["none", noop("None")], ["outline", noop("Outline")], ["shadow", noop("Shadow")]].concat(frosted ? [["frosted", noop("Frosted")]] : []);
+    return opts.map(function (o) { return { v: o[0], label: o[1], pv: "textEdge", colorKey: colorKey, autoKey: autoKey }; });
+}
+// Edge colour with an Automatic swatch that contrasts with the text.
+function edgeColorRow(styleKey, colorKey, autoKey) {
+    return { id: colorKey, type: "color", label: noop("Edge colour"), auto: noop("Automatic"), swatches: BGSWATCHES.concat(["#ffffff"]),
+        when: function (s) { return s[styleKey] !== "none" && s[styleKey] !== "frosted"; },
+        get: function (s) { return s[autoKey] ? "" : s[colorKey]; },
+        set: function (v) { var out = {}; out[autoKey] = !v; if (v) out[colorKey] = v; return out; } };
 }
 function glassCard(s) {
     return s.showBg && ["glass", "liquid"].indexOf(surfaceValue(s)) !== -1;
@@ -311,8 +321,8 @@ var SECTIONS = [
         { k: "lyricsHighlightColor", type: "color", label: noop("Highlight colour"), swatches: SWATCHES, when: function (s) { return s.lyricsHighlight === "custom"; } },
         { k: "lyricsPastOpacity", when: function (s) { return s.layoutMode === "lyrics"; }, type: "range", label: noop("Past lines"), min: .1, max: 1, step: .05, fmt: "pct" },
         { k: "lyricsFutureOpacity", when: function (s) { return s.layoutMode === "lyrics"; }, type: "range", label: noop("Upcoming lines"), min: .1, max: 1, step: .05, fmt: "pct" },
-        { k: "lyricsTextStyle", type: "tiles", full: true, label: noop("Text edge"), desc: noop("Extra contrast on busy wallpapers."), tw: 84, opts: edgeTiles("lyricsTextStyleColor") },
-        { k: "lyricsTextStyleColor", type: "color", label: noop("Edge colour"), swatches: BGSWATCHES, when: function (s) { return s.lyricsTextStyle !== "none"; } }
+        { k: "lyricsTextStyle", type: "tiles", full: true, label: noop("Text edge"), desc: noop("Extra contrast on busy wallpapers."), tw: 84, opts: edgeTiles("lyricsTextStyleColor", "lyricsTextStyleAutoColor") },
+        edgeColorRow("lyricsTextStyle", "lyricsTextStyleColor", "lyricsTextStyleAutoColor")
     ], function (s) { return s.layoutMode === "lyrics" || s.showLyrics; }),
     tab("lyrics", noop("Reading layout"), [
         { k: "lyricsWidth", type: "range", label: noop("Preferred width"), desc: noop("Desktop hosts can override the preferred size by resizing the widget."), min: 240, max: 900, step: 10, fmt: "px" },
@@ -394,8 +404,8 @@ var SECTIONS = [
         { id: "textColor", type: "color", label: noop("Text colour"), auto: noop("System"), swatches: SWATCHES,
           get: function (s) { return s.useSystemText ? "" : s.customTextColor; },
           set: function (v) { return v ? { useSystemText: false, customTextColor: v } : { useSystemText: true }; } },
-        { k: "textStyle", type: "tiles", full: true, label: noop("Text edge"), desc: noop("Extra contrast on busy wallpapers."), tw: 84, opts: edgeTiles("textStyleColor") },
-        { k: "textStyleColor", type: "color", label: noop("Edge colour"), swatches: BGSWATCHES, when: function (s) { return s.textStyle !== "none"; } },
+        { k: "textStyle", type: "tiles", full: true, label: noop("Text edge"), desc: noop("Extra contrast on busy wallpapers. Frosted sets the track text on a glass panel."), tw: 84, opts: edgeTiles("textStyleColor", "textStyleAutoColor", true) },
+        edgeColorRow("textStyle", "textStyleColor", "textStyleAutoColor"),
         { k: "autoContrast", type: "switch", label: noop("Adapt to light cards"), desc: noop("Dark text and icons on the Solid material."), when: function (s) { return s.useSystemText || s.useSystemControls; } }
     ]),
     tab("behavior", noop("Panel placement"), [
