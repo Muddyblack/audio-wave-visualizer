@@ -40,15 +40,21 @@ ColumnLayout {
     readonly property int alignment: alignmentOverride >= 0 ? alignmentOverride : cfg.textAlign === "center" ? Text.AlignHCenter : cfg.textAlign === "right" ? Text.AlignRight : Text.AlignLeft
     readonly property int layoutAlignment: alignment === Text.AlignHCenter ? Qt.AlignHCenter : alignment === Text.AlignRight ? Qt.AlignRight : Qt.AlignLeft
     readonly property real ts: cfg.titleSize ?? 11
-    // Titles over 26 characters scroll (14 s loop, 12 % pause) on the audio clock.
+    // Titles over 26 characters scroll (14 s loop, 12 % pause). The audio poll clock ticks
+    // unevenly and only when bars change, so the scroll runs on its own display-synced clock.
     readonly property bool marquee: (cfg.marquee ?? false) && !(cfg.reducedMotion ?? false) && view.displayTrack.length > 26
     readonly property real marqueeOffset: {
         if (!marquee)
             return 0;
-        const phase = (view.visualFrameTime % 14000) / 14000;
+        const phase = (marqueeClock.elapsedTime * 1000 % 14000) / 14000;
         return phase < 0.12 ? 0 : (phase - 0.12) / 0.88 * (title.implicitWidth + 40);
     }
     spacing: 0
+
+    FrameAnimation {
+        id: marqueeClock
+        running: root.marquee
+    }
 
     RowLayout {
         id: sourceRow
