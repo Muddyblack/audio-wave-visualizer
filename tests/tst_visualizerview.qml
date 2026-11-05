@@ -1082,15 +1082,14 @@ TestCase {
         wait(200);
         verify(!art.tilted, "Reduced motion disables decorative tilt");
     }
-    function test_marqueeScrollsOnAudioFrames() {
+    function test_marqueeScrollsOnDisplayClock() {
         player.track = "A very long track title that surely needs scrolling";
         subject.configuration = Object.assign({}, defaults, {
             marquee: true
         });
         const texts = findChild(subject, "layoutTexts");
         verify(texts.marquee);
-        backend.frameTimeMs = 7000;
-        verify(texts.marqueeOffset > 0);
+        tryVerify(() => texts.marqueeOffset > 0, 4000);
         subject.configuration = Object.assign({}, defaults, {
             marquee: true,
             reducedMotion: true
