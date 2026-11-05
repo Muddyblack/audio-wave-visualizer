@@ -131,7 +131,9 @@ ColumnLayout {
         Layout.minimumWidth: 0
         implicitHeight: title.implicitHeight
         layer.enabled: root.marquee && !GpuDebug.noLayers && GraphicsInfo.api !== GraphicsInfo.Software
-        layer.smooth: true
+        // Texture at device resolution and sampled 1:1, otherwise HiDPI scaling blurs the glyphs.
+        layer.smooth: false
+        layer.textureSize: Qt.size(Math.ceil(width * Screen.devicePixelRatio), Math.ceil(height * Screen.devicePixelRatio))
         layer.effect: ShaderEffect {
             property var source
             property real fadeFraction: Math.min(0.2, 8 / Math.max(1, titleViewport.width))
@@ -141,7 +143,7 @@ ColumnLayout {
 
         TrackText {
             id: title
-            x: root.marquee ? -root.marqueeOffset : 0
+            x: root.marquee ? -Math.round(root.marqueeOffset * Screen.devicePixelRatio) / Screen.devicePixelRatio : 0
             width: root.marquee ? implicitWidth : parent.width
             elide: root.marquee ? Text.ElideNone : Text.ElideRight
             font.family: root.view.defaultFontFamily
@@ -158,7 +160,7 @@ ColumnLayout {
         }
         TrackText {
             visible: root.marquee
-            x: title.x + title.implicitWidth + 40
+            x: title.x + Math.round((title.implicitWidth + 40) * Screen.devicePixelRatio) / Screen.devicePixelRatio
             font.family: root.view.defaultFontFamily
             titleSize: root.ts
             sizeFactor: root.titleFactor
