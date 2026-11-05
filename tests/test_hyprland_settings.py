@@ -65,8 +65,8 @@ AudioVisualizerShell {
             if (JSON.stringify(shell.configuration.detailFields) !== JSON.stringify(EXPECTED_FIELDS)) console.log("FAIL: StringList defaults/persistence");
             if (shell.configuration.hAnchor !== EXPECTED_ANCHOR) console.log("FAIL: horizontal anchor defaults/persistence");
             if (shell.configuration.layoutMode !== EXPECTED_LAYOUT) console.log("FAIL: layout defaults/persistence");
-            shell.configure();
             shell.saveSettings(OVERRIDES);
+            shell.configure();
         }
     }
     Timer {
