@@ -137,19 +137,21 @@ ColumnLayout {
         Layout.minimumWidth: 0
         implicitHeight: title.implicitHeight
         layer.enabled: root.marquee && !GpuDebug.noLayers && GraphicsInfo.api !== GraphicsInfo.Software
-        // Texture at device resolution and sampled 1:1, otherwise HiDPI scaling blurs the glyphs.
+        // Texture at on-screen resolution (card fit scale x device ratio) and sampled 1:1,
+        // otherwise the host scaling the card stretches a design-size texture and blurs the glyphs.
         layer.smooth: false
-        layer.textureSize: Qt.size(Math.ceil(width * Screen.devicePixelRatio), Math.ceil(height * Screen.devicePixelRatio))
+        layer.textureSize: Qt.size(Math.ceil(width * pixelRatio), Math.ceil(height * pixelRatio))
         layer.effect: ShaderEffect {
             property var source
             property real fadeFraction: Math.min(0.2, 8 / Math.max(1, titleViewport.width))
             fragmentShader: Qt.resolvedUrl("../../shaders/text_fade.frag.qsb")
         }
         clip: true
+        readonly property real pixelRatio: fit.value * Screen.devicePixelRatio
 
         TrackText {
             id: title
-            x: root.marquee ? -Math.round(root.marqueeOffset * Screen.devicePixelRatio) / Screen.devicePixelRatio : 0
+            x: root.marquee ? -Math.round(root.marqueeOffset * titleViewport.pixelRatio) / titleViewport.pixelRatio : 0
             width: root.marquee ? implicitWidth : parent.width
             elide: root.marquee ? Text.ElideNone : Text.ElideRight
             font.family: root.view.defaultFontFamily
@@ -166,7 +168,7 @@ ColumnLayout {
         }
         TrackText {
             visible: root.marquee
-            x: title.x + Math.round((title.implicitWidth + 40) * Screen.devicePixelRatio) / Screen.devicePixelRatio
+            x: title.x + Math.round((title.implicitWidth + 40) * titleViewport.pixelRatio) / titleViewport.pixelRatio
             font.family: root.view.defaultFontFamily
             titleSize: root.ts
             sizeFactor: root.titleFactor
@@ -176,6 +178,10 @@ ColumnLayout {
             color: root.view.textColor
             style: root.view.textStyle ?? Text.Normal
             styleColor: root.view.textStyleColor ?? "#101318"
+        }
+
+        FitScale {
+            id: fit
         }
     }
 
