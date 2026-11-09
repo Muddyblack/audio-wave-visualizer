@@ -169,8 +169,8 @@ function widgetHTML(s, status, opt = {}) {
   const vol = s.scrollVolume ? `<div class="vol" data-vol><i style="--v:${P.volume}"></i></div>` : '';
   const cls = ['w', `L-${mode}`, bg && s.cardShadow !== 'none' ? `sh-${s.cardShadow}` : '', s.hoverLift ? 'lift' : '',
     s.dimWhenPaused && d.hasPlayer && !d.playing ? 'dim' : '', pill && !bg ? 'nobg' : '', s.bassPulse || (mode === 'orbit' && (s.orbitCoverPulse || s.orbitGlowRing)) ? 'bass' : '',
-    s.surfaceStyle === 'liquid' && s.glassSpecular ? 'specular' : '', s.textStyle !== 'none' ? `edge-${s.textStyle}` : ''];
-  const vars = `${base}${colorVars(d)}--edge:${s.textStyleColor};--solid:${s.solidColor};--ts:${s.titleSize}px;--cover:${coverOK ? d.t.cover : 'none'};--p1:${d.t.pal.p1};--p2:${d.t.pal.p2};--p3:${d.t.pal.p3}`;
+    s.surfaceStyle === 'liquid' && s.glassSpecular ? 'specular' : '', s.textStyle !== 'none' ? `edge-${s.textStyle}` : '', ColourStyle.luminance(d.text) <= 0.5 ? 'ink-dark' : ''];
+  const vars = `${base}${colorVars(d)}--edge:${ColourStyle.edge(s.textStyleAutoColor, s.textStyleColor, d.text)};--solid:${s.solidColor};--ts:${s.titleSize}px;--cover:${coverOK ? d.t.cover : 'none'};--p1:${d.t.pal.p1};--p2:${d.t.pal.p2};--p3:${d.t.pal.p3}`;
 
   /* ── panel pill ── */
   if (pill) {
@@ -1090,7 +1090,7 @@ function buildRow(r) {
       else if (pvKind === 'viz') pvHtml = `<canvas data-c="wave" data-i="${v}"></canvas>`;
       else if (pvKind === 'progress') pvHtml = v === 10 ? '<div class="artwrap" style="--a:32px"><div class="art" style="--a:32px"></div><i class="rg"></i></div>' : `<div class="pbwrap">${pbHTML(v, { showTimes: true, timeFormat: 'total' }, v === 0 || v === 2, 238, .58)}</div>`;
       else if (pvKind === 'orbit') pvHtml = `<canvas data-c="orbit" data-i="${v}"></canvas>`;
-      else if (pvKind === 'textEdge') pvHtml = `<span class="edgepv edge-${v}" data-key="${o.colorKey}">Aa</span>`;
+      else if (pvKind === 'textEdge') pvHtml = `<span class="edgepv edge-${v}" data-key="${o.colorKey}" data-auto="${o.autoKey}"><b>Aa</b></span>`;
       else pvHtml = o.pv || '';
       return { v, label, pvHtml, isNew: o.isNew };
     });
@@ -1112,7 +1112,7 @@ function buildRow(r) {
     });
     sync = s => {
       btns.forEach(b => b.setAttribute('aria-pressed', opts[b.dataset.i].v === get(s)));
-      $$('.edgepv', el).forEach(ep => { ep.style.setProperty('--edge', s[ep.dataset.key]); ep.style.color = s.useSystemText ? '#ffffff' : s.customTextColor; });
+      $$('.edgepv', el).forEach(ep => { const ink = s.useSystemText ? '#ffffff' : s.customTextColor; ep.style.setProperty('--edge', ColourStyle.edge(s[ep.dataset.auto] ?? true, s[ep.dataset.key], ink)); ep.style.color = ink; ep.classList.toggle('ink-dark', ColourStyle.luminance(ink) <= 0.5); });
       $$('.dockpv', el).forEach(dp => { const html = dockHTML({ ...s, dockStyle: dp.dataset.v }, true); if (dp.innerHTML !== html) dp.innerHTML = html; });
     };
   } else if (r.type === 'presets') {

@@ -42,6 +42,12 @@ function appearance(s, systemAccent, systemText, coverAccent, hasCover) {
         control: s.useSystemControls ? (light ? "#1e241d" : "#ffffff") : s.customControlColor
     };
 }
+// The Text edge colour. Automatic contrasts with the text, not the wallpaper:
+// a dark edge behind light text and a light one behind dark text, since a
+// dark edge on dark text only thickens the letters.
+function edge(automatic, custom, text) {
+    return automatic ? (luminance(text) > 0.5 ? "#101318" : "#f4f6f8") : custom;
+}
 function linked(s, wave, control, systemAccent, cover1, cover2, high, seconds) {
     var stops = s.controlsColorSource === "visualizer" || s.progressColorSource === "visualizer"
         ? WaveMath.colorStops(wave, s.vizColorMode, s.vizColorMode === "custom" ? s.vizCustomColors : s.vizPalette, cover1, cover2, s.hueReactive, high, seconds, s.reducedMotion ?? false)

@@ -24,6 +24,9 @@ Item {
     property color textColor: "#ffffff"
     property int textStyle: Text.Normal
     property color textStyleColor: "#101318"
+    // The soft half of the Text edge (VisualizerView.textEdge).
+    property string textEdge: "none"
+    property color textEdgeColor: "#101318"
     property color waveColor: "#ffffff"
     property color controlColor: "#ffffff"
     property var colorStops: []
@@ -495,8 +498,24 @@ Item {
         }
     }
 
+    // Soft Text edges behind the times.
+    TextEdge {
+        target: elapsedLabel
+        mode: root.textEdge
+        edgeColor: root.textEdgeColor
+    }
+    TextEdge {
+        target: totalLabel
+        mode: root.textEdge
+        edgeColor: root.textEdgeColor
+    }
+    TextEdge {
+        target: timeOnlyRow
+        mode: root.textEdge
+        edgeColor: root.textEdgeColor
+    }
     Text {
-
+        id: elapsedLabel
         renderType: Text.CurveRendering ?? Text.QtRendering
         objectName: "elapsedTimeLabel"
         anchors.left: parent.left
@@ -511,7 +530,7 @@ Item {
     }
 
     Text {
-
+        id: totalLabel
         renderType: Text.CurveRendering ?? Text.QtRendering
         objectName: "totalTimeLabel"
         anchors.right: parent.right
@@ -527,6 +546,7 @@ Item {
 
     // Style 9 — Time only: "1:31 / 3:58", always shown, centred with centred text.
     Row {
+        id: timeOnlyRow
         objectName: "timeOnlyRow"
         visible: !root.customReady && (root.pbStyle === 9)
         anchors.top: parent.top

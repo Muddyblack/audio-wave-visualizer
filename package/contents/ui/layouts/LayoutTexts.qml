@@ -7,7 +7,7 @@ import "../text"
 // Player chip, title, artist, album and lyric line at the configured size and
 // alignment. Layouts scale them like the HTML (for example Stacked uses title
 // ×1.6 and artist ×1.05).
-ColumnLayout {
+Item {
     id: root
     objectName: "layoutTexts"
     required property var view
@@ -49,210 +49,263 @@ ColumnLayout {
         const phase = (marqueeClock.elapsedTime * 1000 % 14000) / 14000;
         return phase < 0.12 ? 0 : (phase - 0.12) / 0.88 * (title.implicitWidth + 40);
     }
-    spacing: 0
-
     FrameAnimation {
         id: marqueeClock
         running: root.marquee
     }
 
-    RowLayout {
-        id: sourceRow
-        objectName: "sourceRow"
-        visible: ((root.cfg.showSource ?? false) || (root.cfg.showPlayerSwitch ?? false)) && root.view.hasPlayer
-        Layout.alignment: root.layoutAlignment
-        Layout.bottomMargin: 3
-        Layout.maximumWidth: root.width
-        Layout.minimumWidth: 0
-        spacing: 5
-        opacity: 0.65
+    // Frosted: the block sits on a glass panel, padded like a widget.
+    readonly property bool panel: view.textPanel ?? false
+    readonly property int padX: panel ? 12 : 0
+    readonly property int padY: panel ? 8 : 0
+    implicitWidth: column.implicitWidth + 2 * padX
+    implicitHeight: column.implicitHeight + 2 * padY
 
-        Rectangle {
-            id: sourceDot
-            implicitWidth: 5
-            implicitHeight: 5
-            radius: 2.5
-            color: root.view.waveColor
-            visible: sourceIcon.status !== Image.Ready
-        }
-        Image {
-            id: sourceIcon
-            source: root.view.faviconUrl ?? ""
-            visible: status === Image.Ready
-            Layout.preferredWidth: visible ? 10 : 0
-            Layout.preferredHeight: visible ? 10 : 0
-            sourceSize.width: 64
-            sourceSize.height: 64
-            fillMode: Image.PreserveAspectFit
-            asynchronous: true
-            cache: true
-        }
-        Text {
-            objectName: "sourceChip"
-            renderType: Text.CurveRendering ?? Text.QtRendering
-            font.family: root.view.defaultFontFamily
+    // The panel hugs the text (the title viewport has no implicit width of
+    // its own) and follows the alignment.
+    TextPanel {
+        objectName: "textPanel"
+        visible: root.panel
+        backdrop: root.view.backdropSource ?? null
+        ink: root.view.textColor
+        width: Math.min(root.width, Math.max(column.implicitWidth, title.implicitWidth) + 2 * root.padX)
+        height: root.height
+        x: root.alignment === Text.AlignHCenter ? Math.round((root.width - width) / 2) : root.alignment === Text.AlignRight ? root.width - width : 0
+    }
+    // Soft Text edges, drawn behind the lines they follow. On the panel the
+    // track text needs none. The inline lyric line uses the lyrics' own edge.
+    TextEdge {
+        target: trackLines
+        mode: root.panel ? "none" : root.view.textEdge
+        edgeColor: root.view.textEdgeColor
+    }
+    TextEdge {
+        target: lyricLine
+        mode: root.view.softTextEdge ? root.cfg.lyricsTextStyle : "none"
+        edgeColor: root.view.lyricsEdgeColor
+    }
+    TextEdge {
+        target: lyricNotice
+        mode: root.panel ? "none" : root.view.textEdge
+        edgeColor: root.view.textEdgeColor
+    }
+
+    ColumnLayout {
+        id: column
+        anchors.fill: parent
+        anchors.leftMargin: root.padX
+        anchors.rightMargin: root.padX
+        anchors.topMargin: root.padY
+        anchors.bottomMargin: root.padY
+        spacing: 0
+
+        ColumnLayout {
+            id: trackLines
             Layout.fillWidth: true
             Layout.minimumWidth: 0
-            text: root.view.sourceName.toUpperCase()
-            color: root.view.textColor
-            style: root.view.textStyle ?? Text.Normal
-            styleColor: root.view.textStyleColor ?? "#101318"
-            font.pixelSize: SystemText.px(root.sourceSize)
-            font.letterSpacing: 1.3
-            elide: Text.ElideRight
-        }
-        Rectangle {
-            visible: root.cfg.showPlayerSwitch ?? false
-            implicitWidth: switchLabel.implicitWidth + 10
-            implicitHeight: switchLabel.implicitHeight
-            radius: 6
-            color: Qt.rgba(1, 1, 1, 0x1a / 255)
-            Text {
-                id: switchLabel
-                objectName: "playerSwitchLabel"
-                anchors.centerIn: parent
-                text: root.view.playerCount + " ▾"
+            spacing: 0
+
+            RowLayout {
+                id: sourceRow
+                objectName: "sourceRow"
+                visible: ((root.cfg.showSource ?? false) || (root.cfg.showPlayerSwitch ?? false)) && root.view.hasPlayer
+                Layout.alignment: root.layoutAlignment
+                Layout.bottomMargin: 3
+                Layout.maximumWidth: root.width
+                Layout.minimumWidth: 0
+                spacing: 5
+                opacity: 0.65
+
+                Rectangle {
+                    id: sourceDot
+                    implicitWidth: 5
+                    implicitHeight: 5
+                    radius: 2.5
+                    color: root.view.waveColor
+                    visible: sourceIcon.status !== Image.Ready
+                }
+                Image {
+                    id: sourceIcon
+                    source: root.view.faviconUrl ?? ""
+                    visible: status === Image.Ready
+                    Layout.preferredWidth: visible ? 10 : 0
+                    Layout.preferredHeight: visible ? 10 : 0
+                    sourceSize.width: 64
+                    sourceSize.height: 64
+                    fillMode: Image.PreserveAspectFit
+                    asynchronous: true
+                    cache: true
+                }
+                Text {
+                    objectName: "sourceChip"
+                    renderType: Text.CurveRendering ?? Text.QtRendering
+                    font.family: root.view.defaultFontFamily
+                    Layout.fillWidth: true
+                    Layout.minimumWidth: 0
+                    text: root.view.sourceName.toUpperCase()
+                    color: root.view.textColor
+                    style: root.view.textStyle ?? Text.Normal
+                    styleColor: root.view.textStyleColor ?? "#101318"
+                    font.pixelSize: SystemText.px(root.sourceSize)
+                    font.letterSpacing: 1.3
+                    elide: Text.ElideRight
+                }
+                Rectangle {
+                    visible: root.cfg.showPlayerSwitch ?? false
+                    implicitWidth: switchLabel.implicitWidth + 10
+                    implicitHeight: switchLabel.implicitHeight
+                    radius: 6
+                    color: Qt.rgba(1, 1, 1, 0x1a / 255)
+                    Text {
+                        id: switchLabel
+                        objectName: "playerSwitchLabel"
+                        anchors.centerIn: parent
+                        text: root.view.playerCount + " ▾"
+                        color: root.view.textColor
+                        style: root.view.textStyle ?? Text.Normal
+                        styleColor: root.view.textStyleColor ?? "#101318"
+                        font.pixelSize: SystemText.px(root.sourceSize)
+                        font.letterSpacing: 0.5
+                    }
+                    MouseArea {
+                        objectName: "playerSwitchArea"
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            if (typeof root.view.switchPlayer === "function")
+                                root.view.switchPlayer();
+                        }
+                    }
+                }
+            }
+
+            Item {
+                id: titleViewport
+                objectName: "titleViewport"
+                Layout.fillWidth: true
+                Layout.minimumWidth: 0
+                implicitHeight: title.implicitHeight
+                layer.enabled: root.marquee && !GpuDebug.noLayers && GraphicsInfo.api !== GraphicsInfo.Software
+                // Texture at on-screen resolution (card fit scale x device ratio) and sampled 1:1,
+                // otherwise the host scaling the card stretches a design-size texture and blurs the glyphs.
+                layer.smooth: false
+                layer.textureSize: Qt.size(Math.ceil(width * pixelRatio), Math.ceil(height * pixelRatio))
+                layer.effect: ShaderEffect {
+                    property var source
+                    property real fadeFraction: Math.min(0.2, 8 / Math.max(1, titleViewport.width))
+                    fragmentShader: Qt.resolvedUrl("../../shaders/text_fade.frag.qsb")
+                }
+                clip: true
+                readonly property real pixelRatio: fit.value * Screen.devicePixelRatio
+
+                TrackText {
+                    id: title
+                    x: root.marquee ? -Math.round(root.marqueeOffset * titleViewport.pixelRatio) / titleViewport.pixelRatio : 0
+                    width: root.marquee ? implicitWidth : parent.width
+                    elide: root.marquee ? Text.ElideNone : Text.ElideRight
+                    font.family: root.view.defaultFontFamily
+                    titleSize: root.ts
+                    sizeFactor: root.titleFactor
+                    horizontalAlignment: root.marquee ? Text.AlignLeft : root.alignment
+                    idle: root.view.idleMessage
+                    displayTrack: root.view.idleMessage ? I18n.i18n("Nothing playing") : root.view.displayTrack
+                    trackUnknown: root.view.trackUnknown
+                    rawTrack: root.view.track
+                    color: root.view.textColor
+                    style: root.view.textStyle ?? Text.Normal
+                    styleColor: root.view.textStyleColor ?? "#101318"
+                }
+                TrackText {
+                    visible: root.marquee
+                    x: title.x + Math.round((title.implicitWidth + 40) * titleViewport.pixelRatio) / titleViewport.pixelRatio
+                    font.family: root.view.defaultFontFamily
+                    titleSize: root.ts
+                    sizeFactor: root.titleFactor
+                    displayTrack: root.view.displayTrack
+                    trackUnknown: root.view.trackUnknown
+                    rawTrack: root.view.track
+                    color: root.view.textColor
+                    style: root.view.textStyle ?? Text.Normal
+                    styleColor: root.view.textStyleColor ?? "#101318"
+                }
+
+                FitScale {
+                    id: fit
+                }
+            }
+
+            TrackText {
+                objectName: "artistLine"
+                visible: !(root.twoLines && sourceRow.visible)
+                Layout.fillWidth: true
+                Layout.minimumWidth: 0
+                secondary: true
+                formatBadges: root.view.formatBadges ?? []
+                font.family: root.view.defaultFontFamily
+                titleSize: root.ts
+                sizeFactor: root.artistSize / 0.82
+                horizontalAlignment: root.alignment
+                artist: root.view.idleMessage ? I18n.i18n("Start music in any player") : root.view.artist
+                sourceHint: root.view.sourceHint
                 color: root.view.textColor
                 style: root.view.textStyle ?? Text.Normal
                 styleColor: root.view.textStyleColor ?? "#101318"
-                font.pixelSize: SystemText.px(root.sourceSize)
-                font.letterSpacing: 0.5
             }
-            MouseArea {
-                objectName: "playerSwitchArea"
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    if (typeof root.view.switchPlayer === "function")
-                        root.view.switchPlayer();
-                }
+
+            Text {
+                objectName: "albumLine"
+                renderType: Text.CurveRendering ?? Text.QtRendering
+                font.family: root.view.defaultFontFamily
+                Layout.fillWidth: true
+                Layout.minimumWidth: 0
+                Layout.topMargin: 1
+                visible: !root.twoLines && (root.cfg.showAlbum ?? false) && root.view.album !== ""
+                text: root.view.album + (root.view.year !== "" ? " · " + root.view.year : "")
+                horizontalAlignment: root.alignment
+                color: root.view.textColor
+                style: root.view.textStyle ?? Text.Normal
+                styleColor: root.view.textStyleColor ?? "#101318"
+                opacity: 0.4
+                font.pixelSize: SystemText.px(Math.max(1, Math.round(root.ts * root.albumSize)))
+                elide: Text.ElideRight
             }
         }
-    }
 
-    Item {
-        id: titleViewport
-        objectName: "titleViewport"
-        Layout.fillWidth: true
-        Layout.minimumWidth: 0
-        implicitHeight: title.implicitHeight
-        layer.enabled: root.marquee && !GpuDebug.noLayers && GraphicsInfo.api !== GraphicsInfo.Software
-        // Texture at on-screen resolution (card fit scale x device ratio) and sampled 1:1,
-        // otherwise the host scaling the card stretches a design-size texture and blurs the glyphs.
-        layer.smooth: false
-        layer.textureSize: Qt.size(Math.ceil(width * pixelRatio), Math.ceil(height * pixelRatio))
-        layer.effect: ShaderEffect {
-            property var source
-            property real fadeFraction: Math.min(0.2, 8 / Math.max(1, titleViewport.width))
-            fragmentShader: Qt.resolvedUrl("../../shaders/text_fade.frag.qsb")
+        Text {
+            id: lyricLine
+            objectName: "lyricLine"
+            Layout.fillWidth: true
+            Layout.minimumWidth: 0
+            Layout.topMargin: 1
+            visible: !root.twoLines && (root.cfg.showLyrics ?? false) && root.view.lyricDisplayLine !== ""
+            text: root.view.lyricDisplayLine
+            horizontalAlignment: root.cfg.lyricsAlign === "center" ? Text.AlignHCenter : root.cfg.lyricsAlign === "right" ? Text.AlignRight : Text.AlignLeft
+            color: root.cfg.lyricsHighlight === "custom" ? root.cfg.lyricsHighlightColor : root.cfg.lyricsHighlight === "accent" ? root.view.waveColor : root.view.textColor
+            font.weight: root.cfg.lyricsCurrentWeight ?? Font.Medium
+            font.italic: root.cfg.lyricsItalic ?? false
+            font.letterSpacing: root.cfg.lyricsLetterSpacing ?? 0
+            style: root.view.edgeStyle(root.cfg.lyricsTextStyle)
+            styleColor: root.view.edgeInk(root.view.lyricsEdgeColor)
+            font.family: root.cfg.lyricsFontFamily || root.view.defaultFontFamily
+            renderType: Text.CurveRendering ?? Text.QtRendering
+            textFormat: Text.PlainText
+            font.pixelSize: SystemText.px(Math.max(10, Math.min(24, root.cfg.lyricsInlineFontSize ?? Math.round(root.ts * root.lyricSize))))
+            elide: Text.ElideRight
         }
-        clip: true
-        readonly property real pixelRatio: fit.value * Screen.devicePixelRatio
-
-        TrackText {
-            id: title
-            x: root.marquee ? -Math.round(root.marqueeOffset * titleViewport.pixelRatio) / titleViewport.pixelRatio : 0
-            width: root.marquee ? implicitWidth : parent.width
-            elide: root.marquee ? Text.ElideNone : Text.ElideRight
-            font.family: root.view.defaultFontFamily
-            titleSize: root.ts
-            sizeFactor: root.titleFactor
-            horizontalAlignment: root.marquee ? Text.AlignLeft : root.alignment
-            idle: root.view.idleMessage
-            displayTrack: root.view.idleMessage ? I18n.i18n("Nothing playing") : root.view.displayTrack
-            trackUnknown: root.view.trackUnknown
-            rawTrack: root.view.track
+        Text {
+            id: lyricNotice
+            objectName: "lyricDependencyNotice"
+            Layout.fillWidth: true
+            visible: !root.twoLines && (root.cfg.showLyrics ?? false) && root.view.lyricLine !== "" && root.view.lyricNotice !== ""
+            text: root.view.lyricNotice
+            textFormat: Text.PlainText
+            wrapMode: Text.Wrap
             color: root.view.textColor
             style: root.view.textStyle ?? Text.Normal
             styleColor: root.view.textStyleColor ?? "#101318"
+            opacity: 0.75
+            font.family: root.cfg.lyricsFontFamily || root.view.defaultFontFamily
+            font.pixelSize: SystemText.px(10)
         }
-        TrackText {
-            visible: root.marquee
-            x: title.x + Math.round((title.implicitWidth + 40) * titleViewport.pixelRatio) / titleViewport.pixelRatio
-            font.family: root.view.defaultFontFamily
-            titleSize: root.ts
-            sizeFactor: root.titleFactor
-            displayTrack: root.view.displayTrack
-            trackUnknown: root.view.trackUnknown
-            rawTrack: root.view.track
-            color: root.view.textColor
-            style: root.view.textStyle ?? Text.Normal
-            styleColor: root.view.textStyleColor ?? "#101318"
-        }
-
-        FitScale {
-            id: fit
-        }
-    }
-
-    TrackText {
-        objectName: "artistLine"
-        visible: !(root.twoLines && sourceRow.visible)
-        Layout.fillWidth: true
-        Layout.minimumWidth: 0
-        secondary: true
-        formatBadges: root.view.formatBadges ?? []
-        font.family: root.view.defaultFontFamily
-        titleSize: root.ts
-        sizeFactor: root.artistSize / 0.82
-        horizontalAlignment: root.alignment
-        artist: root.view.idleMessage ? I18n.i18n("Start music in any player") : root.view.artist
-        sourceHint: root.view.sourceHint
-        color: root.view.textColor
-        style: root.view.textStyle ?? Text.Normal
-        styleColor: root.view.textStyleColor ?? "#101318"
-    }
-
-    Text {
-        objectName: "albumLine"
-        renderType: Text.CurveRendering ?? Text.QtRendering
-        font.family: root.view.defaultFontFamily
-        Layout.fillWidth: true
-        Layout.minimumWidth: 0
-        Layout.topMargin: 1
-        visible: !root.twoLines && (root.cfg.showAlbum ?? false) && root.view.album !== ""
-        text: root.view.album + (root.view.year !== "" ? " · " + root.view.year : "")
-        horizontalAlignment: root.alignment
-        color: root.view.textColor
-        style: root.view.textStyle ?? Text.Normal
-        styleColor: root.view.textStyleColor ?? "#101318"
-        opacity: 0.4
-        font.pixelSize: SystemText.px(Math.max(1, Math.round(root.ts * root.albumSize)))
-        elide: Text.ElideRight
-    }
-
-    Text {
-        objectName: "lyricLine"
-        Layout.fillWidth: true
-        Layout.minimumWidth: 0
-        Layout.topMargin: 1
-        visible: !root.twoLines && (root.cfg.showLyrics ?? false) && root.view.lyricDisplayLine !== ""
-        text: root.view.lyricDisplayLine
-        horizontalAlignment: root.cfg.lyricsAlign === "center" ? Text.AlignHCenter : root.cfg.lyricsAlign === "right" ? Text.AlignRight : Text.AlignLeft
-        color: root.cfg.lyricsHighlight === "custom" ? root.cfg.lyricsHighlightColor : root.cfg.lyricsHighlight === "accent" ? root.view.waveColor : root.view.textColor
-        font.weight: root.cfg.lyricsCurrentWeight ?? Font.Medium
-        font.italic: root.cfg.lyricsItalic ?? false
-        font.letterSpacing: root.cfg.lyricsLetterSpacing ?? 0
-        style: root.cfg.lyricsTextStyle === "outline" ? Text.Outline : root.cfg.lyricsTextStyle === "shadow" ? Text.Raised : Text.Normal
-        styleColor: root.cfg.lyricsTextStyleColor ?? "#101318"
-        font.family: root.cfg.lyricsFontFamily || root.view.defaultFontFamily
-        renderType: Text.CurveRendering ?? Text.QtRendering
-        textFormat: Text.PlainText
-        font.pixelSize: SystemText.px(Math.max(10, Math.min(24, root.cfg.lyricsInlineFontSize ?? Math.round(root.ts * root.lyricSize))))
-        elide: Text.ElideRight
-    }
-    Text {
-        objectName: "lyricDependencyNotice"
-        Layout.fillWidth: true
-        visible: !root.twoLines && (root.cfg.showLyrics ?? false) && root.view.lyricLine !== "" && root.view.lyricNotice !== ""
-        text: root.view.lyricNotice
-        textFormat: Text.PlainText
-        wrapMode: Text.Wrap
-        color: root.view.textColor
-        style: root.view.textStyle ?? Text.Normal
-        styleColor: root.view.textStyleColor ?? "#101318"
-        opacity: 0.75
-        font.family: root.cfg.lyricsFontFamily || root.view.defaultFontFamily
-        font.pixelSize: SystemText.px(10)
     }
 }

@@ -993,6 +993,15 @@ msgstr "Kontur"
 msgid "Shadow"
 msgstr "Schatten"
 
+msgid "Frosted"
+msgstr "Milchglas"
+
+msgid "Edge colour"
+msgstr "Kantenfarbe"
+
+msgid "Automatic"
+msgstr "Automatisch"
+
 msgid "Looks"
 msgstr "Designs"
 
@@ -1304,9 +1313,6 @@ msgstr "Hintergrundfarbe"
 msgid "Applies to pill styles. Tinted uses your accent when set to Automatic."
 msgstr ""
 "Gilt für Kapselstile. „Getönt“ verwendet bei „Automatisch“ die Akzentfarbe."
-
-msgid "Automatic"
-msgstr "Automatisch"
 
 msgid "Arrangement"
 msgstr "Anordnung"
@@ -1794,9 +1800,6 @@ msgstr "Textkante"
 msgid "Extra contrast on busy wallpapers."
 msgstr "Zusätzlicher Kontrast auf unruhigen Hintergrundbildern."
 
-msgid "Edge colour"
-msgstr "Kantenfarbe"
-
 msgid "Reading layout"
 msgstr "Leselayout"
 
@@ -2192,6 +2195,13 @@ msgstr "Eigene Fortschrittsfarbe"
 
 msgid "Text colour"
 msgstr "Textfarbe"
+
+msgid ""
+"Extra contrast on busy wallpapers. Frosted sets the track text on a glass "
+"panel."
+msgstr ""
+"Zusätzlicher Kontrast auf unruhigen Hintergrundbildern. Milchglas setzt den "
+"Titeltext auf eine Glasfläche."
 
 msgid "Adapt to light cards"
 msgstr "An helle Karten anpassen"

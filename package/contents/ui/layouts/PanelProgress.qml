@@ -1,4 +1,5 @@
 import QtQuick
+import ".."
 import "../text"
 
 // A small panel row uses the shared seek bar, with labels beside it.
@@ -11,6 +12,16 @@ Item {
     readonly property bool available: bar.lengthValue > 0
     readonly property bool labels: available && width >= 120 && (view.configuration.showTimes || timeOnly)
     implicitHeight: 9
+    TextEdge {
+        target: elapsed
+        mode: root.view.textEdge
+        edgeColor: root.view.textEdgeColor
+    }
+    TextEdge {
+        target: total
+        mode: root.view.textEdge
+        edgeColor: root.view.textEdgeColor
+    }
     Text {
         id: elapsed
         anchors.left: parent.left

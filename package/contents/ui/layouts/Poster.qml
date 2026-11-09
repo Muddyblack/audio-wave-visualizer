@@ -1,6 +1,7 @@
 import QtQuick
 import QtQuick.Layouts
 import "../../code/Layouts.js" as Layouts
+import ".."
 import "../text"
 
 // Typographic card: the wave as a faded texture behind an accent meta line, a
@@ -33,6 +34,23 @@ Item {
             edgeFade: true
         }
 
+        // Soft Text edges behind the meta line, title and clock.
+        TextEdge {
+            target: posterMetaRow
+            mode: root.view.textEdge
+            edgeColor: root.view.textEdgeColor
+        }
+        TextEdge {
+            target: posterTitle
+            mode: root.view.textEdge
+            edgeColor: root.view.textEdgeColor
+        }
+        TextEdge {
+            target: posterClock
+            mode: root.view.textEdge
+            edgeColor: root.view.textEdgeColor
+        }
+
         ColumnLayout {
             anchors.fill: parent
             spacing: 2
@@ -41,6 +59,7 @@ Item {
                 Layout.fillHeight: true
             }
             RowLayout {
+                id: posterMetaRow
                 spacing: 6
                 Layout.maximumWidth: area.width
                 Layout.fillWidth: !root.centered
@@ -70,6 +89,7 @@ Item {
                 }
             }
             Text {
+                id: posterTitle
                 renderType: Text.CurveRendering ?? Text.QtRendering
                 objectName: "posterTitle"
                 Layout.fillWidth: true
@@ -100,6 +120,7 @@ Item {
                     Layout.preferredHeight: implicitHeight
                 }
                 Text {
+                    id: posterClock
                     renderType: Text.CurveRendering ?? Text.QtRendering
                     objectName: "posterClock"
                     visible: root.showClock

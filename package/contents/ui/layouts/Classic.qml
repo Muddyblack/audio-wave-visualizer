@@ -148,6 +148,8 @@ Item {
                 textColor: root.view.textColor
                 textStyle: root.view.textStyle ?? Text.Normal
                 textStyleColor: root.view.textStyleColor ?? "#101318"
+                textEdge: root.view.textEdge ?? "none"
+                textEdgeColor: root.view.textEdgeColor ?? "#101318"
                 waveColor: root.view.waveColor
                 controlColor: root.view.controlColor
                 pgStartColor: root.view.pgStartColor

@@ -71,6 +71,7 @@ Flow {
                         kind: tile.option.pv
                         value: tile.option.v
                         colorKey: tile.option.colorKey ?? ""
+                        autoKey: tile.option.autoKey ?? ""
                         studio: tiles.studio
                         ink: tile.pressed ? Theme.text : Theme.muted
                     }

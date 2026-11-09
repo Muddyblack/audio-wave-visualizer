@@ -30,6 +30,14 @@ TestCase {
         property string lyricNotice: ""
         property color textColor: "white"
         property string defaultFontFamily: Qt.application.font.family
+        property bool softTextEdge: false
+        property color lyricsEdgeColor: configuration.lyricsTextStyleColor ?? "#101318"
+        function edgeStyle(mode) {
+            return mode === "outline" ? Text.Outline : mode === "shadow" ? Text.Raised : Text.Normal;
+        }
+        function edgeInk(edgeColor) {
+            return edgeColor;
+        }
     }
     Layouts.Lyrics {
         id: subject

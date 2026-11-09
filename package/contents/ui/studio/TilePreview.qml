@@ -1,5 +1,6 @@
 import QtQuick
 import "../../code/MaterialPreview.js" as MaterialPreview
+import "../../code/ColourStyle.js" as ColourStyle
 import ".."
 import "Theme.js" as Theme
 import "Schema.js" as Schema
@@ -15,6 +16,8 @@ Item {
     property color ink: Theme.muted
     // The draft key holding this option's colour (Text edge tiles).
     property string colorKey: ""
+    // The draft key that makes that colour Automatic.
+    property string autoKey: ""
     readonly property var draft: studio.draft
 
     Loader {
@@ -338,7 +341,24 @@ Item {
                     }
                 }
             }
+            // Frosted: the glass panel's tint (the studio has no wallpaper).
+            TextPanel {
+                visible: preview.value === "frosted"
+                anchors.centerIn: parent
+                width: sample.implicitWidth + 20
+                height: 26
+                radius: 8
+                ink: sample.color
+            }
+            // Drawn as the widget draws it (VisualizerView.edgeStyle): a soft
+            // edge behind native text, with Qt's halo for Outline.
+            TextEdge {
+                target: sample
+                mode: sample.soft ? preview.value : "none"
+                edgeColor: sample.edgeColor
+            }
             Text {
+                id: sample
                 objectName: "textEdgePreview"
                 anchors.centerIn: parent
                 // TRANSLATORS: two sample letters, an upper and a lower case one, in your script.
@@ -346,8 +366,10 @@ Item {
                 font.pixelSize: 20
                 font.bold: true
                 color: (preview.draft.useSystemText ?? true) ? "#ffffff" : preview.draft.customTextColor
-                style: preview.value === "outline" ? Text.Outline : preview.value === "shadow" ? Text.Raised : Text.Normal
-                styleColor: preview.draft[preview.colorKey] ?? "#101318"
+                readonly property color edgeColor: ColourStyle.edge(preview.draft[preview.autoKey] ?? true, preview.draft[preview.colorKey] ?? "#101318", color)
+                readonly property bool soft: GraphicsInfo.api !== GraphicsInfo.Software
+                style: preview.value === "outline" ? Text.Outline : preview.value === "shadow" && !soft ? Text.Raised : Text.Normal
+                styleColor: Qt.rgba(edgeColor.r, edgeColor.g, edgeColor.b, (soft ? 0.35 : 0.6) * edgeColor.a)
             }
         }
     }
