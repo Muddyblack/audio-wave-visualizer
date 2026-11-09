@@ -15,6 +15,10 @@ Item {
     property var segments: []
     anchors.fill: parent
 
+    FitScale {
+        id: fit
+    }
+
     // TextEdit exposes shaped cursor geometry; Text does not. Keep a hidden,
     // non-interactive document with the same font, width and wrap policy.
     TextEdit {
@@ -120,6 +124,9 @@ Item {
                 height: segment.height
                 clip: true
                 layer.enabled: !GpuDebug.noLayers && GraphicsInfo.api !== GraphicsInfo.Software
+                // On-screen resolution, otherwise the card's fit scale stretches the glyph texture.
+                layer.smooth: false
+                layer.textureSize: Qt.size(Math.ceil(width * fit.value * Screen.devicePixelRatio), Math.ceil(height * fit.value * Screen.devicePixelRatio))
                 layer.effect: ShaderEffect {
                     property var source
                     property real progress: segment.progress
