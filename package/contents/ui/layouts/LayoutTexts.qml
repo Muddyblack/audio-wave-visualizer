@@ -40,14 +40,20 @@ Item {
     readonly property int alignment: alignmentOverride >= 0 ? alignmentOverride : cfg.textAlign === "center" ? Text.AlignHCenter : cfg.textAlign === "right" ? Text.AlignRight : Text.AlignLeft
     readonly property int layoutAlignment: alignment === Text.AlignHCenter ? Qt.AlignHCenter : alignment === Text.AlignRight ? Qt.AlignRight : Qt.AlignLeft
     readonly property real ts: cfg.titleSize ?? 11
-    // Titles over 26 characters scroll (14 s loop, 12 % pause) on the audio clock.
+    // Titles over 26 characters scroll (14 s loop, 12 % pause). The audio poll clock ticks
+    // unevenly and only when bars change, so the scroll runs on its own display-synced clock.
     readonly property bool marquee: (cfg.marquee ?? false) && !(cfg.reducedMotion ?? false) && view.displayTrack.length > 26
     readonly property real marqueeOffset: {
         if (!marquee)
             return 0;
-        const phase = (view.visualFrameTime % 14000) / 14000;
+        const phase = (marqueeClock.elapsedTime * 1000 % 14000) / 14000;
         return phase < 0.12 ? 0 : (phase - 0.12) / 0.88 * (title.implicitWidth + 40);
     }
+    FrameAnimation {
+        id: marqueeClock
+        running: root.marquee
+    }
+
     // Frosted: the block sits on a glass panel, padded like a widget.
     readonly property bool panel: view.textPanel ?? false
     readonly property int padX: panel ? 12 : 0
@@ -180,17 +186,21 @@ Item {
                 Layout.minimumWidth: 0
                 implicitHeight: title.implicitHeight
                 layer.enabled: root.marquee && !GpuDebug.noLayers && GraphicsInfo.api !== GraphicsInfo.Software
-                layer.smooth: true
+                // Texture at on-screen resolution (card fit scale x device ratio) and sampled 1:1,
+                // otherwise the host scaling the card stretches a design-size texture and blurs the glyphs.
+                layer.smooth: false
+                layer.textureSize: Qt.size(Math.ceil(width * pixelRatio), Math.ceil(height * pixelRatio))
                 layer.effect: ShaderEffect {
                     property var source
                     property real fadeFraction: Math.min(0.2, 8 / Math.max(1, titleViewport.width))
                     fragmentShader: Qt.resolvedUrl("../../shaders/text_fade.frag.qsb")
                 }
                 clip: true
+                readonly property real pixelRatio: fit.value * Screen.devicePixelRatio
 
                 TrackText {
                     id: title
-                    x: root.marquee ? -root.marqueeOffset : 0
+                    x: root.marquee ? -Math.round(root.marqueeOffset * titleViewport.pixelRatio) / titleViewport.pixelRatio : 0
                     width: root.marquee ? implicitWidth : parent.width
                     elide: root.marquee ? Text.ElideNone : Text.ElideRight
                     font.family: root.view.defaultFontFamily
@@ -207,7 +217,7 @@ Item {
                 }
                 TrackText {
                     visible: root.marquee
-                    x: title.x + title.implicitWidth + 40
+                    x: title.x + Math.round((title.implicitWidth + 40) * titleViewport.pixelRatio) / titleViewport.pixelRatio
                     font.family: root.view.defaultFontFamily
                     titleSize: root.ts
                     sizeFactor: root.titleFactor
@@ -217,6 +227,10 @@ Item {
                     color: root.view.textColor
                     style: root.view.textStyle ?? Text.Normal
                     styleColor: root.view.textStyleColor ?? "#101318"
+                }
+
+                FitScale {
+                    id: fit
                 }
             }
 
