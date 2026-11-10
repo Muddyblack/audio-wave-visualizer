@@ -149,9 +149,12 @@ PlasmoidItem {
             Controls.AbstractButton {
                 id: popupPin
                 objectName: "popupPin"
-                anchors.bottom: popupView.bottom
+                // Overhang the card's top-right corner into the shadow margin. At
+                // the bottom-right it covered the Next button of layouts with a
+                // bottom-right dock and took its clicks, even while invisible.
+                anchors.top: popupView.top
                 anchors.right: popupView.right
-                anchors.margins: 6
+                anchors.margins: -parent.cardMargin
                 width: 20
                 height: 20
                 z: 2
@@ -162,11 +165,17 @@ PlasmoidItem {
                 Controls.ToolTip.visible: hovered
                 Controls.ToolTip.text: Accessible.name
                 onClicked: popupState.togglePin()
+                // A dark base keeps the pin legible where it overhangs the card.
                 background: Rectangle {
                     radius: height / 2
+                    color: Qt.rgba(0.08, 0.08, 0.1, 0.72)
                     readonly property color tint: popupPin.checked ? popupView.controlsAccent : popupView.controlColor
-                    color: Qt.rgba(tint.r, tint.g, tint.b, popupPin.checked ? 0.22 : popupPin.hovered ? 0.14 : 0.06)
                     border.color: Qt.rgba(tint.r, tint.g, tint.b, popupPin.checked || popupPin.activeFocus ? 0.7 : 0.18)
+                    Rectangle {
+                        anchors.fill: parent
+                        radius: parent.radius
+                        color: Qt.rgba(parent.tint.r, parent.tint.g, parent.tint.b, popupPin.checked ? 0.22 : popupPin.hovered ? 0.14 : 0.06)
+                    }
                 }
                 contentItem: Kirigami.Icon {
                     source: "window-pin"
